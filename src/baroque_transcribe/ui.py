@@ -33,7 +33,7 @@ from baroque_transcribe.defaults import (
     SCORE_XML,
     WORKING_WAV,
 )
-from baroque_transcribe.library import Card, Run, card_for, find_project, library_cards, project_param, read_run
+from baroque_transcribe.library import Card, Run, card_for, find_project, library_cards, load_thumbnail, project_param, read_run
 # ``notation`` (music21), ``pipeline`` (model/diagnostics stack), and ``pandas``
 # are imported inside the handlers that use them. At the top they added
 # seconds to every first page load, including the home-page thumbnail grid.
@@ -219,7 +219,8 @@ def _home_page() -> None:
     with st.container(border=True):
         _transcribe_fragment()()
 
-    # Card metadata only: titles, counts, and a path to a saved JPEG.
+    # Card metadata only: titles, counts, and the cached thumbnail JPEG
+    # (fetched from YouTube once per video, then read from disk).
     # The notes, audio, and score are opened on the project page.
     cards = _with_local_thumbnails(library_cards(for_grid=True))
     count = sum(1 for card in cards for run in card.runs if run.available)
@@ -247,17 +248,27 @@ def _transcribe_fragment():
 
 
 def _with_local_thumbnails(cards: list[Card]) -> list[Card]:
-    """Attach each card's saved JPEG, read from disk, and nothing else."""
+    """Attach each card's JPEG as a data URI, and nothing else.
+
+    ``load_thumbnail`` reads the JPEG from the ``data/thumbnails`` cache and
+    fetches it from YouTube only the first time a video is seen, so a new
+    transcription's card gets its thumbnail without anyone having to place
+    a file anywhere by hand. The JPEGs committed under ``static/thumbnails``
+    are kept as a fallback for when the cache is empty and the fetch fails.
+    A card whose thumbnail cannot be fetched simply renders without one.
+    """
 
     folder = Path(__file__).resolve().parent / "static" / "thumbnails"
     for card in cards:
         card.thumbnail = None
         if not card.video_id:
             continue
-        try:
-            data = (folder / f"{card.video_id}.jpg").read_bytes()
-        except OSError:
-            data = b""
+        data = load_thumbnail(card.video_id)
+        if not data:
+            try:
+                data = (folder / f"{card.video_id}.jpg").read_bytes()
+            except OSError:
+                data = b""
         if data:
             card.thumbnail = "data:image/jpeg;base64," + base64.b64encode(data).decode("ascii")
     return cards
