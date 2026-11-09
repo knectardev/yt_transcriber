@@ -144,6 +144,7 @@ transcriptions/baroque_improvisation/
   raw.mid
   quantized.mid
   score.musicxml
+  annotations.json
   manifest.json
   diagnostics/
     overview.png
@@ -178,13 +179,27 @@ That opens a local site at <http://127.0.0.1:8765> with two kinds of page.
 
 The home page has the controls that start a transcription (YouTube URL, local file, upload, or a MIDI file to draw without running the model; excerpt and notation settings are under an expander) and, below them, the library: a grid of the videos and recordings that already have a transcription. Each YouTube video appears once with its thumbnail; several runs of the same video are listed as chips on its card. A recording without a video gets a plain tile. Clicking a card opens that transcription's page. A run named in the parse history but missing from this computer is shown greyed out.
 
-The project page, `/project?project=<folder>`, is one transcription. The header gives the note and pedal counts, excerpt length, tempo, meter, and model. **Play with score** opens the video with the measures following it in a new tab, and **Score only** opens the static two-staff score; the same synced view is also framed in the first tab of the page. The other tabs hold the working audio and the mix of that audio with a simple tone at each detected pitch (a check of timing, not a piano sound), the plots, the editable note table with the tempo, meter, subdivision, and staff split used to rebuild MIDI and MusicXML, and the downloadable files with the run's warnings. A project transcribed from a local file can have a YouTube address attached on that page so the score can follow the video.
+The project page, `/project?project=<folder>`, is one transcription. The header gives the note and pedal counts, excerpt length, tempo, meter, and model. **Play with score** opens the video with the measures following it in a new tab, and **Score only** opens the static two-staff score; the same synced view is also framed in the first tab of the page. The other tabs hold the working audio and the mix of that audio with a simple tone at each detected pitch (a check of timing, not a piano sound), the plots, the editable note table with the tempo, meter, subdivision, and staff split used to rebuild MIDI and MusicXML, the Harmony tab described below, and the downloadable files with the run's warnings. A project transcribed from a local file can have a YouTube address attached on that page so the score can follow the video.
 
 `baroque-transcribe ui --project transcriptions\piece` opens straight to that project's page.
 
 The same plots are written by the `transcribe` command. `baroque-transcribe diagnostics transcriptions\baroque_improvisation --position 12.5` redraws them with a cursor.
 
 Import `working.wav` and `raw.mid` into a DAW if you want to solo the transcription against the recording. Use the raw file for that. The quantized file is metronomic on purpose.
+
+## Harmony draft
+
+A transcription also gets a first-pass harmonic reading, stored in `annotations.json` beside the score: one chord label per measure (split at a beat when the harmony clearly changes mid-measure), each with both a Roman numeral and a lead-sheet chord symbol, plus any repeated root-motion spans the detector finds — descending or ascending fifths, stepwise root motion, and repeated one- or two-measure modules. The key is estimated from the notes (Krumhansl profiles) unless you set it. A fresh transcription writes this file automatically; a failure to analyze never fails the transcription.
+
+```text
+baroque-transcribe analyze transcriptions\baroque_improvisation --key Bb --mode major
+```
+
+`--key`/`--mode` pin the tonic; omit them to keep the estimate (or the key you set before). The **Harmony** tab on the project page does the same thing and lets you edit every label and span in place. Edits you save there are marked as yours: a normal rebuild keeps them and only refreshes the rest, while "Replace my edited labels" (or `--force`) discards them. If the notes or tempo changed since the analysis, the tab says so.
+
+On both score pages the labels sit under each measure, Roman numerals by default. The **Harmony** checkbox hides the layer and **Lead-sheet chord symbols** swaps every label to its chord symbol (the hover text shows the other form and the detector's confidence; paler labels are the ones it was unsure about). Sequence spans are underlined under the measures they cover. The layer lives only in these browser pages for now: exported MusicXML does not carry the chords yet, and `annotations.json` is not copied into the parse history, so a restored project needs a fresh `analyze` run.
+
+Treat the whole thing as a draft. It reads the quantized grid, not the counterpoint: Baroque figuration, arpeggiation, passing tones, and pedal blur will produce wrong or over-specific labels (sus and six-chords are common false positives), the key is one global estimate with no modulation tracking, and inversions follow the lowest attack near the slice, which ornamentation can fool. Correct it in the Harmony tab rather than trusting it.
 
 ## When the transcription is wrong
 
@@ -272,14 +287,14 @@ The same warning in reverse: a `git pull` and a restore never update a project f
 | `quantize.py` | Grid, tempo, meter, downbeat |
 | `notation.py` | Two-staff MusicXML |
 | `diagnostics.py` | Plots and the comparison mix |
-| `analysis.py` | Later voice, imitation, sequence, harmony, and cadence hooks |
+| `analysis.py` | Harmonic draft: key estimate, chord labels, sequence spans in `annotations.json`; voice/imitation/cadence hooks still reserved |
 | `parse_store.py` | JSON history of each run, with the score files and a reserved PDF slot; also restores project folders from that history on another machine |
 | `library.py` | Cards for the home page: the parse history merged with the folders under `transcriptions/` |
 | `playback.py` | YouTube id parsing and the localhost server that serves the synced playback page and the score page |
 | `ui.py` | The local site: home page with the transcribe controls and the library, and one page per project |
-| `cli.py` | `prepare`, `transcribe`, `quantize`, `diagnostics`, `doctor`, `ui`, `history` |
+| `cli.py` | `prepare`, `transcribe`, `quantize`, `analyze`, `diagnostics`, `doctor`, `ui`, `history` |
 
-`notes.json` is the stable intermediate those later analyzers should read. They should write annotations beside the transcription and leave `raw.mid` alone.
+`notes.json` is the stable intermediate those later analyzers should read. They should write annotations beside the transcription and leave `raw.mid` alone. The harmonic analyzer does exactly that: it reads `notes.json` and writes `annotations.json`.
 
 ## License of the models
 

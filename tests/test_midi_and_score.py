@@ -129,6 +129,50 @@ def test_notation_page_embeds_the_score_without_closing_the_script(tmp_path):
     assert "&larr; Library" in linked
 
 
+def test_notation_page_draws_the_harmony_layer_with_a_toggle(tmp_path):
+    from baroque_transcribe.analysis import ChordEvent, HarmonicAnalysis, SequenceEvent, write_analysis
+
+    score_path = tmp_path / "score.musicxml"
+    score_path.write_text("<score-partwise><part id='right'/></score-partwise>", encoding="utf-8")
+    write_analysis(
+        tmp_path / "annotations.json",
+        HarmonicAnalysis(
+            key_tonic="C",
+            key_mode="major",
+            key_source="manual",
+            key_confidence=1.0,
+            chords=[
+                ChordEvent(
+                    measure=1, beat=0.0, measure_position=0.0, start_step=0, end_step=16,
+                    root_pc=0, root_name="C", quality="major", bass_pc=0, bass_name="C",
+                    roman="I", symbol="C", inversion=0, confidence=0.9,
+                )
+            ],
+            sequences=[
+                SequenceEvent(
+                    start_measure=1, end_measure=2, kind="descending-fifth",
+                    description="Descending fifth sequence", repetitions=1, confidence=0.8,
+                )
+            ],
+        ),
+    )
+    text = write_notation_page(score_path, tmp_path / "notation.html").read_text(encoding="utf-8")
+    assert "Lead-sheet chord symbols" in text
+    assert '"roman": "I"' in text
+    assert '"symbol": "C"' in text
+    assert "drawHarmony" in text
+    assert "Descending fifth sequence" in text
+
+
+def test_notation_page_survives_malformed_annotations(tmp_path):
+    score_path = tmp_path / "score.musicxml"
+    score_path.write_text("<score-partwise><part id='right'/></score-partwise>", encoding="utf-8")
+    (tmp_path / "annotations.json").write_text("{ not json", encoding="utf-8")
+    text = write_notation_page(score_path, tmp_path / "notation.html").read_text(encoding="utf-8")
+    assert "const harmony = null;" in text
+    assert "opensheetmusicdisplay.min.js" in text
+
+
 def test_project_midi_reuses_the_saved_score(tmp_path):
     score = tmp_path / "score.musicxml"
     score.write_text("<score-partwise><!-- saved --></score-partwise>", encoding="utf-8")

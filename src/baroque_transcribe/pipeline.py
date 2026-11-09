@@ -28,6 +28,7 @@ from baroque_transcribe.defaults import (
     DEFAULT_STAFF_SPLIT,
     DEFAULT_SUBDIVISION,
     DEFAULT_TIME_SIGNATURE,
+    ANNOTATIONS_JSON,
     DIAGNOSTICS_DIR,
     MANIFEST,
     NOTES_JSON,
@@ -37,6 +38,14 @@ from baroque_transcribe.defaults import (
     SCORE_XML,
     SOURCE_WAV,
     WORKING_WAV,
+)
+from baroque_transcribe.analysis import (
+    AnalysisError,
+    HarmonicAnalysis,
+    analyze_harmony,
+    load_analysis,
+    preserve_edited,
+    write_analysis,
 )
 from baroque_transcribe.diagnostics import render_diagnostics
 from baroque_transcribe.midi_export import write_quantized_midi, write_raw_midi
@@ -189,6 +198,72 @@ def notate_transcription(
     )
     _write_manifest(output_dir / MANIFEST, manifest)
     return quantization
+
+
+def _analysis_summary(analysis: HarmonicAnalysis) -> dict:
+    return {
+        "file": ANNOTATIONS_JSON,
+        "key": f"{analysis.key_tonic} {analysis.key_mode}",
+        "key_source": analysis.key_source,
+        "key_confidence": round(float(analysis.key_confidence), 4),
+        "chords": len(analysis.chords),
+        "sequences": len(analysis.sequences),
+        "stale": False,
+    }
+
+
+def _try_generate_analysis(output_dir: Path, quantization) -> str | None:
+    """Generate the harmonic draft; failure never discards a transcription."""
+
+    try:
+        analyze_project(output_dir, quantization=quantization)
+    except Exception as exc:
+        return f"Harmonic analysis was not generated: {exc}"
+    return None
+
+
+def analyze_project(
+    output_dir: Path,
+    *,
+    key: str | None = None,
+    mode: str | None = None,
+    force: bool = False,
+    quantization=None,
+) -> HarmonicAnalysis:
+    """Write ``annotations.json`` for an existing project from its notes and grid."""
+
+    notes_path = output_dir / NOTES_JSON
+    if not notes_path.is_file():
+        raise FileNotFoundError(f"No {NOTES_JSON} in {output_dir}. Transcribe the audio first.")
+    transcription = read_transcription(notes_path)
+    manifest = _read_manifest(output_dir / MANIFEST)
+    tempo_info = manifest.get("tempo") if isinstance(manifest.get("tempo"), dict) else {}
+    if quantization is None:
+        if not tempo_info.get("bpm") or not tempo_info.get("time_signature"):
+            raise AnalysisError(
+                "Harmonic analysis needs a tempo and time signature. Rebuild the score with a tempo first."
+            )
+        signature = parse_time_signature(str(tempo_info["time_signature"]))
+        quantization = quantize_notes(
+            transcription.notes,
+            bpm=float(tempo_info["bpm"]),
+            numerator=signature[0],
+            denominator=signature[1],
+            subdivision=int(tempo_info.get("subdivision") or DEFAULT_SUBDIVISION),
+            downbeat=float(tempo_info.get("downbeat_seconds") or 0.0),
+        )
+    old = None if force else load_analysis(output_dir / ANNOTATIONS_JSON)
+    chosen_key, chosen_mode = key, mode
+    if chosen_key is None and old is not None and old.key_source == "manual":
+        chosen_key, chosen_mode = old.key_tonic, old.key_mode
+    analysis = analyze_harmony(quantization, key_tonic=chosen_key, key_mode=chosen_mode)
+    if not force:
+        analysis = preserve_edited(analysis, old)
+    write_analysis(output_dir / ANNOTATIONS_JSON, analysis)
+    manifest = _read_manifest(output_dir / MANIFEST)
+    manifest["analysis"] = _analysis_summary(analysis)
+    _write_manifest(output_dir / MANIFEST, manifest)
+    return analysis
 
 
 def run_transcription(
@@ -370,7 +445,7 @@ def run_transcription(
             manifest["warnings"] = warnings
             _write_manifest(output_dir / MANIFEST, manifest)
         else:
-            notate_transcription(
+            quantization = notate_transcription(
                 transcription,
                 output_dir,
                 bpm=chosen_bpm,
@@ -386,6 +461,9 @@ def run_transcription(
                 },
                 time_signature_assumed=signature_assumed,
             )
+            analysis_error = _try_generate_analysis(output_dir, quantization)
+            if analysis_error:
+                warnings.append(analysis_error)
             manifest = _read_manifest(output_dir / MANIFEST)
             manifest["warnings"] = warnings
             _write_manifest(output_dir / MANIFEST, manifest)
@@ -500,7 +578,7 @@ def requantize_project(
 
     write_raw_midi(output_dir / RAW_MID, transcription.notes, transcription.pedals)
     write_pedal_file(output_dir / PEDAL_JSON, transcription.pedals, transcription.model)
-    notate_transcription(
+    quantization = notate_transcription(
         transcription,
         output_dir,
         bpm=bpm,
@@ -512,6 +590,12 @@ def requantize_project(
         tempo_info={"source": "manual" if tempo not in (None, "auto") else "previous-or-estimated", "assumed_bpm": assumed},
         time_signature_assumed=assumed_meter,
     )
+    analysis_error = _try_generate_analysis(output_dir, quantization)
+    if analysis_error:
+        warnings.append(analysis_error)
+        manifest = _read_manifest(output_dir / MANIFEST)
+        manifest["warnings"] = warnings
+        _write_manifest(output_dir / MANIFEST, manifest)
     print(f"Rewrote MIDI and MusicXML for {len(transcription.notes)} notes in {output_dir}")
     audio_info = manifest.get("audio") if isinstance(manifest.get("audio"), dict) else {}
     record_parse(

@@ -18,7 +18,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from baroque_transcribe.defaults import MANIFEST, NOTES_JSON, SCORE_XML
+from baroque_transcribe.analysis import analysis_is_stale, load_analysis
+from baroque_transcribe.defaults import ANNOTATIONS_JSON, MANIFEST, NOTES_JSON, SCORE_XML
 # ``notation`` (and its music21 import) is loaded inside the functions that
 # write score pages, not here: this module is also imported for YouTube id
 # parsing on the UI home page, which must start without that weight.
@@ -199,6 +200,7 @@ class PlaybackContext:
     anchors: list[MeasureAnchor]
     excerpt_start: float
     sync_offset: float
+    harmony: dict | None = None
 
 
 def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext:
@@ -238,6 +240,11 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
         offset = float(manifest.get("sync_offset_seconds") or 0.0)
     except (OSError, TypeError, ValueError) as exc:
         raise SyncError(f"Could not align the measures: {exc}") from exc
+    harmony = None
+    analysis = load_analysis(project / ANNOTATIONS_JSON)
+    if analysis is not None:
+        harmony = analysis.to_dict()
+        harmony["stale"] = analysis_is_stale(analysis, quantization)
     return PlaybackContext(
         project=project,
         score_path=score_path,
@@ -246,6 +253,7 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
         anchors=measure_anchors(quantization),
         excerpt_start=excerpt,
         sync_offset=offset,
+        harmony=harmony,
     )
 
 
@@ -282,6 +290,7 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
             "homeUrl": home_url or "",
             "excerptStart": context.excerpt_start,
             "syncOffset": context.sync_offset,
+            "harmony": context.harmony,
             "anchors": [
                 {
                     "measure": anchor.measure,
@@ -566,6 +575,17 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     .measure-hit { position: absolute; z-index: 3; cursor: pointer; border-radius: 3px; }
     .measure-hit:hover { outline: 1px solid rgba(180, 83, 9, 0.45); }
     .measure-hit.active { background: var(--accent-soft); }
+    .harmony-label {
+      position: absolute; z-index: 4; transform: translateX(-50%); pointer-events: none; white-space: nowrap;
+      font-size: 11px; font-weight: 600; color: var(--accent-ink); background: rgba(253, 243, 226, 0.88);
+      padding: 0 3px; border-radius: 3px;
+    }
+    .harmony-label.uncertain { opacity: 0.55; font-style: italic; }
+    .harmony-seq {
+      position: absolute; z-index: 3; pointer-events: none; text-align: center; overflow: visible;
+      font-size: 10px; font-style: italic; color: var(--accent-ink);
+      border-bottom: 2px solid rgba(180, 83, 9, 0.55); padding-bottom: 1px; white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -583,6 +603,8 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         <span id="clock">0:00 / 0:00</span>
         <span id="measure-label">Measure —</span>
         <label class="follow"><input id="follow" type="checkbox" checked> Follow score</label>
+        <label class="follow"><input id="show-harmony" type="checkbox" checked> Harmony</label>
+        <label class="follow"><input id="lead-sheet" type="checkbox"> Lead-sheet chord symbols</label>
       </div>
       <div class="sync">
         <span class="readout">Sync adjustment <output id="offset-label">0.00 s</output></span>
@@ -753,6 +775,95 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       });
     }
 
+    const harmony = config.harmony || null;
+
+    function measureBoxes() {
+      const boxes = [];
+      const systems = [];
+      const list = (osmd && osmd.GraphicSheet && osmd.GraphicSheet.MeasureList) || [];
+      const scale = 10 * (osmd.Zoom || 1);
+      for (let index = 0; index < list.length; index += 1) {
+        const staffs = list[index] || [];
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        let pageNumber = null;
+        let systemKey = "";
+        let measureNumber = index + 1;
+        for (let staff = 0; staff < staffs.length; staff += 1) {
+          const measure = staffs[staff];
+          if (!measure || !measure.PositionAndShape) continue;
+          const source = measure.parentSourceMeasure;
+          if (source && source.MeasureNumber) measureNumber = source.MeasureNumber;
+          const box = measure.PositionAndShape;
+          const x = box.AbsolutePosition.x + box.BorderLeft;
+          const y = box.AbsolutePosition.y + box.BorderTop;
+          const right = x + box.Size.width;
+          const bottom = y + box.Size.height;
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (right > maxX) maxX = right;
+          if (bottom > maxY) maxY = bottom;
+          const system = measure.ParentStaffLine && measure.ParentStaffLine.ParentMusicSystem;
+          const page = system && system.Parent;
+          if (page && page.PageNumber) pageNumber = page.PageNumber;
+          if (system) {
+            let systemIndex = systems.indexOf(system);
+            if (systemIndex === -1) { systems.push(system); systemIndex = systems.length - 1; }
+            systemKey = (pageNumber || 1) + ":" + systemIndex;
+          }
+        }
+        if (!isFinite(minX) || maxX <= minX || maxY <= minY) continue;
+        const pageEl = document.getElementById("osmdCanvasPage" + pageNumber) || document.getElementById("score");
+        boxes.push({ measure: measureNumber, pageEl: pageEl, systemKey: systemKey, minX: minX, maxX: maxX, minY: minY, maxY: maxY, scale: scale });
+      }
+      return boxes;
+    }
+
+    function drawHarmony() {
+      document.querySelectorAll(".harmony-label, .harmony-seq").forEach(function (node) { node.remove(); });
+      const showBox = document.getElementById("show-harmony");
+      if (!harmony || (showBox && !showBox.checked) || !osmd || !osmd.GraphicSheet) return;
+      const leadSheet = document.getElementById("lead-sheet");
+      const useSymbols = !!(leadSheet && leadSheet.checked);
+      const boxes = measureBoxes();
+      (harmony.chords || []).forEach(function (chord) {
+        const box = boxes.find(function (item) { return item.measure === chord.measure; });
+        if (!box) return;
+        box.pageEl.style.position = "relative";
+        const label = document.createElement("div");
+        label.className = "harmony-label" + (chord.confidence < 0.5 ? " uncertain" : "");
+        label.textContent = useSymbols ? chord.symbol : chord.roman;
+        label.title = (useSymbols ? chord.roman : chord.symbol) + " · " + Math.round((chord.confidence || 0) * 100) + "%";
+        label.style.left = ((box.minX + (box.maxX - box.minX) * (chord.measure_position || 0)) * box.scale) + "px";
+        label.style.top = (box.maxY * box.scale + 5) + "px";
+        box.pageEl.appendChild(label);
+      });
+      (harmony.sequences || []).forEach(function (sequence) {
+        // Group the covered measures by page and vertical system position.
+        const bySystem = {};
+        boxes.filter(function (box) { return box.measure >= sequence.start_measure && box.measure <= sequence.end_measure; })
+          .forEach(function (box) {
+            const key = box.systemKey || ((box.pageEl.id || "score") + ":" + Math.round(box.maxY * 2));
+            if (!bySystem[key]) bySystem[key] = [];
+            bySystem[key].push(box);
+          });
+        Object.values(bySystem).forEach(function (group) {
+          group.sort(function (a, b) { return a.minX - b.minX; });
+          const first = group[0];
+          const last = group[group.length - 1];
+          const baseY = Math.max.apply(null, group.map(function (box) { return box.maxY; }));
+          first.pageEl.style.position = "relative";
+          const span = document.createElement("div");
+          span.className = "harmony-seq";
+          span.textContent = sequence.description;
+          span.title = sequence.description + " · measures " + sequence.start_measure + "-" + sequence.end_measure;
+          span.style.left = (first.minX * first.scale) + "px";
+          span.style.width = Math.max(30, (last.maxX - first.minX) * first.scale) + "px";
+          span.style.top = (baseY * first.scale + 20) + "px";
+          first.pageEl.appendChild(span);
+        });
+      });
+    }
+
     function syncFromPlayer() {
       if (!player || !player.getCurrentTime) return;
       let current = 0;
@@ -865,6 +976,8 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       if (player.getPlayerState() === 1) player.pauseVideo();
       else player.playVideo();
     });
+    document.getElementById("show-harmony").addEventListener("change", drawHarmony);
+    document.getElementById("lead-sheet").addEventListener("change", drawHarmony);
     document.getElementById("earlier").addEventListener("click", function () { setOffset(syncOffset + 0.1); });
     document.getElementById("later").addEventListener("click", function () { setOffset(syncOffset - 0.1); });
     document.getElementById("reset").addEventListener("click", function () { setOffset(0); });
@@ -897,6 +1010,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         const drawn = drawScore();
         stampMeasurePlaces();
         buildMeasureHits();
+        drawHarmony();
         return drawn;
       };
       osmd.load(xml).then(function () { osmd.render(); }).catch(function (error) {

@@ -17,7 +17,7 @@ The musical goal is a decoding of the notes that were played, for studying Baroq
 
 | Module | Role |
 | --- | --- |
-| `src/baroque_transcribe/cli.py` | Commands: `prepare`, `transcribe`, `quantize`, `diagnostics`, `doctor`, `ui` |
+| `src/baroque_transcribe/cli.py` | Commands: `prepare`, `transcribe`, `quantize`, `analyze`, `diagnostics`, `doctor`, `ui`, `history` |
 | `audio.py` | Local WAV, MP3, or FLAC, or a YouTube URL. Writes `source.wav` and a trimmed, mono, 16 kHz, peak-normalized `working.wav`. Does not modify the original file. |
 | `checkpoint.py` | Downloads the Kong et al. checkpoint with Python, so Windows does not need `wget`. Accepts both the old pickle checkpoint and newer zip checkpoints. |
 | `transcribe.py` | ByteDance piano model by default. Basic Pitch ONNX as a baseline. CUDA when PyTorch can see a GPU, otherwise CPU. |
@@ -28,7 +28,7 @@ The musical goal is a decoding of the notes that were played, for studying Baroq
 | `ui.py` | Local Streamlit site. Home page: transcribe controls plus a library grid of transcribed videos. Project page (`/project?project=<folder>`): synced video and score, audio and plots, the note table, and the files. |
 | `library.py` | Builds the library cards by merging the parse history with the project folders on disk, and resolves the `project` address parameter to a folder. |
 | `playback.py` | YouTube id parsing, plus a localhost server that serves each project's synced playback page and static score page. The project page frames those with `?embed=1`. |
-| `analysis.py` | Empty hooks for voice separation, imitation, sequences, harmony, and cadences. Every method raises `NotImplementedError`. |
+| `analysis.py` | Harmonic draft implemented: key estimate/override, measure/beat chord labels (Roman numerals + lead-sheet symbols), sequence spans, edit preservation, `annotations.json` IO. Voice separation, imitation, and cadences remain `NotImplementedError` hooks. |
 | `pipeline.py` | Runs the stages and writes `manifest.json`. |
 
 Output of one run:
@@ -144,6 +144,7 @@ Open `score.musicxml` in MuseScore. Compare `working.wav` with `raw.mid` when ch
 - The program does not invent notes, but a wrong detection still adds or drops notes. Treat the score as unchecked until you have listened.
 - One global tempo cannot follow rubato. The quantized score is a reading aid. The raw MIDI is the timing document.
 - The staff split is a pitch threshold, middle C by default. It is not a hand assignment and not a contrapuntal voice analysis.
+- The harmonic layer is a draft over the quantized grid: one global key, no modulation, figuration and passing tones produce wrong or over-specific labels. It is drawn only on the browser score pages, is not embedded in MusicXML, and is not copied into parse-history events.
 - Pedal is kept in `raw.mid` and `pedal.json`. It is not written into the quantized score.
 - If you omit `--time-signature`, the score uses 4/4 and the manifest says that was an assumption.
 - Tempo estimation often locks onto half time or double time. The manifest lists those candidates.
@@ -158,4 +159,4 @@ Open `score.musicxml` in MuseScore. Compare `working.wav` with `raw.mid` when ch
 2. Download and transcribe a short excerpt of the Think Baroque video with `--cookies-from-browser`, then listen to `diagnostics/comparison.wav` before transcribing a long span.
 3. Set the real tempo, meter, and downbeat, and fix notes in the review page or in `notes.json`.
 4. Open the MusicXML in MuseScore and make the pickup, beaming, and hand assignment editorial.
-5. Only after that, implement the hooks in `analysis.py`: real voice separation, imitation, sequences, harmonic progressions, and cadences. Those should annotate `notes.json`. They should not change `raw.mid`.
+5. Only after that, extend the analysis in `analysis.py`. The harmonic layer is done: `analyze_harmony` writes chord labels (Roman + chord symbol) and sequence spans to `annotations.json`, generated automatically after notation, rebuilt with `baroque-transcribe analyze` or the project page's Harmony tab, and drawn under the measures on both score pages with a lead-sheet toggle. Still reserved: voice separation, imitation, and cadences (`CounterpointAnalyzer` raises `NotImplementedError`). Those should annotate `notes.json`. They should not change `raw.mid`.

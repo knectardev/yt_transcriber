@@ -18,7 +18,8 @@ from pathlib import Path
 
 from music21 import chord, clef, instrument, layout, meter, note, pitch, stream, tempo, tie
 
-from baroque_transcribe.defaults import NOTES_JSON, SCORE_XML
+from baroque_transcribe.analysis import load_analysis
+from baroque_transcribe.defaults import ANNOTATIONS_JSON, NOTES_JSON, SCORE_XML
 from baroque_transcribe.quantize import GridNote, Quantization
 
 
@@ -340,6 +341,7 @@ def write_notation_page(
     title: str | None = None,
     note: str | None = None,
     home_url: str | None = None,
+    harmony: dict | None = None,
 ) -> Path:
     """Write an HTML page that draws the two-staff score in a browser tab.
 
@@ -367,6 +369,10 @@ def write_notation_page(
         measure_times = json.dumps(measure_time_labels(score_path))
     except Exception:
         measure_times = "{}"
+    if harmony is None:
+        stored = load_analysis(score_path.parent / ANNOTATIONS_JSON)
+        harmony = stored.to_dict() if stored is not None else None
+    harmony_payload = json.dumps(harmony).replace("<", "\\u003c")
     heading = escape(title or score_path.stem)
     blurb = escape(
         note
@@ -396,6 +402,12 @@ def write_notation_page(
     p {{ margin: 0; max-width: 42rem; line-height: 1.45; color: #6b6560; font-size: 0.92rem; }}
     body.embed header {{ display: none; }}
     #score {{ padding: 0.5rem 1rem 2rem; background: white; }}
+    #score svg {{ overflow: visible; }}
+    .harmony-controls {{ margin-top: 0.5rem; display: flex; gap: 1rem; font-size: 0.9rem; color: #44403c; }}
+    .harmony-controls label {{ display: flex; gap: 0.3rem; align-items: center; cursor: pointer; }}
+    .harmony-label {{ position: absolute; font-size: 11px; font-weight: 700; color: #7c3a07; background: rgba(255,253,249,0.92); padding: 0 2px; pointer-events: none; white-space: nowrap; z-index: 4; }}
+    .harmony-label.uncertain {{ color: #b45309; font-weight: 400; }}
+    .harmony-seq {{ position: absolute; border-top: 2px solid #a16207; color: #854d0e; font-size: 10px; font-style: italic; padding-top: 1px; pointer-events: none; white-space: nowrap; overflow: hidden; z-index: 4; }}
   </style>
 </head>
 <body>
@@ -403,6 +415,10 @@ def write_notation_page(
     {home_link}
     <h1>{heading}</h1>
     <p>{blurb}</p>
+    <div class="harmony-controls" id="harmony-controls" hidden>
+      <label><input type="checkbox" id="show-harmony" checked> Harmony</label>
+      <label><input type="checkbox" id="lead-sheet"> Lead-sheet chord symbols</label>
+    </div>
   </header>
   <div id="score"></div>
   <script src="{_NOTATION_LIBRARY}"></script>
@@ -410,6 +426,8 @@ def write_notation_page(
     if (new URLSearchParams(window.location.search).get("embed") === "1") document.body.classList.add("embed");
     const xml = {payload};
     const measureTimes = {measure_times};
+    const harmony = {harmony_payload};
+    if (harmony) document.getElementById("harmony-controls").hidden = false;
     const library = window.opensheetmusicdisplay;
     function stampMeasureTimes(osmd) {{
       const pages = (osmd.GraphicSheet && osmd.GraphicSheet.MusicPages) || [];
@@ -440,10 +458,95 @@ def write_notation_page(
       drawMeasureNumbers: true,
       measureNumberInterval: 1
     }});
+    function measureBoxes() {{
+      const boxes = [];
+      const systems = [];
+      const list = (osmd.GraphicSheet && osmd.GraphicSheet.MeasureList) || [];
+      const scale = 10 * (osmd.Zoom || 1);
+      for (let index = 0; index < list.length; index += 1) {{
+        const staffs = list[index] || [];
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        let pageNumber = null;
+        let systemKey = "";
+        let measureNumber = index + 1;
+        for (let staff = 0; staff < staffs.length; staff += 1) {{
+          const measure = staffs[staff];
+          if (!measure || !measure.PositionAndShape) continue;
+          const source = measure.parentSourceMeasure;
+          if (source && source.MeasureNumber) measureNumber = source.MeasureNumber;
+          const box = measure.PositionAndShape;
+          const x = box.AbsolutePosition.x + box.BorderLeft;
+          const y = box.AbsolutePosition.y + box.BorderTop;
+          const right = x + box.Size.width;
+          const bottom = y + box.Size.height;
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (right > maxX) maxX = right;
+          if (bottom > maxY) maxY = bottom;
+          const system = measure.ParentStaffLine && measure.ParentStaffLine.ParentMusicSystem;
+          const page = system && system.Parent;
+          if (page && page.PageNumber) pageNumber = page.PageNumber;
+          if (system) {{
+            let systemIndex = systems.indexOf(system);
+            if (systemIndex === -1) {{ systems.push(system); systemIndex = systems.length - 1; }}
+            systemKey = (pageNumber || 1) + ":" + systemIndex;
+          }}
+        }}
+        if (!isFinite(minX) || maxX <= minX || maxY <= minY) continue;
+        const pageEl = document.getElementById("osmdCanvasPage" + pageNumber) || document.getElementById("score");
+        boxes.push({{ measure: measureNumber, pageEl: pageEl, systemKey: systemKey, minX: minX, maxX: maxX, minY: minY, maxY: maxY, scale: scale }});
+      }}
+      return boxes;
+    }}
+    function drawHarmony() {{
+      document.querySelectorAll(".harmony-label, .harmony-seq").forEach(function (node) {{ node.remove(); }});
+      if (!harmony || !document.getElementById("show-harmony").checked) return;
+      const leadSheet = document.getElementById("lead-sheet").checked;
+      const boxes = measureBoxes();
+      (harmony.chords || []).forEach(function (chord) {{
+        const box = boxes.find(function (item) {{ return item.measure === chord.measure; }});
+        if (!box || !box.pageEl) return;
+        box.pageEl.style.position = "relative";
+        const label = document.createElement("div");
+        label.className = "harmony-label" + (chord.confidence < 0.5 ? " uncertain" : "");
+        label.textContent = leadSheet ? chord.symbol : chord.roman;
+        label.title = (leadSheet ? chord.roman : chord.symbol) + " - " + Math.round((chord.confidence || 0) * 100) + "% confidence";
+        label.style.left = ((box.minX + chord.measure_position * (box.maxX - box.minX)) * box.scale) + "px";
+        label.style.top = (box.maxY * box.scale + 5) + "px";
+        box.pageEl.appendChild(label);
+      }});
+      (harmony.sequences || []).forEach(function (sequence) {{
+        const bySystem = {{}};
+        boxes.filter(function (box) {{ return box.measure >= sequence.start_measure && box.measure <= sequence.end_measure; }})
+          .forEach(function (box) {{
+            const key = box.systemKey || ((box.pageEl.id || "score") + ":" + Math.round(box.maxY * 2));
+            if (!bySystem[key]) bySystem[key] = [];
+            bySystem[key].push(box);
+          }});
+        Object.values(bySystem).forEach(function (group) {{
+          group.sort(function (a, b) {{ return a.minX - b.minX; }});
+          const first = group[0];
+          const last = group[group.length - 1];
+          const baseY = Math.max.apply(null, group.map(function (box) {{ return box.maxY; }}));
+          first.pageEl.style.position = "relative";
+          const span = document.createElement("div");
+          span.className = "harmony-seq";
+          span.textContent = sequence.description;
+          span.title = sequence.description + " - measures " + sequence.start_measure + "-" + sequence.end_measure;
+          span.style.left = (first.minX * first.scale) + "px";
+          span.style.width = Math.max(30, (last.maxX - first.minX) * first.scale) + "px";
+          span.style.top = (baseY * first.scale + 20) + "px";
+          group[0].pageEl.appendChild(span);
+        }});
+      }});
+    }}
+    document.getElementById("show-harmony").addEventListener("change", drawHarmony);
+    document.getElementById("lead-sheet").addEventListener("change", drawHarmony);
     const drawScore = osmd.render.bind(osmd);
     osmd.render = function () {{
       const drawn = drawScore();
       stampMeasureTimes(osmd);
+      drawHarmony();
       return drawn;
     }};
     osmd.load(xml).then(function () {{ osmd.render(); }}).catch(function (error) {{

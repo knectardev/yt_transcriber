@@ -89,6 +89,15 @@ def _build_parser() -> argparse.ArgumentParser:
     quantize.add_argument("--staff-split", type=int, default=None)
     quantize.add_argument("--no-diagnostics", action="store_true")
 
+    analyze = sub.add_parser(
+        "analyze",
+        help="Write annotations.json with a harmonic draft for an existing project.",
+    )
+    analyze.add_argument("project", type=Path, help="Transcription directory.")
+    analyze.add_argument("--key", default=None, help="Key tonic, such as C, F#, or Bb. Omit to estimate it.")
+    analyze.add_argument("--mode", default=None, choices=["major", "minor"], help="Key mode. Default: major with --key, otherwise estimated.")
+    analyze.add_argument("--force", action="store_true", help="Replace hand-edited harmonic labels as well.")
+
     diagnostics = sub.add_parser("diagnostics", help="Redraw plots and the comparison mix for an existing project.")
     diagnostics.add_argument("project", type=Path)
     diagnostics.add_argument("--position", type=float, default=None)
@@ -319,10 +328,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "ui":
         return _launch_ui(args.port, args.project)
 
+    from baroque_transcribe.analysis import AnalysisError
     from baroque_transcribe.audio import AudioError
     from baroque_transcribe.checkpoint import CheckpointError
     from baroque_transcribe.notation import NotationError
-    from baroque_transcribe.pipeline import prepare_only, requantize_project, resolve_output_dir, run_transcription
+    from baroque_transcribe.pipeline import analyze_project, prepare_only, requantize_project, resolve_output_dir, run_transcription
     from baroque_transcribe.quantize import QuantizeError
     from baroque_transcribe.transcribe import TranscribeError
 
@@ -360,6 +370,14 @@ def main(argv: list[str] | None = None) -> int:
                 position=args.position,
                 cookies=args.cookies,
                 cookies_from_browser=args.cookies_from_browser,
+            )
+            return 0
+        if args.command == "analyze":
+            analysis = analyze_project(args.project, key=args.key, mode=args.mode, force=args.force)
+            print(
+                f"Wrote harmonic analysis for {args.project}: "
+                f"{analysis.key_tonic} {analysis.key_mode} ({analysis.key_source}), "
+                f"{len(analysis.chords)} chord label(s), {len(analysis.sequences)} sequence(s)."
             )
             return 0
         if args.command == "quantize":

@@ -24,6 +24,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 from baroque_transcribe.defaults import (
+    ANNOTATIONS_JSON,
     DIAGNOSTICS_DIR,
     MANIFEST,
     NOTES_JSON,
@@ -606,7 +607,7 @@ def _project_page() -> None:
 
     manifest = _manifest(project)
     score_tab_label = "Video and score" if run.video_id else "Score"
-    tabs = st.tabs([score_tab_label, "Listen", "Notes", "Files"])
+    tabs = st.tabs([score_tab_label, "Listen", "Notes", "Harmony", "Files"])
     with tabs[0]:
         _score_tab(project, run, pages)
     with tabs[1]:
@@ -614,6 +615,8 @@ def _project_page() -> None:
     with tabs[2]:
         _notes_tab(project, manifest)
     with tabs[3]:
+        _harmony_tab(project, manifest)
+    with tabs[4]:
         _files_tab(project, run, card, manifest)
 
 
@@ -815,6 +818,252 @@ def _notes_tab(project: Path, manifest: dict) -> None:
     else:
         st.session_state["flash"] = ("success", "Rebuilt raw.mid, quantized.mid, and score.musicxml from the edited notes.")
         st.rerun()
+
+
+def _harmony_tab(project: Path, manifest: dict) -> None:
+    import pandas as pd
+    import streamlit as st
+
+    from baroque_transcribe.analysis import (
+        CHORD_QUALITIES,
+        ChordEvent,
+        SequenceEvent,
+        analysis_is_stale,
+        load_analysis,
+        parse_tonic,
+        write_analysis,
+    )
+    from baroque_transcribe.analysis import _inversion
+
+    path = project / ANNOTATIONS_JSON
+    analysis = load_analysis(path)
+    tempo_info = manifest.get("tempo") or {}
+
+    a, b, c, d = st.columns(4)
+    tonic = a.text_input(
+        "Key tonic",
+        value=analysis.key_tonic if analysis else "C",
+        key=f"harmony-tonic-{project.name}",
+        help="For example C, F#, or Bb. Leave the analysis key in place to keep an automatic estimate.",
+    )
+    modes = ["major", "minor"]
+    mode = b.selectbox(
+        "Mode",
+        modes,
+        index=modes.index(analysis.key_mode) if analysis and analysis.key_mode in modes else 0,
+        key=f"harmony-mode-{project.name}",
+    )
+    force = c.checkbox(
+        "Replace my edited labels",
+        value=False,
+        key=f"harmony-force-{project.name}",
+        help="A normal rebuild keeps labels you edited here. Tick this to discard those edits.",
+    )
+    if d.button("Analyze / rebuild", key=f"harmony-build-{project.name}", width="stretch"):
+        try:
+            from baroque_transcribe.pipeline import analyze_project
+
+            analyze_project(project, key=tonic.strip() or None, mode=mode, force=force)
+        except Exception as exc:
+            st.error(str(exc))
+        else:
+            st.session_state["flash"] = ("success", "Harmonic analysis rebuilt. Reopen the score pages to see the new labels.")
+            st.rerun()
+        return
+
+    if analysis is None:
+        st.info(
+            "No harmonic analysis yet. Set a key above, or leave the tonic as shown for an automatic "
+            "estimate, then choose Analyze / rebuild. The labels are a draft: Baroque figuration, passing "
+            "notes, and sequences can fool the detector, so edit freely below once it exists."
+        )
+        return
+
+    st.caption(
+        f"Key: **{analysis.key_tonic} {analysis.key_mode}** ({analysis.key_source}, "
+        f"{analysis.key_confidence:.0%} confidence) · {len(analysis.chords)} chord labels · "
+        f"{len(analysis.sequences)} sequence spans. Roman numerals are primary on the score pages; "
+        "the Lead-sheet toggle there switches each label to its chord symbol."
+    )
+    # Staleness: the stored fingerprint no longer matches the current notes/grid.
+    try:
+        if tempo_info.get("bpm") and tempo_info.get("time_signature"):
+            from baroque_transcribe.quantize import parse_time_signature, quantize_notes
+
+            numerator, denominator = parse_time_signature(str(tempo_info["time_signature"]))
+            quantization = quantize_notes(
+                read_transcription(project / NOTES_JSON).notes,
+                bpm=float(tempo_info["bpm"]),
+                numerator=numerator,
+                denominator=denominator,
+                subdivision=int(tempo_info.get("subdivision") or 16),
+                downbeat=float(tempo_info.get("downbeat_seconds") or 0.0),
+            )
+            if analysis_is_stale(analysis, quantization):
+                st.warning("The notes or tempo changed since this analysis. Rebuild to refresh the unedited labels.")
+    except Exception:
+        pass
+
+    grid = analysis.grid or {}
+    steps_per_measure = int(grid.get("steps_per_measure") or 0)
+    first_step = int(grid.get("first_step") or 0)
+    beat_steps = max(1, round(int(grid.get("subdivision") or 16) / int(grid.get("denominator") or 4)))
+
+    st.markdown("**Chord labels** — beat 0 is the first beat of the measure. Delete a row to remove a label.")
+    chord_frame = pd.DataFrame(
+        [
+            {
+                "measure": item.measure,
+                "beat": item.beat,
+                "roman": item.roman,
+                "symbol": item.symbol,
+                "root": item.root_name,
+                "quality": item.quality,
+                "bass": item.bass_name,
+                "confidence": round(item.confidence, 2),
+            }
+            for item in analysis.chords
+        ],
+        columns=["measure", "beat", "roman", "symbol", "root", "quality", "bass", "confidence"],
+    )
+    edited_chords = st.data_editor(
+        chord_frame,
+        num_rows="dynamic",
+        width="stretch",
+        height=360,
+        key=f"harmony-chords-{project.name}",
+        disabled=["confidence"],
+        column_config={
+            "quality": st.column_config.SelectboxColumn("quality", options=list(CHORD_QUALITIES)),
+        },
+    )
+
+    st.markdown("**Sequence spans**")
+    sequence_frame = pd.DataFrame(
+        [
+            {
+                "start_measure": item.start_measure,
+                "end_measure": item.end_measure,
+                "kind": item.kind,
+                "description": item.description,
+                "repetitions": item.repetitions,
+                "confidence": round(item.confidence, 2),
+            }
+            for item in analysis.sequences
+        ],
+        columns=["start_measure", "end_measure", "kind", "description", "repetitions", "confidence"],
+    )
+    edited_sequences = st.data_editor(
+        sequence_frame,
+        num_rows="dynamic",
+        width="stretch",
+        height=200,
+        key=f"harmony-sequences-{project.name}",
+        disabled=["confidence"],
+    )
+
+    if not st.button("Save harmony edits", type="primary", key=f"harmony-save-{project.name}"):
+        return
+    try:
+        originals = {(item.start_step, item.end_step): item for item in analysis.chords}
+        rows = [
+            row
+            for row in edited_chords.to_dict(orient="records")
+            if not _blank(row.get("roman")) or not _blank(row.get("symbol"))
+        ]
+        rows.sort(key=lambda row: (int(row["measure"]), float(row.get("beat") or 0.0)))
+        chords: list[ChordEvent] = []
+        for index, row in enumerate(rows):
+            measure = int(row["measure"])
+            beat = float(row.get("beat") or 0.0)
+            if steps_per_measure:
+                measure_start = first_step + (measure - 1) * steps_per_measure
+                start_step = measure_start + round(beat * beat_steps)
+                if index + 1 < len(rows):
+                    next_measure = int(rows[index + 1]["measure"])
+                    next_beat = float(rows[index + 1].get("beat") or 0.0)
+                    end_step = first_step + (next_measure - 1) * steps_per_measure + round(next_beat * beat_steps)
+                else:
+                    end_step = measure_start + steps_per_measure
+                if end_step <= start_step:
+                    end_step = start_step + beat_steps
+            else:
+                start_step = index
+                end_step = index + 1
+                measure_start = start_step
+            root_name, root_pc = parse_tonic(str(row.get("root") or analysis.key_tonic))
+            bass_text = str(row.get("bass") or root_name)
+            bass_name, bass_pc = parse_tonic(bass_text)
+            quality = str(row.get("quality") or "major")
+            if quality not in CHORD_QUALITIES:
+                raise ValueError(f"Unknown chord quality {quality!r}.")
+            original = originals.get((start_step, end_step))
+            edited_fields = list(original.edited_fields) if original else []
+            if original is not None:
+                for field_name, value in (
+                    ("roman", str(row.get("roman") or "")),
+                    ("symbol", str(row.get("symbol") or "")),
+                    ("root_name", root_name),
+                    ("quality", quality),
+                    ("bass_name", bass_name),
+                ):
+                    if getattr(original, field_name) != value and field_name not in edited_fields:
+                        edited_fields.append(field_name)
+            elif str(row.get("roman") or "") or str(row.get("symbol") or ""):
+                edited_fields = ["roman", "symbol"]
+            chords.append(
+                ChordEvent(
+                    measure=measure,
+                    beat=beat,
+                    measure_position=round((start_step - measure_start) / steps_per_measure, 4)
+                    if steps_per_measure
+                    else 0.0,
+                    start_step=start_step,
+                    end_step=end_step,
+                    root_pc=root_pc,
+                    root_name=root_name,
+                    quality=quality,
+                    bass_pc=bass_pc,
+                    bass_name=bass_name,
+                    roman=str(row.get("roman") or ""),
+                    symbol=str(row.get("symbol") or ""),
+                    inversion=_inversion(root_pc, bass_pc, quality),
+                    confidence=float(row.get("confidence") or 0.0),
+                    edited=bool(edited_fields) or (original.edited if original else False),
+                    edited_fields=edited_fields,
+                )
+            )
+        original_sequences = {(item.start_measure, item.end_measure): item for item in analysis.sequences}
+        sequences: list[SequenceEvent] = []
+        for row in edited_sequences.to_dict(orient="records"):
+            if _blank(row.get("start_measure")) or _blank(row.get("end_measure")):
+                continue
+            start_measure = int(row["start_measure"])
+            end_measure = int(row["end_measure"])
+            original = original_sequences.get((start_measure, end_measure))
+            changed = original is None or (
+                original.kind != str(row.get("kind") or "sequence")
+                or original.description != str(row.get("description") or "")
+            )
+            sequences.append(
+                SequenceEvent(
+                    start_measure=start_measure,
+                    end_measure=end_measure,
+                    kind=str(row.get("kind") or "sequence"),
+                    description=str(row.get("description") or ""),
+                    repetitions=int(row.get("repetitions") or 0),
+                    confidence=float(row.get("confidence") or 0.0),
+                    edited=bool(changed or (original.edited if original else False)),
+                )
+            )
+        analysis.chords = chords
+        analysis.sequences = sequences
+        write_analysis(path, analysis)
+    except Exception as exc:
+        st.error(f"Could not save the harmony edits: {exc}")
+        return
+    st.session_state["flash"] = ("success", "Harmony edits saved. Reopen the score pages to see them.")
+    st.rerun()
 
 
 def _files_tab(project: Path, run: Run, card: Card | None, manifest: dict) -> None:

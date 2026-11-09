@@ -98,6 +98,51 @@ def test_playback_page_records_the_estimate_limitation(tmp_path):
     assert context.anchors[0].measure == 1
 
 
+def test_playback_page_carries_the_harmony_layer_and_toggle(tmp_path):
+    project = _write_min_project(tmp_path, origin="https://youtu.be/abcdefghijk")
+    annotations = {
+        "version": 1,
+        "key": {"tonic": "C", "mode": "major", "source": "manual", "confidence": 1.0},
+        "grid": {},
+        "notes_fingerprint": "x",
+        "chords": [
+            {
+                "measure": 1, "beat": 0.0, "measure_position": 0.0, "start_step": 0, "end_step": 16,
+                "root_pc": 0, "root_name": "C", "quality": "major", "bass_pc": 0, "bass_name": "C",
+                "roman": "I", "symbol": "C", "inversion": 0, "confidence": 0.9,
+                "edited": False, "edited_fields": [],
+            }
+        ],
+        "sequences": [
+            {
+                "start_measure": 1, "end_measure": 2, "kind": "descending-fifth",
+                "description": "Descending fifth sequence", "repetitions": 1, "confidence": 0.8,
+                "edited": False,
+            }
+        ],
+    }
+    (project / "annotations.json").write_text(json.dumps(annotations), encoding="utf-8")
+    context = load_playback(project)
+    assert context.harmony is not None
+    assert context.harmony["chords"][0]["roman"] == "I"
+    assert context.harmony["chords"][0]["symbol"] == "C"
+    text = write_playback_page(context, project / "playback.html").read_text(encoding="utf-8")
+    assert 'id="show-harmony"' in text
+    assert "Lead-sheet chord symbols" in text
+    assert "drawHarmony" in text
+    assert '"roman": "I"' in text
+    assert "Descending fifth sequence" in text
+
+
+def test_malformed_annotations_never_break_playback(tmp_path):
+    project = _write_min_project(tmp_path, origin="https://youtu.be/abcdefghijk")
+    (project / "annotations.json").write_text("{ not json", encoding="utf-8")
+    context = load_playback(project)
+    assert context.harmony is None
+    text = write_playback_page(context, project / "playback.html").read_text(encoding="utf-8")
+    assert "abcdefghijk" in text
+
+
 def test_server_round_trips_the_offset_without_dropping_manifest_fields(tmp_path):
     project = _write_min_project(tmp_path, origin="https://youtu.be/abcdefghijk")
     context = load_playback(project)

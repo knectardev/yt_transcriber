@@ -30,6 +30,7 @@ PEDAL_JSON = "pedal.json"
 RAW_MID = "raw.mid"
 QUANTIZED_MID = "quantized.mid"
 SCORE_XML = "score.musicxml"
+ANNOTATIONS_JSON = "annotations.json"
 MANIFEST = "manifest.json"
 DIAGNOSTICS_DIR = "diagnostics"
 
