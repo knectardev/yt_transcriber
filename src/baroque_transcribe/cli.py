@@ -97,15 +97,20 @@ def _build_parser() -> argparse.ArgumentParser:
 
     history = sub.add_parser(
         "history",
-        help="List parse history, or import existing transcription folders into it.",
+        help="List parse history, import existing transcription folders into it, or restore projects from it.",
     )
-    history.add_argument("history_command", nargs="?", choices=["import"], default=None)
+    history.add_argument("history_command", nargs="?", choices=["import", "restore"], default=None)
     history.add_argument(
         "root",
         nargs="?",
         type=Path,
         default=None,
-        help="Folder of projects to import. Default: transcriptions.",
+        help="Folder of projects to import, or one project name to restore. Default: transcriptions, or every missing project.",
+    )
+    history.add_argument(
+        "--with-audio",
+        action="store_true",
+        help="Restore only: also download the excerpt audio (section only). The model is never run.",
     )
 
     ui = sub.add_parser("ui", help="Open the local review window.")
@@ -219,9 +224,18 @@ def _doctor() -> int:
     return 0 if ok else 1
 
 
-def _history(command: str | None, root: Path | None) -> int:
-    from baroque_transcribe.parse_store import default_store, format_event, import_projects, load_events
+def _history(command: str | None, root: Path | None, *, with_audio: bool = False) -> int:
+    from baroque_transcribe.parse_store import default_store, format_event, import_projects, load_events, restore_projects
 
+    if command == "restore":
+        projects = [root.name] if root is not None else None
+        restored, skipped = restore_projects(projects=projects, with_audio=with_audio)
+        for folder in restored:
+            print(f"Restored {folder}")
+        if skipped:
+            print(f"Skipped {len(skipped)} project(s) already on this computer or without a stored run: {', '.join(skipped)}")
+        print(f"Restored {len(restored)} project(s) from {default_store() / 'events'}. No model was run.")
+        return 0
     if command == "import":
         directory = root or Path("transcriptions")
         if not directory.is_dir():
@@ -301,7 +315,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "doctor":
         return _doctor()
     if args.command == "history":
-        return _history(args.history_command, args.root)
+        return _history(args.history_command, args.root, with_audio=args.with_audio)
     if args.command == "ui":
         return _launch_ui(args.port, args.project)
 

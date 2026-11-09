@@ -245,13 +245,22 @@ Pull first, push after. Event folders are new every time and are never edited, s
 
 **What you get on the other machine after `git pull`**
 
-The library shows the new video and its runs greyed out, marked "not on this computer". That is expected: the history and the score files have arrived, but no project folder has. There is no restore command, so opening that transcription on this machine takes one of these:
+The library shows the new video and its runs greyed out, marked "not on this computer". That is expected: the history and the score files have arrived, but no project folder has. Restore the project from the history:
 
-- **Just the score.** Open `data/parses/events/<run>/score.musicxml` from the pull in MuseScore, or use the `quantized.mid` beside it. This needs nothing else installed beyond MuseScore.
-- **The full project page** (video sync, audio, note table). Copy the matching `transcriptions/<project>` folder from the other machine (USB, network share, any file copy) into this machine's `transcriptions/` folder. The UI then merges it with the pulled history by folder name and video. Do **not** run `baroque-transcribe history import transcriptions` for a folder whose runs are already in the pulled history; import is for projects that predate the history, and it would record those runs a second time.
-- **Re-transcribe on this machine.** This creates a local project folder, but it downloads the audio and runs the model again, and it records a new run in the history rather than reusing the pulled one.
+```text
+baroque-transcribe history restore
+```
 
-The same warning in reverse: a `git pull` never updates a project folder you already have. If notes were edited and requantized on the other machine, the new scores arrive as a new event folder while your local `transcriptions/<project>` still holds the old ones. Replace that folder with a fresh copy, or delete it and re-transcribe, before trusting the local page.
+That rebuilds every missing project (or one project, with `baroque-transcribe history restore <project>`) by copying the stored notes, pedal, MIDI, and MusicXML files into `transcriptions/<project>` and writing a manifest rebuilt from the event, with the tempo and meter read back from the score. **Nothing is downloaded and no model is run**: a restored project is the pulled transcription itself, not a new one, and restoring records no new history. A project that already exists on this machine is skipped and left untouched. The same restore is a button on each greyed-out library card in the review window.
+
+Two limits of a restored project, both because audio does not travel in the repo:
+
+- There is no `working.wav`, so the Listen tab has nothing to play and there are no diagnostic plots. The score page and the synced video play without it, because the video is streamed from YouTube and the measure timing is re-derived from the restored tempo and notes.
+- `baroque-transcribe history restore --with-audio` additionally downloads the excerpt audio -- for a YouTube source, only the requested section, using the same section download as a transcription -- so the Listen tab works. It still never runs the model. The diagnostics can then be redrawn with `baroque-transcribe diagnostics transcriptions/<project>`.
+
+The alternatives are still there: open `data/parses/events/<run>/score.musicxml` directly in MuseScore for just the score, or re-transcribe on this machine, which downloads and runs the model again and records a *new* history run rather than reusing the pulled one. Do **not** run `baroque-transcribe history import transcriptions` for a folder whose runs are already in the pulled history; import is for projects that predate the history, and it would record those runs a second time.
+
+The same warning in reverse: a `git pull` and a restore never update a project folder you already have. If notes were edited and requantized on the other machine, the new scores arrive as a new event folder while your local `transcriptions/<project>` still holds the old ones, and restore skips it because it exists. Delete that folder and restore again, or replace it with a fresh copy, before trusting the local page.
 
 ## Layout
 
@@ -264,7 +273,7 @@ The same warning in reverse: a `git pull` never updates a project folder you alr
 | `notation.py` | Two-staff MusicXML |
 | `diagnostics.py` | Plots and the comparison mix |
 | `analysis.py` | Later voice, imitation, sequence, harmony, and cadence hooks |
-| `parse_store.py` | JSON history of each run, with the score files and a reserved PDF slot |
+| `parse_store.py` | JSON history of each run, with the score files and a reserved PDF slot; also restores project folders from that history on another machine |
 | `library.py` | Cards for the home page: the parse history merged with the folders under `transcriptions/` |
 | `playback.py` | YouTube id parsing and the localhost server that serves the synced playback page and the score page |
 | `ui.py` | The local site: home page with the transcribe controls and the library, and one page per project |

@@ -253,6 +253,127 @@ def test_history_command_rejects_a_missing_import_directory(tmp_path):
     assert main(["history"]) == 0
 
 
+_SCORE_XML = """<?xml version="1.0"?>
+<score-partwise><part><measure>
+<attributes><time><beats>3</beats><beat-type>4</beat-type></time></attributes>
+<direction><sound tempo="84"/></direction>
+</measure></part></score-partwise>
+"""
+
+
+def _scored_project(path: Path, *, note_count: int = 2) -> Path:
+    path.mkdir(parents=True, exist_ok=True)
+    notes = [
+        {"pitch": 60 + index, "onset": float(index), "offset": float(index) + 0.5, "velocity": 80}
+        for index in range(note_count)
+    ]
+    (path / "notes.json").write_text(
+        json.dumps({"version": 1, "model": "bytedance-note-pedal", "source": "https://youtu.be/abcdefghijk", "notes": notes, "pedals": [{"onset": 0.0, "offset": 1.0}]}),
+        encoding="utf-8",
+    )
+    (path / "pedal.json").write_text("{}\n", encoding="utf-8")
+    (path / "raw.mid").write_bytes(b"mid")
+    (path / "quantized.mid").write_bytes(b"mid")
+    (path / "score.musicxml").write_text(_SCORE_XML, encoding="utf-8")
+    return path
+
+
+def test_restore_rebuilds_a_project_without_downloading(tmp_path):
+    from baroque_transcribe.parse_store import restore_projects
+
+    store = tmp_path / "store"
+    record_parse(
+        action="transcribe",
+        status="ok",
+        source="https://youtu.be/abcdefghijk",
+        title="Toccata",
+        project="take",
+        project_dir=_scored_project(tmp_path / "original"),
+        store=store,
+        excerpt_start=12.0,
+        excerpt_end=42.0,
+        duration=30.0,
+        full_duration=212.0,
+        recorded_at=_when("2026-11-08T04:21:03Z"),
+    )
+    # A later run of the same project is the one restored.
+    record_parse(
+        action="quantize",
+        status="ok",
+        source="https://youtu.be/abcdefghijk",
+        title="Toccata",
+        project="take",
+        project_dir=_scored_project(tmp_path / "edited", note_count=3),
+        store=store,
+        excerpt_start=12.0,
+        excerpt_end=42.0,
+        duration=30.0,
+        full_duration=212.0,
+        recorded_at=_when("2026-11-08T05:21:03Z"),
+    )
+    root = tmp_path / "transcriptions"
+    restored, skipped = restore_projects(store=store, projects_root=root)
+    assert skipped == []
+    assert restored == [root / "take"]
+    dest = root / "take"
+    for name in ("notes.json", "pedal.json", "raw.mid", "quantized.mid", "score.musicxml", "manifest.json"):
+        assert (dest / name).is_file(), name
+    assert not (dest / "working.wav").exists()
+    assert not (dest / "source.wav").exists()
+    manifest = json.loads((dest / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["counts"] == {"notes": 3, "pedals": 1}
+    assert manifest["model"] == "bytedance-note-pedal"
+    assert manifest["youtube_url"] == "https://youtu.be/abcdefghijk"
+    assert manifest["tempo"]["bpm"] == 84.0
+    assert manifest["tempo"]["time_signature"] == "3/4"
+    assert manifest["audio"]["excerpt_start_seconds"] == 12.0
+    assert manifest["restored_from"]["machine"] == manifest["restored_from"]["machine"]
+
+    # Restoring again leaves the local project alone.
+    (dest / "manifest.json").write_text('{"title": "Local edit"}\n', encoding="utf-8")
+    restored, skipped = restore_projects(store=store, projects_root=root)
+    assert restored == []
+    assert skipped == ["take"]
+    assert json.loads((dest / "manifest.json").read_text(encoding="utf-8"))["title"] == "Local edit"
+
+    restored, skipped = restore_projects(store=store, projects_root=root, projects=["missing"])
+    assert restored == []
+    assert skipped == ["missing"]
+
+
+def test_restore_with_audio_fetches_only_the_excerpt(tmp_path, monkeypatch):
+    from baroque_transcribe import parse_store
+
+    store = tmp_path / "store"
+    record_parse(
+        action="transcribe",
+        status="ok",
+        source="https://youtu.be/abcdefghijk",
+        title="Toccata",
+        project="take",
+        project_dir=_scored_project(tmp_path / "original"),
+        store=store,
+        excerpt_start=12.0,
+        excerpt_end=42.0,
+        duration=30.0,
+        full_duration=212.0,
+    )
+    calls = {}
+
+    def fake_prepare(source, output_dir, **kwargs):
+        calls.update(source=source, **kwargs)
+        (output_dir / "working.wav").write_bytes(b"wav")
+
+    monkeypatch.setattr("baroque_transcribe.audio.prepare_audio", fake_prepare)
+    restored, _skipped = parse_store.restore_projects(
+        store=store, projects_root=tmp_path / "transcriptions", with_audio=True
+    )
+    assert calls == {"source": "https://youtu.be/abcdefghijk", "start": 12.0, "end": 42.0}
+    assert (restored[0] / "working.wav").is_file()
+    manifest = json.loads((restored[0] / "manifest.json").read_text(encoding="utf-8"))
+    assert any("no model was run" in warning for warning in manifest["warnings"])
+
+
 def test_transcribed_videos_are_one_card_per_youtube_video(tmp_path):
     store = tmp_path / "store"
     record_parse(

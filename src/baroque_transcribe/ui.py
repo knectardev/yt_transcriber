@@ -316,6 +316,24 @@ def _show_card(card: Card) -> bool:
                     chips.append(label)
             if chips:
                 st.markdown(" · ".join(chips))
+        for run in card.runs:
+            if run.available:
+                continue
+            # The score files for this run are in the parse history (they
+            # arrived with the repo); only the project folder is missing.
+            if st.button(
+                f"Restore {run.name} from history",
+                key=f"restore-{card.key}-{run.name}",
+                help="Copy the stored notes, MIDI, and score into a local project folder. Nothing is downloaded and no model is run.",
+            ):
+                from baroque_transcribe.parse_store import restore_projects
+
+                restored, _skipped = restore_projects(projects=[run.name])
+                if restored:
+                    st.session_state["flash"] = ("success", f"Restored {run.name} from the parse history. No model was run.")
+                else:
+                    st.session_state["flash"] = ("info", f"{run.name} has no stored score files to restore.")
+                st.rerun()
     return bool(card.thumbnail)
 
 

@@ -21,7 +21,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from baroque_transcribe.defaults import (
+    DEFAULT_STAFF_SPLIT,
+    DEFAULT_SUBDIVISION,
     DIAGNOSTICS_DIR,
+    MANIFEST,
     NOTES_JSON,
     PEDAL_JSON,
     QUANTIZED_MID,
@@ -297,6 +300,233 @@ def import_projects(root: Path, store: Path | None = None) -> tuple[int, int]:
         existing.add(identity)
         added += 1
     return added, skipped
+
+
+def restore_projects(
+    store: Path | None = None,
+    projects_root: Path | None = None,
+    projects: list[str] | None = None,
+    *,
+    with_audio: bool = False,
+) -> tuple[list[Path], list[str]]:
+    """Rebuild project folders from the score files stored in the history.
+
+    This is the receiving-machine half of the two-computer workflow. The
+    stored ``notes.json``, pedal, MIDI, and MusicXML files are copied into
+    ``transcriptions/<project>`` and a manifest is synthesized from the
+    event (with the tempo and meter read back from the MusicXML). Nothing
+    is downloaded and no model is run, so a pulled transcription can be
+    opened locally without transcribing it again. A project that already
+    has a ``notes.json`` locally is left untouched.
+
+    With ``with_audio``, the excerpt audio is also fetched -- for a YouTube
+    source that is the section download only, never a re-transcription.
+    Without it the project simply has no ``working.wav``: the score and the
+    synced video still play, the Listen tab has nothing to play.
+
+    Returns ``(restored, skipped)``: the folders written, and the project
+    names that already existed locally or have no stored run.
+    """
+
+    target = resolve_store(store)
+    if target is None:
+        return [], []
+    dest_base = projects_root if projects_root is not None else repo_root() / "transcriptions"
+    wanted = {Path(name).name for name in projects} if projects else None
+    latest: dict[str, tuple[dict, Path]] = {}
+    for event in load_events(target):
+        if event.get("status") != "ok":
+            continue
+        project = str(event.get("project") or "")
+        if not project or (wanted is not None and project not in wanted):
+            continue
+        folder = target / EVENTS_DIR / str(event.get("id") or "")
+        if (folder / NOTES_JSON).is_file():
+            # load_events is oldest first, so a later run of the same
+            # project replaces an earlier one here.
+            latest[project] = (event, folder)
+    restored: list[Path] = []
+    skipped: list[str] = []
+    if wanted is not None:
+        skipped.extend(sorted(wanted - set(latest)))
+    for project in sorted(latest):
+        event, folder = latest[project]
+        dest = dest_base / project
+        if (dest / NOTES_JSON).is_file():
+            skipped.append(project)
+            continue
+        dest.mkdir(parents=True, exist_ok=True)
+        copied: dict[str, bool] = {}
+        for name in _STORED_SCORE_FILES:
+            source_file = folder / name
+            copied[name] = source_file.is_file()
+            if copied[name]:
+                _copy_score_file(source_file, dest / name)
+        manifest = _restored_manifest(event, folder, copied)
+        if with_audio:
+            _restore_audio(event, dest, manifest)
+        _write_json(dest / MANIFEST, manifest)
+        restored.append(dest)
+    return restored, skipped
+
+
+def _restored_manifest(event: dict, event_folder: Path, copied: dict[str, bool]) -> dict:
+    """A project manifest rebuilt from an event, for a restored project.
+
+    The event does not store everything a live run writes (thresholds,
+    tempo estimates, diagnostics). The fields the library, project page,
+    and synced playback read are restored; the rest is left out rather
+    than invented.
+    """
+
+    source = event.get("source") if isinstance(event.get("source"), dict) else {}
+    audio = event.get("audio") if isinstance(event.get("audio"), dict) else {}
+    working = audio.get("working_wav") if isinstance(audio.get("working_wav"), dict) else {}
+    origin = str(source.get("url") or source.get("name") or "")
+    notes_count: int | None = None
+    pedals_count: int | None = None
+    model = ""
+    try:
+        notes_payload = json.loads((event_folder / NOTES_JSON).read_text(encoding="utf-8"))
+        notes_count = len(notes_payload.get("notes") or [])
+        pedals_count = len(notes_payload.get("pedals") or [])
+        model = str(notes_payload.get("model") or "")
+    except (OSError, json.JSONDecodeError, AttributeError):
+        pass
+    warnings = [
+        f"Restored from parse history event {event.get('id')} recorded on "
+        f"{event.get('machine') or 'another machine'}. The audio was not "
+        "downloaded again and no model was run. working.wav is missing "
+        "unless the restore fetched it; the score and synced video play "
+        "without it."
+    ]
+    tempo = _score_tempo(event_folder / SCORE_XML)
+    if not tempo:
+        warnings.append(
+            "The tempo and meter could not be read from the restored score. "
+            "Set them on the Notes tab and rebuild to enable synced playback."
+        )
+    manifest: dict = {
+        "program": "baroque-transcribe (restored from parse history)",
+        "origin": origin,
+        "title": str(source.get("title") or ""),
+        "model": model,
+        "restored_from": {
+            "event": str(event.get("id") or ""),
+            "machine": str(event.get("machine") or ""),
+            "recorded_at": str(event.get("recorded_at") or ""),
+        },
+        "counts": {"notes": notes_count, "pedals": pedals_count},
+        "audio": {
+            "source": SOURCE_WAV,
+            "working": WORKING_WAV,
+            "sample_rate": working.get("sample_rate"),
+            "full_duration_seconds": (audio.get("source_wav") or {}).get("full_duration_seconds"),
+            "excerpt_start_seconds": working.get("excerpt_start_seconds"),
+            "excerpt_end_seconds": working.get("excerpt_end_seconds"),
+            "working_duration_seconds": working.get("duration_seconds"),
+        },
+        "warnings": warnings,
+        "notation": {
+            "quantized_mid": QUANTIZED_MID,
+            "score": SCORE_XML,
+            "raw_mid": RAW_MID,
+        },
+    }
+    if source.get("kind") == "youtube" and origin:
+        manifest["youtube_url"] = origin
+    if tempo:
+        manifest["tempo"] = tempo
+        manifest["staff_split"] = DEFAULT_STAFF_SPLIT
+    return manifest
+
+
+def _score_tempo(score_path: Path) -> dict:
+    """Tempo, meter, and grid read back from a MusicXML score, or ``{}``.
+
+    Synced playback re-derives measure times from the manifest tempo and
+    the notes, so a restored project needs the values the score was made
+    with. They are written in the score itself: the first ``<time>`` and
+    the metronome ``<sound tempo=...>``.
+    """
+
+    if not score_path.is_file():
+        return {}
+    try:
+        import xml.etree.ElementTree as element_tree
+
+        root = element_tree.parse(score_path).getroot()
+    except (OSError, element_tree.ParseError):  # type: ignore[attr-defined]
+        return {}
+    bpm: float | None = None
+    signature = ""
+    for element in root.iter():
+        if bpm is None and element.tag == "sound" and element.get("tempo"):
+            try:
+                bpm = float(element.get("tempo"))  # type: ignore[arg-type]
+            except ValueError:
+                pass
+        if bpm is None and element.tag == "per-minute" and element.text:
+            try:
+                bpm = float(element.text.strip())
+            except ValueError:
+                pass
+        if not signature and element.tag == "time":
+            beats = element.findtext("beats")
+            beat_type = element.findtext("beat-type")
+            if beats and beat_type:
+                signature = f"{beats.strip()}/{beat_type.strip()}"
+        if bpm is not None and signature:
+            break
+    if bpm is None or not signature:
+        return {}
+    return {
+        "bpm": bpm,
+        "downbeat_seconds": 0.0,
+        "subdivision": DEFAULT_SUBDIVISION,
+        "time_signature": signature,
+        "time_signature_assumed": False,
+        "source": "restored-from-score",
+        "assumed_bpm": False,
+    }
+
+
+def _restore_audio(event: dict, dest: Path, manifest: dict) -> None:
+    """Fetch the excerpt audio for a restored project, in place.
+
+    Only a YouTube source can be fetched: a local file is stored in the
+    history by file name only. This downloads audio; it never transcribes.
+    A failure leaves the restored project without audio and says so in the
+    manifest warnings instead of failing the restore.
+    """
+
+    source = event.get("source") if isinstance(event.get("source"), dict) else {}
+    url = str(source.get("url") or "")
+    warnings = manifest.setdefault("warnings", [])
+    if source.get("kind") != "youtube" or not url:
+        warnings.append("The excerpt audio was not fetched: the source is not a YouTube URL in the history.")
+        return
+    excerpt = event.get("excerpt") if isinstance(event.get("excerpt"), dict) else {}
+    try:
+        from baroque_transcribe.audio import prepare_audio
+
+        prepare_audio(
+            url,
+            dest,
+            start=_number(excerpt.get("start_seconds")),
+            end=_number(excerpt.get("end_seconds")),
+        )
+    except Exception as exc:  # audio fetch must not discard a good restore
+        warnings.append(f"The excerpt audio could not be fetched: {exc}")
+        return
+    manifest["warnings"] = [
+        item for item in warnings if not item.startswith("Restored from parse history")
+    ]
+    warnings = manifest["warnings"]
+    warnings.append(
+        f"Restored from parse history event {event.get('id')}; the excerpt audio "
+        "was downloaded (section only) and no model was run."
+    )
 
 
 def import_identity(event: dict) -> tuple | None:
