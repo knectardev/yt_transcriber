@@ -118,6 +118,8 @@ baroque-transcribe prepare recital.mp3 -o transcriptions\recital --start 1:05 --
 
 Accepted local files are WAV, MP3, and FLAC. The original file is not modified. `source.wav` is a decoded copy at the file's own rate and channel count. `working.wav` is the excerpt actually transcribed: mono, 16 kHz, peak-normalized to 0.95. MIDI time zero is the start of `working.wav`, not the start of the video, when you pass `--start`.
 
+For a YouTube source, passing `--start` or `--end` downloads only that section of the video (yt-dlp `--download-sections`), so a short excerpt of a long video does not download the whole recording. In that case `source.wav` holds just the downloaded section, at the excerpt's offset recorded in `manifest.json`; choosing a different excerpt later means downloading again. If a section download fails, the whole audio is downloaded instead, as before. With no excerpt times the whole video is downloaded and `source.wav` is the complete recording, so a local re-trim needs no new download. Local files are always copied in full.
+
 ## Output
 
 ```text

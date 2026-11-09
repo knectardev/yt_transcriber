@@ -1,0 +1,81 @@
+{
+  "action": "transcribe",
+  "audio": {
+    "diagnostics": [
+      "comparison.wav",
+      "overview.png",
+      "piano_roll.png",
+      "resynthesis.wav",
+      "spectrogram.png",
+      "waveform.png"
+    ],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": 621.0,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 20.0,
+      "excerpt_end_seconds": 50.0,
+      "excerpt_start_seconds": 30.0,
+      "file": "working.wav",
+      "sample_rate": 16000,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": 50.0,
+    "start_seconds": 30.0
+  },
+  "formats": {
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    }
+  },
+  "id": "20261109T191539Z-dcdecf79",
+  "machine": "Knectar_surface",
+  "project": "performance-20261109-141250",
+  "recorded_at": "2026-11-09T19:15:39Z",
+  "source": {
+    "kind": "youtube",
+    "title": "Some french baroque improvised variations",
+    "url": "https://www.youtube.com/watch?v=n1y8qRW0Iwo",
+    "video_id": "n1y8qRW0Iwo"
+  },
+  "status": "ok",
+  "version": 1
+}

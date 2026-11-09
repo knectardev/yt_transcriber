@@ -1,8 +1,9 @@
 """Acquire a recording and make a working copy for the transcription model.
 
 The file the user points at is never opened for writing. A YouTube download
-is stored once, then a trimmed mono 16 kHz copy is peak-normalized for the
-model. Times in the MIDI files are relative to that working copy.
+is stored once -- only the requested section, when an excerpt is given --
+then a trimmed mono 16 kHz copy is peak-normalized for the model. Times in
+the MIDI files are relative to that working copy.
 """
 
 from __future__ import annotations
@@ -41,6 +42,22 @@ class PreparedAudio:
     original_peak: float
     title: str
     origin: str
+
+
+@dataclass
+class DownloadedAudio:
+    """Result of a YouTube download.
+
+    ``excerpt_only`` is True when only the requested section was downloaded
+    (``source.wav`` then holds that section, not the whole recording), in
+    which case ``full_duration`` is the duration of the complete video as
+    reported by yt-dlp, so callers can still report excerpt positions
+    against the full recording.
+    """
+
+    title: str
+    full_duration: float | None
+    excerpt_only: bool
 
 
 def parse_timestamp(value: str | float | int | None) -> float | None:
@@ -330,18 +347,67 @@ def _youtube_title(
     cookies: Path | None = None,
     cookies_from_browser: str | None = None,
 ) -> str:
+    title, _duration = _youtube_info(url, cookies=cookies, cookies_from_browser=cookies_from_browser)
+    return title
+
+
+def _youtube_info(
+    url: str,
+    *,
+    cookies: Path | None = None,
+    cookies_from_browser: str | None = None,
+) -> tuple[str, float | None]:
+    """Video title and full duration in seconds, without downloading.
+
+    The duration lets an excerpt-only download still report positions
+    against the complete video. Either value is missing when the metadata
+    request fails (for example before a sign-in retry succeeds).
+    """
+
     try:
-        title = _yt_dlp(
+        raw = _yt_dlp(
             "--no-download",
             "--no-playlist",
             *_youtube_auth_args(cookies, cookies_from_browser),
             "--print",
             "title",
+            "--print",
+            "duration",
             url,
         )
     except AudioError:
-        title = ""
-    return title.splitlines()[0].strip() if title else ""
+        return "", None
+    lines = raw.splitlines()
+    title = lines[0].strip() if lines else ""
+    duration: float | None = None
+    if len(lines) > 1:
+        try:
+            duration = float(lines[1].strip())
+        except ValueError:
+            duration = None
+    return title, duration
+
+
+def _download_section(start: float | None, end: float | None) -> str | None:
+    """yt-dlp ``--download-sections`` value for an excerpt, or None for the whole video.
+
+    The value is a ``*start-end`` time range in seconds; ``inf`` leaves the
+    end open. A range is only worth requesting when it actually excludes
+    part of the video, which cannot be known for an open-ended range that
+    starts at zero.
+    """
+
+    if start is None and end is None:
+        return None
+    begin = 0.0 if start is None else float(start)
+    if begin < 0:
+        raise AudioError("Times cannot be negative.")
+    if end is not None and float(end) <= begin:
+        raise AudioError("The end time must be later than the start time.")
+    if begin == 0 and end is None:
+        return None
+    end_text = "inf" if end is None else f"{float(end):.6f}"
+    return f"*{begin:.6f}-{end_text}"
 
 
 def download_youtube(
@@ -350,8 +416,16 @@ def download_youtube(
     *,
     cookies: Path | None = None,
     cookies_from_browser: str | None = None,
-) -> str:
+    start: float | None = None,
+    end: float | None = None,
+) -> DownloadedAudio:
     """Download the best available audio and decode it to PCM WAV.
+
+    When ``start``/``end`` select an excerpt, only that section is
+    downloaded (yt-dlp ``--download-sections``); ``dest`` then holds just
+    the excerpt. If a section download fails for a reason other than the
+    sign-in retry below, the whole audio is downloaded instead, as before.
+    Without an excerpt the whole audio is always downloaded.
 
     A signed-in YouTube page in your browser is not visible to a different
     computer. When YouTube asks for a sign-in, this retries the browsers on
@@ -360,6 +434,7 @@ def download_youtube(
     """
 
     require_ffmpeg()
+    section = _download_section(start, end)
     dest.parent.mkdir(parents=True, exist_ok=True)
     attempts: list[str | None] = [cookies_from_browser]
     if cookies is None and cookies_from_browser is None:
@@ -373,6 +448,7 @@ def download_youtube(
                 dest,
                 cookies=cookies,
                 cookies_from_browser=browser,
+                section=section,
             )
         except AudioError as exc:
             message = str(exc)
@@ -410,37 +486,68 @@ def download_youtube(
     ) from sign_in_error
 
 
+def _clear_download_files(dest: Path, template: Path) -> None:
+    """Remove a finished or partial download so a retry starts clean."""
+
+    for path in dest.parent.glob(template.name + ".*"):
+        try:
+            path.unlink()
+        except OSError:
+            pass
+    if dest.exists():
+        dest.unlink()
+
+
 def _download_youtube_once(
     url: str,
     dest: Path,
     *,
     cookies: Path | None,
     cookies_from_browser: str | None,
-) -> str:
+    section: str | None = None,
+) -> DownloadedAudio:
     if cookies_from_browser:
         print(f"Trying YouTube download with {cookies_from_browser} cookies.")
-    title = _youtube_title(url, cookies=cookies, cookies_from_browser=cookies_from_browser)
+    title, full_duration = _youtube_info(url, cookies=cookies, cookies_from_browser=cookies_from_browser)
     template = dest.with_suffix("")
     # yt-dlp appends the extension from the template. A fixed wav name keeps
     # the decoded file where the rest of the pipeline expects it.
     output = str(template) + ".%(ext)s"
-    if dest.exists():
-        dest.unlink()
-    _yt_dlp(
-        "--no-playlist",
-        *_youtube_auth_args(cookies, cookies_from_browser),
-        "-f",
-        "bestaudio/best",
-        "-x",
-        "--audio-format",
-        "wav",
-        "--audio-quality",
-        "0",
-        "--no-progress",
-        "-o",
-        output,
-        url,
-    )
+
+    def attempt(section_arg: str | None) -> None:
+        _clear_download_files(dest, template)
+        arguments = [
+            "--no-playlist",
+            *_youtube_auth_args(cookies, cookies_from_browser),
+            "-f",
+            "bestaudio/best",
+            "-x",
+            "--audio-format",
+            "wav",
+            "--audio-quality",
+            "0",
+            "--no-progress",
+        ]
+        if section_arg is not None:
+            # Re-encoding at the cuts keeps the excerpt start sample-accurate
+            # instead of landing on the previous audio frame boundary.
+            arguments += ["--download-sections", section_arg, "--force-keyframes-at-cuts"]
+        arguments += ["-o", output, url]
+        _yt_dlp(*arguments)
+
+    excerpt_only = section is not None
+    try:
+        attempt(section)
+    except AudioError:
+        if section is None:
+            raise
+        # A section download can fail on formats yt-dlp cannot range-request.
+        # The full download is slower but is the behaviour this replaces, so
+        # fall back to it within the same cookie attempt. A sign-in failure
+        # simply fails again here and is handled by the caller's retry loop.
+        print("Downloading only the requested section failed. Downloading the full audio instead.")
+        excerpt_only = False
+        attempt(None)
     if not dest.exists():
         produced = list(dest.parent.glob(template.name + ".*"))
         wavs = [path for path in produced if path.suffix.lower() == ".wav"]
@@ -451,7 +558,11 @@ def _download_youtube_once(
                 "yt-dlp finished without writing a WAV file. "
                 "The video may be unavailable, age-restricted, or blocked."
             )
-    return title or dest.stem
+    return DownloadedAudio(
+        title=title or dest.stem,
+        full_duration=full_duration,
+        excerpt_only=excerpt_only,
+    )
 
 
 def peak_normalize(path: Path, peak: float = WORKING_PEAK) -> float:
@@ -488,25 +599,42 @@ def prepare_audio(
     cookies_from_browser: str | None = None,
     on_progress: ProgressCallback | None = None,
 ) -> PreparedAudio:
-    """Copy or download ``source`` and write ``source.wav`` plus ``working.wav``."""
+    """Copy or download ``source`` and write ``source.wav`` plus ``working.wav``.
+
+    For a YouTube source with a start or end time, only that section is
+    downloaded and ``source.wav`` holds just the section; the trim below
+    then runs from the start of that file instead of trimming twice. A
+    local file, or a YouTube download that fell back to the full audio,
+    keeps the original behaviour: ``source.wav`` is the whole recording.
+    """
 
     require_ffmpeg()
     output_dir.mkdir(parents=True, exist_ok=True)
     source_wav = output_dir / "source.wav"
     working_wav = output_dir / "working.wav"
     origin = source
+    downloaded: DownloadedAudio | None = None
 
     if is_url(source):
         emit(
             on_progress,
-            ProgressEvent("prepare", "Downloading audio…", fraction_for("prepare", 0.25)),
+            ProgressEvent(
+                "prepare",
+                "Downloading the requested excerpt…"
+                if _download_section(start, end) is not None
+                else "Downloading audio…",
+                fraction_for("prepare", 0.25),
+            ),
         )
-        title = download_youtube(
+        downloaded = download_youtube(
             source,
             source_wav,
             cookies=cookies,
             cookies_from_browser=cookies_from_browser,
+            start=start,
+            end=end,
         )
+        title = downloaded.title
     else:
         emit(
             on_progress,
@@ -522,8 +650,20 @@ def prepare_audio(
         _ffmpeg_wav(path, source_wav)
         origin = str(path)
 
-    full_duration = probe_duration(source_wav)
+    source_duration = probe_duration(source_wav)
     trim_start = 0.0 if start is None else start
+    excerpt_only = downloaded is not None and downloaded.excerpt_only
+    if excerpt_only:
+        # source.wav already starts at trim_start. The full duration comes
+        # from the video metadata; without it the best available figure is
+        # the section placed at its requested offset.
+        full_duration = (
+            downloaded.full_duration
+            if downloaded.full_duration and downloaded.full_duration > 0
+            else trim_start + source_duration
+        )
+    else:
+        full_duration = source_duration
     trim_end = full_duration if end is None else end
     if trim_start > full_duration:
         raise AudioError(
@@ -533,14 +673,27 @@ def prepare_audio(
     if trim_end - trim_start < 0.2:
         raise AudioError("The selected region is shorter than 0.2 seconds.")
 
-    _ffmpeg_wav(
-        source_wav,
-        working_wav,
-        start=trim_start,
-        end=trim_end,
-        sample_rate=MODEL_SAMPLE_RATE,
-        mono=True,
-    )
+    if excerpt_only:
+        # Trim in coordinates of the already-trimmed section file, capped
+        # at what was actually downloaded.
+        local_end = min(source_duration, trim_end - trim_start)
+        _ffmpeg_wav(
+            source_wav,
+            working_wav,
+            start=0.0,
+            end=local_end,
+            sample_rate=MODEL_SAMPLE_RATE,
+            mono=True,
+        )
+    else:
+        _ffmpeg_wav(
+            source_wav,
+            working_wav,
+            start=trim_start,
+            end=trim_end,
+            sample_rate=MODEL_SAMPLE_RATE,
+            mono=True,
+        )
     original_peak = peak_normalize(working_wav)
     working, sample_rate = load_working_audio(working_wav)
     if sample_rate != MODEL_SAMPLE_RATE:
