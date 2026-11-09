@@ -1,0 +1,83 @@
+{
+  "action": "transcribe",
+  "audio": {
+    "diagnostics": [
+      "comparison.wav",
+      "overview.png",
+      "piano_roll.png",
+      "resynthesis.wav",
+      "spectrogram.png",
+      "waveform.png"
+    ],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": 318.2295,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 318.2295,
+      "excerpt_end_seconds": 318.2295,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": 16000,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": 318.2295,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": true,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    }
+  },
+  "id": "20261108T042103Z-8d9fd44b",
+  "machine": "Knectar_surface",
+  "project": "baroque_improvisation-full",
+  "recorded_at": "2026-11-08T04:21:03Z",
+  "source": {
+    "kind": "youtube",
+    "local_name": "source.wav",
+    "title": "source",
+    "url": "https://www.youtube.com/watch?v=Anx1SFCbGow",
+    "video_id": "Anx1SFCbGow"
+  },
+  "status": "ok",
+  "version": 1,
+  "via": "import"
+}

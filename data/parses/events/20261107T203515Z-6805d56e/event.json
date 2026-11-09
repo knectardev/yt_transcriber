@@ -1,0 +1,82 @@
+{
+  "action": "transcribe",
+  "audio": {
+    "diagnostics": [
+      "comparison.wav",
+      "overview.png",
+      "piano_roll.png",
+      "resynthesis.wav",
+      "spectrogram.png",
+      "waveform.png"
+    ],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": 318.2295,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 30.0,
+      "excerpt_end_seconds": 150.0,
+      "excerpt_start_seconds": 120.0,
+      "file": "working.wav",
+      "sample_rate": 16000,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": 150.0,
+    "start_seconds": 120.0
+  },
+  "formats": {
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": true,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    }
+  },
+  "id": "20261107T203515Z-6805d56e",
+  "machine": "Knectar_surface",
+  "project": "baroque_improvisation",
+  "recorded_at": "2026-11-07T20:35:15Z",
+  "source": {
+    "kind": "youtube",
+    "title": "Baroque Improvisation Tip No. 1 - Listen, Experiment, and Practice",
+    "url": "https://www.youtube.com/watch?v=Anx1SFCbGow",
+    "video_id": "Anx1SFCbGow"
+  },
+  "status": "ok",
+  "version": 1,
+  "via": "import"
+}

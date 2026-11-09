@@ -1,0 +1,25 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+transcriptions/
+*.wav
+*.mp3
+*.flac
+*.mid
+*.musicxml
+*.xml
+!tests/**/*.wav
+# Score copies in the parse history are committed. Audio stays ignored.
+!data/parses/**/*.mid
+!data/parses/**/*.musicxml
+!data/parses/**/*.xml
+.cache/
+data/thumbnails/
+*.part
+.streamlit/

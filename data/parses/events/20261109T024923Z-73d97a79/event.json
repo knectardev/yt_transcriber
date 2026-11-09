@@ -1,0 +1,74 @@
+{
+  "action": "transcribe",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": null,
+      "excerpt_end_seconds": 1944.0,
+      "excerpt_start_seconds": 1818.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": "ffmpeg and ffprobe must be on PATH. On Windows, install FFmpeg and reopen the terminal. One option is: winget install Gyan.FFmpeg",
+  "excerpt": {
+    "end_seconds": 1944.0,
+    "start_seconds": 1818.0
+  },
+  "formats": {
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": false,
+      "stored": false
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": false,
+      "stored": false
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": false,
+      "stored": false
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": false,
+      "stored": false
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": false,
+      "stored": false
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    }
+  },
+  "id": "20261109T024923Z-73d97a79",
+  "machine": "Knectar_surface",
+  "project": "performance-20261108-214923",
+  "recorded_at": "2026-11-09T02:49:23Z",
+  "source": {
+    "kind": "youtube",
+    "title": "",
+    "url": "https://www.youtube.com/watch?v=ZRuqcq389F4",
+    "video_id": "ZRuqcq389F4"
+  },
+  "status": "error",
+  "version": 1
+}
