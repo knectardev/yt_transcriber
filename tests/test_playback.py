@@ -86,10 +86,14 @@ def test_playback_page_records_the_estimate_limitation(tmp_path):
     dest = write_playback_page(context, context_dir / "playback.html")
     text = dest.read_text(encoding="utf-8")
     assert "abcdefghijk" in text
-    assert "Measure times are estimates" in text
+    assert "place on the video clock" in text
     assert "Follow score" in text
     assert "Notation earlier" in text
     assert "seekTo" in text
+    assert '"place": "(0:02)"' in text
+    assert "stampMeasurePlaces" in text
+    assert "getPlaybackRate" in text
+    assert "onPlaybackRateChange" in text
     assert (context_dir / "opensheetmusicdisplay.min.js").is_file()
     assert context.anchors[0].measure == 1
 
@@ -105,7 +109,7 @@ def test_server_round_trips_the_offset_without_dropping_manifest_fields(tmp_path
         page = server.page_url(token)
         with urlopen(page) as response:
             body = response.read()
-        assert b"Measure times are estimates" in body
+        assert b"place on the video clock" in body
         request = Request(
             page + "sync-offset",
             data=json.dumps({"offset": -0.4}).encode("utf-8"),

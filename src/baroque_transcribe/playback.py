@@ -273,6 +273,8 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
     if not context.score_path.is_file():
         raise SyncError(f"No score to display at {context.score_path}.")
     _ensure_library(dest.parent)
+    from baroque_transcribe.notation import format_measure_time
+
     xml = json.dumps(context.score_path.read_text(encoding="utf-8")).replace("<", "\\u003c")
     config = json.dumps(
         {
@@ -284,6 +286,9 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
                 {
                     "measure": anchor.measure,
                     "time": anchor.time,
+                    "place": format_measure_time(
+                        anchor.time + context.excerpt_start + context.sync_offset
+                    ),
                     "collided": anchor.collided,
                     "opensBeforeAttack": anchor.opens_before_attack,
                 }
@@ -585,7 +590,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         <button id="reset" type="button">Reset</button>
         <button id="later" type="button">Notation later</button>
       </div>
-      <p class="limit">Measure times are estimates. A measure can open with a rest or a held note before its first new note, and that opening follows the written tempo. Notation earlier moves the highlight backward. Notation later moves it forward. Click a measure to jump the video there.</p>
+      <p class="limit">The time in parentheses is that measure's place on the video clock. A measure can open with a rest or a held note before its first new note, and that opening follows the written tempo. Notation earlier moves the highlight backward. Notation later moves it forward. Click a measure to jump the video there.</p>
       <p id="player-error" class="limit" hidden>This video cannot be embedded. The working audio is still on the transcription page.</p>
     </div>
   </header>
@@ -648,14 +653,104 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       pane.scrollTop += delta;
     }
 
+    let playbackRate = 1;
+    let clockMedia = 0;
+    let clockWall = 0;
+    let clockPlaying = false;
+    let lastReported = null;
+
+    function readPlaybackRate() {
+      try {
+        const rate = player.getPlaybackRate();
+        if (typeof rate === "number" && isFinite(rate) && rate > 0) playbackRate = rate;
+      } catch (error) {}
+      return playbackRate;
+    }
+
+    function rebaseClock(media) {
+      clockMedia = media;
+      clockWall = performance.now();
+    }
+
+    function mediaTime() {
+      // The highlight follows the video picture. getCurrentTime() is that
+      // position when the player is at 1x. At 0.5x the picture moves half as
+      // fast; if the reported clock keeps ticking near full speed, advance
+      // the highlight at getPlaybackRate() instead so it stays with the frame.
+      if (!player || !player.getCurrentTime) return 0;
+      let reported = 0;
+      let playing = false;
+      try {
+        reported = player.getCurrentTime() || 0;
+        playing = player.getPlayerState() === 1;
+      } catch (error) {
+        return clockMedia;
+      }
+      readPlaybackRate();
+      const jumped = lastReported !== null && Math.abs(reported - lastReported) > 1.5;
+      lastReported = reported;
+      if (!playing || !clockPlaying || jumped) {
+        clockPlaying = playing;
+        rebaseClock(reported);
+        return reported;
+      }
+      const elapsed = (performance.now() - clockWall) / 1000;
+      const predicted = clockMedia + elapsed * playbackRate;
+      const advanced = reported - clockMedia;
+      if (playbackRate < 0.999 && advanced > elapsed * playbackRate + 0.35) return predicted;
+      rebaseClock(reported);
+      return reported;
+    }
+
+    function formatPlace(seconds) {
+      if (!isFinite(seconds)) return "";
+      const negative = seconds < 0;
+      const whole = Math.floor(Math.abs(seconds) + 0.5);
+      const sign = negative && whole !== 0 ? "-" : "";
+      const secs = whole % 60;
+      const minutes = Math.floor(whole / 60) % 60;
+      const hours = Math.floor(whole / 3600);
+      const clock = hours
+        ? hours + ":" + String(minutes).padStart(2, "0") + ":" + String(secs).padStart(2, "0")
+        : minutes + ":" + String(secs).padStart(2, "0");
+      return "(" + sign + clock + ")";
+    }
+
+    function videoPlace(anchor) {
+      if (!anchor) return "";
+      return formatPlace(anchor.time + excerptStart + syncOffset);
+    }
+
     function applyMeasure(measureNumber) {
       const hits = document.querySelectorAll(".measure-hit");
       hits.forEach(function (hit) {
         hit.classList.toggle("active", Number(hit.dataset.measure) === measureNumber);
       });
-      document.getElementById("measure-label").textContent = measureNumber ? ("Measure " + measureNumber) : "Measure —";
+      const chosen = measureNumber ? anchorByMeasure[measureNumber] : null;
+      const place = chosen ? " " + videoPlace(chosen) : "";
+      document.getElementById("measure-label").textContent = measureNumber ? ("Measure " + measureNumber + place) : "Measure —";
       const active = document.querySelector(".measure-hit.active");
       if (active) revealMeasure(active);
+    }
+
+    function stampMeasurePlaces() {
+      const places = {};
+      anchors.forEach(function (anchor) { places[String(anchor.measure)] = videoPlace(anchor); });
+      const pages = (osmd && osmd.GraphicSheet && osmd.GraphicSheet.MusicPages) || [];
+      pages.forEach(function (page) {
+        (page.MusicSystems || []).forEach(function (system) {
+          (system.MeasureNumberLabels || []).forEach(function (label) {
+            const node = label.SVGNode;
+            if (!node) return;
+            const text = node.tagName === "text" ? node : node.querySelector("text, tspan");
+            if (!text) return;
+            const raw = (text.textContent || "").trim().split(" ")[0];
+            const stamp = places[raw];
+            if (!stamp) return;
+            text.textContent = raw + " " + stamp;
+          });
+        });
+      });
     }
 
     function syncFromPlayer() {
@@ -663,7 +758,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       let current = 0;
       let duration = 0;
       try {
-        current = player.getCurrentTime() || 0;
+        current = mediaTime();
         duration = player.getDuration() || 0;
       } catch (error) {
         return;
@@ -679,6 +774,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     function setOffset(next) {
       syncOffset = Math.max(-60, Math.min(60, next));
       showOffset();
+      stampMeasurePlaces();
       syncFromPlayer();
       fetch("sync-offset", {
         method: "POST",
@@ -748,6 +844,11 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
             document.getElementById("play").textContent = event.data === 1 ? "Pause" : "Play";
             syncFromPlayer();
           },
+          onPlaybackRateChange: function (event) {
+            if (typeof event.data === "number" && isFinite(event.data) && event.data > 0) playbackRate = event.data;
+            clockPlaying = false;
+            syncFromPlayer();
+          },
           onError: function (event) {
             const note = document.getElementById("player-error");
             note.hidden = false;
@@ -794,6 +895,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       const drawScore = osmd.render.bind(osmd);
       osmd.render = function () {
         const drawn = drawScore();
+        stampMeasurePlaces();
         buildMeasureHits();
         return drawn;
       };
