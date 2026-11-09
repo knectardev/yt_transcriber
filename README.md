@@ -28,7 +28,18 @@ The upstream package says Windows was not part of its test matrix, and it downlo
 
 ## Install
 
-Use Python 3.11 or 3.12. FFmpeg must be on `PATH` (`ffmpeg` and `ffprobe`). On Windows, `winget install Gyan.FFmpeg`, then open a new terminal.
+Use Python 3.11 or 3.12 (check with `py -3.12 --version`; a machine that only has Python 3.13 needs 3.12 installed first). FFmpeg must be on `PATH` (`ffmpeg` and `ffprobe`). On Windows, `winget install Gyan.FFmpeg`, then open a new terminal.
+
+YouTube downloads also need a JavaScript runtime for yt-dlp. On Windows, `winget install OpenJS.NodeJS.LTS`, then open a new terminal. `baroque-transcribe doctor` reports whether Node or Deno was found; without one, YouTube extraction fails even though everything else works.
+
+To work from the repository rather than a zip, install Git, sign in to GitHub on that machine (for example with Git Credential Manager or `gh auth login`), and clone instead of unzipping:
+
+```text
+git clone https://github.com/knectardev/yt_transcriber.git
+cd yt_transcriber
+```
+
+Then create the environment in the cloned folder:
 
 ```text
 py -3.12 -m venv .venv
@@ -39,6 +50,8 @@ python -m pip install -r requirements.txt
 python -m pip install -e .
 baroque-transcribe doctor
 ```
+
+Do not copy another machine's `.venv` or clone into a folder that already has one. The virtual environment records the folder it was created in; a copied or stale one can import the program from the wrong checkout. If `python -c "import baroque_transcribe.audio; print(baroque_transcribe.audio.__file__)"` does not print a path inside the clone you are working in, delete `.venv` and recreate it.
 
 On macOS or Linux the virtual environment is activated with `source .venv/bin/activate`.
 
@@ -203,6 +216,42 @@ baroque-transcribe history import transcriptions
 Import reads each `manifest.json` once. Running it again skips a project already imported with the same video (or file name), excerpt, and folder name.
 
 Commit `data/parses/` and pull it on the other machine. The history and the score files come with the pull. The audio does not, so a YouTube download still has to be run on a computer where YouTube is signed in.
+
+## Using two computers
+
+The repository is the sync mechanism. Each machine has its own clone, its own `.venv`, its own model checkpoint, and its own `transcriptions/` folder. Only the parse history under `data/parses/` travels between them.
+
+**What travels, and what does not**
+
+| Comes with `git pull` | Stays on the machine that made it |
+| --- | --- |
+| The program, the tests, and these documents | `transcriptions/` (every project folder, including `manifest.json`) |
+| `data/parses/events/`: `event.json`, `notes.json`, `pedal.json`, `raw.mid`, `quantized.mid`, `score.musicxml` for each run | All audio (`source.wav`, `working.wav`, diagnostics) |
+| | The 165 MB model checkpoint (`%USERPROFILE%\.cache\baroque_transcribe\`) |
+| | The thumbnail cache (`data/thumbnails\`); it is re-fetched on first view |
+| | `.venv\`, browser cookies, and YouTube sign-ins |
+
+**Routine on the machine that transcribes**
+
+```text
+git pull
+baroque-transcribe transcribe "https://youtu.be/…" -o transcriptions\piece --cookies-from-browser chrome
+git add data/parses
+git commit -m "Transcribe piece"
+git push
+```
+
+Pull first, push after. Event folders are new every time and are never edited, so two machines adding runs do not conflict in the files themselves; a push is only rejected when the other machine pushed first, and `git pull` then merges the two histories as new folders. Never edit an `event.json` by hand, and do not copy another machine's `transcriptions/` folder into the clone as part of the routine: `git add data/parses` is the whole publish step. YouTube sign-in is per machine, so the download still has to run on a computer whose browser is signed in (close the browser first if its cookie database is locked).
+
+**What you get on the other machine after `git pull`**
+
+The library shows the new video and its runs greyed out, marked "not on this computer". That is expected: the history and the score files have arrived, but no project folder has. There is no restore command, so opening that transcription on this machine takes one of these:
+
+- **Just the score.** Open `data/parses/events/<run>/score.musicxml` from the pull in MuseScore, or use the `quantized.mid` beside it. This needs nothing else installed beyond MuseScore.
+- **The full project page** (video sync, audio, note table). Copy the matching `transcriptions/<project>` folder from the other machine (USB, network share, any file copy) into this machine's `transcriptions/` folder. The UI then merges it with the pulled history by folder name and video. Do **not** run `baroque-transcribe history import transcriptions` for a folder whose runs are already in the pulled history; import is for projects that predate the history, and it would record those runs a second time.
+- **Re-transcribe on this machine.** This creates a local project folder, but it downloads the audio and runs the model again, and it records a new run in the history rather than reusing the pulled one.
+
+The same warning in reverse: a `git pull` never updates a project folder you already have. If notes were edited and requantized on the other machine, the new scores arrive as a new event folder while your local `transcriptions/<project>` still holds the old ones. Replace that folder with a fresh copy, or delete it and re-transcribe, before trusting the local page.
 
 ## Layout
 

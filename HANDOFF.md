@@ -76,8 +76,8 @@ YouTube was not transcribed. Both `https://youtu.be/IuZCq1cMq1A` and `https://ww
 ## Install and run on Windows
 
 1. Install Python 3.11 or 3.12 from python.org and check "Add python to PATH".
-2. Install FFmpeg and open a new terminal: `winget install Gyan.FFmpeg`. Confirm `ffmpeg -version` and `ffprobe -version`.
-3. Unzip this project, then in that folder:
+2. Install FFmpeg and open a new terminal: `winget install Gyan.FFmpeg`. Confirm `ffmpeg -version` and `ffprobe -version`. Also install Node.js LTS (`winget install OpenJS.NodeJS.LTS`) and open a new terminal; current yt-dlp needs Node or Deno on `PATH` to extract YouTube audio.
+3. Clone the repository (`git clone https://github.com/knectardev/yt_transcriber.git`) — or unzip this project — then in that folder:
 
 ```text
 py -3.12 -m venv .venv
