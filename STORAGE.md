@@ -178,7 +178,7 @@ data/fragments/<uuid>/
   harmony.json               optional sliced HarmonicAnalysis + provenance
 ```
 
-No WAV. Audio is never copied into a fragment. A YouTube fragment plays the video at the stored timestamp. A local-file fragment has the score and downloads only.
+No WAV in the fragment folder. Audio is never copied into a fragment. The library **Preview** control synthesizes a short tone WAV from `notes.json` or the grid into `.local/fragment_audio/` (derived, deletable). A YouTube fragment can still open on its own page with the video at the stored timestamp. A local-file fragment has the score and downloads only.
 
 ### `fragment.json` (schema version 1)
 
@@ -346,6 +346,10 @@ Tag spelling is canonicalized from the oldest fragment that uses the tag (`creat
 Generated `*.playback.html` and `*.notation.html`, plus one copy of the OSMD script. Rebuilt whenever the fragment is opened. Not committed. Deleting the directory only forces a rewrite.
 
 Project playback pages are also generated on demand by `PlaybackServer` (a localhost `ThreadingHTTPServer` on a port chosen at launch). Tokens in `/p/<token>/` and `/f/<token>/` live **in memory for that process**. They are not in SQLite and they are not stable URLs.
+
+### `.local/fragment_audio/`
+
+Tone renderings for the fragment library **Preview** control. Named `<id>-<performance|quantized>-<hash>.wav` from `notes.json` or `grid.json`. Not committed. Deleting the directory only forces a rewrite the next time Preview is used.
 
 ### Other caches (not SQLite)
 

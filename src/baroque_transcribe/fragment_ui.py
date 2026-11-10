@@ -43,6 +43,7 @@ from baroque_transcribe.fragment_pages import (
 from baroque_transcribe.fragments import (
     FragmentError,
     describe_plan,
+    ensure_fragment_preview_wav,
     extract_fragment,
     find_fragment,
     normalize_tags,
@@ -157,6 +158,7 @@ def fragments_page() -> None:
         _index_buttons()
         return
     _show_fragment_cards(rows)
+    _show_fragment_preview(rows)
     _index_buttons()
 
 
@@ -241,6 +243,73 @@ def _show_fragment_card(row: IndexedFragment) -> None:
         f'<a class="bt-chip" href="{escape(details, quote=True)}">Details</a>'
         f"</div>"
     )
+    previewing = st.session_state.get("frag_preview_id") == row.id
+    label = "Hide preview" if previewing else "Preview"
+    if st.button(label, key=f"frag-preview-{row.id}"):
+        if previewing:
+            st.session_state.pop("frag_preview_id", None)
+        else:
+            st.session_state["frag_preview_id"] = row.id
+        st.rerun()
+
+
+def _show_fragment_preview(rows: list[IndexedFragment]) -> None:
+    """One selected fragment's score and a tone rendering of its notes.
+
+    Only the chosen fragment is framed, so the library stays light. Playback is
+    synthesized from the fragment's MIDI/notes, never from source audio.
+    """
+
+    import streamlit as st
+
+    ident = str(st.session_state.get("frag_preview_id") or "")
+    if not ident:
+        return
+    row = next((item for item in rows if item.id == ident), None)
+    folder = find_fragment(ident) if row is not None else None
+    if row is None or folder is None:
+        st.session_state.pop("frag_preview_id", None)
+        return
+
+    st.html(
+        f'<div class="bt-section"><h2>{escape(row.title)}</h2>'
+        f'<span class="bt-count">Inline preview</span></div>'
+        '<p class="bt-lede">Score of the saved passage, with a tone rendering of its notes. '
+        "This is not piano audio and not the source recording.</p>"
+    )
+    mode = st.radio(
+        "Playback",
+        ["performance", "quantized"],
+        format_func=lambda value: "As played" if value == "performance" else "Quantized grid",
+        horizontal=True,
+        key=f"frag-preview-mode-{ident}",
+        help="As played keeps the performance timing. Quantized follows the written grid.",
+    )
+    try:
+        wav = ensure_fragment_preview_wav(folder, mode=mode)
+    except (FragmentError, OSError, ValueError) as exc:
+        st.warning(f"Could not build a preview of the notes: {exc}")
+    else:
+        st.audio(wav.read_bytes(), format="audio/wav")
+        st.caption(
+            "Simple tones at each note. Pedal is not modelled. Open the fragment's own page "
+            "for the source video when there is one."
+        )
+
+    player = fragment_detail_url(folder)
+    embed = player if player.endswith("/") else player + "/"
+    try:
+        import streamlit.components.v1 as components
+
+        components.iframe(embed + "notation.html?embed=1", height=420, scrolling=True)
+    except Exception:
+        st.caption("The score could not be framed here.")
+        st.html(f'<a class="bt-chip" href="{escape(player, quote=True)}">Open score page</a>')
+    chips = [
+        f'<a class="bt-chip" href="{escape(player, quote=True)}">Open full page</a>',
+        f'<a class="bt-chip" href="{escape(fragment_href(ident), quote=True)}">Details</a>',
+    ]
+    st.html(f'<div class="bt-runs">{"".join(chips)}</div>')
 
 
 def _index_buttons() -> None:
@@ -552,6 +621,7 @@ def project_tab(project: Path) -> None:
         return
     st.markdown(f"**{len(rows)} fragment{'' if len(rows) == 1 else 's'} from this transcription**")
     _show_fragment_cards(rows)
+    _show_fragment_preview(rows)
 
 
 # The extract form reads query params. Setting them then switching is the

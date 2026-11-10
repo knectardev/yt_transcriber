@@ -56,6 +56,7 @@ from baroque_transcribe.analysis import (
 from baroque_transcribe.defaults import (
     ANNOTATIONS_JSON,
     DEFAULT_STAFF_SPLIT,
+    FRAGMENT_AUDIO_DIR,
     FRAGMENT_GRID_JSON,
     FRAGMENT_HARMONY_JSON,
     FRAGMENT_JSON,
@@ -134,6 +135,16 @@ def fragment_pages_root(local: Path | None = None) -> Path:
     """
 
     return local_root(local) / FRAGMENT_PAGES_DIR
+
+
+def fragment_audio_root(local: Path | None = None) -> Path:
+    """Where derived preview WAVs of fragments are cached.
+
+    These are synthesized from the fragment's notes for the library list.
+    They are not committed and can be deleted at any time.
+    """
+
+    return local_root(local) / FRAGMENT_AUDIO_DIR
 
 
 def is_fragment_dir(folder: Path) -> bool:
@@ -1224,6 +1235,110 @@ def read_harmony(folder: Path, manifest: dict | None = None) -> HarmonicAnalysis
         return analysis_from_dict(_read_json_object(path))
     except (FragmentError, KeyError, TypeError, ValueError):
         return None
+
+
+# --------------------------------------------------------------------------
+# Preview audio (derived; never stored in the fragment folder)
+# --------------------------------------------------------------------------
+
+
+PREVIEW_MODES = ("performance", "quantized")
+PREVIEW_SAMPLE_RATE = 22_050
+
+
+def preview_notes(folder: Path, mode: str = "performance") -> tuple[list[NoteEvent], float]:
+    """Notes and duration for a library preview of ``folder``.
+
+    ``performance`` uses the as-played times in ``notes.json``. ``quantized``
+    uses the metronomic grid times. Pedal is omitted: the tone renderer has
+    no sustain model.
+    """
+
+    folder = Path(folder)
+    chosen = str(mode or "performance").strip().lower()
+    if chosen not in PREVIEW_MODES:
+        raise FragmentError(f"Preview mode must be one of {', '.join(PREVIEW_MODES)}.")
+    manifest = read_manifest(folder)
+    duration = duration_seconds(manifest)
+    if chosen == "performance":
+        notes_path = folder / str((manifest.get("artifacts") or {}).get("notes") or NOTES_JSON)
+        if not notes_path.is_file():
+            raise FragmentError(f"This fragment has no {notes_path.name} to preview.")
+        notes = read_transcription(notes_path).notes
+    else:
+        grid = read_grid(folder)
+        quantization = grid_quantization(grid)
+        notes = [
+            NoteEvent(
+                pitch=item.pitch,
+                onset=quantization.step_to_score(item.onset_step),
+                offset=max(
+                    quantization.step_to_score(item.offset_step),
+                    quantization.step_to_score(item.onset_step) + MIN_NOTE_SECONDS,
+                ),
+                velocity=item.velocity,
+            )
+            for item in grid_notes(grid)
+        ]
+    if notes:
+        duration = max(duration, max(note.offset for note in notes))
+    return notes, float(duration)
+
+
+def ensure_fragment_preview_wav(
+    folder: Path,
+    *,
+    mode: str = "performance",
+    local: Path | None = None,
+    sample_rate: int = PREVIEW_SAMPLE_RATE,
+) -> Path:
+    """Return a cached tone rendering of the fragment's notes.
+
+    The WAV is written under ``.local/fragment_audio/`` and named with a hash
+    of the source notes or grid, so a changed fragment rebuilds itself. The
+    fragment folder is never written. Deleting the cache only forces a rewrite.
+    """
+
+    import soundfile as sf
+
+    from baroque_transcribe.diagnostics import synthesize_notes
+
+    folder = Path(folder)
+    chosen = str(mode or "performance").strip().lower()
+    if chosen not in PREVIEW_MODES:
+        raise FragmentError(f"Preview mode must be one of {', '.join(PREVIEW_MODES)}.")
+    if sample_rate < 8_000:
+        raise FragmentError("The preview sample rate is too low.")
+    manifest = read_manifest(folder)
+    ident = str(manifest["id"])
+    source = folder / (
+        str((manifest.get("artifacts") or {}).get("notes") or NOTES_JSON)
+        if chosen == "performance"
+        else FRAGMENT_GRID_JSON
+    )
+    if not source.is_file():
+        raise FragmentError(f"This fragment has no {source.name} to preview.")
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()[:16]
+    cache = fragment_audio_root(local)
+    cache.mkdir(parents=True, exist_ok=True)
+    target = cache / f"{ident}-{chosen}-{digest}.wav"
+    if target.is_file() and target.stat().st_size > 0:
+        return target
+    notes, duration = preview_notes(folder, chosen)
+    if not notes:
+        raise FragmentError("This fragment has no notes to preview.")
+    audio = synthesize_notes(notes, int(sample_rate), duration)
+    for old in cache.glob(f"{ident}-{chosen}-*.wav"):
+        if old != target:
+            old.unlink(missing_ok=True)
+    temporary = target.with_name(target.name + ".tmp")
+    try:
+        sf.write(temporary, audio, int(sample_rate))
+        temporary.replace(target)
+    except BaseException:
+        temporary.unlink(missing_ok=True)
+        raise
+    return target
 
 
 # --------------------------------------------------------------------------

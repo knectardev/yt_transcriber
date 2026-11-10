@@ -1137,9 +1137,64 @@ def test_gitignore_tracks_fragments_and_ignores_the_local_index():
         assert not _git_ignored(repo, f"{fragment}/{name}"), f"{name} would not be committed"
     assert _git_ignored(repo, ".local/library.sqlite")
     assert _git_ignored(repo, ".local/fragment_pages/abc/playback.html")
+    assert _git_ignored(repo, ".local/fragment_audio/abc-performance-deadbeef.wav")
     assert _git_ignored(repo, "data/fragments/.tmp-0b1c2d3e/fragment.json")
     assert _git_ignored(repo, "data/fragments/.tmp-0b1c2d3e/score.musicxml")
     # The rules that keep a whole transcription out of Git are unchanged.
     assert _git_ignored(repo, "transcriptions/some-run/raw.mid")
     assert _git_ignored(repo, "transcriptions/some-run/score.musicxml")
     assert _git_ignored(repo, "stray.mid")
+
+
+# --------------------------------------------------------------------------
+# Library preview audio
+# --------------------------------------------------------------------------
+
+
+def test_preview_wav_is_cached_outside_the_fragment(tmp_path: Path):
+    project = make_project(tmp_path, held_bass_piece(3.0))
+    before_project = tree_digest(project)
+    folder = F.extract_fragment(project, 2, 2, title="Preview", root=tmp_path / "fragments")
+    before = tree_digest(folder)
+    local = tmp_path / ".local"
+
+    first = F.ensure_fragment_preview_wav(folder, mode="performance", local=local)
+    second = F.ensure_fragment_preview_wav(folder, mode="performance", local=local)
+    quantized = F.ensure_fragment_preview_wav(folder, mode="quantized", local=local)
+
+    assert first == second and first.is_file()
+    assert first.parent == local / "fragment_audio"
+    assert first.name.startswith(f"{F.read_manifest(folder)['id']}-performance-")
+    assert quantized != first and quantized.is_file()
+    assert tree_digest(folder) == before
+    assert tree_digest(project) == before_project
+
+    import soundfile as sf
+
+    audio, rate = sf.read(first)
+    assert rate == F.PREVIEW_SAMPLE_RATE
+    assert len(audio) >= int(0.5 * F.PREVIEW_SAMPLE_RATE)
+    # A later note edit invalidates the cache.
+    notes = json.loads((folder / NOTES_JSON).read_text(encoding="utf-8"))
+    notes["notes"][0]["velocity"] = 1 + notes["notes"][0]["velocity"] % 100
+    (folder / NOTES_JSON).write_text(json.dumps(notes), encoding="utf-8")
+    rebuilt = F.ensure_fragment_preview_wav(folder, mode="performance", local=local)
+    assert rebuilt != first
+    assert not first.exists()
+    assert list(local.joinpath("fragment_audio").glob("*-performance-*.wav")) == [rebuilt]
+
+
+def test_preview_notes_distinguish_performance_from_quantized(tmp_path: Path):
+    project = make_project(tmp_path, barline_piece())
+    folder = F.extract_fragment(project, 2, 2, title="Timing", root=tmp_path / "fragments")
+    played, played_duration = F.preview_notes(folder, "performance")
+    grid, grid_duration = F.preview_notes(folder, "quantized")
+    assert played and grid
+    assert played_duration > 0 and grid_duration > 0
+    # Pitch 67 is played 50 ms after its grid step in this fixture.
+    as_played = next(note for note in played if note.pitch == 67)
+    on_grid = next(note for note in grid if note.pitch == 67)
+    assert as_played.onset == pytest.approx(0.55)
+    assert on_grid.onset == pytest.approx(0.5)
+    with pytest.raises(F.FragmentError, match="Preview mode"):
+        F.preview_notes(folder, "piano")
