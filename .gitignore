@@ -29,3 +29,6 @@ data/fragments/.tmp-*/
 data/thumbnails/
 *.part
 .streamlit/
+# Local prompt / scratch notes — not project docs.
+notes.txt
+
