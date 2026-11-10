@@ -1,0 +1,79 @@
+{
+  "action": "transcribe",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": null,
+      "excerpt_end_seconds": 200.0,
+      "excerpt_start_seconds": 40.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": "Use a .flac, .mp3, .wav file, or pass a YouTube URL. Got '.mxl'.",
+  "excerpt": {
+    "end_seconds": 200.0,
+    "start_seconds": 40.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": false,
+      "stored": false
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": false,
+      "stored": false
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": false,
+      "stored": false
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": false,
+      "stored": false
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": false,
+      "stored": false
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    }
+  },
+  "id": "20261110T173205Z-80c0e057",
+  "machine": "Knectar_Alien",
+  "project": "performance-20261110-123205",
+  "recorded_at": "2026-11-10T17:32:05Z",
+  "source": {
+    "extension": ".mxl",
+    "kind": "file",
+    "name": "bach-wtc2-no2-bwv871.mxl",
+    "title": ""
+  },
+  "status": "error",
+  "version": 1
+}

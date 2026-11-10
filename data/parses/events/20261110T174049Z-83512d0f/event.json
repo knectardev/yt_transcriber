@@ -1,0 +1,79 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": 227.0,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 130.0,
+      "excerpt_end_seconds": 130.0,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": 16000,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": 130.0,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": true,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    }
+  },
+  "id": "20261110T174049Z-83512d0f",
+  "machine": "Knectar_Alien",
+  "project": "performance-20261109-181437",
+  "recorded_at": "2026-11-10T17:40:49Z",
+  "source": {
+    "kind": "youtube",
+    "title": "Baroque Improvisation Tip No. 4 - Use Counterpoint",
+    "url": "https://www.youtube.com/watch?v=IuZCq1cMq1A",
+    "video_id": "IuZCq1cMq1A"
+  },
+  "status": "ok",
+  "version": 1
+}
