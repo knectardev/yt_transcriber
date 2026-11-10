@@ -299,6 +299,21 @@ def test_project_without_a_score_opens_on_its_tools_page(tmp_path):
         server.close()
 
 
+def test_playback_page_exposes_color_voices_when_sibling_exists(tmp_path):
+    project = _write_min_project(tmp_path, origin="https://youtu.be/abcdefghijk")
+    (project / "score.voices.musicxml").write_text("<score-voices/>", encoding="utf-8")
+    context = load_playback(project)
+    text = write_playback_page(context, project / "playback.html").read_text(encoding="utf-8")
+    assert "Color voices" in text
+    assert '"hasVoiceColors": true' in text
+    assert "score-voices" in text
+    assert "baroque-transcribe.color-voices" in text
+    assert "xmlVoices" in text
+    # Toggle reloads OSMD only; the YouTube iframe API path is untouched by that checkbox.
+    assert "cueVideoById" in text
+    assert "color-voices" in text
+
+
 def test_playback_page_header_has_the_run_facts_and_same_tab_links(tmp_path):
     project = _write_min_project(tmp_path, origin="https://youtu.be/abcdefghijk")
     manifest = json.loads((project / "manifest.json").read_text(encoding="utf-8"))
@@ -346,7 +361,17 @@ def _get(server, path):
 
 
 def _fake_notation_page(
-    score_path, dest, *, title=None, note=None, home_url=None, facts=None, folder=None, tools_url=None, playback_url=None
+    score_path,
+    dest,
+    *,
+    title=None,
+    note=None,
+    home_url=None,
+    facts=None,
+    folder=None,
+    tools_url=None,
+    playback_url=None,
+    **_kwargs,
 ):
     dest.write_text(
         f"<html><a href='{home_url}'>home</a><h1>{title}</h1>"

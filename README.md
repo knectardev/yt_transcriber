@@ -144,6 +144,7 @@ transcriptions/baroque_improvisation/
   raw.mid
   quantized.mid
   score.musicxml
+  score.voices.musicxml   # readable style: optional Color voices display
   annotations.json
   manifest.json
   diagnostics/
@@ -163,7 +164,11 @@ After an edit:
 
 ```text
 baroque-transcribe quantize transcriptions\baroque_improvisation --tempo 84 --time-signature 4/4 --subdivision 16 --downbeat 0.2
+baroque-transcribe quantize transcriptions\baroque_improvisation --grid follow --notation readable
+baroque-transcribe compare transcriptions\baroque_improvisation --variants literal_fixed,literal_follow,readable_follow,readable_follow_voices
 ```
+
+With `--notation readable`, the project also writes `score.voices.musicxml`. The playback and score-only pages then offer a **Color voices** checkbox (default off, remembered in the browser). Colours mark interpreted contrapuntal voices from the same interpretation as the black-and-white score; toggling does not re-transcribe or move the video. Treat the colours as the algorithm's current reading, not ground-truth voice identity — dense passages can still fragment upper lines. Defaults for new runs remain `fixed` + `literal`. Known follow-ups: stronger cross-phrase voice continuity, staff assignment after continuity (instead of the middle-C threshold during assignment), and Tip No. 1's follow-grid rest regression.
 
 `--subdivision` is the smallest note value: `8` eighths, `16` sixteenths, `32` thirty-seconds. Notes that share a start and an end on one staff become a chord. Notes with different durations stay in separate voices. A note that crosses a barline is tied.
 
@@ -286,15 +291,19 @@ The same warning in reverse: a `git pull` and a restore never update a project f
 | `audio.py` | YouTube or local file, trim, normalize |
 | `transcribe.py` | ByteDance and Basic Pitch |
 | `midi_export.py` | Raw and quantized MIDI |
-| `quantize.py` | Grid, tempo, meter, downbeat |
-| `notation.py` | Two-staff MusicXML |
+| `quantize.py` | Grid, tempo, meter, downbeat (`fixed` or `follow`) |
+| `notation_settings.py` | Notation thresholds and style defaults |
+| `engrave.py` | Readable voice/duration interpretation and note-preservation map |
+| `notation.py` | Piano MusicXML (linked staves; literal or readable) |
+| `compare.py` | Side-by-side score variants under `comparison/` |
+| `metrics.py` | Comparison metrics |
 | `diagnostics.py` | Plots and the comparison mix |
 | `analysis.py` | Harmonic draft: key estimate, chord labels, sequence spans in `annotations.json`; voice/imitation/cadence hooks still reserved |
 | `parse_store.py` | JSON history of each run, with the score files and a reserved PDF slot; also restores project folders from that history on another machine |
 | `library.py` | Cards for the home page: the parse history merged with the folders under `transcriptions/` |
 | `playback.py` | YouTube id parsing and the localhost server that writes and serves each transcription's page (video with score) and its score-only page |
 | `ui.py` | The local site: home page with the transcribe controls and the library, and an Edit & files page per project |
-| `cli.py` | `prepare`, `transcribe`, `quantize`, `analyze`, `diagnostics`, `doctor`, `ui`, `history` |
+| `cli.py` | `prepare`, `transcribe`, `quantize`, `compare`, `analyze`, `diagnostics`, `doctor`, `ui`, `history` |
 
 `notes.json` is the stable intermediate those later analyzers should read. They should write annotations beside the transcription and leave `raw.mid` alone. The harmonic analyzer does exactly that: it reads `notes.json` and writes `annotations.json`.
 

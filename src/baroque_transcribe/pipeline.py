@@ -32,9 +32,12 @@ from baroque_transcribe.defaults import (
     DIAGNOSTICS_DIR,
     MANIFEST,
     NOTES_JSON,
+    NOTATION_MAP_JSON,
     PEDAL_JSON,
+    PRESERVATION_JSON,
     QUANTIZED_MID,
     RAW_MID,
+    SCORE_VOICES_XML,
     SCORE_XML,
     SOURCE_WAV,
     WORKING_WAV,
@@ -51,7 +54,8 @@ from baroque_transcribe.diagnostics import render_diagnostics
 from baroque_transcribe.midi_export import write_quantized_midi, write_raw_midi
 from baroque_transcribe.notation import write_musicxml
 from baroque_transcribe.parse_store import record_parse
-from baroque_transcribe.quantize import Quantization, parse_time_signature, quantize_notes
+from baroque_transcribe.notation_settings import NotationSettings, settings_from_manifest
+from baroque_transcribe.quantize import Quantization, parse_time_signature, quantization_from_manifest, quantize_notes
 from baroque_transcribe.progress import ProgressCallback, ProgressEvent, emit, fraction_for
 from baroque_transcribe.schema import Transcription, read_transcription, write_pedal_file
 from baroque_transcribe.tempo import TempoEstimate, estimate_tempo
@@ -160,7 +164,9 @@ def notate_transcription(
     title: str,
     tempo_info: dict,
     time_signature_assumed: bool,
+    settings: NotationSettings | None = None,
 ) -> Quantization:
+    resolved = settings or NotationSettings()
     quantization = quantize_notes(
         transcription.notes,
         bpm=bpm,
@@ -168,34 +174,55 @@ def notate_transcription(
         denominator=time_signature[1],
         subdivision=subdivision,
         downbeat=downbeat,
+        settings=resolved,
     )
     write_raw_midi(output_dir / RAW_MID, transcription.notes, transcription.pedals)
     write_quantized_midi(output_dir / QUANTIZED_MID, quantization, staff_split)
+    map_path = output_dir / NOTATION_MAP_JSON if resolved.style == "readable" else None
+    voices_path = output_dir / SCORE_VOICES_XML if resolved.style == "readable" else None
+    preservation_path = output_dir / PRESERVATION_JSON if resolved.style == "readable" else None
     write_musicxml(
         output_dir / SCORE_XML,
         quantization,
         staff_split=staff_split,
         title=title,
+        style=resolved.style,
+        notation_map=map_path,
+        pedals=transcription.pedals,
+        voices_path=voices_path,
+        preservation_report=preservation_path,
     )
+    if resolved.style != "readable":
+        for leftover in (output_dir / SCORE_VOICES_XML, output_dir / NOTATION_MAP_JSON, output_dir / PRESERVATION_JSON):
+            if leftover.is_file():
+                leftover.unlink()
     manifest = _read_manifest(output_dir / MANIFEST)
+    tempo_block = {
+        "bpm": bpm,
+        "downbeat_seconds": downbeat,
+        "subdivision": subdivision,
+        "time_signature": f"{time_signature[0]}/{time_signature[1]}",
+        "time_signature_assumed": time_signature_assumed,
+        "grid": resolved.grid,
+        **tempo_info,
+    }
     manifest.update(
         {
-            "tempo": {
-                "bpm": bpm,
-                "downbeat_seconds": downbeat,
-                "subdivision": subdivision,
-                "time_signature": f"{time_signature[0]}/{time_signature[1]}",
-                "time_signature_assumed": time_signature_assumed,
-                **tempo_info,
-            },
+            "tempo": tempo_block,
             "staff_split": staff_split,
             "notation": {
                 "quantized_mid": QUANTIZED_MID,
                 "score": SCORE_XML,
                 "raw_mid": RAW_MID,
+                "style": resolved.style,
+                "settings": resolved.to_dict(),
             },
         }
     )
+    if quantization.warnings:
+        warnings = list(manifest.get("warnings") or [])
+        warnings.extend(quantization.warnings)
+        manifest["warnings"] = warnings
     _write_manifest(output_dir / MANIFEST, manifest)
     return quantization
 
@@ -249,15 +276,15 @@ def analyze_project(
             raise AnalysisError(
                 "Harmonic analysis needs a tempo and time signature. Rebuild the score with a tempo first."
             )
-        signature = parse_time_signature(str(tempo_info["time_signature"]))
-        quantization = quantize_notes(
-            transcription.notes,
-            bpm=float(tempo_info["bpm"]),
-            numerator=signature[0],
-            denominator=signature[1],
-            subdivision=int(tempo_info.get("subdivision") or DEFAULT_SUBDIVISION),
-            downbeat=float(tempo_info.get("downbeat_seconds") or 0.0),
-        )
+        try:
+            quantization = quantization_from_manifest(
+                transcription.notes,
+                tempo_info,
+                settings=settings_from_manifest(manifest),
+                manifest=manifest,
+            )
+        except Exception as exc:
+            raise AnalysisError(f"Could not rebuild the notation grid: {exc}") from exc
     old = None if force else load_analysis(output_dir / ANNOTATIONS_JSON)
     chosen_key, chosen_mode = key, mode
     if chosen_key is None and old is not None and old.key_source == "manual":
@@ -301,6 +328,7 @@ def run_transcription(
     cookies_from_browser: str | None = None,
     on_progress: ProgressCallback | None = None,
     history_store: Path | None = None,
+    settings: NotationSettings | None = None,
 ) -> ProjectResult:
     output_dir = _claim_output_dir(output_dir)
     start_seconds = None
@@ -470,6 +498,7 @@ def run_transcription(
                     "assumed_bpm": tempo_assumed,
                 },
                 time_signature_assumed=signature_assumed,
+                settings=settings or NotationSettings(),
             )
             analysis_error = _try_generate_analysis(output_dir, quantization)
             if analysis_error:
@@ -542,6 +571,7 @@ def requantize_project(
     staff_split: int | None = None,
     diagnostics: bool = True,
     history_store: Path | None = None,
+    settings: NotationSettings | None = None,
 ) -> ProjectResult:
     notes_path = output_dir / NOTES_JSON
     if not notes_path.exists():
@@ -588,6 +618,7 @@ def requantize_project(
 
     write_raw_midi(output_dir / RAW_MID, transcription.notes, transcription.pedals)
     write_pedal_file(output_dir / PEDAL_JSON, transcription.pedals, transcription.model)
+    resolved = settings or settings_from_manifest(manifest)
     quantization = notate_transcription(
         transcription,
         output_dir,
@@ -599,6 +630,7 @@ def requantize_project(
         title=title,
         tempo_info={"source": "manual" if tempo not in (None, "auto") else "previous-or-estimated", "assumed_bpm": assumed},
         time_signature_assumed=assumed_meter,
+        settings=resolved,
     )
     analysis_error = _try_generate_analysis(output_dir, quantization)
     if analysis_error:

@@ -19,11 +19,12 @@ from pathlib import Path
 from urllib.parse import parse_qs, quote, urlparse
 
 from baroque_transcribe.analysis import analysis_is_stale, load_analysis
-from baroque_transcribe.defaults import ANNOTATIONS_JSON, MANIFEST, NOTES_JSON, SCORE_XML
+from baroque_transcribe.defaults import ANNOTATIONS_JSON, MANIFEST, NOTES_JSON, SCORE_VOICES_XML, SCORE_XML
 # ``notation`` (and its music21 import) is loaded inside the functions that
 # write score pages, not here: this module is also imported for YouTube id
 # parsing on the UI home page, which must start without that weight.
-from baroque_transcribe.quantize import parse_time_signature, quantize_notes
+from baroque_transcribe.notation_settings import settings_from_manifest
+from baroque_transcribe.quantize import quantization_from_manifest
 from baroque_transcribe.schema import read_transcription
 from baroque_transcribe.sync_map import MeasureAnchor, measure_anchors
 
@@ -228,15 +229,12 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
     if not tempo.get("bpm") or not tempo.get("time_signature"):
         raise SyncError("This project has no tempo, so the measures cannot be aligned.")
     try:
-        signature = parse_time_signature(str(tempo["time_signature"]))
         transcription = read_transcription(notes_path)
-        quantization = quantize_notes(
+        quantization = quantization_from_manifest(
             transcription.notes,
-            bpm=float(tempo["bpm"]),
-            numerator=signature[0],
-            denominator=signature[1],
-            subdivision=int(tempo.get("subdivision") or 16),
-            downbeat=float(tempo.get("downbeat_seconds") or 0.0),
+            tempo,
+            settings=settings_from_manifest(manifest),
+            manifest=manifest,
         )
         excerpt = float((manifest.get("audio") or {}).get("excerpt_start_seconds") or 0.0)
         offset = float(manifest.get("sync_offset_seconds") or 0.0)
@@ -307,6 +305,12 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
     from baroque_transcribe.notation import format_measure_time
 
     xml = json.dumps(context.score_path.read_text(encoding="utf-8")).replace("<", "\\u003c")
+    voices_path = context.project / SCORE_VOICES_XML
+    xml_voices = (
+        json.dumps(voices_path.read_text(encoding="utf-8")).replace("<", "\\u003c")
+        if voices_path.is_file()
+        else "null"
+    )
     config = json.dumps(
         {
             "videoId": context.video_id,
@@ -317,6 +321,7 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
             "excerptStart": context.excerpt_start,
             "syncOffset": context.sync_offset,
             "harmony": context.harmony,
+            "hasVoiceColors": voices_path.is_file(),
             "anchors": [
                 {
                     "measure": anchor.measure,
@@ -332,7 +337,8 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
         }
     ).replace("<", "\\u003c")
     title = escape(context.title)
-    page = _PLAYBACK_TEMPLATE.replace("__TITLE__", title).replace("__CONFIG__", config).replace("__XML__", xml)
+    page = _PLAYBACK_TEMPLATE.replace("__TITLE__", title).replace("__CONFIG__", config)
+    page = page.replace("__XML__", xml).replace("__XML_VOICES__", xml_voices)
     page = page.replace("__LIBRARY__", _NOTATION_LIBRARY)
     dest.write_text(page, encoding="utf-8")
     return dest
@@ -694,6 +700,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     #clock { font-size: 1rem; }
     #measure-label { color: var(--accent-ink); font-weight: 600; }
     label.follow { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--muted); }
+    label.follow[hidden], #voice-legend[hidden] { display: none !important; }
     .sync {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.7rem;
       padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
@@ -744,7 +751,9 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         <label class="follow"><input id="follow" type="checkbox" checked> Follow score</label>
         <label class="follow"><input id="show-harmony" type="checkbox" checked> Harmony</label>
         <label class="follow"><input id="lead-sheet" type="checkbox"> Lead-sheet chord symbols</label>
+        <label class="follow" id="color-voices-label" hidden><input id="color-voices" type="checkbox"> Color voices</label>
       </div>
+      <p id="voice-legend" class="limit" hidden>Colours mark interpreted contrapuntal voices, not hands.</p>
       <div class="sync">
         <span class="readout">Sync adjustment <output id="offset-label">0.00 s</output></span>
         <button id="earlier" type="button">Notation earlier</button>
@@ -761,7 +770,9 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
   <script src="__LIBRARY__"></script>
   <script>
     const config = __CONFIG__;
-    const xml = __XML__;
+    const xmlPlain = __XML__;
+    const xmlVoices = __XML_VOICES__;
+    const colorStorageKey = "baroque-transcribe.color-voices";
     (function () {
       const params = new URLSearchParams(window.location.search);
       if (params.get("embed") === "1") document.body.classList.add("embed");
@@ -1172,9 +1183,36 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         stampMeasurePlaces();
         buildMeasureHits();
         drawHarmony();
+        syncFromPlayer();
         return drawn;
       };
-      osmd.load(xml).then(function () { osmd.render(); }).catch(function (error) {
+      function preferredXml() {
+        const box = document.getElementById("color-voices");
+        return (box && box.checked && xmlVoices) ? xmlVoices : xmlPlain;
+      }
+      function loadScore() {
+        const y = window.scrollY;
+        return osmd.load(preferredXml()).then(function () {
+          osmd.render();
+          window.scrollTo(0, y);
+        });
+      }
+      if (xmlVoices && config.hasVoiceColors) {
+        const label = document.getElementById("color-voices-label");
+        const box = document.getElementById("color-voices");
+        const legend = document.getElementById("voice-legend");
+        label.hidden = false;
+        try { box.checked = window.localStorage.getItem(colorStorageKey) === "1"; } catch (error) {}
+        legend.hidden = !box.checked;
+        box.addEventListener("change", function () {
+          try { window.localStorage.setItem(colorStorageKey, box.checked ? "1" : "0"); } catch (error) {}
+          legend.hidden = !box.checked;
+          loadScore().catch(function (error) {
+            score.textContent = "Could not draw the score. " + error;
+          });
+        });
+      }
+      loadScore().catch(function (error) {
         score.textContent = "Could not draw the score. " + error;
       });
     }

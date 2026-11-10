@@ -81,7 +81,6 @@ def measure_anchors(quantization: Quantization) -> list[MeasureAnchor]:
     """
 
     per_measure = quantization.steps_per_measure
-    quantum = quantization.quantum
     first, count = printed_measure_span(quantization)
     notes = quantization.grid
     anchors: list[MeasureAnchor] = []
@@ -96,16 +95,25 @@ def measure_anchors(quantization: Quantization) -> list[MeasureAnchor]:
             opens_before_attack = True
         else:
             first_note = min(beginning, key=lambda note: (note.onset_step, note.source_onset, note.source_index))
-            rest_steps = first_note.onset_step - start
-            candidate = first_note.source_onset - rest_steps * quantum
-            opens_before_attack = rest_steps > 0
+            # Back up from the first attack using the step-time map so a
+            # follow-grid score stays aligned with the performance.
+            if first_note.onset_step == start:
+                candidate = first_note.source_onset
+            else:
+                candidate = first_note.source_onset - (
+                    quantization.step_to_audio(first_note.onset_step) - quantization.step_to_audio(start)
+                )
+            opens_before_attack = first_note.onset_step > start
         collided = False
         if previous is not None and candidate <= previous + _TIME_EPSILON:
             collided = True
+            fallback_gap = quantization.step_to_audio(start + 1) - quantization.step_to_audio(start)
+            if fallback_gap <= _TIME_EPSILON:
+                fallback_gap = quantization.quantum
             if grid_start > previous + _TIME_EPSILON:
                 chosen = grid_start
             else:
-                chosen = previous + quantum
+                chosen = previous + fallback_gap
         else:
             chosen = candidate
         anchors.append(

@@ -10,6 +10,8 @@ from pathlib import Path
 
 from baroque_transcribe import __version__
 from baroque_transcribe.defaults import (
+    DEFAULT_GRID_MODE,
+    DEFAULT_NOTATION_STYLE,
     DEFAULT_STAFF_SPLIT,
     DEFAULT_SUBDIVISION,
     DEFAULT_UI_PORT,
@@ -76,6 +78,7 @@ def _build_parser() -> argparse.ArgumentParser:
     transcribe.add_argument("--raw-only", action="store_true", help="Stop after the unquantized MIDI file.")
     transcribe.add_argument("--no-diagnostics", action="store_true")
     transcribe.add_argument("--position", type=float, default=None, help="Draw a cursor at this time, in seconds.")
+    _add_notation_arguments(transcribe)
 
     quantize = sub.add_parser(
         "quantize",
@@ -88,6 +91,26 @@ def _build_parser() -> argparse.ArgumentParser:
     quantize.add_argument("--downbeat", default=None)
     quantize.add_argument("--staff-split", type=int, default=None)
     quantize.add_argument("--no-diagnostics", action="store_true")
+    _add_notation_arguments(quantize)
+
+    compare = sub.add_parser(
+        "compare",
+        help="Write side-by-side notation variants under project/comparison/ without changing the saved score.",
+    )
+    compare.add_argument("project", type=Path, help="Transcription directory.")
+    compare.add_argument("--tempo", type=float, default=None, help="BPM override for the comparison only.")
+    compare.add_argument("--time-signature", default=None)
+    compare.add_argument("--subdivision", type=int, default=None, choices=[8, 16, 32])
+    compare.add_argument("--downbeat", type=float, default=None)
+    compare.add_argument("--staff-split", type=int, default=None)
+    compare.add_argument(
+        "--variants",
+        default="literal_fixed,literal_follow,readable_follow,readable_follow_voices",
+        help=(
+            "Comma-separated variants: literal_fixed, literal_follow, "
+            "readable_follow, readable_follow_voices."
+        ),
+    )
 
     analyze = sub.add_parser(
         "analyze",
@@ -126,6 +149,65 @@ def _build_parser() -> argparse.ArgumentParser:
     ui.add_argument("--port", type=int, default=DEFAULT_UI_PORT)
     ui.add_argument("--project", type=Path, default=None)
     return parser
+
+
+def _add_notation_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--grid",
+        choices=["fixed", "follow"],
+        default=None,
+        help=(
+            f"Notation grid: fixed metronome or tempo-following. "
+            f"Default for new runs: {DEFAULT_GRID_MODE}. Omit on quantize to keep the project setting."
+        ),
+    )
+    parser.add_argument(
+        "--notation",
+        choices=["literal", "readable"],
+        default=None,
+        help=(
+            f"Score style: literal event packing or readable interpretation. "
+            f"Default for new runs: {DEFAULT_NOTATION_STYLE}. Readable voice work lands after the grid checkpoint."
+        ),
+    )
+
+
+def _settings_from_args(args: argparse.Namespace, *, fallback_manifest: dict | None = None):
+    from baroque_transcribe.notation_settings import NotationSettings, settings_from_manifest
+
+    base = settings_from_manifest(fallback_manifest) if fallback_manifest is not None else NotationSettings()
+    grid = getattr(args, "grid", None) or base.grid
+    style = getattr(args, "notation", None) or base.style
+    return NotationSettings(
+        grid=grid,
+        style=style,
+        cluster_ms=base.cluster_ms,
+        fill_gap_steps=base.fill_gap_steps,
+        keep_rest_steps=base.keep_rest_steps,
+        overlap_trim_steps=base.overlap_trim_steps,
+        chord_release_tolerance_steps=base.chord_release_tolerance_steps,
+        extra_voice_cost=base.extra_voice_cost,
+        silence_reanchor_seconds=base.silence_reanchor_seconds,
+    )
+
+
+def _parse_compare_variants(text: str):
+    from baroque_transcribe.notation_settings import NotationSettings
+
+    mapping = {
+        "literal_fixed": NotationSettings(grid="fixed", style="literal"),
+        "literal_follow": NotationSettings(grid="follow", style="literal"),
+        "readable_follow": NotationSettings(grid="follow", style="readable"),
+        "readable_follow_voices": NotationSettings(grid="follow", style="readable"),
+        "readable_fixed": NotationSettings(grid="fixed", style="readable"),
+    }
+    names = [part.strip() for part in text.split(",") if part.strip()]
+    if not names:
+        raise ValueError("Pass at least one comparison variant.")
+    unknown = [name for name in names if name not in mapping]
+    if unknown:
+        raise ValueError(f"Unknown comparison variant(s): {', '.join(unknown)}.")
+    return [(name, mapping[name]) for name in names]
 
 
 def _add_input_arguments(parser: argparse.ArgumentParser) -> None:
@@ -331,6 +413,7 @@ def main(argv: list[str] | None = None) -> int:
     from baroque_transcribe.analysis import AnalysisError
     from baroque_transcribe.audio import AudioError
     from baroque_transcribe.checkpoint import CheckpointError
+    from baroque_transcribe.compare import CompareError, compare_project
     from baroque_transcribe.notation import NotationError
     from baroque_transcribe.pipeline import analyze_project, prepare_only, requantize_project, resolve_output_dir, run_transcription
     from baroque_transcribe.quantize import QuantizeError
@@ -370,6 +453,7 @@ def main(argv: list[str] | None = None) -> int:
                 position=args.position,
                 cookies=args.cookies,
                 cookies_from_browser=args.cookies_from_browser,
+                settings=_settings_from_args(args),
             )
             return 0
         if args.command == "analyze":
@@ -380,7 +464,35 @@ def main(argv: list[str] | None = None) -> int:
                 f"{len(analysis.chords)} chord label(s), {len(analysis.sequences)} sequence(s)."
             )
             return 0
+        if args.command == "compare":
+            report = compare_project(
+                args.project,
+                variants=_parse_compare_variants(args.variants),
+                tempo=args.tempo,
+                time_signature=args.time_signature,
+                subdivision=args.subdivision,
+                downbeat=args.downbeat,
+                staff_split=args.staff_split,
+            )
+            print(f"Wrote {len(report.variants)} comparison variant(s) to {report.output_dir}")
+            for variant in report.variants:
+                metrics = variant.metrics
+                print(
+                    f"  {variant.name}: on-beat {metrics.attacks_on_beat}/{metrics.attacks_total} "
+                    f"({metrics.attacks_on_beat_ratio:.0%}), "
+                    f"residual {metrics.mean_onset_residual_steps:.3f} steps, "
+                    f"rests {metrics.rest_elements}, ties {metrics.tie_starts}, "
+                    f"voices T/B {metrics.voices_treble}/{metrics.voices_bass}"
+                )
+            print(f"Report: {report.output_dir / 'report.json'}")
+            return 0
         if args.command == "quantize":
+            import json
+
+            from baroque_transcribe.defaults import MANIFEST
+
+            manifest_path = args.project / MANIFEST
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.is_file() else {}
             requantize_project(
                 args.project,
                 tempo=args.tempo,
@@ -389,6 +501,7 @@ def main(argv: list[str] | None = None) -> int:
                 downbeat=args.downbeat,
                 staff_split=args.staff_split,
                 diagnostics=not args.no_diagnostics,
+                settings=_settings_from_args(args, fallback_manifest=manifest),
             )
             return 0
         if args.command == "diagnostics":
@@ -404,7 +517,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Wrote diagnostics in {args.project / DIAGNOSTICS_DIR}")
             return 0
     except (
+        AnalysisError,
         AudioError,
+        CompareError,
         TranscribeError,
         NotationError,
         QuantizeError,

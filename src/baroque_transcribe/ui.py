@@ -729,16 +729,14 @@ def _harmony_tab(project: Path, manifest: dict) -> None:
     # Staleness: the stored fingerprint no longer matches the current notes/grid.
     try:
         if tempo_info.get("bpm") and tempo_info.get("time_signature"):
-            from baroque_transcribe.quantize import parse_time_signature, quantize_notes
+            from baroque_transcribe.notation_settings import settings_from_manifest
+            from baroque_transcribe.quantize import quantization_from_manifest
 
-            numerator, denominator = parse_time_signature(str(tempo_info["time_signature"]))
-            quantization = quantize_notes(
+            quantization = quantization_from_manifest(
                 read_transcription(project / NOTES_JSON).notes,
-                bpm=float(tempo_info["bpm"]),
-                numerator=numerator,
-                denominator=denominator,
-                subdivision=int(tempo_info.get("subdivision") or 16),
-                downbeat=float(tempo_info.get("downbeat_seconds") or 0.0),
+                tempo_info,
+                settings=settings_from_manifest(manifest),
+                manifest=manifest,
             )
             if analysis_is_stale(analysis, quantization):
                 st.warning("The notes or tempo changed since this analysis. Rebuild to refresh the unedited labels.")

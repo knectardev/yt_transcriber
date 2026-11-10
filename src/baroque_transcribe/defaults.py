@@ -10,6 +10,18 @@ DEFAULT_TIME_SIGNATURE = (4, 4)
 DEFAULT_STAFF_SPLIT = 60
 DEFAULT_UI_PORT = 8765
 
+# Notation interpretation. Fixed + literal is the safe default for old projects.
+DEFAULT_GRID_MODE = "fixed"
+DEFAULT_NOTATION_STYLE = "literal"
+# Conservative thresholds for the readable pipeline. Stored in the manifest when used.
+DEFAULT_CLUSTER_MS = 30.0
+DEFAULT_FILL_GAP_STEPS = 1
+DEFAULT_KEEP_REST_STEPS = 2
+DEFAULT_OVERLAP_TRIM_STEPS = 1
+DEFAULT_CHORD_RELEASE_TOLERANCE_STEPS = 1
+DEFAULT_EXTRA_VOICE_COST = 1.0
+DEFAULT_SILENCE_REANCHOR_SECONDS = 1.5
+
 # Paper defaults from Kong et al., high-resolution piano transcription.
 BYTEDANCE_ONSET_THRESHOLD = 0.3
 BYTEDANCE_OFFSET_THRESHOLD = 0.3
@@ -30,9 +42,14 @@ PEDAL_JSON = "pedal.json"
 RAW_MID = "raw.mid"
 QUANTIZED_MID = "quantized.mid"
 SCORE_XML = "score.musicxml"
+SCORE_VOICES_XML = "score.voices.musicxml"
+NOTATION_MAP_JSON = "notation_map.json"
+PRESERVATION_JSON = "preservation.json"
+VOICE_METRICS_JSON = "voice_metrics.json"
 ANNOTATIONS_JSON = "annotations.json"
 MANIFEST = "manifest.json"
 DIAGNOSTICS_DIR = "diagnostics"
+COMPARISON_DIR = "comparison"
 
 CHECKPOINT_FILENAME = "note_F1=0.9677_pedal_F1=0.9186.pth"
 CHECKPOINT_URL = (

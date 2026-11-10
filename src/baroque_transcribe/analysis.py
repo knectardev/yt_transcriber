@@ -207,6 +207,7 @@ def analysis_is_stale(analysis: HarmonicAnalysis, quantization: Quantization) ->
         or int(grid.get("numerator") or 0) != quantization.numerator
         or int(grid.get("denominator") or 0) != quantization.denominator
         or int(grid.get("subdivision") or 0) != quantization.subdivision
+        or str(grid.get("grid_mode") or "fixed") != str(quantization.grid_mode)
     )
 
 
@@ -313,6 +314,47 @@ def _pc_name(pc: int, tonic: str, mode: str) -> str:
     flat_keys = {"F", "Bb", "Eb", "Ab", "Db", "Gb", "Dm", "Gm", "Cm", "Fm"}
     use_flats = tonic in flat_keys or tonic.endswith("b")
     return (_FLAT_NAMES if use_flats else _SHARP_NAMES)[pc % 12]
+
+
+def spell_pitch_name(midi_note: int, tonic: str, mode: str, *, rising: bool | None = None) -> str:
+    """Key-aware pitch name for a MIDI number, without octave.
+
+    Diatonic tones use the scale spelling. In minor, the raised 6th and 7th
+    are preferred when ``rising`` is true or unspecified. Other chromatics
+    follow the key's sharp/flat habit, unless ``rising`` forces a sharp or flat.
+    """
+
+    pc = int(midi_note) % 12
+    tonic_pc = _NAME_TO_PC[tonic]
+    scale = _scale_names(tonic, mode)
+    if pc in scale:
+        return scale[pc]
+    if mode == "minor":
+        raised_sixth = (tonic_pc + 9) % 12
+        raised_seventh = (tonic_pc + 11) % 12
+        if pc == raised_seventh and rising is not False:
+            return _sharp_name_for_letter(pc, tonic, 6)
+        if pc == raised_sixth and rising is not False:
+            return _sharp_name_for_letter(pc, tonic, 5)
+    if rising is True:
+        return _SHARP_NAMES[pc]
+    if rising is False:
+        return _FLAT_NAMES[pc]
+    return _pc_name(pc, tonic, mode)
+
+
+def _sharp_name_for_letter(pc: int, tonic: str, degree_index: int) -> str:
+    """Spell ``pc`` as an altered form of the given scale degree letter."""
+
+    letters = "ABCDEFG"
+    start = letters.index(tonic[0].upper())
+    letter = letters[(start + degree_index) % 7]
+    natural = _NAME_TO_PC[letter]
+    diff = (pc - natural + 6) % 12 - 6
+    accidental = {0: "", 1: "#", -1: "b", 2: "##", -2: "bb"}.get(diff)
+    if accidental is None:
+        return _SHARP_NAMES[pc]
+    return f"{letter}{accidental}"
 
 
 def estimate_key(quantization: Quantization) -> tuple[str, str, float]:
@@ -697,6 +739,7 @@ def analyze_harmony(
             "downbeat_seconds": quantization.downbeat,
             "steps_per_measure": quantization.steps_per_measure,
             "first_step": -quantization.lead_steps,
+            "grid_mode": quantization.grid_mode,
         },
         notes_fingerprint=notes_fingerprint(quantization),
     )

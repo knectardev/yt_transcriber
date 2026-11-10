@@ -22,8 +22,13 @@ The musical goal is a decoding of the notes that were played, for studying Baroq
 | `checkpoint.py` | Downloads the Kong et al. checkpoint with Python, so Windows does not need `wget`. Accepts both the old pickle checkpoint and newer zip checkpoints. |
 | `transcribe.py` | ByteDance piano model by default. Basic Pitch ONNX as a baseline. CUDA when PyTorch can see a GPU, otherwise CPU. |
 | `midi_export.py` | `raw.mid` uses 120 BPM only as a clock so note times stay in seconds. `quantized.mid` uses the musical tempo and splits treble and bass by pitch. |
-| `quantize.py` | Grid from tempo, time signature, subdivision (8, 16, or 32), and a downbeat time. Pitches and velocities are copied. |
-| `notation.py` | Two-staff MusicXML. Notes that share a start and an end become a chord. Independent durations stay in separate voices. Barline crossings are tied. |
+| `quantize.py` | Grid from tempo, time signature, subdivision (8, 16, or 32), and a downbeat time. Modes: `fixed` (default) or tempo-`follow`. Pitches and velocities are copied. |
+| `notation_settings.py` | Grid/style thresholds (`cluster_ms`, gap fill, rest keep, soft extra-voice cost). Missing manifest keys mean fixed + literal. |
+| `engrave.py` | Readable interpretation: continuity voices (soft two-voice preference), guarded chords, gap fill, selective rests, `notation_map.json`, preservation check. |
+| `notation.py` | Piano MusicXML as one part with two linked staves. Literal packing or readable interpretation; key-aware spelling; optional coloured sibling `score.voices.musicxml`. |
+| `voice_metrics.py` | Continuity metrics and staff-split assessment for interpreted voices. |
+| `compare.py` | Side-by-side variants under `project/comparison/` without touching the saved score. |
+| `metrics.py` | Rest/tie/voice/on-beat metrics for comparison reports. |
 | `diagnostics.py` | Waveform, spectrogram, piano roll, a tone rendering, and a mix of that rendering with the working audio. |
 | `ui.py` | Local Streamlit site. Home page: transcribe controls plus a library grid of transcribed videos, whose cards link to the transcription's page on the playback server. Edit & files page (`/project?project=<folder>`): audio and plots, the note table, the harmony labels, and the files. Links are `st.html` anchors, because `st.image(link=)`, Markdown links, and `st.link_button` always open a new tab. |
 | `library.py` | Builds the library cards by merging the parse history with the project folders on disk, resolves the `project` address parameter to a folder, and lists the facts shown in a transcription's header (`run_facts`). |
@@ -42,6 +47,9 @@ transcriptions/<name>/
   raw.mid
   quantized.mid
   score.musicxml
+  score.voices.musicxml   # readable style only; optional Color voices toggle
+  notation_map.json       # readable style only
+  preservation.json       # readable style only
   manifest.json
   diagnostics/
 ```
@@ -143,7 +151,11 @@ Open `score.musicxml` in MuseScore. Compare `working.wav` with `raw.mid` when ch
 - The published model scores are not a measurement of a YouTube recording. Ornamentation, repeated notes, and notes hidden by the pedal are the usual errors.
 - The program does not invent notes, but a wrong detection still adds or drops notes. Treat the score as unchecked until you have listened.
 - One global tempo cannot follow rubato. The quantized score is a reading aid. The raw MIDI is the timing document.
-- The staff split is a pitch threshold, middle C by default. It is not a hand assignment and not a contrapuntal voice analysis.
+- Default grid/style for new runs remain `fixed` + `literal`. Pass `--grid follow` and/or `--notation readable` (or use `baroque-transcribe compare`) to opt in.
+- **Voice fragmentation:** Readable continuity assignment still produces discontinuous upper voices on dense Tip No. 4 passages. Soft two-voice preference is not a finished editorial reading.
+- **Pitch-threshold staff assignment:** Staff is chosen during voice assignment from middle C (default) with ±5 sticky continuation. Near-split notes bias toward the treble. A later improvement is staff-per-segment from each voice's median pitch after continuity IDs are set.
+- **Tip No. 1 follow-grid regression:** Tempo-follow can worsen rest counts on Tip No. 1; investigation is deferred. Keep fixed + literal as the default.
+- **Color voices** is a presentation toggle on the playback and score-only pages when `score.voices.musicxml` exists. Preference is stored in `localStorage` (`baroque-transcribe.color-voices`). Default off. Toggling reloads OSMD only and must not seek or reset YouTube playback. Colours visualize the current interpreter's voice IDs — pedagogical, not authoritative analysis. Features such as voice soloing need stronger cross-phrase continuity first.
 - The harmonic layer is a draft over the quantized grid: one global key, no modulation, figuration and passing tones produce wrong or over-specific labels. It is drawn on the browser score pages and stored in `annotations.json`, which is copied into the parse history with the score. It is not embedded in MusicXML.
 - Pedal is kept in `raw.mid` and `pedal.json`. It is not written into the quantized score.
 - If you omit `--time-signature`, the score uses 4/4 and the manifest says that was an assumption.
