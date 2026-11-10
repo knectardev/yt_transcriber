@@ -1158,14 +1158,16 @@ def test_preview_wav_is_cached_outside_the_fragment(tmp_path: Path):
     before = tree_digest(folder)
     local = tmp_path / ".local"
 
-    first = F.ensure_fragment_preview_wav(folder, mode="performance", local=local)
-    second = F.ensure_fragment_preview_wav(folder, mode="performance", local=local)
-    quantized = F.ensure_fragment_preview_wav(folder, mode="quantized", local=local)
+    first = F.ensure_fragment_preview_wav(folder, mode="performance", sound="rhodes", local=local)
+    second = F.ensure_fragment_preview_wav(folder, mode="performance", sound="rhodes", local=local)
+    quantized = F.ensure_fragment_preview_wav(folder, mode="quantized", sound="rhodes", local=local)
+    other_sound = F.ensure_fragment_preview_wav(folder, mode="performance", sound="wurli", local=local)
 
     assert first == second and first.is_file()
     assert first.parent == local / "fragment_audio"
-    assert first.name.startswith(f"{F.read_manifest(folder)['id']}-performance-")
+    assert first.name.startswith(f"{F.read_manifest(folder)['id']}-performance-rhodes-")
     assert quantized != first and quantized.is_file()
+    assert other_sound != first and other_sound.is_file()
     assert tree_digest(folder) == before
     assert tree_digest(project) == before_project
 
@@ -1178,10 +1180,10 @@ def test_preview_wav_is_cached_outside_the_fragment(tmp_path: Path):
     notes = json.loads((folder / NOTES_JSON).read_text(encoding="utf-8"))
     notes["notes"][0]["velocity"] = 1 + notes["notes"][0]["velocity"] % 100
     (folder / NOTES_JSON).write_text(json.dumps(notes), encoding="utf-8")
-    rebuilt = F.ensure_fragment_preview_wav(folder, mode="performance", local=local)
+    rebuilt = F.ensure_fragment_preview_wav(folder, mode="performance", sound="rhodes", local=local)
     assert rebuilt != first
     assert not first.exists()
-    assert list(local.joinpath("fragment_audio").glob("*-performance-*.wav")) == [rebuilt]
+    assert list(local.joinpath("fragment_audio").glob("*-performance-rhodes-*.wav")) == [rebuilt]
 
 
 def test_preview_notes_distinguish_performance_from_quantized(tmp_path: Path):

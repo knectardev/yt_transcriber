@@ -49,8 +49,15 @@ from baroque_transcribe.fragments import (
     normalize_tags,
     parse_measures,
     plan_fragment,
+    preview_notes,
     read_manifest,
     update_fragment_metadata,
+)
+from baroque_transcribe.preview_synth import (
+    DEFAULT_PREVIEW_SOUND,
+    PREVIEW_SOUNDS,
+    piano_roll_svg,
+    preview_sound_label,
 )
 from baroque_transcribe.library import find_project, format_clock, project_param, read_run
 
@@ -139,14 +146,10 @@ def fragments_page() -> None:
 
     count = fragment_count()
     st.html(
-        '<div class="bt-section"><h2>Fragment library</h2>'
+        '<div class="bt-section bt-section-tight"><h2>Fragment library</h2>'
         f'<span class="bt-count">{count} fragment{"" if count == 1 else "s"}</span></div>'
-        '<p class="bt-lede">Passages saved from a transcription. Each one keeps its own notes, '
-        "score, and harmony, so it can be opened on a machine that does not have the parent recording. "
-        "Mark a passage on a video-and-score page, or type measure numbers on a project's Fragments tab.</p>"
     )
-
-    rows = _library_filters()
+    rows = _library_toolbar()
     if not rows:
         if count == 0:
             st.html(
@@ -158,35 +161,83 @@ def fragments_page() -> None:
         _index_buttons()
         return
     _show_fragment_cards(rows)
-    _show_fragment_preview(rows)
     _index_buttons()
 
 
-def _library_filters() -> list[IndexedFragment]:
+def _library_toolbar() -> list[IndexedFragment]:
+    """Search, filters, and preview sound in two tight rows (labels collapsed)."""
+
     import streamlit as st
 
-    text = st.text_input("Search", placeholder="Title, composer, tag…", key="frag-search")
-    left, mid, right, extra = st.columns(4)
+    st.html(
+        "<style>"
+        "section.main .block-container div[data-testid='stVerticalBlock'] { gap: 0.35rem !important; }"
+        "section.main div[data-testid='stWidgetLabel'] p { font-size: 0.72rem !important; }"
+        "</style>"
+    )
+    sound_ids = [sound.id for sound in PREVIEW_SOUNDS]
+    if "frag-preview-sound" not in st.session_state:
+        st.session_state["frag-preview-sound"] = (
+            DEFAULT_PREVIEW_SOUND if DEFAULT_PREVIEW_SOUND in sound_ids else sound_ids[0]
+        )
+    if "frag-preview-mode" not in st.session_state:
+        st.session_state["frag-preview-mode"] = "performance"
+
+    search_col, sound_col, mode_col = st.columns([3.2, 1.5, 1.3], gap="small")
+    text = search_col.text_input(
+        "Search",
+        placeholder="Search title, composer, tag…",
+        key="frag-search",
+        label_visibility="collapsed",
+    )
+    sound_col.selectbox(
+        "Sound",
+        sound_ids,
+        format_func=preview_sound_label,
+        key="frag-preview-sound",
+        label_visibility="collapsed",
+        help="Preview instrument",
+    )
+    mode_col.selectbox(
+        "Playback",
+        ["performance", "quantized"],
+        format_func=lambda value: "As played" if value == "performance" else "Quantized",
+        key="frag-preview-mode",
+        label_visibility="collapsed",
+        help="As played keeps performance timing; Quantized follows the written grid.",
+    )
+
+    key_col, tag_col, source_col, sort_col, chord_col = st.columns([1, 1, 1, 1, 1.2], gap="small")
     keys = all_keys()
     key_labels = ["Any key"] + [f"{tonic} {mode}" for tonic, mode, _count in keys]
-    chosen_key = left.selectbox("Analyzed key", key_labels, key="frag-key")
+    chosen_key = key_col.selectbox("Key", key_labels, key="frag-key", label_visibility="collapsed")
     tag_names = [name for name, _count in all_tags()]
-    chosen_tags = mid.multiselect("Tags", tag_names, key="frag-tags")
+    chosen_tags = tag_col.multiselect(
+        "Tags",
+        tag_names,
+        key="frag-tags",
+        label_visibility="collapsed",
+        placeholder="Tags",
+    )
     sources = all_sources()
     source_labels = ["Any source"] + [f"{title or ident}" for ident, title, _count in sources]
-    chosen_source = right.selectbox("Source", source_labels, key="frag-source")
+    chosen_source = source_col.selectbox(
+        "Source", source_labels, key="frag-source", label_visibility="collapsed"
+    )
     sort_keys = list(_SORT_LABELS)
-    sort = extra.selectbox(
+    sort = sort_col.selectbox(
         "Sort",
         sort_keys,
         format_func=lambda key: _SORT_LABELS[key],
         key="frag-sort",
+        label_visibility="collapsed",
     )
-    progression = st.text_input(
-        "Chord sequence",
-        placeholder="V7 i",
+    progression = chord_col.text_input(
+        "Chords",
+        placeholder="Chords: V7 i",
         key="frag-progression",
-        help="Roman numerals or chord symbols that appear next to each other, in order. V and v are different chords.",
+        label_visibility="collapsed",
+        help="Adjacent chord labels in order. V and v are different.",
     )
     tonic = mode = ""
     if chosen_key != "Any key":
@@ -205,111 +256,161 @@ def _library_filters() -> list[IndexedFragment]:
     )
 
 
+_ROW_HEIGHT = 46
+_LIST_MAX_HEIGHT = 720
+
+
 def _show_fragment_cards(rows: list[IndexedFragment]) -> None:
+    """One dense HTML list: Play, title, piano-roll, facts — Noiiz-like row height."""
+
     import streamlit as st
+    import streamlit.components.v1 as components
 
-    columns = st.columns(min(3, len(rows)), gap="medium")
-    for index, row in enumerate(rows):
-        with columns[index % len(columns)]:
-            _show_fragment_card(row)
+    sound = str(st.session_state.get("frag-preview-sound") or DEFAULT_PREVIEW_SOUND)
+    mode = str(st.session_state.get("frag-preview-mode") or "performance")
+    items: list[str] = []
+    for row in rows:
+        items.append(_fragment_row_html(row, sound=sound, mode=mode))
+    body = "\n".join(items)
+    height = min(_LIST_MAX_HEIGHT, 8 + len(rows) * _ROW_HEIGHT)
+    components.html(
+        f"""<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+  html, body {{ margin: 0; padding: 0; background: transparent; }}
+  body {{
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1c1917;
+  }}
+  .bt-list {{ display: flex; flex-direction: column; }}
+  .bt-row {{
+    display: grid;
+    grid-template-columns: 3.4rem minmax(7rem, 0.9fr) minmax(8rem, 1.4fr) minmax(7rem, 0.9fr) auto;
+    gap: 0.55rem; align-items: center;
+    min-height: {_ROW_HEIGHT - 1}px; padding: 0 0.15rem;
+    border-bottom: 1px solid #e7e2da;
+    box-sizing: border-box;
+  }}
+  .bt-row button.play {{
+    font: inherit; font-size: 0.72rem; font-weight: 650; padding: 0.18rem 0.55rem;
+    border-radius: 999px; border: 1px solid #e7e2da; background: #b45309; color: #fff; cursor: pointer;
+    width: 3.2rem;
+  }}
+  .bt-row button.play:hover {{ background: #7c3a07; }}
+  .bt-row button.play:disabled {{ opacity: 0.45; cursor: default; background: #a8a29e; }}
+  .bt-row .title {{
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-size: 0.92rem; font-weight: 600; color: #1c1917; text-decoration: none;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }}
+  .bt-row .title:hover {{ color: #7c3a07; }}
+  .bt-row .roll {{ min-width: 0; line-height: 0; }}
+  .bt-row .roll svg {{ width: 100%; height: 34px; display: block; }}
+  .bt-row .meta {{
+    color: #6b6560; font-size: 0.72rem; line-height: 1.25;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }}
+  .bt-row .chip {{
+    font-size: 0.68rem; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid #e7e2da;
+    color: #7c3a07; background: #fdf3e2; text-decoration: none; white-space: nowrap;
+  }}
+  .bt-row .chip:hover {{ border-color: #b45309; }}
+</style></head><body>
+<div class="bt-list">
+{body}
+</div>
+<script>
+(function () {{
+  const volume = 0.2;
+  function stopAll(except) {{
+    document.querySelectorAll("audio").forEach(function (audio) {{
+      if (audio === except) return;
+      audio.pause();
+      audio.currentTime = 0;
+    }});
+    document.querySelectorAll("button.play").forEach(function (button) {{
+      if (!button.disabled) button.textContent = "Play";
+    }});
+  }}
+  document.querySelectorAll("button.play").forEach(function (button) {{
+    const audio = document.getElementById(button.getAttribute("data-audio"));
+    if (!audio) return;
+    audio.volume = volume;
+    button.addEventListener("click", function () {{
+      audio.volume = volume;
+      if (audio.paused) {{
+        stopAll(audio);
+        audio.play();
+        button.textContent = "Stop";
+      }} else {{
+        audio.pause();
+        audio.currentTime = 0;
+        button.textContent = "Play";
+      }}
+    }});
+    audio.addEventListener("ended", function () {{
+      audio.currentTime = 0;
+      button.textContent = "Play";
+    }});
+  }});
+}})();
+</script>
+</body></html>""",
+        height=height,
+        scrolling=len(rows) * _ROW_HEIGHT > _LIST_MAX_HEIGHT,
+    )
 
 
-def _show_fragment_card(row: IndexedFragment) -> None:
-    import streamlit as st
+def _fragment_row_html(row: IndexedFragment, *, sound: str, mode: str) -> str:
+    import base64
 
-    player = fragment_detail_url(find_fragment(row.id) or Path(row.rel_dir))
+    folder = find_fragment(row.id)
+    player = fragment_detail_url(folder or Path(row.rel_dir))
     details = fragment_href(row.id)
-    title = escape(row.title)
     measures = (
         f"mm. {row.measure_start}"
         if row.measure_start == row.measure_end
         else f"mm. {row.measure_start}–{row.measure_end}"
     )
-    bits = [
+    meta_bits = [
         escape(part)
         for part in (
             row.source_title,
             measures,
-            f"{row.duration:.1f} s",
+            f"{row.duration:.1f}s",
             row.key or "",
-            ", ".join(row.tags),
+            ", ".join(row.tags[:2]),
         )
         if part
     ]
-    st.html(
-        f'<div class="bt-frag">'
-        f'<a class="bt-title" href="{escape(player, quote=True)}">{title}</a>'
-        f'<div class="bt-frag-meta">{" · ".join(bits)}</div>'
-        f'<a class="bt-chip" href="{escape(details, quote=True)}">Details</a>'
+    audio_id = f"frag-audio-{row.id}"
+    play = (
+        f'<button type="button" class="play" disabled title="Preview unavailable">—</button>'
+        f'<audio id="{escape(audio_id, quote=True)}"></audio>'
+    )
+    roll = piano_roll_svg([], float(row.duration or 1.0))
+    if folder is not None:
+        try:
+            notes, duration = preview_notes(folder, mode)
+            roll = piano_roll_svg(notes, duration)
+            wav = ensure_fragment_preview_wav(folder, mode=mode, sound=sound)
+            payload = base64.b64encode(wav.read_bytes()).decode("ascii")
+            play = (
+                f'<button type="button" class="play" data-audio="{escape(audio_id, quote=True)}">Play</button>'
+                f'<audio id="{escape(audio_id, quote=True)}" preload="metadata" '
+                f'src="data:audio/wav;base64,{payload}"></audio>'
+            )
+        except (FragmentError, OSError, ValueError):
+            pass
+    return (
+        f'<div class="bt-row">'
+        f"<div>{play}</div>"
+        f'<a class="title" href="{escape(player, quote=True)}" target="_top" title="{escape(row.title)}">'
+        f"{escape(row.title)}</a>"
+        f'<div class="roll">{roll}</div>'
+        f'<div class="meta" title="{" · ".join(meta_bits)}">{" · ".join(meta_bits)}</div>'
+        f'<a class="chip" href="{escape(details, quote=True)}" target="_top">Details</a>'
         f"</div>"
     )
-    previewing = st.session_state.get("frag_preview_id") == row.id
-    label = "Hide preview" if previewing else "Preview"
-    if st.button(label, key=f"frag-preview-{row.id}"):
-        if previewing:
-            st.session_state.pop("frag_preview_id", None)
-        else:
-            st.session_state["frag_preview_id"] = row.id
-        st.rerun()
-
-
-def _show_fragment_preview(rows: list[IndexedFragment]) -> None:
-    """One selected fragment's score and a tone rendering of its notes.
-
-    Only the chosen fragment is framed, so the library stays light. Playback is
-    synthesized from the fragment's MIDI/notes, never from source audio.
-    """
-
-    import streamlit as st
-
-    ident = str(st.session_state.get("frag_preview_id") or "")
-    if not ident:
-        return
-    row = next((item for item in rows if item.id == ident), None)
-    folder = find_fragment(ident) if row is not None else None
-    if row is None or folder is None:
-        st.session_state.pop("frag_preview_id", None)
-        return
-
-    st.html(
-        f'<div class="bt-section"><h2>{escape(row.title)}</h2>'
-        f'<span class="bt-count">Inline preview</span></div>'
-        '<p class="bt-lede">Score of the saved passage, with a tone rendering of its notes. '
-        "This is not piano audio and not the source recording.</p>"
-    )
-    mode = st.radio(
-        "Playback",
-        ["performance", "quantized"],
-        format_func=lambda value: "As played" if value == "performance" else "Quantized grid",
-        horizontal=True,
-        key=f"frag-preview-mode-{ident}",
-        help="As played keeps the performance timing. Quantized follows the written grid.",
-    )
-    try:
-        wav = ensure_fragment_preview_wav(folder, mode=mode)
-    except (FragmentError, OSError, ValueError) as exc:
-        st.warning(f"Could not build a preview of the notes: {exc}")
-    else:
-        st.audio(wav.read_bytes(), format="audio/wav")
-        st.caption(
-            "Simple tones at each note. Pedal is not modelled. Open the fragment's own page "
-            "for the source video when there is one."
-        )
-
-    player = fragment_detail_url(folder)
-    embed = player if player.endswith("/") else player + "/"
-    try:
-        import streamlit.components.v1 as components
-
-        components.iframe(embed + "notation.html?embed=1", height=420, scrolling=True)
-    except Exception:
-        st.caption("The score could not be framed here.")
-        st.html(f'<a class="bt-chip" href="{escape(player, quote=True)}">Open score page</a>')
-    chips = [
-        f'<a class="bt-chip" href="{escape(player, quote=True)}">Open full page</a>',
-        f'<a class="bt-chip" href="{escape(fragment_href(ident), quote=True)}">Details</a>',
-    ]
-    st.html(f'<div class="bt-runs">{"".join(chips)}</div>')
 
 
 def _index_buttons() -> None:
@@ -620,8 +721,37 @@ def project_tab(project: Path) -> None:
         st.info("No fragments have been saved from this transcription yet.")
         return
     st.markdown(f"**{len(rows)} fragment{'' if len(rows) == 1 else 's'} from this transcription**")
+    _compact_preview_selectors()
     _show_fragment_cards(rows)
-    _show_fragment_preview(rows)
+
+
+def _compact_preview_selectors() -> None:
+    """Sound / playback mode only — for the project Fragments tab."""
+
+    import streamlit as st
+
+    sound_ids = [sound.id for sound in PREVIEW_SOUNDS]
+    if "frag-preview-sound" not in st.session_state:
+        st.session_state["frag-preview-sound"] = (
+            DEFAULT_PREVIEW_SOUND if DEFAULT_PREVIEW_SOUND in sound_ids else sound_ids[0]
+        )
+    if "frag-preview-mode" not in st.session_state:
+        st.session_state["frag-preview-mode"] = "performance"
+    sound_col, mode_col = st.columns([2, 1.2], gap="small")
+    sound_col.selectbox(
+        "Sound",
+        sound_ids,
+        format_func=preview_sound_label,
+        key="frag-preview-sound",
+        label_visibility="collapsed",
+    )
+    mode_col.selectbox(
+        "Playback",
+        ["performance", "quantized"],
+        format_func=lambda value: "As played" if value == "performance" else "Quantized",
+        key="frag-preview-mode",
+        label_visibility="collapsed",
+    )
 
 
 # The extract form reads query params. Setting them then switching is the

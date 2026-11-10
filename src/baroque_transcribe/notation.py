@@ -935,6 +935,10 @@ def write_notation_page(
     h1 {{ font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; font-size: 1.4rem; font-weight: 600; margin: 0 0 0.35rem; }}
     p {{ margin: 0; max-width: 42rem; line-height: 1.45; color: #6b6560; font-size: 0.92rem; }}
     body.embed header {{ display: none; }}
+    body.compact {{ overflow: hidden; }}
+    body.compact #score {{ padding: 0.1rem 0.35rem 0.35rem; }}
+    body.compact .harmony-label {{ font-size: 9px; }}
+    body.compact .harmony-seq {{ font-size: 8px; }}
     #score {{ padding: 0.5rem 1rem 2rem; background: white; }}
     #score svg {{ overflow: visible; }}
     .score-controls {{ margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.9rem; color: #44403c; }}
@@ -962,7 +966,11 @@ def write_notation_page(
   <div id="score"></div>
   <script src="{_NOTATION_LIBRARY}"></script>
   <script>
-    if (new URLSearchParams(window.location.search).get("embed") === "1") document.body.classList.add("embed");
+    (function () {{
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("embed") === "1") document.body.classList.add("embed");
+      if (params.get("compact") === "1") document.body.classList.add("compact");
+    }})();
     const xmlPlain = {payload};
     const xmlVoices = {voices_payload};
     const measureTimes = {measure_times};
@@ -994,15 +1002,17 @@ def write_notation_page(
     if (!library) {{
       document.getElementById("score").textContent = "The notation library did not load from {_NOTATION_LIBRARY}.";
     }} else {{
+    const compact = document.body.classList.contains("compact");
     const osmd = new library.OpenSheetMusicDisplay("score", {{
       autoResize: true,
       backend: "svg",
       drawTitle: false,
       drawComposer: false,
-      drawPartNames: true,
+      drawPartNames: !compact,
       drawMeasureNumbers: true,
       measureNumberInterval: 1
     }});
+    if (compact) osmd.Zoom = 0.52;
     function measureBoxes() {{
       const boxes = [];
       const systems = [];
@@ -1099,7 +1109,10 @@ def write_notation_page(
       return (box && box.checked && xmlVoices) ? xmlVoices : xmlPlain;
     }}
     function loadScore() {{
-      return osmd.load(preferredXml()).then(function () {{ osmd.render(); }});
+      return osmd.load(preferredXml()).then(function () {{
+        if (compact) osmd.Zoom = 0.52;
+        osmd.render();
+      }});
     }}
     if (xmlVoices) {{
       const box = document.getElementById("color-voices");

@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "id": "031faea8-ac4b-41db-b61c-861dee41dce4",
+  "title": "test 2",
+  "description": "",
+  "practice_notes": "",
+  "tags": [],
+  "composer": "",
+  "performer": "",
+  "source": {
+    "kind": "youtube",
+    "url": "https://www.youtube.com/watch?v=5Zhf8y7Gez4",
+    "video_id": "5Zhf8y7Gez4",
+    "title": "A few improvised variations in semi French baroque"
+  },
+  "parent": {
+    "project": "performance-20261109-153856",
+    "event_id": "20261109T204210Z-2ab96241",
+    "notes_fingerprint": "d9efc51f0db1a3a6",
+    "analysis_sha256": "92504d434644679a2e5925aa05286af8b728ba0220367774a5d731599a9f8d14",
+    "measure_start": 2,
+    "measure_end": 3,
+    "step_start": 16,
+    "step_end": 48
+  },
+  "time": {
+    "working_audio": {
+      "start_seconds": 1.24584,
+      "end_seconds": 3.88
+    },
+    "source_video": {
+      "start_seconds": 71.24584,
+      "end_seconds": 73.88,
+      "excerpt_start_seconds": 70.0
+    },
+    "duration_seconds": 2.63416
+  },
+  "sync": {
+    "offset_seconds": 0.0,
+    "parent_offset_at_extraction": 0.0
+  },
+  "music": {
+    "analyzed_key": {
+      "tonic": "G",
+      "mode": "major",
+      "source": "automatic",
+      "confidence": 0.9693
+    },
+    "written_key_signature": {
+      "tonic": "G",
+      "mode": "major"
+    },
+    "time_signature": "4/4",
+    "bpm": 187.5,
+    "subdivision": 16,
+    "staff_split": 60,
+    "measures": 2,
+    "parent_grid_mode": "fixed",
+    "notation_style": "literal"
+  },
+  "harmony": {
+    "roman": [
+      "V7",
+      "vii7",
+      "I4/2"
+    ],
+    "symbols": [
+      "D7",
+      "F#m7",
+      "Gmaj7/F#"
+    ]
+  },
+  "boundary": {
+    "notes": 26,
+    "owned": 26,
+    "carried_in": 0,
+    "cut_off": 2,
+    "unprinted_overlaps": 0,
+    "pedal_down_at_start": false
+  },
+  "artifacts": {
+    "notes": "notes.json",
+    "grid": "grid.json",
+    "performance_midi": "performance.mid",
+    "quantized_midi": "quantized.mid",
+    "musicxml": "score.musicxml",
+    "harmony": "harmony.json"
+  },
+  "warnings": [],
+  "created_at": "2026-11-10T21:50:46Z",
+  "modified_at": "2026-11-10T21:50:46Z"
+}

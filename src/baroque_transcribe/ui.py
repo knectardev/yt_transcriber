@@ -103,6 +103,8 @@ _STYLE = """
   .bt-brand .bt-crumb a { color: var(--bt-accent-ink); text-decoration: none; font-weight: 500; }
   .bt-brand .bt-crumb a:hover { text-decoration: underline; }
   .bt-section { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin: 1.6rem 0 0.7rem; }
+  .bt-section.bt-section-tight { margin: 0.35rem 0 0.35rem; }
+  .bt-section.bt-section-tight h2 { font-size: 1.15rem; }
   .bt-section h2 { margin: 0; font-size: 1.35rem; font-weight: 600; }
   .bt-section .bt-count { color: var(--bt-muted); font-size: 0.9rem; }
   .bt-lede { color: var(--bt-muted); font-size: 0.95rem; margin: 0 0 0.6rem; max-width: 60rem; line-height: 1.5; }
@@ -127,8 +129,8 @@ _STYLE = """
   }
   .bt-back { color: var(--bt-accent-ink); text-decoration: none; font-weight: 500; font-size: 0.95rem; }
   .bt-back:hover { text-decoration: underline; }
-  .bt-frag { padding: 0.7rem 0 0.2rem; }
-  .bt-frag-meta { color: var(--bt-muted); font-size: 0.86rem; margin: 0.25rem 0 0.45rem; line-height: 1.4; }
+  .bt-frag { padding: 0.35rem 0; border-bottom: 1px solid var(--bt-line); }
+  .bt-frag-meta { color: var(--bt-muted); font-size: 0.86rem; margin: 0.15rem 0 0.35rem; line-height: 1.4; }
   .bt-brand .bt-tag a { color: var(--bt-accent-ink); text-decoration: none; font-weight: 500; }
   .bt-brand .bt-tag a:hover { text-decoration: underline; }
   .bt-section .bt-count a { color: var(--bt-accent-ink); text-decoration: none; }

@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "key": {
+    "tonic": "G",
+    "mode": "major",
+    "source": "automatic",
+    "confidence": 0.9693
+  },
+  "grid": {
+    "bpm": 187.5,
+    "numerator": 4,
+    "denominator": 4,
+    "subdivision": 16,
+    "downbeat_seconds": 0.03416,
+    "steps_per_measure": 16,
+    "first_step": 0,
+    "grid_mode": "fixed"
+  },
+  "notes_fingerprint": "24e4b7229f8eaa20",
+  "chords": [
+    {
+      "measure": 1,
+      "beat": 0.0,
+      "measure_position": 0.0,
+      "start_step": 0,
+      "end_step": 16,
+      "root_pc": 2,
+      "root_name": "D",
+      "quality": "dominant7",
+      "bass_pc": 2,
+      "bass_name": "D",
+      "roman": "V7",
+      "symbol": "D7",
+      "inversion": 0,
+      "confidence": 0.7026,
+      "edited": false,
+      "edited_fields": []
+    },
+    {
+      "measure": 2,
+      "beat": 0.0,
+      "measure_position": 0.0,
+      "start_step": 16,
+      "end_step": 20,
+      "root_pc": 6,
+      "root_name": "F#",
+      "quality": "minor7",
+      "bass_pc": 6,
+      "bass_name": "F#",
+      "roman": "vii7",
+      "symbol": "F#m7",
+      "inversion": 0,
+      "confidence": 0.6768,
+      "edited": false,
+      "edited_fields": []
+    },
+    {
+      "measure": 2,
+      "beat": 1.0,
+      "measure_position": 0.25,
+      "start_step": 20,
+      "end_step": 32,
+      "root_pc": 7,
+      "root_name": "G",
+      "quality": "major7",
+      "bass_pc": 6,
+      "bass_name": "F#",
+      "roman": "I4/2",
+      "symbol": "Gmaj7/F#",
+      "inversion": 3,
+      "confidence": 0.7767,
+      "edited": false,
+      "edited_fields": []
+    }
+  ],
+  "sequences": [],
+  "provenance": {
+    "parent_project": "performance-20261109-153856",
+    "parent_event_id": "20261109T204210Z-2ab96241",
+    "parent_notes_fingerprint": "d9efc51f0db1a3a6",
+    "parent_analysis_sha256": "92504d434644679a2e5925aa05286af8b728ba0220367774a5d731599a9f8d14",
+    "parent_measure_start": 2,
+    "parent_measure_end": 3,
+    "parent_step_start": 16
+  }
+}

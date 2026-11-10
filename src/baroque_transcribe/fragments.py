@@ -1250,8 +1250,8 @@ def preview_notes(folder: Path, mode: str = "performance") -> tuple[list[NoteEve
     """Notes and duration for a library preview of ``folder``.
 
     ``performance`` uses the as-played times in ``notes.json``. ``quantized``
-    uses the metronomic grid times. Pedal is omitted: the tone renderer has
-    no sustain model.
+    uses the metronomic grid times. Pedal is omitted: the preview synth has
+    no sustain-pedal model.
     """
 
     folder = Path(folder)
@@ -1289,19 +1289,21 @@ def ensure_fragment_preview_wav(
     folder: Path,
     *,
     mode: str = "performance",
+    sound: str | None = None,
     local: Path | None = None,
     sample_rate: int = PREVIEW_SAMPLE_RATE,
 ) -> Path:
     """Return a cached tone rendering of the fragment's notes.
 
-    The WAV is written under ``.local/fragment_audio/`` and named with a hash
-    of the source notes or grid, so a changed fragment rebuilds itself. The
-    fragment folder is never written. Deleting the cache only forces a rewrite.
+    The WAV is written under ``.local/fragment_audio/`` and named with the
+    sound id and a hash of the source notes or grid, so a changed fragment or
+    a different timbre rebuilds itself. The fragment folder is never written.
+    Deleting the cache only forces a rewrite.
     """
 
     import soundfile as sf
 
-    from baroque_transcribe.diagnostics import synthesize_notes
+    from baroque_transcribe.preview_synth import DEFAULT_PREVIEW_SOUND, resolve_preview_sound, synthesize_preview
 
     folder = Path(folder)
     chosen = str(mode or "performance").strip().lower()
@@ -1309,6 +1311,10 @@ def ensure_fragment_preview_wav(
         raise FragmentError(f"Preview mode must be one of {', '.join(PREVIEW_MODES)}.")
     if sample_rate < 8_000:
         raise FragmentError("The preview sample rate is too low.")
+    try:
+        preset = resolve_preview_sound(sound or DEFAULT_PREVIEW_SOUND)
+    except ValueError as exc:
+        raise FragmentError(str(exc)) from exc
     manifest = read_manifest(folder)
     ident = str(manifest["id"])
     source = folder / (
@@ -1321,17 +1327,17 @@ def ensure_fragment_preview_wav(
     digest = hashlib.sha256(source.read_bytes()).hexdigest()[:16]
     cache = fragment_audio_root(local)
     cache.mkdir(parents=True, exist_ok=True)
-    target = cache / f"{ident}-{chosen}-{digest}.wav"
+    target = cache / f"{ident}-{chosen}-{preset.id}-{digest}.wav"
     if target.is_file() and target.stat().st_size > 0:
         return target
     notes, duration = preview_notes(folder, chosen)
     if not notes:
         raise FragmentError("This fragment has no notes to preview.")
-    audio = synthesize_notes(notes, int(sample_rate), duration)
-    for old in cache.glob(f"{ident}-{chosen}-*.wav"):
+    audio = synthesize_preview(notes, int(sample_rate), duration, sound=preset)
+    for old in cache.glob(f"{ident}-{chosen}-{preset.id}-*.wav"):
         if old != target:
             old.unlink(missing_ok=True)
-    temporary = target.with_name(target.name + ".tmp")
+    temporary = target.with_name(target.stem + ".tmp.wav")
     try:
         sf.write(temporary, audio, int(sample_rate))
         temporary.replace(target)
