@@ -2,8 +2,10 @@
 
 One folder per run lives under ``data/parses/events/``. The folder is new
 every time, and ``event.json`` is not rewritten, so two machines can commit
-new runs and git can merge them. Score files are copied into the folder.
-Audio stays in ``transcriptions/`` and is only described here.
+new runs and git can merge them. Score files and ``annotations.json`` are
+copied into the folder. Audio stays in ``transcriptions/`` and is only
+described here. A later harmonic edit is a new ``analyze`` event that
+carries ``annotations.json`` alone.
 
 ``score.pdf`` is reserved. A later ``pdf`` command writes that file beside
 the event, with a sibling ``pdf.json``, and leaves ``event.json`` as it was.
@@ -21,6 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from baroque_transcribe.defaults import (
+    ANNOTATIONS_JSON,
     DEFAULT_STAFF_SPLIT,
     DEFAULT_SUBDIVISION,
     DIAGNOSTICS_DIR,
@@ -41,8 +44,10 @@ NOTATION_HTML = "notation.html"
 EVENTS_DIR = "events"
 
 # These are the shareable products of a run. WAV, MP3, and FLAC stay out
-# so a checkout does not carry the audio.
-_STORED_SCORE_FILES = (NOTES_JSON, PEDAL_JSON, RAW_MID, QUANTIZED_MID, SCORE_XML)
+# so a checkout does not carry the audio. annotations.json is the harmonic
+# draft; a later edit is published as its own event so the file travels
+# with git without rewriting an older event.json.
+_STORED_SCORE_FILES = (NOTES_JSON, PEDAL_JSON, RAW_MID, QUANTIZED_MID, SCORE_XML, ANNOTATIONS_JSON)
 
 
 def default_store() -> Path:
@@ -95,6 +100,7 @@ def record_parse(
     error: str | None = None,
     via: str | None = None,
     recorded_at: datetime | None = None,
+    files: tuple[str, ...] | None = None,
 ) -> Path | None:
     """Write one new event folder. Return its path, or None if it could not be written.
 
@@ -114,7 +120,11 @@ def record_parse(
         events = target / EVENTS_DIR
         events.mkdir(parents=True, exist_ok=True)
         folder = _unique_folder(events, when)
-        copied = _copy_scores(project_dir, folder) if status == "ok" else {name: False for name in _STORED_SCORE_FILES}
+        copied = (
+            _copy_scores(project_dir, folder, files)
+            if status == "ok"
+            else {name: False for name in _STORED_SCORE_FILES}
+        )
         payload = _payload(
             ident=folder.name,
             action=action,
@@ -302,6 +312,45 @@ def import_projects(root: Path, store: Path | None = None) -> tuple[int, int]:
     return added, skipped
 
 
+def publish_analysis(project_dir: Path, store: Path | None = None) -> Path | None:
+    """Publish ``annotations.json`` as a new history event.
+
+    The event carries that file only. The notes and the score stay in the
+    earlier run, and ``event.json`` files are not rewritten, so two machines
+    can each publish an analysis and git merges the new folders.
+    """
+
+    annotations = project_dir / ANNOTATIONS_JSON
+    if not annotations.is_file():
+        return None
+    manifest: dict = {}
+    manifest_path = project_dir / MANIFEST
+    if manifest_path.is_file():
+        try:
+            loaded = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if isinstance(loaded, dict):
+                manifest = loaded
+        except (OSError, json.JSONDecodeError):
+            manifest = {}
+    audio = manifest.get("audio") if isinstance(manifest.get("audio"), dict) else {}
+    return record_parse(
+        action="analyze",
+        status="ok",
+        source=str(manifest.get("origin") or ""),
+        title=str(manifest.get("title") or project_dir.name),
+        project=project_dir.name,
+        project_dir=project_dir,
+        youtube_url=str(manifest.get("youtube_url") or "") or None,
+        excerpt_start=_number(audio.get("excerpt_start_seconds")),
+        excerpt_end=_number(audio.get("excerpt_end_seconds")),
+        duration=_number(audio.get("working_duration_seconds")),
+        full_duration=_number(audio.get("full_duration_seconds")),
+        sample_rate=audio.get("sample_rate"),
+        store=store,
+        files=(ANNOTATIONS_JSON,),
+    )
+
+
 def restore_projects(
     store: Path | None = None,
     projects_root: Path | None = None,
@@ -316,8 +365,10 @@ def restore_projects(
     ``transcriptions/<project>`` and a manifest is synthesized from the
     event (with the tempo and meter read back from the MusicXML). Nothing
     is downloaded and no model is run, so a pulled transcription can be
-    opened locally without transcribing it again. A project that already
-    has a ``notes.json`` locally is left untouched.
+    opened locally without transcribing it again.     A project that already
+    has a ``notes.json`` locally is left untouched, except that a missing
+    ``annotations.json`` is filled from history. An existing analysis file
+    is not replaced.
 
     With ``with_audio``, the excerpt audio is also fetched -- for a YouTube
     source that is the section download only, never a re-transcription.
@@ -334,6 +385,7 @@ def restore_projects(
     dest_base = projects_root if projects_root is not None else repo_root() / "transcriptions"
     wanted = {Path(name).name for name in projects} if projects else None
     latest: dict[str, tuple[dict, Path]] = {}
+    annotations: dict[str, tuple[dict, Path]] = {}
     for event in load_events(target):
         if event.get("status") != "ok":
             continue
@@ -345,6 +397,8 @@ def restore_projects(
             # load_events is oldest first, so a later run of the same
             # project replaces an earlier one here.
             latest[project] = (event, folder)
+        if (folder / ANNOTATIONS_JSON).is_file():
+            annotations[project] = (event, folder)
     restored: list[Path] = []
     skipped: list[str] = []
     if wanted is not None:
@@ -352,8 +406,16 @@ def restore_projects(
     for project in sorted(latest):
         event, folder = latest[project]
         dest = dest_base / project
+        newer_annotations = _newer_annotations(event, folder, annotations.get(project))
         if (dest / NOTES_JSON).is_file():
-            skipped.append(project)
+            if newer_annotations is not None and not (dest / ANNOTATIONS_JSON).is_file():
+                _copy_score_file(newer_annotations, dest / ANNOTATIONS_JSON)
+                restored.append(dest)
+            elif (folder / ANNOTATIONS_JSON).is_file() and not (dest / ANNOTATIONS_JSON).is_file():
+                _copy_score_file(folder / ANNOTATIONS_JSON, dest / ANNOTATIONS_JSON)
+                restored.append(dest)
+            else:
+                skipped.append(project)
             continue
         dest.mkdir(parents=True, exist_ok=True)
         copied: dict[str, bool] = {}
@@ -362,12 +424,33 @@ def restore_projects(
             copied[name] = source_file.is_file()
             if copied[name]:
                 _copy_score_file(source_file, dest / name)
+        if newer_annotations is not None:
+            _copy_score_file(newer_annotations, dest / ANNOTATIONS_JSON)
+            copied[ANNOTATIONS_JSON] = True
         manifest = _restored_manifest(event, folder, copied)
         if with_audio:
             _restore_audio(event, dest, manifest)
         _write_json(dest / MANIFEST, manifest)
         restored.append(dest)
     return restored, skipped
+
+
+def _newer_annotations(
+    score_event: dict,
+    score_folder: Path,
+    found: tuple[dict, Path] | None,
+) -> Path | None:
+    """Annotations published at or after the score run, from another event."""
+
+    if found is None:
+        return None
+    event, folder = found
+    if folder == score_folder:
+        return None
+    if str(event.get("recorded_at") or "") < str(score_event.get("recorded_at") or ""):
+        return None
+    path = folder / ANNOTATIONS_JSON
+    return path if path.is_file() else None
 
 
 def _restored_manifest(event: dict, event_folder: Path, copied: dict[str, bool]) -> dict:
@@ -671,6 +754,7 @@ def _formats(copied: dict[str, bool], project_dir: Path | None) -> dict:
         "raw_midi": _format_entry(RAW_MID, copied.get(RAW_MID, False)),
         "quantized_midi": _format_entry(QUANTIZED_MID, copied.get(QUANTIZED_MID, False)),
         "musicxml": _format_entry(SCORE_XML, copied.get(SCORE_XML, False)),
+        "annotations_json": _format_entry(ANNOTATIONS_JSON, copied.get(ANNOTATIONS_JSON, False)),
         "notation_html": {"file": NOTATION_HTML, "present": notation_present, "stored": False},
         "score_pdf": {
             "file": SCORE_PDF,
@@ -685,11 +769,15 @@ def _format_entry(filename: str, stored: bool) -> dict:
     return {"file": filename, "present": stored, "stored": stored}
 
 
-def _copy_scores(project_dir: Path | None, dest: Path) -> dict[str, bool]:
+def _copy_scores(
+    project_dir: Path | None,
+    dest: Path,
+    files: tuple[str, ...] | None = None,
+) -> dict[str, bool]:
     copied = {name: False for name in _STORED_SCORE_FILES}
     if project_dir is None:
         return copied
-    for name in _STORED_SCORE_FILES:
+    for name in (files if files is not None else _STORED_SCORE_FILES):
         src = project_dir / name
         if src.is_file():
             _copy_score_file(src, dest / name)

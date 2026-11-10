@@ -224,6 +224,8 @@ def test_server_serves_the_static_notation_page(tmp_path, monkeypatch):
             body = response.read().decode("utf-8")
         assert "Piece" in body
         assert "http://127.0.0.1:8765/" in body
+        # The project has a video, so its score page links to the synced view.
+        assert f"playback='{url[: -len('notation.html')]}'" in body
         with pytest.raises(SyncError, match="no score"):
             playback.notation_page_url(tmp_path / "empty")
     finally:
@@ -231,8 +233,126 @@ def test_server_serves_the_static_notation_page(tmp_path, monkeypatch):
         monkeypatch.setattr(playback, "_SERVER", None)
 
 
-def _fake_notation_page(score_path, dest, *, title=None, note=None, home_url=None):
-    dest.write_text(f"<html><a href='{home_url}'>home</a><h1>{title}</h1></html>", encoding="utf-8")
+def test_server_writes_the_playback_page_when_it_is_requested(tmp_path):
+    project = _write_min_project(tmp_path, origin="https://youtu.be/abcdefghijk")
+    server = PlaybackServer(home_url="http://127.0.0.1:8765/")
+    server.start()
+    try:
+        token = server.register(project, "Toccata")
+        assert not (project / "playback.html").exists()
+        with urlopen(server.page_url(token)) as response:
+            body = response.read().decode("utf-8")
+        assert "<h1>Toccata</h1>" in body
+        assert "place on the video clock" in body
+        assert '"syncOffset": 0.0' in body
+        # The page is written again on each request, so it follows the project.
+        write_sync_offset(project, 0.3)
+        assert server.register(project) == token
+        with urlopen(server.page_url(token) + "playback.html") as response:
+            body = response.read().decode("utf-8")
+        assert '"syncOffset": 0.3' in body
+        assert "<h1>Toccata</h1>" in body
+    finally:
+        server.close()
+
+
+def test_project_without_a_video_opens_on_its_score(tmp_path, monkeypatch):
+    import baroque_transcribe.playback as playback
+
+    project = _write_min_project(tmp_path, origin="C:/recordings/piece.wav")
+    monkeypatch.setattr(playback, "write_notation_page", _fake_notation_page)
+    server = PlaybackServer(home_url="http://127.0.0.1:8765/")
+    server.start()
+    try:
+        token = server.register(project, "Piece")
+        assert _get(server, f"/p/{token}/") == (302, f"/p/{token}/notation.html")
+        assert _get(server, f"/p/{token}/?embed=1") == (302, f"/p/{token}/notation.html?embed=1")
+        with urlopen(server.page_url(token)) as response:
+            body = response.read().decode("utf-8")
+        assert "<h1>Piece</h1>" in body
+        assert "tools='http://127.0.0.1:8765/project?project=" in body
+        # There is no video, so the score page offers no synced playback.
+        assert "playback='None'" in body
+    finally:
+        server.close()
+
+
+def test_project_without_a_score_opens_on_its_tools_page(tmp_path):
+    from urllib.parse import unquote
+
+    project = _write_min_project(tmp_path, origin="https://youtu.be/abcdefghijk")
+    (project / "score.musicxml").unlink()
+    server = PlaybackServer(home_url="http://127.0.0.1:8765/")
+    server.start()
+    try:
+        token = server.register(project)
+        for page in ("", "notation.html"):
+            status, location = _get(server, f"/p/{token}/{page}")
+            assert status == 302
+            prefix = "http://127.0.0.1:8765/project?project="
+            assert location.startswith(prefix)
+            assert unquote(location[len(prefix):]) == str(project.resolve())
+        # With no library site to send the reader to, the page is simply missing.
+        server.home_url = ""
+        assert _get(server, f"/p/{token}/") == (404, None)
+    finally:
+        server.close()
+
+
+def test_playback_page_header_has_the_run_facts_and_same_tab_links(tmp_path):
+    project = _write_min_project(tmp_path, origin="https://youtu.be/abcdefghijk")
+    manifest = json.loads((project / "manifest.json").read_text(encoding="utf-8"))
+    manifest["counts"] = {"notes": 1489, "pedals": 48}
+    manifest["model"] = "bytedance-note-pedal"
+    (project / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    context = load_playback(project)
+    assert context.facts[:4] == [
+        {"before": "", "value": "1,489", "after": " notes"},
+        {"before": "", "value": "48", "after": " pedal events"},
+        {"before": "from ", "value": "0:02", "after": " in the video"},
+        {"before": "", "value": "120", "after": " BPM"},
+    ]
+    tools = "http://127.0.0.1:8765/project?project=piece"
+    text = write_playback_page(
+        context, project / "playback.html", home_url="http://127.0.0.1:8765/", tools_url=tools
+    ).read_text(encoding="utf-8")
+    assert '"value": "1,489", "after": " notes"' in text
+    assert '"after": "bytedance-note-pedal"' in text
+    assert f'"folder": {json.dumps(str(project))}' in text
+    assert f'"toolsUrl": "{tools}"' in text
+    assert '<a id="score-link" href="notation.html">Score only</a>' in text
+    assert '<a id="tools-link" href="#" hidden>Edit &amp; files</a>' in text
+    # Everything inside the app opens in this tab. Only YouTube leaves it.
+    assert text.count('target="_blank"') == 1
+    assert 'id="youtube-link" href="#" target="_blank"' in text
+    # Without a library site the tools link stays hidden.
+    bare = write_playback_page(context, project / "playback.html").read_text(encoding="utf-8")
+    assert '"toolsUrl": ""' in bare
+
+
+def _get(server, path):
+    """Status and Location of one GET, without following a redirect."""
+
+    from http.client import HTTPConnection
+
+    connection = HTTPConnection("127.0.0.1", server.port, timeout=10)
+    try:
+        connection.request("GET", path)
+        response = connection.getresponse()
+        response.read()
+        return response.status, response.getheader("Location")
+    finally:
+        connection.close()
+
+
+def _fake_notation_page(
+    score_path, dest, *, title=None, note=None, home_url=None, facts=None, folder=None, tools_url=None, playback_url=None
+):
+    dest.write_text(
+        f"<html><a href='{home_url}'>home</a><h1>{title}</h1>"
+        f"<p>tools='{tools_url}' playback='{playback_url}' folder='{folder}' facts={len(facts or [])}</p></html>",
+        encoding="utf-8",
+    )
     return dest
 
 

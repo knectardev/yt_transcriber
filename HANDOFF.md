@@ -25,9 +25,9 @@ The musical goal is a decoding of the notes that were played, for studying Baroq
 | `quantize.py` | Grid from tempo, time signature, subdivision (8, 16, or 32), and a downbeat time. Pitches and velocities are copied. |
 | `notation.py` | Two-staff MusicXML. Notes that share a start and an end become a chord. Independent durations stay in separate voices. Barline crossings are tied. |
 | `diagnostics.py` | Waveform, spectrogram, piano roll, a tone rendering, and a mix of that rendering with the working audio. |
-| `ui.py` | Local Streamlit site. Home page: transcribe controls plus a library grid of transcribed videos. Project page (`/project?project=<folder>`): synced video and score, audio and plots, the note table, and the files. |
-| `library.py` | Builds the library cards by merging the parse history with the project folders on disk, and resolves the `project` address parameter to a folder. |
-| `playback.py` | YouTube id parsing, plus a localhost server that serves each project's synced playback page and static score page. The project page frames those with `?embed=1`. |
+| `ui.py` | Local Streamlit site. Home page: transcribe controls plus a library grid of transcribed videos, whose cards link to the transcription's page on the playback server. Edit & files page (`/project?project=<folder>`): audio and plots, the note table, the harmony labels, and the files. Links are `st.html` anchors, because `st.image(link=)`, Markdown links, and `st.link_button` always open a new tab. |
+| `library.py` | Builds the library cards by merging the parse history with the project folders on disk, resolves the `project` address parameter to a folder, and lists the facts shown in a transcription's header (`run_facts`). |
+| `playback.py` | YouTube id parsing, plus a localhost server for each transcription's page (`/p/<token>/`, the video with the score following it) and its score-only page. Both are written when they are requested. A project with no video is redirected to its score, and one with no score to its Edit & files page. |
 | `analysis.py` | Harmonic draft implemented: key estimate/override, measure/beat chord labels (Roman numerals + lead-sheet symbols), sequence spans, edit preservation, `annotations.json` IO. Voice separation, imitation, and cadences remain `NotImplementedError` hooks. |
 | `pipeline.py` | Runs the stages and writes `manifest.json`. |
 
@@ -57,7 +57,7 @@ MIDI time zero is the start of `working.wav`. If you pass `--start`, that is the
 - Unquantized MIDI with velocities and sustain-pedal controller 64. Pedal times are also stored in `pedal.json`.
 - Quantized MIDI and MusicXML. Meter and tempo can be set by hand. Tempo can be estimated. The default meter, if you omit it, is 4/4 and is recorded as an assumption.
 - Diagnostic plots and a comparison mix.
-- A Streamlit site: a home page with the transcribe controls and a thumbnail library, and one page per project with the video and score in sync, the audio and plots, the note table, and the files.
+- A local site: a Streamlit home page with the transcribe controls and a thumbnail library, one page per transcription with the video and score in sync, and a Streamlit Edit & files page per project with the audio and plots, the note table, the harmony labels, and the files. Links between them open in the same tab.
 - `baroque-transcribe doctor` for FFmpeg, PyTorch, the checkpoint, and optional packages.
 
 ## What was tested
@@ -104,7 +104,7 @@ python -m pip install -r requirements-ui.txt
 baroque-transcribe ui
 ```
 
-That opens http://127.0.0.1:8765 on the PC where the command is running. The home page starts transcriptions and lists what has been transcribed; clicking a thumbnail opens that project's page. `--project <folder>` opens a project page directly. `baroque-transcribe` exists only after `.venv\Scripts\activate`. In PowerShell or Command Prompt that is the activation line above. In Git Bash it is `source .venv/Scripts/activate`.
+That opens http://127.0.0.1:8765 on the PC where the command is running. The home page starts transcriptions and lists what has been transcribed; clicking a thumbnail opens that transcription's page, the video with the score, in the same tab. Edit & files on that page opens the project's tools. `--project <folder>` opens a project's Edit & files page directly. `baroque-transcribe` exists only after `.venv\Scripts\activate`. In PowerShell or Command Prompt that is the activation line above. In Git Bash it is `source .venv/Scripts/activate`.
 
 Optional Basic Pitch baseline, because its TensorFlow pin does not support Python 3.12:
 
@@ -144,7 +144,7 @@ Open `score.musicxml` in MuseScore. Compare `working.wav` with `raw.mid` when ch
 - The program does not invent notes, but a wrong detection still adds or drops notes. Treat the score as unchecked until you have listened.
 - One global tempo cannot follow rubato. The quantized score is a reading aid. The raw MIDI is the timing document.
 - The staff split is a pitch threshold, middle C by default. It is not a hand assignment and not a contrapuntal voice analysis.
-- The harmonic layer is a draft over the quantized grid: one global key, no modulation, figuration and passing tones produce wrong or over-specific labels. It is drawn only on the browser score pages, is not embedded in MusicXML, and is not copied into parse-history events.
+- The harmonic layer is a draft over the quantized grid: one global key, no modulation, figuration and passing tones produce wrong or over-specific labels. It is drawn on the browser score pages and stored in `annotations.json`, which is copied into the parse history with the score. It is not embedded in MusicXML.
 - Pedal is kept in `raw.mid` and `pedal.json`. It is not written into the quantized score.
 - If you omit `--time-signature`, the score uses 4/4 and the manifest says that was an assumption.
 - Tempo estimation often locks onto half time or double time. The manifest lists those candidates.
@@ -159,4 +159,4 @@ Open `score.musicxml` in MuseScore. Compare `working.wav` with `raw.mid` when ch
 2. Download and transcribe a short excerpt of the Think Baroque video with `--cookies-from-browser`, then listen to `diagnostics/comparison.wav` before transcribing a long span.
 3. Set the real tempo, meter, and downbeat, and fix notes in the review page or in `notes.json`.
 4. Open the MusicXML in MuseScore and make the pickup, beaming, and hand assignment editorial.
-5. Only after that, extend the analysis in `analysis.py`. The harmonic layer is done: `analyze_harmony` writes chord labels (Roman + chord symbol) and sequence spans to `annotations.json`, generated automatically after notation, rebuilt with `baroque-transcribe analyze` or the project page's Harmony tab, and drawn under the measures on both score pages with a lead-sheet toggle. Still reserved: voice separation, imitation, and cadences (`CounterpointAnalyzer` raises `NotImplementedError`). Those should annotate `notes.json`. They should not change `raw.mid`.
+5. Only after that, extend the analysis in `analysis.py`. The harmonic layer is done: `analyze_harmony` writes chord labels (Roman + chord symbol) and sequence spans to `annotations.json`, generated automatically after notation, rebuilt with `baroque-transcribe analyze` or the Harmony tab of the Edit & files page, and drawn under the measures on both score pages with a lead-sheet toggle. Still reserved: voice separation, imitation, and cadences (`CounterpointAnalyzer` raises `NotImplementedError`). Those should annotate `notes.json`. They should not change `raw.mid`.

@@ -129,6 +129,39 @@ def test_notation_page_embeds_the_score_without_closing_the_script(tmp_path):
     assert "&larr; Library" in linked
 
 
+def test_notation_page_heading_for_a_project(tmp_path):
+    score_path = tmp_path / "score.musicxml"
+    score_path.write_text("<score-partwise><part id='right'/></score-partwise>", encoding="utf-8")
+    # A score that belongs to no project keeps the plain heading.
+    plain = write_notation_page(score_path, tmp_path / "notation.html", title="Loose").read_text(encoding="utf-8")
+    assert '<div class="facts">' not in plain
+    assert '<div class="path">' not in plain
+    assert "Play with score" not in plain
+    assert "Edit &amp; files" not in plain
+
+    text = write_notation_page(
+        score_path,
+        tmp_path / "notation.html",
+        title="Take",
+        home_url="http://127.0.0.1:8765/",
+        facts=[
+            {"before": "from ", "value": "0:12", "after": " in the video"},
+            {"before": "", "value": "", "after": "model <x>"},
+        ],
+        folder=r"C:\music\take & one",
+        tools_url="http://127.0.0.1:8765/project?project=take",
+        playback_url="http://127.0.0.1:5000/p/abc/",
+    ).read_text(encoding="utf-8")
+    assert '<span class="fact">from <b>0:12</b> in the video</span>' in text
+    assert '<span class="fact">model &lt;x&gt;</span>' in text
+    assert '<div class="path">C:\\music\\take &amp; one</div>' in text
+    assert 'href="http://127.0.0.1:8765/">&larr; Library</a>' in text
+    assert 'href="http://127.0.0.1:5000/p/abc/">Play with score</a>' in text
+    assert 'href="http://127.0.0.1:8765/project?project=take">Edit &amp; files</a>' in text
+    # Every link stays in this tab.
+    assert "target=" not in text
+
+
 def test_notation_page_draws_the_harmony_layer_with_a_toggle(tmp_path):
     from baroque_transcribe.analysis import ChordEvent, HarmonicAnalysis, SequenceEvent, write_analysis
 

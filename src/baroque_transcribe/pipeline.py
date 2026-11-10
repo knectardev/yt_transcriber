@@ -213,10 +213,15 @@ def _analysis_summary(analysis: HarmonicAnalysis) -> dict:
 
 
 def _try_generate_analysis(output_dir: Path, quantization) -> str | None:
-    """Generate the harmonic draft; failure never discards a transcription."""
+    """Generate the harmonic draft; failure never discards a transcription.
+
+    The caller records the history event after this returns, and that event
+    copies ``annotations.json`` with the score. This call does not record
+    a second event.
+    """
 
     try:
-        analyze_project(output_dir, quantization=quantization)
+        analyze_project(output_dir, quantization=quantization, record_history=False)
     except Exception as exc:
         return f"Harmonic analysis was not generated: {exc}"
     return None
@@ -229,6 +234,7 @@ def analyze_project(
     mode: str | None = None,
     force: bool = False,
     quantization=None,
+    record_history: bool = True,
 ) -> HarmonicAnalysis:
     """Write ``annotations.json`` for an existing project from its notes and grid."""
 
@@ -263,6 +269,10 @@ def analyze_project(
     manifest = _read_manifest(output_dir / MANIFEST)
     manifest["analysis"] = _analysis_summary(analysis)
     _write_manifest(output_dir / MANIFEST, manifest)
+    if record_history:
+        from baroque_transcribe.parse_store import publish_analysis
+
+        publish_analysis(output_dir)
     return analysis
 
 

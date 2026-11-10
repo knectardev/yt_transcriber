@@ -4,7 +4,16 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from baroque_transcribe.library import card_for, find_project, library_cards, project_param, read_run
+from baroque_transcribe.library import (
+    Run,
+    card_for,
+    find_project,
+    format_clock,
+    library_cards,
+    project_param,
+    read_run,
+    run_facts,
+)
 from baroque_transcribe.parse_store import record_parse
 
 
@@ -41,6 +50,41 @@ def test_read_run_describes_the_folder(tmp_path):
     assert run.has_audio is False
     assert isinstance(run.modified, datetime)
     assert read_run(tmp_path / "missing") is None
+
+
+def test_run_facts_are_the_header_chips_in_reading_order(tmp_path):
+    folder = _project(tmp_path / "take", origin="https://youtu.be/abcdefghijk", notes=1234)
+    run = read_run(folder)
+    assert run is not None
+    facts = run_facts(run)
+    assert ["".join((fact["before"], fact["value"], fact["after"])) for fact in facts] == [
+        "1,234 notes",
+        "1 pedal events",
+        "0:30 excerpt",
+        "from 0:12 in the video",
+        "72 BPM",
+        "3/4",
+        "bytedance-note-pedal",
+        run.modified.strftime("%b %d, %Y %H:%M"),
+    ]
+    # The number is the emphasised part. The model and the date have none.
+    assert [fact["value"] for fact in facts] == ["1,234", "1", "0:30", "0:12", "72", "3/4", "", ""]
+
+
+def test_run_facts_leave_out_what_the_manifest_does_not_say(tmp_path):
+    assert run_facts(Run(name="bare", folder=tmp_path, available=True)) == []
+    # An excerpt that starts at the top of the video says nothing about where it starts.
+    facts = run_facts(Run(name="top", folder=tmp_path, available=True, notes=0, excerpt_start=0.0, bpm=89.29))
+    assert facts == [
+        {"before": "", "value": "0", "after": " notes"},
+        {"before": "", "value": "89.29", "after": " BPM"},
+    ]
+
+
+def test_clock_text_grows_an_hour_field():
+    assert format_clock(0) == "0:00"
+    assert format_clock(130.4) == "2:10"
+    assert format_clock(3725) == "1:02:05"
 
 
 def test_cards_merge_history_with_folders_on_disk(tmp_path):

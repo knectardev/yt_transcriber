@@ -1,0 +1,86 @@
+{
+  "action": "analyze",
+  "audio": {
+    "diagnostics": [
+      "comparison.wav",
+      "overview.png",
+      "piano_roll.png",
+      "resynthesis.wav",
+      "spectrogram.png",
+      "waveform.png"
+    ],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": 345.0,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 50.0,
+      "excerpt_end_seconds": 120.0,
+      "excerpt_start_seconds": 70.0,
+      "file": "working.wav",
+      "sample_rate": 16000,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": 120.0,
+    "start_seconds": 70.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": false,
+      "stored": false
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": true,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": false,
+      "stored": false
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": false,
+      "stored": false
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": false,
+      "stored": false
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": false,
+      "stored": false
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    }
+  },
+  "id": "20261110T141355Z-0645cc94",
+  "machine": "Knectar_Alien",
+  "project": "performance-20261109-153856",
+  "recorded_at": "2026-11-10T14:13:55Z",
+  "source": {
+    "kind": "youtube",
+    "title": "A few improvised variations in semi French baroque",
+    "url": "https://www.youtube.com/watch?v=5Zhf8y7Gez4",
+    "video_id": "5Zhf8y7Gez4"
+  },
+  "status": "ok",
+  "version": 1
+}

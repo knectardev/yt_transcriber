@@ -72,6 +72,49 @@ class Card:
         return max(stamps) if stamps else None
 
 
+def format_clock(seconds: float) -> str:
+    """``M:SS``, or ``H:MM:SS`` from an hour up."""
+
+    whole = int(round(seconds))
+    minutes, secs = divmod(whole, 60)
+    hours, minutes = divmod(minutes, 60)
+    if hours:
+        return f"{hours}:{minutes:02d}:{secs:02d}"
+    return f"{minutes}:{secs:02d}"
+
+
+def run_facts(run: Run) -> list[dict[str, str]]:
+    """What the header of a project's page says about the run, in reading order.
+
+    Each fact is the text of one chip in three parts: ``before``, the
+    emphasised ``value``, and ``after``. A part that is not used is empty.
+    Plain strings, so the pages can place them as text.
+    """
+
+    facts: list[dict[str, str]] = []
+
+    def add(value: str, after: str = "", before: str = "") -> None:
+        facts.append({"before": before, "value": value, "after": after})
+
+    if run.notes is not None:
+        add(f"{run.notes:,}", " notes")
+    if run.pedals is not None:
+        add(f"{run.pedals:,}", " pedal events")
+    if run.duration:
+        add(format_clock(run.duration), " excerpt")
+    if run.excerpt_start:
+        add(format_clock(run.excerpt_start), " in the video", "from ")
+    if run.bpm:
+        add(f"{run.bpm:g}", " BPM")
+    if run.time_signature:
+        add(run.time_signature)
+    if run.model:
+        add("", run.model)
+    if run.modified:
+        add("", run.modified.strftime("%b %d, %Y %H:%M"))
+    return facts
+
+
 def transcriptions_root(root: Path | None = None) -> Path:
     return root if root is not None else repo_root() / TRANSCRIPTIONS_DIR
 

@@ -175,13 +175,15 @@ If you omit `--time-signature`, the score uses 4/4 and `manifest.json` records t
 baroque-transcribe ui
 ```
 
-That opens a local site at <http://127.0.0.1:8765> with two kinds of page.
+That opens a local site at <http://127.0.0.1:8765>. Links inside the site open in the tab you are in. **Open on YouTube** is the one that opens a new tab, because it leaves the site.
 
 The home page has the controls that start a transcription (YouTube URL, local file, upload, or a MIDI file to draw without running the model; excerpt and notation settings are under an expander) and, below them, the library: a grid of the videos and recordings that already have a transcription. Each YouTube video appears once with its thumbnail; several runs of the same video are listed as chips on its card. A recording without a video gets a plain tile. Clicking a card opens that transcription's page. A run named in the parse history but missing from this computer is shown greyed out.
 
-The project page, `/project?project=<folder>`, is one transcription. The header gives the note and pedal counts, excerpt length, tempo, meter, and model. **Play with score** opens the video with the measures following it in a new tab, and **Score only** opens the static two-staff score; the same synced view is also framed in the first tab of the page. The other tabs hold the working audio and the mix of that audio with a simple tone at each detected pitch (a check of timing, not a piano sound), the plots, the editable note table with the tempo, meter, subdivision, and staff split used to rebuild MIDI and MusicXML, the Harmony tab described below, and the downloadable files with the run's warnings. A project transcribed from a local file can have a YouTube address attached on that page so the score can follow the video.
+A transcription's page is the video with the score under it. The header gives the note and pedal counts, excerpt length, tempo, meter, model, and the project folder. The highlighted measure follows the video, and clicking a measure moves the video there. **Score only** shows the static two-staff score, and **Play with score** on that page comes back. A recording with no video opens on its score. The page is written again each time it is opened, so it shows the notes and harmony as they are now. It is served on a second local port that is chosen at each launch, so its address is not one to bookmark. Start from the home page.
 
-`baroque-transcribe ui --project transcriptions\piece` opens straight to that project's page.
+**Edit & files** on that page opens `/project?project=<folder>`, which holds the rest. Its tabs are the working audio and the mix of that audio with a simple tone at each detected pitch (a check of timing, not a piano sound) with the plots, the editable note table with the tempo, meter, subdivision, and staff split used to rebuild MIDI and MusicXML, the Harmony tab described below, and the downloadable files with the run's warnings. A project transcribed from a local file can have a YouTube address attached there so the score can follow the video. **Back to video and score** returns to the transcription's page. A transcription that has just finished opens here, and so does a project that has no score yet.
+
+`baroque-transcribe ui --project transcriptions\piece` opens straight to that project's Edit & files page.
 
 The same plots are written by the `transcribe` command. `baroque-transcribe diagnostics transcriptions\baroque_improvisation --position 12.5` redraws them with a cursor.
 
@@ -195,9 +197,9 @@ A transcription also gets a first-pass harmonic reading, stored in `annotations.
 baroque-transcribe analyze transcriptions\baroque_improvisation --key Bb --mode major
 ```
 
-`--key`/`--mode` pin the tonic; omit them to keep the estimate (or the key you set before). The **Harmony** tab on the project page does the same thing and lets you edit every label and span in place. Edits you save there are marked as yours: a normal rebuild keeps them and only refreshes the rest, while "Replace my edited labels" (or `--force`) discards them. If the notes or tempo changed since the analysis, the tab says so.
+`--key`/`--mode` pin the tonic; omit them to keep the estimate (or the key you set before). The **Harmony** tab on the Edit & files page does the same thing and lets you edit every label and span in place. Edits you save there are marked as yours: a normal rebuild keeps them and only refreshes the rest, while "Replace my edited labels" (or `--force`) discards them. If the notes or tempo changed since the analysis, the tab says so.
 
-On both score pages the labels sit under each measure, Roman numerals by default. The **Harmony** checkbox hides the layer and **Lead-sheet chord symbols** swaps every label to its chord symbol (the hover text shows the other form and the detector's confidence; paler labels are the ones it was unsure about). Sequence spans are underlined under the measures they cover. The layer lives only in these browser pages for now: exported MusicXML does not carry the chords yet, and `annotations.json` is not copied into the parse history, so a restored project needs a fresh `analyze` run.
+On both score pages the labels sit under each measure, Roman numerals by default. The **Harmony** checkbox hides the layer and **Lead-sheet chord symbols** swaps every label to its chord symbol (the hover text shows the other form and the detector's confidence; paler labels are the ones it was unsure about). Sequence spans are underlined under the measures they cover. Exported MusicXML does not carry the chords yet. `annotations.json` does travel: a transcribe or quantize copies it into that run's history folder, and a later edit or `analyze` adds a new history event that holds the file. Restore copies it back with the score. A project folder that already exists keeps its notes, and gains `annotations.json` only when that file is missing locally.
 
 Treat the whole thing as a draft. It reads the quantized grid, not the counterpoint: Baroque figuration, arpeggiation, passing tones, and pedal blur will produce wrong or over-specific labels (sus and six-chords are common false positives), the key is one global estimate with no modulation tracking, and inversions follow the lowest attack near the slice, which ornamentation can fool. Correct it in the Harmony tab rather than trusting it.
 
@@ -217,9 +219,9 @@ Do not treat `score.musicxml` as a finished edition until you have checked it ag
 
 ## Parse history
 
-Every `prepare`, `transcribe`, and `quantize` adds a folder under `data/parses/events/`. Each folder is one run. `event.json` is written once and left as it was, so history added on two machines merges as new folders.
+Every `prepare`, `transcribe`, `quantize`, and `analyze` adds a folder under `data/parses/events/`. Each folder is one run. `event.json` is written once and left as it was, so history added on two machines merges as new folders.
 
-The folder also holds the score files from that run, when the run produced them: `notes.json`, `pedal.json`, `raw.mid`, `quantized.mid`, and `score.musicxml`. `source.wav`, `working.wav`, and the diagnostic wavs stay in `transcriptions/` and are only described in `event.json`. Cookie files and absolute home-directory paths are not stored. The machine name in the event is the computer that wrote it.
+The folder also holds the score files from that run, when the run produced them: `notes.json`, `pedal.json`, `raw.mid`, `quantized.mid`, `score.musicxml`, and `annotations.json`. An `analyze` event, including one written when harmony edits are saved, stores `annotations.json` and leaves the earlier score files where they are. `source.wav`, `working.wav`, and the diagnostic wavs stay in `transcriptions/` and are only described in `event.json`. Cookie files and absolute home-directory paths are not stored. The machine name in the event is the computer that wrote it.
 
 `score.pdf` is listed in every event with `"present": false` and `"status": "planned"`. A later `baroque-transcribe pdf <project>` command will write that PDF next to `score.musicxml` by asking music21 for a MusicXML PDF, which needs MuseScore on `PATH`. The PDF will be copied into the event folder as a new file, with a sibling `pdf.json` saying when and on which machine. `event.json` stays as first written. The review page can then offer the PDF beside MusicXML.
 
@@ -241,7 +243,7 @@ The repository is the sync mechanism. Each machine has its own clone, its own `.
 | Comes with `git pull` | Stays on the machine that made it |
 | --- | --- |
 | The program, the tests, and these documents | `transcriptions/` (every project folder, including `manifest.json`) |
-| `data/parses/events/`: `event.json`, `notes.json`, `pedal.json`, `raw.mid`, `quantized.mid`, `score.musicxml` for each run | All audio (`source.wav`, `working.wav`, diagnostics) |
+| `data/parses/events/`: `event.json`, `notes.json`, `pedal.json`, `raw.mid`, `quantized.mid`, `score.musicxml`, and `annotations.json` for each run | All audio (`source.wav`, `working.wav`, diagnostics) |
 | | The 165 MB model checkpoint (`%USERPROFILE%\.cache\baroque_transcribe\`) |
 | | The thumbnail cache (`data/thumbnails\`); it is re-fetched on first view |
 | | `.venv\`, browser cookies, and YouTube sign-ins |
@@ -266,7 +268,7 @@ The library shows the new video and its runs greyed out, marked "not on this com
 baroque-transcribe history restore
 ```
 
-That rebuilds every missing project (or one project, with `baroque-transcribe history restore <project>`) by copying the stored notes, pedal, MIDI, and MusicXML files into `transcriptions/<project>` and writing a manifest rebuilt from the event, with the tempo and meter read back from the score. **Nothing is downloaded and no model is run**: a restored project is the pulled transcription itself, not a new one, and restoring records no new history. A project that already exists on this machine is skipped and left untouched. The same restore is a button on each greyed-out library card in the review window.
+That rebuilds every missing project (or one project, with `baroque-transcribe history restore <project>`) by copying the stored notes, pedal, MIDI, MusicXML, and `annotations.json` into `transcriptions/<project>` and writing a manifest rebuilt from the event, with the tempo and meter read back from the score. A newer `analyze` event supplies the harmony file when the score event does not have one. **Nothing is downloaded and no model is run**: a restored project is the pulled transcription itself, not a new one, and restoring records no new history. A project that already exists on this machine keeps its notes and score. If `annotations.json` is missing there, restore fills that file in and leaves an analysis that is already present. The same restore is a button on each greyed-out library card in the review window.
 
 Two limits of a restored project, both because audio does not travel in the repo:
 
@@ -290,8 +292,8 @@ The same warning in reverse: a `git pull` and a restore never update a project f
 | `analysis.py` | Harmonic draft: key estimate, chord labels, sequence spans in `annotations.json`; voice/imitation/cadence hooks still reserved |
 | `parse_store.py` | JSON history of each run, with the score files and a reserved PDF slot; also restores project folders from that history on another machine |
 | `library.py` | Cards for the home page: the parse history merged with the folders under `transcriptions/` |
-| `playback.py` | YouTube id parsing and the localhost server that serves the synced playback page and the score page |
-| `ui.py` | The local site: home page with the transcribe controls and the library, and one page per project |
+| `playback.py` | YouTube id parsing and the localhost server that writes and serves each transcription's page (video with score) and its score-only page |
+| `ui.py` | The local site: home page with the transcribe controls and the library, and an Edit & files page per project |
 | `cli.py` | `prepare`, `transcribe`, `quantize`, `analyze`, `diagnostics`, `doctor`, `ui`, `history` |
 
 `notes.json` is the stable intermediate those later analyzers should read. They should write annotations beside the transcription and leave `raw.mid` alone. The harmonic analyzer does exactly that: it reads `notes.json` and writes `annotations.json`.

@@ -342,6 +342,10 @@ def write_notation_page(
     note: str | None = None,
     home_url: str | None = None,
     harmony: dict | None = None,
+    facts: list[dict[str, str]] | None = None,
+    folder: str | None = None,
+    tools_url: str | None = None,
+    playback_url: str | None = None,
 ) -> Path:
     """Write an HTML page that draws the two-staff score in a browser tab.
 
@@ -353,6 +357,12 @@ def write_notation_page(
 
     ``home_url`` adds a link back to the library page. ``?embed=1`` on the
     page address hides the heading, for a page that frames this one.
+
+    The rest of the heading is for a score that belongs to a project.
+    ``facts`` are the chips from ``library.run_facts`` and ``folder`` is the
+    project folder, shown under the title. ``playback_url`` links to the
+    video with the score following it, and ``tools_url`` to the page with the
+    audio, the note table, the harmony editor, and the files.
     """
 
     if not score_path.is_file():
@@ -379,8 +389,25 @@ def write_notation_page(
         or "Upper staff: right-hand track. Lower staff: left-hand track. "
         "The split follows pitch, with middle C on the upper staff."
     )
-    home_link = (
-        f'<a class="home" href="{escape(home_url, quote=True)}">&larr; Library</a>' if home_url else ""
+    home_link = "".join(
+        f'<a class="home" href="{escape(address, quote=True)}">{label}</a>'
+        for address, label in (
+            (home_url, "&larr; Library"),
+            (playback_url, "Play with score"),
+            (tools_url, "Edit &amp; files"),
+        )
+        if address
+    )
+    chips = "".join(
+        '<span class="fact">'
+        + escape(fact.get("before", ""))
+        + (f'<b>{escape(fact["value"])}</b>' if fact.get("value") else "")
+        + escape(fact.get("after", ""))
+        + "</span>"
+        for fact in facts or []
+    )
+    details = (f'<div class="facts">{chips}</div>' if chips else "") + (
+        f'<div class="path">{escape(folder)}</div>' if folder else ""
     )
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(
@@ -398,6 +425,11 @@ def write_notation_page(
     header {{ padding: 1rem 1.5rem 0.75rem; border-bottom: 1px solid #e7e2da; background: #fffdf9; }}
     .home {{ display: inline-block; margin-bottom: 0.5rem; font-size: 0.9rem; color: #7c3a07; text-decoration: none; font-weight: 500; }}
     .home:hover {{ text-decoration: underline; }}
+    .home + .home {{ margin-left: 1.1rem; }}
+    .facts {{ display: flex; flex-wrap: wrap; gap: 0.35rem 0.5rem; margin: 0.15rem 0 0.4rem; }}
+    .fact {{ font-size: 0.78rem; padding: 0.14rem 0.55rem; border-radius: 999px; white-space: nowrap; background: #fdf3e2; border: 1px solid #e7e2da; font-variant-numeric: tabular-nums; }}
+    .fact b {{ color: #7c3a07; font-weight: 600; }}
+    .path {{ margin-bottom: 0.45rem; color: #6b6560; font-size: 0.78rem; font-family: ui-monospace, Consolas, monospace; word-break: break-all; }}
     h1 {{ font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; font-size: 1.4rem; font-weight: 600; margin: 0 0 0.35rem; }}
     p {{ margin: 0; max-width: 42rem; line-height: 1.45; color: #6b6560; font-size: 0.92rem; }}
     body.embed header {{ display: none; }}
@@ -414,7 +446,7 @@ def write_notation_page(
   <header>
     {home_link}
     <h1>{heading}</h1>
-    <p>{blurb}</p>
+    {details}<p>{blurb}</p>
     <div class="harmony-controls" id="harmony-controls" hidden>
       <label><input type="checkbox" id="show-harmony" checked> Harmony</label>
       <label><input type="checkbox" id="lead-sheet"> Lead-sheet chord symbols</label>

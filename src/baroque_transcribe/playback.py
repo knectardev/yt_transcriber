@@ -12,11 +12,11 @@ import re
 import secrets
 import shutil
 import threading
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from html import escape
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, quote, urlparse
 
 from baroque_transcribe.analysis import analysis_is_stale, load_analysis
 from baroque_transcribe.defaults import ANNOTATIONS_JSON, MANIFEST, NOTES_JSON, SCORE_XML
@@ -201,6 +201,8 @@ class PlaybackContext:
     excerpt_start: float
     sync_offset: float
     harmony: dict | None = None
+    # Header chips (``library.run_facts``): note count, tempo, model, and so on.
+    facts: list[dict[str, str]] = field(default_factory=list)
 
 
 def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext:
@@ -245,6 +247,10 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
     if analysis is not None:
         harmony = analysis.to_dict()
         harmony["stale"] = analysis_is_stale(analysis, quantization)
+    # Imported here: ``library`` imports this module for the YouTube id parsing.
+    from baroque_transcribe.library import read_run, run_facts
+
+    run = read_run(project)
     return PlaybackContext(
         project=project,
         score_path=score_path,
@@ -254,6 +260,7 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
         excerpt_start=excerpt,
         sync_offset=offset,
         harmony=harmony,
+        facts=run_facts(run) if run is not None else [],
     )
 
 
@@ -270,12 +277,28 @@ def _ensure_library(dest_dir: Path) -> None:
         shutil.copyfile(library, local)
 
 
-def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str = "") -> Path:
+def tools_page_url(home_url: str, project: Path) -> str:
+    """Address of the project's "Edit & files" page on the library site.
+
+    Empty when there is no library site to link to.
+    """
+
+    if not home_url:
+        return ""
+    from baroque_transcribe.library import project_param
+
+    return f"{home_url.rstrip('/')}/project?project={quote(project_param(project))}"
+
+
+def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str = "", tools_url: str = "") -> Path:
     """Write the synced playback page next to the score.
 
-    ``home_url`` is the library page. When it is given, the page shows a link
-    back to it. ``?embed=1`` on the page address hides that bar, for the
-    project page that frames this one.
+    This is the page for one transcription: the video, the score that follows
+    it, and a header with the facts about the run. ``home_url`` is the library
+    page and ``tools_url`` is the page with the audio, the note table, the
+    harmony editor, and the files. Each adds a link when it is given.
+    ``?embed=1`` on the page address hides the header, for a page that frames
+    this one.
     """
 
     if not context.score_path.is_file():
@@ -288,6 +311,9 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
         {
             "videoId": context.video_id,
             "homeUrl": home_url or "",
+            "toolsUrl": tools_url or "",
+            "facts": context.facts,
+            "folder": str(context.project),
             "excerptStart": context.excerpt_start,
             "syncOffset": context.sync_offset,
             "harmony": context.harmony,
@@ -316,9 +342,8 @@ def open_synced_playback(project: Path, *, title: str | None = None) -> str:
     """Write the page, serve it on localhost, and return the tab URL."""
 
     server = shared_playback_server()
-    context = load_playback(project, title=title)
-    write_playback_page(context, project / "playback.html", home_url=server.home_url)
-    token = server.register(project)
+    token = server.register(project, title)
+    server.build_playback(token)
     return server.page_url(token)
 
 
@@ -326,21 +351,28 @@ def notation_page_url(project: Path, *, title: str | None = None) -> str:
     """Write the static score page, serve it on localhost, and return its URL.
 
     The page is the same ``notation.html`` that opens from a ``file://`` tab.
-    Serving it lets the project page frame it when there is no video to sync.
+    Served, it is the page for a project that has no video to sync.
     """
 
-    from baroque_transcribe.notation import NotationError
-
-    score = project / SCORE_XML
-    if not score.is_file():
+    if not (project / SCORE_XML).is_file():
         raise SyncError("This project has no score to display.")
     server = shared_playback_server()
-    try:
-        write_notation_page(score, project / "notation.html", title=title, home_url=server.home_url)
-    except NotationError as exc:
-        raise SyncError(str(exc)) from exc
-    token = server.register(project)
+    token = server.register(project, title)
+    server.build_notation(token)
     return server.page_url(token) + "notation.html"
+
+
+def detail_url(project: Path, *, title: str | None = None) -> str:
+    """Address of the page for one transcription, without writing it.
+
+    The server writes the page when the address is opened, so a link costs
+    nothing to make: the library can link every run without reading its
+    notes. A project with no video opens on its score, and one with no score
+    yet opens on its "Edit & files" page.
+    """
+
+    server = shared_playback_server()
+    return server.page_url(server.register(project, title))
 
 
 def shared_playback_server(home_url: str | None = None) -> "PlaybackServer":
@@ -360,12 +392,16 @@ class PlaybackServer:
     """Serve one project's playback page and its sync-offset field.
 
     Bound to 127.0.0.1. Tokens are random, and the only files offered are the
-    generated pages and the local notation library.
+    generated pages and the local notation library. A page is written again
+    each time it is requested, so it shows the notes and harmony as they are
+    now.
     """
 
     def __init__(self, home_url: str = "") -> None:
         self._projects: dict[str, Path] = {}
+        self._titles: dict[str, str] = {}
         self._lock = threading.Lock()
+        self._build_lock = threading.Lock()
         self._httpd: ThreadingHTTPServer | None = None
         self._thread: threading.Thread | None = None
         self.port = 0
@@ -390,24 +426,77 @@ class PlaybackServer:
         self._httpd = None
         self._thread = None
 
-    def register(self, project: Path) -> str:
-        """Return the token for a project. One project keeps one token for the life of the server."""
+    def register(self, project: Path, title: str | None = None) -> str:
+        """Return the token for a project. One project keeps one token for the life of the server.
+
+        ``title`` is the heading for the project's pages. It is remembered
+        until a later call gives another.
+        """
 
         resolved = project.resolve()
         with self._lock:
-            for existing, folder in self._projects.items():
-                if folder == resolved:
-                    return existing
-            token = secrets.token_urlsafe(8)
-            self._projects[token] = resolved
+            token = next((existing for existing, folder in self._projects.items() if folder == resolved), None)
+            if token is None:
+                token = secrets.token_urlsafe(8)
+                self._projects[token] = resolved
+            if title:
+                self._titles[token] = title
         return token
 
     def project_for(self, token: str) -> Path | None:
         with self._lock:
             return self._projects.get(token)
 
+    def title_for(self, token: str) -> str | None:
+        with self._lock:
+            return self._titles.get(token)
+
     def page_url(self, token: str) -> str:
         return f"http://127.0.0.1:{self.port}/p/{token}/"
+
+    def build_playback(self, token: str) -> Path:
+        """Write the synced playback page from the project's files as they are now."""
+
+        project = self.project_for(token)
+        if project is None:
+            raise SyncError("That project is not being served.")
+        with self._build_lock:
+            context = load_playback(project, title=self.title_for(token))
+            return write_playback_page(
+                context,
+                project / "playback.html",
+                home_url=self.home_url,
+                tools_url=tools_page_url(self.home_url, project),
+            )
+
+    def build_notation(self, token: str) -> Path:
+        """Write the static score page from the project's files as they are now."""
+
+        from baroque_transcribe.library import read_run, run_facts
+        from baroque_transcribe.notation import NotationError
+
+        project = self.project_for(token)
+        if project is None:
+            raise SyncError("That project is not being served.")
+        score = project / SCORE_XML
+        if not score.is_file():
+            raise SyncError("This project has no score to display.")
+        run = read_run(project)
+        title = self.title_for(token) or (run.title if run else "") or project.name
+        with self._build_lock:
+            try:
+                return write_notation_page(
+                    score,
+                    project / "notation.html",
+                    title=title,
+                    home_url=self.home_url,
+                    facts=run_facts(run) if run else None,
+                    folder=str(project),
+                    tools_url=tools_page_url(self.home_url, project) or None,
+                    playback_url=self.page_url(token) if run and run.video_id else None,
+                )
+            except NotationError as exc:
+                raise SyncError(str(exc)) from exc
 
 
 def _thumbnail_id(path: str) -> str | None:
@@ -454,20 +543,32 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
             if route is None or project is None:
                 self.send_error(404)
                 return
-            _token, name = route
+            token, name = route
             if name == "sync-offset":
                 body = json.dumps({"offset": read_sync_offset(project)}).encode("utf-8")
                 self._send(200, "application/json", body)
                 return
+            content_type = "text/html; charset=utf-8"
             if name == "opensheetmusicdisplay.min.js":
                 target = project / name
                 content_type = "text/javascript; charset=utf-8"
             elif name == "notation.html":
-                target = project / name
-                content_type = "text/html; charset=utf-8"
+                try:
+                    target = server.build_notation(token)
+                except (SyncError, OSError) as exc:
+                    self._send_to_tools(project, str(exc))
+                    return
             else:
-                target = project / "playback.html"
-                content_type = "text/html; charset=utf-8"
+                try:
+                    target = server.build_playback(token)
+                except (SyncError, OSError, ValueError) as exc:
+                    # No video to follow: the score alone is this project's
+                    # page. No score either: the tools page can build one.
+                    if (project / SCORE_XML).is_file():
+                        self._redirect(f"/p/{token}/notation.html" + self._query())
+                    else:
+                        self._send_to_tools(project, str(exc))
+                    return
             if not target.is_file():
                 self.send_error(404)
                 return
@@ -490,6 +591,26 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                 self.send_error(400)
                 return
             self._send(200, "application/json", json.dumps({"offset": stored}).encode("utf-8"))
+
+        def _query(self) -> str:
+            query = urlparse(self.path).query
+            return f"?{query}" if query else ""
+
+        def _redirect(self, location: str) -> None:
+            self.send_response(302)
+            self.send_header("Location", location)
+            self.send_header("Content-Length", "0")
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+
+        def _send_to_tools(self, project: Path, reason: str) -> None:
+            """A page that cannot be drawn sends the reader to the project's tools page."""
+
+            tools = tools_page_url(server.home_url, project)
+            if tools:
+                self._redirect(tools)
+            else:
+                self.send_error(404, explain=reason)
 
         def _send(self, status: int, content_type: str, body: bytes, cache: bool = False) -> None:
             self.send_response(status)
@@ -523,16 +644,27 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       font-family: var(--sans); color: var(--ink); background: var(--bg);
     }
     .topbar {
-      flex: 0 0 auto; display: flex; align-items: center; gap: 1rem;
-      padding: 0.55rem 1.25rem; border-bottom: 1px solid var(--line); background: var(--panel);
+      flex: 0 0 auto; padding: 0.55rem 1.25rem; border-bottom: 1px solid var(--line); background: var(--panel);
       font-size: 0.9rem;
     }
-    .topbar a { color: var(--accent-ink); text-decoration: none; font-weight: 500; }
+    .topbar-row { display: flex; align-items: center; gap: 1rem; }
+    .topbar-row.meta { flex-wrap: wrap; gap: 0.35rem 0.5rem; margin-top: 0.45rem; }
+    .topbar [hidden] { display: none; }
+    .topbar a { flex: 0 0 auto; color: var(--accent-ink); text-decoration: none; font-weight: 500; white-space: nowrap; }
     .topbar a:hover { text-decoration: underline; }
     .topbar .crumb { color: var(--muted); }
     .topbar h1 {
-      flex: 1 1 auto; margin: 0; font-family: var(--serif); font-size: 1.05rem; font-weight: 600;
+      flex: 1 1 auto; min-width: 0; margin: 0; font-family: var(--serif); font-size: 1.05rem; font-weight: 600;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .fact {
+      font-size: 0.78rem; padding: 0.14rem 0.55rem; border-radius: 999px; white-space: nowrap;
+      background: #fdf3e2; border: 1px solid var(--line); font-variant-numeric: tabular-nums;
+    }
+    .fact b { color: var(--accent-ink); font-weight: 600; }
+    .path {
+      min-width: 0; margin-left: 0.3rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      color: var(--muted); font-size: 0.78rem; font-family: ui-monospace, Consolas, monospace;
     }
     body.embed .topbar { display: none; }
     .stage {
@@ -590,10 +722,17 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
 </head>
 <body>
   <nav class="topbar">
-    <a id="home-link" href="#" hidden>&larr; Library</a>
-    <span class="crumb" id="home-sep" hidden>/</span>
-    <h1>__TITLE__</h1>
-    <a id="youtube-link" href="#" target="_blank" rel="noopener">Open on YouTube &nearr;</a>
+    <div class="topbar-row">
+      <a id="home-link" href="#" hidden>&larr; Library</a>
+      <span class="crumb" id="home-sep" hidden>/</span>
+      <h1>__TITLE__</h1>
+      <a id="score-link" href="notation.html">Score only</a>
+      <a id="tools-link" href="#" hidden>Edit &amp; files</a>
+      <a id="youtube-link" href="#" target="_blank" rel="noopener">Open on YouTube &nearr;</a>
+    </div>
+    <div class="topbar-row meta" id="meta-row" hidden>
+      <span class="path" id="project-path"></span>
+    </div>
   </nav>
   <header class="stage">
     <div class="player-wrap"><div id="player"></div></div>
@@ -632,6 +771,28 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         home.hidden = false;
         document.getElementById("home-sep").hidden = false;
       }
+      const tools = document.getElementById("tools-link");
+      if (config.toolsUrl) {
+        tools.href = config.toolsUrl;
+        tools.hidden = false;
+      }
+      const meta = document.getElementById("meta-row");
+      const folder = document.getElementById("project-path");
+      (config.facts || []).forEach(function (fact) {
+        const chip = document.createElement("span");
+        chip.className = "fact";
+        if (fact.before) chip.appendChild(document.createTextNode(fact.before));
+        if (fact.value) {
+          const value = document.createElement("b");
+          value.textContent = fact.value;
+          chip.appendChild(value);
+        }
+        if (fact.after) chip.appendChild(document.createTextNode(fact.after));
+        meta.insertBefore(chip, folder);
+      });
+      folder.textContent = config.folder || "";
+      folder.title = config.folder || "";
+      meta.hidden = !(config.folder || (config.facts || []).length);
       document.getElementById("youtube-link").href = "https://www.youtube.com/watch?v=" + encodeURIComponent(config.videoId);
     })();
     const anchors = config.anchors || [];

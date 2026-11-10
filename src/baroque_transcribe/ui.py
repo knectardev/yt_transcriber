@@ -5,11 +5,17 @@ Run with ``baroque-transcribe ui``. Transcription still happens on this machine.
 Two pages:
 
 * ``/`` is the home page. It has the controls that start a transcription and
-  a grid of the videos and recordings that already have one.
-* ``/project?project=<folder>`` is the page for one transcription: the video
-  with the score following it, the audio and plots, the note table, and the
-  files. The note table writes ``notes.json`` and rebuilds the MIDI and
-  MusicXML from it.
+  a grid of the videos and recordings that already have one. A card opens
+  that transcription's own page, the video with the score following it,
+  which ``playback`` serves.
+* ``/project?project=<folder>`` is the "Edit & files" page for one
+  transcription: the audio and plots, the note table, the harmony labels,
+  and the files. The note table writes ``notes.json`` and rebuilds the MIDI
+  and MusicXML from it.
+
+Links between these pages are plain anchors written with ``st.html``.
+``st.image(link=...)``, Markdown links, and ``st.link_button`` all open a
+new tab, and Streamlit offers no way to turn that off.
 """
 
 from __future__ import annotations
@@ -34,14 +40,23 @@ from baroque_transcribe.defaults import (
     SCORE_XML,
     WORKING_WAV,
 )
-from baroque_transcribe.library import Card, Run, card_for, find_project, library_cards, load_thumbnail, project_param, read_run
+from baroque_transcribe.library import (
+    Card,
+    Run,
+    card_for,
+    find_project,
+    format_clock,
+    library_cards,
+    load_thumbnail,
+    project_param,
+    read_run,
+)
 # ``notation`` (music21), ``pipeline`` (model/diagnostics stack), and ``pandas``
 # are imported inside the handlers that use them. At the top they added
 # seconds to every first page load, including the home-page thumbnail grid.
 from baroque_transcribe.playback import (
     SyncError,
-    notation_page_url,
-    open_synced_playback,
+    detail_url,
     shared_playback_server,
     write_youtube_url,
     youtube_project_for_midi,
@@ -90,39 +105,14 @@ _STYLE = """
   .bt-section h2 { margin: 0; font-size: 1.35rem; font-weight: 600; }
   .bt-section .bt-count { color: var(--bt-muted); font-size: 0.9rem; }
   .bt-lede { color: var(--bt-muted); font-size: 0.95rem; margin: 0 0 0.6rem; max-width: 60rem; line-height: 1.5; }
-  .bt-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem 1.1rem; margin-top: 0.4rem;
-  }
-  .bt-card {
-    display: flex; flex-direction: column; background: var(--bt-panel); border: 1px solid var(--bt-line);
-    border-radius: 14px; overflow: hidden; transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .bt-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -18px rgba(28, 25, 23, 0.45); }
-  .bt-thumb { position: relative; display: block; aspect-ratio: 16 / 9; background: #1c1917; overflow: hidden; }
+  .bt-thumb { display: block; aspect-ratio: 16 / 9; background: #1c1917; border-radius: 8px; overflow: hidden; }
   .bt-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .bt-thumb.bt-placeholder {
-    display: flex; align-items: center; justify-content: center; color: #fbbf24; font-size: 2.6rem;
-    background: linear-gradient(135deg, #292524, #44403c);
-  }
-  .bt-thumb .bt-badge {
-    position: absolute; right: 0.55rem; bottom: 0.55rem; padding: 0.15rem 0.5rem; border-radius: 999px;
-    background: rgba(28, 25, 23, 0.82); color: white; font-size: 0.74rem; font-variant-numeric: tabular-nums;
-  }
-  .bt-thumb .bt-play {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.15s;
-  }
-  .bt-thumb .bt-play span {
-    width: 3rem; height: 3rem; border-radius: 999px; background: rgba(180, 83, 9, 0.92); color: white;
-    display: flex; align-items: center; justify-content: center; font-size: 1.2rem; padding-left: 0.2rem;
-  }
-  .bt-card:hover .bt-play { opacity: 1; }
-  .bt-body { display: flex; flex-direction: column; gap: 0.4rem; padding: 0.75rem 0.9rem 0.9rem; }
+  .bt-thumb + .bt-title { margin-top: 0.7rem; }
   .bt-title {
     font-family: var(--bt-serif); font-size: 1.02rem; font-weight: 600; line-height: 1.3; color: var(--bt-ink);
     text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .bt-title:hover { color: var(--bt-accent-ink); }
-  .bt-meta { color: var(--bt-muted); font-size: 0.82rem; }
   .bt-runs { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.15rem; }
   .bt-chip {
     font-size: 0.74rem; padding: 0.14rem 0.55rem; border-radius: 999px; border: 1px solid var(--bt-line);
@@ -134,21 +124,8 @@ _STYLE = """
   .bt-empty {
     padding: 2rem; border: 1px dashed var(--bt-line); border-radius: 14px; color: var(--bt-muted); text-align: center;
   }
-  .bt-head { display: grid; grid-template-columns: auto 1fr; gap: 1.1rem; align-items: start; margin-bottom: 0.6rem; }
-  .bt-head .bt-poster { width: 200px; aspect-ratio: 16 / 9; border-radius: 10px; object-fit: cover; background: #1c1917; }
-  .bt-head .bt-poster.bt-placeholder {
-    display: flex; align-items: center; justify-content: center; color: #fbbf24; font-size: 2rem;
-    background: linear-gradient(135deg, #292524, #44403c);
-  }
-  .bt-head h1 { margin: 0 0 0.3rem; font-size: 1.7rem; font-weight: 600; line-height: 1.2; }
-  .bt-facts { display: flex; flex-wrap: wrap; gap: 0.4rem 0.5rem; margin: 0.3rem 0 0.4rem; }
-  .bt-fact {
-    font-size: 0.8rem; padding: 0.18rem 0.6rem; border-radius: 999px; background: var(--bt-soft);
-    border: 1px solid var(--bt-line); color: var(--bt-ink); font-variant-numeric: tabular-nums;
-  }
-  .bt-fact b { color: var(--bt-accent-ink); font-weight: 600; }
-  .bt-path { color: var(--bt-muted); font-size: 0.82rem; font-family: ui-monospace, Consolas, monospace; word-break: break-all; }
-  @media (max-width: 720px) { .bt-head { grid-template-columns: 1fr; } .bt-head .bt-poster { width: 100%; } }
+  .bt-back { color: var(--bt-accent-ink); text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+  .bt-back:hover { text-decoration: underline; }
 </style>
 """
 
@@ -222,7 +199,7 @@ def _home_page() -> None:
 
     # Card metadata only: titles, counts, and the cached thumbnail JPEG
     # (fetched from YouTube once per video, then read from disk).
-    # The notes, audio, and score are opened on the project page.
+    # The notes, audio, and score are read when a transcription is opened.
     cards = _with_local_thumbnails(library_cards(for_grid=True))
     count = sum(1 for card in cards for run in card.runs if run.available)
     st.html(
@@ -290,15 +267,23 @@ def _show_card(card: Card) -> bool:
     import streamlit as st
 
     primary = card.primary
-    href = _project_href(primary.folder) if primary else None
+    href = _detail_href(primary, card) if primary else None
     with st.container(border=True):
-        if card.thumbnail:
-            st.image(card.thumbnail, width="stretch", link=href)
-        title = card.title.replace("[", "\\[").replace("]", "\\]")
-        st.markdown(f"**[{title}]({href})**" if href else f"**{title}**")
+        # Anchors through st.html open in this tab. The link on st.image and
+        # a Markdown link both open a new one.
+        title = escape(card.title)
+        image = f'<img src="{escape(card.thumbnail, quote=True)}" alt="">' if card.thumbnail else ""
+        if href:
+            label = escape(card.title, quote=True)
+            thumb = f'<a class="bt-thumb" href="{href}" aria-label="{label}">{image}</a>' if image else ""
+            heading = f'<a class="bt-title" href="{href}">{title}</a>'
+        else:
+            thumb = f'<div class="bt-thumb">{image}</div>' if image else ""
+            heading = f'<span class="bt-title">{title}</span>'
+        st.html(thumb + heading)
         bits: list[str] = []
         if primary and primary.duration:
-            bits.append(_clock(primary.duration))
+            bits.append(format_clock(primary.duration))
         if primary and primary.notes is not None:
             bits.append(f"{primary.notes:,} notes")
         if primary and primary.modified:
@@ -310,13 +295,13 @@ def _show_card(card: Card) -> bool:
         if len(card.runs) > 1 or primary is None:
             chips: list[str] = []
             for run in card.runs:
-                label = run.name.replace("[", "\\[").replace("]", "\\]")
+                label = escape(run.name)
                 if run.available:
-                    chips.append(f"[{label}]({_project_href(run.folder)})")
+                    chips.append(f'<a class="bt-chip" href="{_detail_href(run, card)}" title="{label}">{label}</a>')
                 else:
-                    chips.append(label)
+                    chips.append(f'<span class="bt-chip bt-off" title="{label} is not on this computer">{label}</span>')
             if chips:
-                st.markdown(" · ".join(chips))
+                st.html(f'<div class="bt-runs">{"".join(chips)}</div>')
         for run in card.runs:
             if run.available:
                 continue
@@ -325,7 +310,7 @@ def _show_card(card: Card) -> bool:
             if st.button(
                 f"Restore {run.name} from history",
                 key=f"restore-{card.key}-{run.name}",
-                help="Copy the stored notes, MIDI, and score into a local project folder. Nothing is downloaded and no model is run.",
+                help="Copy the stored notes, MIDI, score, and harmonic analysis into a local project folder. Nothing is downloaded and no model is run.",
             ):
                 from baroque_transcribe.parse_store import restore_projects
 
@@ -338,29 +323,10 @@ def _show_card(card: Card) -> bool:
     return bool(card.thumbnail)
 
 
-def _cards_document(cards: list[Card]) -> str:
-    """One HTML document whose images are the bytes read above."""
+def _detail_href(run: Run, card: Card) -> str:
+    """Address of the run's own page (video and score), escaped for an ``href``."""
 
-    return f"""<!DOCTYPE html>
-<html><head><meta charset="utf-8"><script>
-fetch('http://127.0.0.1:7249/ingest/38e55499-7058-440e-99f5-c0e7258b5b2a',{{method:'POST',headers:{{'Content-Type':'application/json','X-Debug-Session-Id':'cb4792'}},body:JSON.stringify({{sessionId:'cb4792',hypothesisId:'E',location:'cards-iframe',message:'iframe document started',data:{{imgs:document.images.length}},timestamp:Date.now()}})}}).catch(()=>{{}});
-addEventListener('load',function(){{fetch('http://127.0.0.1:7249/ingest/38e55499-7058-440e-99f5-c0e7258b5b2a',{{method:'POST',headers:{{'Content-Type':'application/json','X-Debug-Session-Id':'cb4792'}},body:JSON.stringify({{sessionId:'cb4792',hypothesisId:'E',location:'cards-iframe',message:'iframe document loaded',data:{{imgs:[...document.images].map(function(img){{return img.naturalWidth}})}},timestamp:Date.now()}})}}).catch(()=>{{}});}});
-</script><style>
-  html, body {{ margin: 0; background: #faf7f2; }}
-  body {{ font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; color: #1c1917; }}
-  .bt-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem 1.1rem; }}
-  .bt-card {{ display: flex; flex-direction: column; background: #fffdf9; border: 1px solid #e7e2da; border-radius: 14px; overflow: hidden; }}
-  .bt-thumb {{ position: relative; display: block; aspect-ratio: 16 / 9; background: #1c1917; overflow: hidden; }}
-  .bt-thumb img {{ width: 100%; height: 100%; object-fit: cover; display: block; }}
-  .bt-thumb.bt-placeholder {{ display: flex; align-items: center; justify-content: center; color: #fbbf24; font-size: 2.6rem; background: linear-gradient(135deg, #292524, #44403c); }}
-  .bt-badge {{ position: absolute; right: 0.55rem; bottom: 0.55rem; padding: 0.15rem 0.5rem; border-radius: 999px; background: rgba(28, 25, 23, 0.82); color: white; font-size: 0.74rem; }}
-  .bt-body {{ display: flex; flex-direction: column; gap: 0.4rem; padding: 0.75rem 0.9rem 0.9rem; }}
-  .bt-title {{ font-size: 1.02rem; font-weight: 600; line-height: 1.3; color: #1c1917; text-decoration: none; }}
-  .bt-meta {{ color: #6b6560; font-size: 0.82rem; font-family: "Segoe UI", sans-serif; }}
-  .bt-runs {{ display: flex; flex-wrap: wrap; gap: 0.35rem; }}
-  .bt-chip {{ font-family: "Segoe UI", sans-serif; font-size: 0.74rem; padding: 0.14rem 0.55rem; border-radius: 999px; border: 1px solid #e7e2da; color: #7c3a07; background: #fdf3e2; text-decoration: none; }}
-  .bt-chip.bt-off {{ color: #6b6560; background: transparent; border-style: dashed; }}
-</style></head><body>{_cards_html(cards)}</body></html>"""
+    return escape(detail_url(run.folder, title=run.title or card.title or run.name), quote=True)
 
 
 def _transcribe_panel() -> None:
@@ -524,62 +490,17 @@ def _open_midi(midi: Path, attached: str, output: Path) -> None:
     st.success(message)
 
 
-def _cards_html(cards: list[Card]) -> str:
-    parts = ['<section class="bt-grid">']
-    for card in cards:
-        parts.append(_card_html(card))
-    parts.append("</section>")
-    return "".join(parts)
-
-
-def _card_html(card: Card) -> str:
-    primary = card.primary
-    href = _project_href(primary.folder) if primary else None
-    title = escape(card.title)
-    available = [run for run in card.runs if run.available]
-    badge = f"{len(available)} run{'' if len(available) == 1 else 's'}" if len(card.runs) > 1 else ""
-    if primary and primary.duration:
-        badge = _clock(primary.duration) + (f" · {badge}" if badge else "")
-    if card.thumbnail:
-        inner = f'<img src="{escape(card.thumbnail, quote=True)}" alt="">'
-        thumb_class = "bt-thumb"
-    else:
-        inner = "&#9835;"
-        thumb_class = "bt-thumb bt-placeholder"
-    play = '<span class="bt-play"><span>&#9654;</span></span>' if href else ""
-    badge_html = f'<span class="bt-badge">{escape(badge)}</span>' if badge else ""
-    if href:
-        thumb = f'<a class="{thumb_class}" href="{href}" target="_top">{inner}{play}{badge_html}</a>'
-        heading = f'<a class="bt-title" href="{href}" target="_top">{title}</a>'
-    else:
-        thumb = f'<div class="{thumb_class}">{inner}{badge_html}</div>'
-        heading = f'<span class="bt-title">{title}</span>'
-    meta_bits: list[str] = []
-    if primary:
-        if primary.notes is not None:
-            meta_bits.append(f"{primary.notes:,} notes")
-        if primary.modified:
-            meta_bits.append(_relative(primary.modified))
-    elif card.runs:
-        meta_bits.append("not on this computer")
-    meta = f'<div class="bt-meta">{escape(" · ".join(meta_bits))}</div>' if meta_bits else ""
-    chips: list[str] = []
-    for run in card.runs:
-        label = escape(run.name)
-        if run.available:
-            chips.append(
-                f'<a class="bt-chip" href="{_project_href(run.folder)}" target="_top" title="{label}">{label}</a>'
-            )
-        else:
-            chips.append(f'<span class="bt-chip bt-off" title="{label} is not on this computer">{label}</span>')
-    runs = f'<div class="bt-runs">{"".join(chips)}</div>' if len(card.runs) > 1 or not primary else ""
-    return f'<article class="bt-card">{thumb}<div class="bt-body">{heading}{meta}{runs}</div></article>'
-
-
 # ------------------------------------------------------------------------ project
 
 
 def _project_page() -> None:
+    """The "Edit & files" page of one transcription.
+
+    The video and the score are on the transcription's own page, which
+    ``playback`` serves. This page holds what that one links to: the audio
+    and plots, the note table, the harmony labels, and the files.
+    """
+
     import streamlit as st
 
     requested = st.query_params.get("project") or st.session_state.pop("open_project", None)
@@ -596,114 +517,34 @@ def _project_page() -> None:
         return
     card = card_for(project)
     title = run.title or (card.title if card else "") or project.name
+    # The transcription's own page: the video with the score, or the score
+    # alone when no video is attached. Without a score there is nothing to
+    # go back to, and that address would only lead here again.
+    detail = escape(detail_url(project, title=title), quote=True) if run.has_score else None
 
-    _brand(crumb=title)
+    _brand(crumb=title, crumb_href=detail, leaf="Edit & files")
     message = st.session_state.pop("transcription_message", None)
     if message:
         st.success(message)
     _flash()
-    pages = _score_pages(project, run, title)
-    _project_header(run, card, title, pages)
+    if detail:
+        back = "Back to video and score" if run.video_id else "Back to the score"
+        st.html(f'<a class="bt-back" href="{detail}">&larr; {back}</a>')
+        if not run.video_id:
+            _attach_video_form(project)
+    else:
+        st.info("This project has no score yet. Set a tempo on the Notes tab and rebuild.")
 
     manifest = _manifest(project)
-    score_tab_label = "Video and score" if run.video_id else "Score"
-    tabs = st.tabs([score_tab_label, "Listen", "Notes", "Harmony", "Files"])
+    tabs = st.tabs(["Listen", "Notes", "Harmony", "Files"])
     with tabs[0]:
-        _score_tab(project, run, pages)
-    with tabs[1]:
         _listen_tab(project, manifest)
-    with tabs[2]:
+    with tabs[1]:
         _notes_tab(project, manifest)
-    with tabs[3]:
+    with tabs[2]:
         _harmony_tab(project, manifest)
-    with tabs[4]:
+    with tabs[3]:
         _files_tab(project, run, card, manifest)
-
-
-def _score_pages(project: Path, run: Run, title: str) -> dict[str, str]:
-    """Addresses of the served score pages for this project, plus any reason one is missing."""
-
-    pages: dict[str, str] = {}
-    if not run.has_score:
-        return pages
-    if run.video_id:
-        try:
-            pages["playback"] = open_synced_playback(project, title=title)
-        except (SyncError, OSError, ValueError) as exc:
-            pages["playback_error"] = str(exc)
-    try:
-        pages["notation"] = notation_page_url(project, title=title)
-    except (SyncError, OSError) as exc:
-        pages["notation_error"] = str(exc)
-    return pages
-
-
-def _project_header(run: Run, card: Card | None, title: str, pages: dict[str, str]) -> None:
-    import streamlit as st
-
-    facts: list[str] = []
-    if run.notes is not None:
-        facts.append(f"<b>{run.notes:,}</b> notes")
-    if run.pedals is not None:
-        facts.append(f"<b>{run.pedals:,}</b> pedal events")
-    if run.duration:
-        facts.append(f"<b>{_clock(run.duration)}</b> excerpt")
-    if run.excerpt_start:
-        facts.append(f"from <b>{_clock(run.excerpt_start)}</b> in the video")
-    if run.bpm:
-        facts.append(f"<b>{run.bpm:g}</b> BPM")
-    if run.time_signature:
-        facts.append(f"<b>{escape(run.time_signature)}</b>")
-    if run.model:
-        facts.append(escape(run.model))
-    if run.modified:
-        facts.append(escape(run.modified.strftime("%b %d, %Y %H:%M")))
-    if card and card.thumbnail:
-        poster = f'<img class="bt-poster" src="{escape(card.thumbnail, quote=True)}" alt="">'
-    else:
-        poster = '<div class="bt-poster bt-placeholder">&#9835;</div>'
-    st.html(
-        f'<div class="bt-head">{poster}<div><h1>{escape(title)}</h1>'
-        f'<div class="bt-facts">{"".join(f"<span class=\'bt-fact\'>{fact}</span>" for fact in facts)}</div>'
-        f'<div class="bt-path">{escape(str(run.folder))}</div></div></div>'
-    )
-    actions = st.columns([1.2, 1.2, 1.2, 4], gap="small")
-    column = 0
-    if "playback" in pages:
-        actions[column].link_button(
-            "Play with score", pages["playback"], type="primary", icon=":material/play_arrow:", width="stretch"
-        )
-        column += 1
-    if "notation" in pages:
-        actions[column].link_button("Score only", pages["notation"], icon=":material/music_note:", width="stretch")
-        column += 1
-    if card and card.url:
-        actions[column].link_button("YouTube", card.url, icon=":material/open_in_new:", width="stretch")
-    actions[-1].caption("Play with score and Score only open full-size in a new tab.")
-
-
-def _score_tab(project: Path, run: Run, pages: dict[str, str]) -> None:
-    import streamlit as st
-    import streamlit.components.v1 as components
-
-    if not run.has_score:
-        st.info("This project has no score yet. Set a tempo on the Notes tab and rebuild.")
-        return
-    if "playback" in pages:
-        components.iframe(pages["playback"] + "?embed=1", height=820, scrolling=False)
-        st.caption(
-            "The highlighted measure follows the video. Click a measure to jump there. "
-            "Notation earlier and later shift the highlight when the score runs ahead of or behind the sound."
-        )
-        return
-    if "playback_error" in pages:
-        st.warning(pages["playback_error"])
-    if "notation" in pages:
-        components.iframe(pages["notation"] + "?embed=1", height=820, scrolling=True)
-    elif "notation_error" in pages:
-        st.warning(pages["notation_error"])
-    if not run.video_id:
-        _attach_video_form(project)
 
 
 def _attach_video_form(project: Path) -> None:
@@ -1059,6 +900,9 @@ def _harmony_tab(project: Path, manifest: dict) -> None:
         analysis.chords = chords
         analysis.sequences = sequences
         write_analysis(path, analysis)
+        from baroque_transcribe.parse_store import publish_analysis
+
+        publish_analysis(project)
     except Exception as exc:
         st.error(f"Could not save the harmony edits: {exc}")
         return
@@ -1131,11 +975,22 @@ def _files_tab(project: Path, run: Run, card: Card | None, manifest: dict) -> No
 # ------------------------------------------------------------------------- shared
 
 
-def _brand(crumb: str | None = None) -> None:
+def _brand(crumb: str | None = None, *, crumb_href: str | None = None, leaf: str | None = None) -> None:
+    """The wordmark, and under it the tag line or the trail back to the library.
+
+    ``crumb`` is the place after Library. ``crumb_href``, already escaped,
+    makes it a link, and ``leaf`` is one more step after it.
+    """
+
     import streamlit as st
 
     if crumb:
-        trail = f'<span class="bt-crumb"><a href="/">Library</a> &nbsp;/&nbsp; {escape(crumb)}</span>'
+        place = escape(crumb)
+        if crumb_href:
+            place = f'<a href="{crumb_href}">{place}</a>'
+        if leaf:
+            place += f" &nbsp;/&nbsp; {escape(leaf)}"
+        trail = f'<span class="bt-crumb"><a href="/">Library</a> &nbsp;/&nbsp; {place}</span>'
     else:
         trail = '<span class="bt-tag">Solo piano recordings into MIDI and a score, on this computer.</span>'
     st.html(f'<div class="bt-brand"><a class="bt-wordmark" href="/">Piano transcription</a>{trail}</div>')
@@ -1169,15 +1024,6 @@ def _manifest(project: Path) -> dict:
     except (OSError, json.JSONDecodeError):
         return {}
     return loaded if isinstance(loaded, dict) else {}
-
-
-def _clock(seconds: float) -> str:
-    whole = int(round(seconds))
-    minutes, secs = divmod(whole, 60)
-    hours, minutes = divmod(minutes, 60)
-    if hours:
-        return f"{hours}:{minutes:02d}:{secs:02d}"
-    return f"{minutes}:{secs:02d}"
 
 
 def _relative(moment: datetime) -> str:

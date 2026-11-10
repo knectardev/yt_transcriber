@@ -432,6 +432,109 @@ def test_transcribed_videos_are_one_card_per_youtube_video(tmp_path):
     assert "hqdefault.jpg" in shared["thumbnail"]
 
 
+def test_published_analysis_restores_and_fills_a_missing_file(tmp_path):
+    from baroque_transcribe.parse_store import publish_analysis, restore_projects
+
+    store = tmp_path / "store"
+    project = _scored_project(tmp_path / "take")
+    (project / "manifest.json").write_text(
+        json.dumps(
+            {
+                "origin": "https://youtu.be/abcdefghijk",
+                "title": "Toccata",
+                "youtube_url": "https://youtu.be/abcdefghijk",
+                "audio": {
+                    "excerpt_start_seconds": 12.0,
+                    "excerpt_end_seconds": 42.0,
+                    "working_duration_seconds": 30.0,
+                    "full_duration_seconds": 212.0,
+                    "sample_rate": 16000,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    record_parse(
+        action="transcribe",
+        status="ok",
+        source="https://youtu.be/abcdefghijk",
+        title="Toccata",
+        project="take",
+        project_dir=project,
+        store=store,
+        excerpt_start=12.0,
+        excerpt_end=42.0,
+        duration=30.0,
+        full_duration=212.0,
+        recorded_at=_when("2026-11-08T04:21:03Z"),
+    )
+    (project / "annotations.json").write_text('{"version": 1, "key": {"tonic": "G", "mode": "minor"}}\n', encoding="utf-8")
+    published = publish_analysis(project, store=store)
+    assert published is not None
+    event = json.loads((published / "event.json").read_text(encoding="utf-8"))
+    assert event["action"] == "analyze"
+    assert event["formats"]["annotations_json"]["stored"] is True
+    assert event["formats"]["notes_json"]["stored"] is False
+    assert (published / "annotations.json").is_file()
+    assert not (published / "notes.json").exists()
+
+    root = tmp_path / "transcriptions"
+    restored, skipped = restore_projects(store=store, projects_root=root)
+    assert skipped == []
+    assert restored == [root / "take"]
+    assert "G" in (root / "take" / "annotations.json").read_text(encoding="utf-8")
+    assert (root / "take" / "notes.json").is_file()
+
+    (root / "take" / "annotations.json").unlink()
+    (root / "take" / "notes.json").write_text('{"notes": [{"pitch": 60}]}\n', encoding="utf-8")
+    restored, skipped = restore_projects(store=store, projects_root=root)
+    assert restored == [root / "take"]
+    assert skipped == []
+    assert "G" in (root / "take" / "annotations.json").read_text(encoding="utf-8")
+    assert json.loads((root / "take" / "notes.json").read_text(encoding="utf-8"))["notes"][0]["pitch"] == 60
+
+    (root / "take" / "annotations.json").write_text('{"version": 1, "kept": true}\n', encoding="utf-8")
+    restored, skipped = restore_projects(store=store, projects_root=root)
+    assert restored == []
+    assert skipped == ["take"]
+    assert json.loads((root / "take" / "annotations.json").read_text(encoding="utf-8"))["kept"] is True
+
+
+def test_an_older_analysis_is_not_applied_to_a_newer_score(tmp_path):
+    from baroque_transcribe.parse_store import restore_projects
+
+    store = tmp_path / "store"
+    early = _scored_project(tmp_path / "early")
+    (early / "annotations.json").write_text('{"label": "old"}\n', encoding="utf-8")
+    record_parse(
+        action="transcribe",
+        status="ok",
+        source="https://youtu.be/abcdefghijk",
+        title="Toccata",
+        project="take",
+        project_dir=early,
+        store=store,
+        recorded_at=_when("2026-11-08T04:21:03Z"),
+    )
+    later = _scored_project(tmp_path / "later", note_count=4)
+    record_parse(
+        action="quantize",
+        status="ok",
+        source="https://youtu.be/abcdefghijk",
+        title="Toccata",
+        project="take",
+        project_dir=later,
+        store=store,
+        recorded_at=_when("2026-11-08T05:21:03Z"),
+    )
+    restored, skipped = restore_projects(store=store, projects_root=tmp_path / "transcriptions")
+    assert skipped == []
+    dest = restored[0]
+    notes = json.loads((dest / "notes.json").read_text(encoding="utf-8"))
+    assert len(notes["notes"]) == 4
+    assert not (dest / "annotations.json").exists()
+
+
 def _notes_dir(path: Path) -> Path:
     path.mkdir(parents=True)
     (path / "notes.json").write_text("{}\n", encoding="utf-8")

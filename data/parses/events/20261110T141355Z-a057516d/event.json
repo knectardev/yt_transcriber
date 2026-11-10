@@ -1,0 +1,79 @@
+{
+  "action": "analyze",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": 199.6336,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 199.6336,
+      "excerpt_end_seconds": 199.6336,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": 16000,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": 199.6336,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": false,
+      "stored": false
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": true,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": false,
+      "stored": false
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": false,
+      "stored": false
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": false,
+      "stored": false
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": false,
+      "stored": false
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    }
+  },
+  "id": "20261110T141355Z-a057516d",
+  "machine": "Knectar_Alien",
+  "project": "baroque_improvisation-full-20261107-232758",
+  "recorded_at": "2026-11-10T14:13:55Z",
+  "source": {
+    "kind": "youtube",
+    "title": "Improvised baroque toccata",
+    "url": "https://www.youtube.com/watch?v=bSfPnEfsEMY",
+    "video_id": "bSfPnEfsEMY"
+  },
+  "status": "ok",
+  "version": 1
+}
