@@ -24,9 +24,15 @@ from baroque_transcribe.defaults import ANNOTATIONS_JSON, MANIFEST, NOTES_JSON, 
 # write score pages, not here: this module is also imported for YouTube id
 # parsing on the UI home page, which must start without that weight.
 from baroque_transcribe.notation_settings import settings_from_manifest
-from baroque_transcribe.quantize import quantization_from_manifest
+from baroque_transcribe.quantize import Quantization, quantization_from_manifest
 from baroque_transcribe.schema import read_transcription
-from baroque_transcribe.sync_map import MeasureAnchor, NoteAnchor, measure_anchors, note_anchors
+from baroque_transcribe.sync_map import (
+    MeasureAnchor,
+    NoteAnchor,
+    measure_anchors,
+    note_anchors,
+    printed_measure_span,
+)
 
 # Same file name as ``notation._NOTATION_LIBRARY``; duplicated so this module
 # (and the page template below) does not need the music21 import at startup.
@@ -205,6 +211,26 @@ class PlaybackContext:
     # Header chips (``library.run_facts``): note count, tempo, model, and so on.
     facts: list[dict[str, str]] = field(default_factory=list)
     note_anchors: list[NoteAnchor] = field(default_factory=list)
+    # Where the last printed measure ends, on the same clock as the anchors.
+    # The last measure has no next anchor to end a looped selection at.
+    end_time: float | None = None
+    # A fragment's page: the whole passage ``(start, end)`` on the anchors'
+    # clock. The page cues the video there and loops it. None for a project.
+    passage: tuple[float, float] | None = None
+
+
+def score_end_time(quantization: Quantization) -> float:
+    """Working-audio seconds where the printed score ends.
+
+    The written end barline, or the last release when a note rings past it.
+    ``fragments.plan_fragment`` ends a window on the last measure the same way.
+    """
+
+    first, count = printed_measure_span(quantization)
+    end = quantization.step_to_audio(first + count * quantization.steps_per_measure)
+    if quantization.grid:
+        end = max(end, max(float(note.source_offset) for note in quantization.grid))
+    return float(end)
 
 
 def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext:
@@ -261,6 +287,7 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
         harmony=harmony,
         facts=run_facts(run) if run is not None else [],
         note_anchors=note_anchors(quantization),
+        end_time=score_end_time(quantization),
     )
 
 
@@ -290,7 +317,31 @@ def tools_page_url(home_url: str, project: Path) -> str:
     return f"{home_url.rstrip('/')}/project?project={quote(project_param(project))}"
 
 
-def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str = "", tools_url: str = "") -> Path:
+def extract_page_url(home_url: str, project: Path) -> str:
+    """Address of the form that saves measures of this project as a fragment.
+
+    The playback page adds ``&measures=<first>-<last>`` for the selected
+    passage. Empty when there is no library site to link to.
+    """
+
+    if not home_url:
+        return ""
+    from baroque_transcribe.library import project_param
+
+    return f"{home_url.rstrip('/')}/extract?project={quote(project_param(project))}"
+
+
+def write_playback_page(
+    context: PlaybackContext,
+    dest: Path,
+    *,
+    home_url: str = "",
+    tools_url: str = "",
+    extract_url: str = "",
+    source_url: str = "",
+    home_label: str = "",
+    tools_label: str = "",
+) -> Path:
     """Write the synced playback page next to the score.
 
     This is the page for one transcription: the video, the score that follows
@@ -299,6 +350,17 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
     harmony editor, and the files. Each adds a link when it is given.
     ``?embed=1`` on the page address hides the header, for a page that frames
     this one.
+
+    A passage of measures can be selected on the page and looped.
+    ``extract_url`` adds a link that sends the selection to the form that
+    saves it as a fragment.
+
+    The same page shows a saved fragment, whose context carries ``passage``.
+    ``source_url`` then links to the transcription it was taken from, and
+    ``home_label`` and ``tools_label`` reword the two header links.
+
+    ``?w=<seconds>`` on the page address cues the video at that time on the
+    anchors' clock, and ``?sel=<first>-<last>`` selects those measures.
     """
 
     if not context.score_path.is_file():
@@ -318,6 +380,14 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
             "videoId": context.video_id,
             "homeUrl": home_url or "",
             "toolsUrl": tools_url or "",
+            "extractUrl": extract_url or "",
+            "sourceUrl": source_url or "",
+            "homeLabel": home_label or "",
+            "toolsLabel": tools_label or "",
+            "endTime": context.end_time,
+            "passage": (
+                {"start": context.passage[0], "end": context.passage[1]} if context.passage is not None else None
+            ),
             "facts": context.facts,
             "folder": str(context.project),
             "excerptStart": context.excerpt_start,
@@ -413,11 +483,20 @@ class PlaybackServer:
     generated pages and the local notation library. A page is written again
     each time it is requested, so it shows the notes and harmony as they are
     now.
+
+    A saved fragment is served the same way under ``/f/<token>/``. Its pages
+    are written outside the fragment folder, which holds only what is
+    committed, and its sync offset is the one in ``fragment.json``.
     """
 
     def __init__(self, home_url: str = "") -> None:
         self._projects: dict[str, Path] = {}
         self._titles: dict[str, str] = {}
+        self._fragments: dict[str, Path] = {}
+        # Where fragment pages are written, and where a fragment's parent
+        # project is looked for. None means the repository's own folders.
+        self.fragment_pages: Path | None = None
+        self.transcriptions: Path | None = None
         self._lock = threading.Lock()
         self._build_lock = threading.Lock()
         self._httpd: ThreadingHTTPServer | None = None
@@ -485,6 +564,78 @@ class PlaybackServer:
                 project / "playback.html",
                 home_url=self.home_url,
                 tools_url=tools_page_url(self.home_url, project),
+                extract_url=extract_page_url(self.home_url, project),
+            )
+
+    # ----------------------------------------------------------- fragments
+
+    def register_fragment(self, folder: Path) -> str:
+        """Return the token for a fragment folder. One folder keeps one token."""
+
+        resolved = Path(folder).resolve()
+        with self._lock:
+            token = next((existing for existing, known in self._fragments.items() if known == resolved), None)
+            if token is None:
+                token = secrets.token_urlsafe(8)
+                self._fragments[token] = resolved
+        return token
+
+    def fragment_for(self, token: str) -> Path | None:
+        with self._lock:
+            return self._fragments.get(token)
+
+    def fragment_url(self, token: str) -> str:
+        return f"http://127.0.0.1:{self.port}/f/{token}/"
+
+    def _fragment_pages(self) -> Path:
+        if self.fragment_pages is not None:
+            return self.fragment_pages
+        from baroque_transcribe.fragments import fragment_pages_root
+
+        return fragment_pages_root()
+
+    def _fragment_source_url(self, folder: Path) -> str:
+        """The parent transcription's page at the fragment's place, when the parent is on this computer."""
+
+        from baroque_transcribe.fragment_pages import parent_place
+
+        place = parent_place(folder, transcriptions=self.transcriptions)
+        if place is None:
+            return ""
+        project, working = place
+        return f"{self.page_url(self.register(project))}?w={working:.3f}"
+
+    def build_fragment_playback(self, token: str) -> Path:
+        """Write a fragment's synced page from its files as they are now."""
+
+        from baroque_transcribe.fragment_pages import write_fragment_playback
+
+        folder = self.fragment_for(token)
+        if folder is None:
+            raise SyncError("That fragment is not being served.")
+        source_url = self._fragment_source_url(folder)
+        with self._build_lock:
+            return write_fragment_playback(
+                folder,
+                self._fragment_pages(),
+                home_url=self.home_url,
+                source_url=source_url,
+            )
+
+    def build_fragment_notation(self, token: str) -> Path:
+        """Write a fragment's static score page from its files as they are now."""
+
+        from baroque_transcribe.fragment_pages import fragment_has_video, write_fragment_notation
+
+        folder = self.fragment_for(token)
+        if folder is None:
+            raise SyncError("That fragment is not being served.")
+        with self._build_lock:
+            return write_fragment_notation(
+                folder,
+                self._fragment_pages(),
+                home_url=self.home_url,
+                playback_url=self.fragment_url(token) if fragment_has_video(folder) else None,
             )
 
     def build_notation(self, token: str) -> Path:
@@ -529,13 +680,27 @@ def _thumbnail_id(path: str) -> str | None:
     return video_id
 
 
+_PAGE_NAMES = {"", "index.html", "playback.html", "notation.html", "opensheetmusicdisplay.min.js", "sync-offset"}
+
+
 def _route(path: str) -> tuple[str, str] | None:
     parts = [part for part in urlparse(path).path.split("/") if part]
     if len(parts) < 2 or parts[0] != "p" or len(parts) > 3:
         return None
     name = parts[2] if len(parts) == 3 else ""
-    allowed = {"", "index.html", "playback.html", "notation.html", "opensheetmusicdisplay.min.js", "sync-offset"}
-    if name not in allowed:
+    if name not in _PAGE_NAMES:
+        return None
+    return parts[1], name
+
+
+def _fragment_route(path: str) -> tuple[str, str] | None:
+    """``(token, name)`` for ``/f/<token>/<name>``, the pages of a saved fragment."""
+
+    parts = [part for part in urlparse(path).path.split("/") if part]
+    if len(parts) < 2 or parts[0] != "f" or len(parts) > 3:
+        return None
+    name = parts[2] if len(parts) == 3 else ""
+    if name not in _PAGE_NAMES:
         return None
     return parts[1], name
 
@@ -555,6 +720,10 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                     self.send_error(404)
                     return
                 self._send(200, "image/jpeg", body, cache=True)
+                return
+            fragment = _fragment_route(self.path)
+            if fragment is not None:
+                self._get_fragment(*fragment)
                 return
             route = _route(self.path)
             project = server.project_for(route[0]) if route else None
@@ -593,6 +762,10 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
             self._send(200, content_type, target.read_bytes())
 
         def do_POST(self) -> None:  # noqa: N802
+            fragment = _fragment_route(self.path)
+            if fragment is not None:
+                self._post_fragment(*fragment)
+                return
             route = _route(self.path)
             project = server.project_for(route[0]) if route else None
             if route is None or project is None or route[1] != "sync-offset":
@@ -609,6 +782,81 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                 self.send_error(400)
                 return
             self._send(200, "application/json", json.dumps({"offset": stored}).encode("utf-8"))
+
+        def _get_fragment(self, token: str, name: str) -> None:
+            """One page of a saved fragment. Nothing in the fragment folder is written."""
+
+            from baroque_transcribe.fragment_pages import fragment_has_score, read_fragment_sync
+
+            folder = server.fragment_for(token)
+            if folder is None:
+                self.send_error(404)
+                return
+            if name == "sync-offset":
+                body = json.dumps({"offset": read_fragment_sync(folder)}).encode("utf-8")
+                self._send(200, "application/json", body)
+                return
+            if name == "opensheetmusicdisplay.min.js":
+                try:
+                    body = _notation_library().read_bytes()
+                except (RuntimeError, OSError):
+                    self.send_error(404)
+                    return
+                self._send(200, "text/javascript; charset=utf-8", body)
+                return
+            if name == "notation.html":
+                try:
+                    target = server.build_fragment_notation(token)
+                except (SyncError, OSError, ValueError, RuntimeError) as exc:
+                    self._send_to_fragment_details(folder, str(exc))
+                    return
+            else:
+                try:
+                    target = server.build_fragment_playback(token)
+                except (SyncError, OSError, ValueError) as exc:
+                    # A fragment of a local recording has no video to follow:
+                    # its score, with the harmony, is its page.
+                    if fragment_has_score(folder):
+                        self._redirect(f"/f/{token}/notation.html" + self._query())
+                    else:
+                        self._send_to_fragment_details(folder, str(exc))
+                    return
+            if not target.is_file():
+                self.send_error(404)
+                return
+            self._send(200, "text/html; charset=utf-8", target.read_bytes())
+
+        def _post_fragment(self, token: str, name: str) -> None:
+            """Store a fragment's sync offset. Only ``fragment.json`` is written."""
+
+            from baroque_transcribe.fragments import set_fragment_sync
+
+            folder = server.fragment_for(token)
+            if folder is None or name != "sync-offset":
+                self.send_error(404)
+                return
+            length = int(self.headers.get("Content-Length") or 0)
+            if length <= 0 or length > 4096:
+                self.send_error(400)
+                return
+            try:
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                stored = set_fragment_sync(folder, float(payload["offset"]))
+            except (KeyError, TypeError, ValueError, json.JSONDecodeError, OSError):
+                self.send_error(400)
+                return
+            self._send(200, "application/json", json.dumps({"offset": stored}).encode("utf-8"))
+
+        def _send_to_fragment_details(self, folder: Path, reason: str) -> None:
+            """A fragment page that cannot be drawn sends the reader to the fragment's details page."""
+
+            from baroque_transcribe.fragment_pages import fragment_details_url, fragment_id_of
+
+            details = fragment_details_url(server.home_url, fragment_id_of(folder))
+            if details:
+                self._redirect(details)
+            else:
+                self.send_error(404, explain=reason)
 
         def _query(self) -> str:
             query = urlparse(self.path).query
@@ -726,6 +974,19 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     }
     .sync .readout { color: var(--muted); }
     .sync .readout output { color: var(--ink); font-weight: 600; }
+    .passage {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.7rem;
+      padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+    }
+    .passage [hidden] { display: none !important; }
+    .passage .readout { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .passage .readout.chosen { color: var(--ink); font-weight: 600; }
+    .passage .ends { display: inline-flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; color: var(--muted); font-size: 0.86rem; }
+    .passage .end { display: inline-flex; align-items: center; gap: 0.25rem; }
+    .passage .end button { padding: 0.12rem 0.55rem; min-width: 1.9rem; }
+    .passage a { color: var(--accent-ink); font-weight: 600; font-size: 0.92rem; text-decoration: none; white-space: nowrap; }
+    .passage a:hover { text-decoration: underline; }
+    button#select-toggle[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: white; }
     .limit { margin: 0; max-width: 46rem; color: var(--muted); font-size: 0.84rem; line-height: 1.45; }
     #player-error { color: #9a3412; }
     #score-pane { flex: 1 1 auto; min-height: 0; overflow: auto; background: white; }
@@ -733,6 +994,9 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     .measure-hit { position: absolute; z-index: 3; cursor: pointer; border-radius: 3px; }
     .measure-hit:hover { outline: 1px solid rgba(180, 83, 9, 0.45); }
     .measure-hit.active { background: var(--accent-soft); }
+    .measure-hit.selected { background: rgba(180, 83, 9, 0.07); box-shadow: inset 0 -3px 0 rgba(180, 83, 9, 0.6); }
+    .measure-hit.selected.active { background: var(--accent-soft); }
+    body.selecting .measure-hit { cursor: crosshair; }
     .note-cursor {
       position: absolute; z-index: 5; pointer-events: auto; cursor: pointer;
       width: 8px; height: 8px; margin-left: -4px; border-radius: 999px;
@@ -759,6 +1023,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       <span class="crumb" id="home-sep" hidden>/</span>
       <h1>__TITLE__</h1>
       <a id="score-link" href="notation.html">Score only</a>
+      <a id="source-link" href="#" hidden>Source transcription</a>
       <a id="tools-link" href="#" hidden>Edit &amp; files</a>
       <a id="youtube-link" href="#" target="_blank" rel="noopener">Open on YouTube &nearr;</a>
     </div>
@@ -788,7 +1053,25 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         <button id="reset" type="button">Reset</button>
         <button id="later" type="button">Notation later</button>
       </div>
+      <div class="passage" id="passage-controls">
+        <button id="select-toggle" type="button" aria-pressed="false">Select passage</button>
+        <span class="readout" id="passage-label">No passage selected</span>
+        <span class="ends" id="passage-ends" hidden>
+          <span class="end">First
+            <button id="first-earlier" type="button" title="Begin one measure earlier">&minus;</button>
+            <button id="first-later" type="button" title="Begin one measure later">+</button>
+          </span>
+          <span class="end">Last
+            <button id="last-earlier" type="button" title="End one measure earlier">&minus;</button>
+            <button id="last-later" type="button" title="End one measure later">+</button>
+          </span>
+        </span>
+        <label class="follow"><input id="loop" type="checkbox"> Loop</label>
+        <button id="clear-passage" type="button" hidden>Clear</button>
+        <a id="extract-link" href="#" target="_top" hidden>Extract fragment&hellip;</a>
+      </div>
       <p class="limit">The highlighted measure follows the video. Scroll the score to look around — that turns off Follow score so playback stops forcing the viewport; tick Follow score again to resume. Turn on Highlight notes for a small attack dot above the staff (pitch names stay in the measure label). Notation earlier/later move the cursor. Click a measure to jump there; with Highlight notes on, click the attack dot to seek to that onset.</p>
+      <p class="limit" id="passage-help">To mark a passage, choose Select passage, then click its first measure and its last; the − and + buttons move either end by a measure. While selecting, a click marks a measure and does not move the video. Choose the button again to go back to jumping. Loop replays the passage at whatever speed the player is set to, between the estimated starts of its measures.</p>
       <p id="player-error" class="limit" hidden>This video cannot be embedded. The working audio is still on the transcription page.</p>
     </div>
   </header>
@@ -808,12 +1091,19 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       if (config.homeUrl) {
         home.href = config.homeUrl;
         home.hidden = false;
+        if (config.homeLabel) home.textContent = "\\u2190 " + config.homeLabel;
         document.getElementById("home-sep").hidden = false;
       }
       const tools = document.getElementById("tools-link");
       if (config.toolsUrl) {
         tools.href = config.toolsUrl;
         tools.hidden = false;
+        if (config.toolsLabel) tools.textContent = config.toolsLabel;
+      }
+      const source = document.getElementById("source-link");
+      if (config.sourceUrl) {
+        source.href = config.sourceUrl;
+        source.hidden = false;
       }
       const meta = document.getElementById("meta-row");
       const folder = document.getElementById("project-path");
@@ -832,7 +1122,13 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       folder.textContent = config.folder || "";
       folder.title = config.folder || "";
       meta.hidden = !(config.folder || (config.facts || []).length);
-      document.getElementById("youtube-link").href = "https://www.youtube.com/watch?v=" + encodeURIComponent(config.videoId);
+      let watch = "https://www.youtube.com/watch?v=" + encodeURIComponent(config.videoId);
+      if (config.passage) {
+        // A fragment opens YouTube where the passage begins, in whole seconds.
+        const begins = Number(config.passage.start) + (Number(config.excerptStart) || 0) + (Number(config.syncOffset) || 0);
+        if (isFinite(begins) && begins >= 1) watch += "&t=" + Math.floor(begins) + "s";
+      }
+      document.getElementById("youtube-link").href = watch;
     })();
     const anchors = config.anchors || [];
     const excerptStart = Number(config.excerptStart) || 0;
@@ -1193,6 +1489,133 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       });
     }
 
+    // ---- Passage: mark a run of measures, loop it, send it to the extract form.
+    // Every time here is on the anchors' clock. toVideo() is the one place
+    // that turns such a time into a player time, with the current sync offset,
+    // so a sync adjustment moves both ends of a loop together.
+    const passage = (config.passage && isFinite(Number(config.passage.start)) && isFinite(Number(config.passage.end)))
+      ? { start: Number(config.passage.start), end: Number(config.passage.end) }
+      : null;
+    const scoreEnd = (typeof config.endTime === "number" && isFinite(config.endTime)) ? config.endTime : null;
+    const firstMeasure = anchors.length ? anchors[0].measure : 1;
+    const lastMeasure = anchors.length ? anchors[anchors.length - 1].measure : 1;
+    let selecting = false;
+    let selection = null;
+    let awaitingLast = false;
+    let lastLoopSeek = 0;
+
+    function toVideo(time) {
+      return time + excerptStart + syncOffset;
+    }
+
+    function selectionBounds() {
+      if (!selection) return null;
+      const opening = anchorByMeasure[selection.first];
+      if (!opening) return null;
+      const following = anchorByMeasure[selection.last + 1];
+      let end = following ? following.time : (scoreEnd !== null ? scoreEnd : measureSpan(selection.last).end);
+      if (!(end > opening.time)) end = opening.time + 2;
+      return { start: opening.time, end: end };
+    }
+
+    function loopBounds() {
+      // The selected measures, or on a fragment's page the whole fragment.
+      return selectionBounds() || passage;
+    }
+
+    function loopEnabled() {
+      const box = document.getElementById("loop");
+      return !!(box && box.checked);
+    }
+
+    function paintSelection() {
+      document.querySelectorAll(".measure-hit").forEach(function (hit) {
+        const number = Number(hit.dataset.measure);
+        hit.classList.toggle("selected", !!selection && number >= selection.first && number <= selection.last);
+      });
+      document.body.classList.toggle("selecting", selecting);
+      const toggle = document.getElementById("select-toggle");
+      toggle.setAttribute("aria-pressed", selecting ? "true" : "false");
+      toggle.textContent = selecting ? "Selecting\\u2026" : "Select passage";
+      const label = document.getElementById("passage-label");
+      const bounds = selectionBounds();
+      let text = "No passage selected";
+      if (selection && bounds) {
+        const measures = selection.first === selection.last
+          ? "Measure " + selection.first
+          : "Measures " + selection.first + "\\u2013" + selection.last;
+        text = measures + " \\u00b7 " + formatPlace(toVideo(bounds.start)) + "\\u2013" + formatPlace(toVideo(bounds.end))
+          + " \\u00b7 " + (bounds.end - bounds.start).toFixed(1) + " s";
+        if (awaitingLast) text += " \\u00b7 click the last measure";
+      } else if (selecting) {
+        text = "Click the first measure";
+      } else if (passage) {
+        text = "Whole fragment \\u00b7 " + (passage.end - passage.start).toFixed(1) + " s";
+      }
+      label.textContent = text;
+      label.classList.toggle("chosen", !!selection);
+      document.getElementById("passage-ends").hidden = !selection;
+      document.getElementById("clear-passage").hidden = !selection;
+      const extract = document.getElementById("extract-link");
+      if (selection && config.extractUrl) {
+        extract.href = config.extractUrl + "&measures=" + selection.first + "-" + selection.last;
+        extract.hidden = false;
+      } else {
+        extract.hidden = true;
+      }
+    }
+
+    function setSelection(first, last) {
+      const low = Math.max(firstMeasure, Math.min(first, last));
+      const high = Math.min(lastMeasure, Math.max(first, last));
+      if (!anchorByMeasure[low] || !anchorByMeasure[high]) return;
+      selection = { first: low, last: high };
+      paintSelection();
+    }
+
+    function pickMeasure(number) {
+      // The first click begins a passage; the next one sets its other end.
+      if (selection && awaitingLast) {
+        awaitingLast = false;
+        setSelection(Math.min(selection.first, number), Math.max(selection.last, number));
+      } else {
+        awaitingLast = true;
+        setSelection(number, number);
+      }
+    }
+
+    function moveEnd(which, by) {
+      if (!selection) return;
+      awaitingLast = false;
+      if (which === "first") {
+        setSelection(Math.max(firstMeasure, Math.min(selection.last, selection.first + by)), selection.last);
+      } else {
+        setSelection(selection.first, Math.min(lastMeasure, Math.max(selection.first, selection.last + by)));
+      }
+    }
+
+    function seekToLoopStart(bounds) {
+      lastLoopSeek = performance.now();
+      clockPlaying = false;
+      player.seekTo(Math.max(0, toVideo(bounds.start)), true);
+    }
+
+    function keepInsideLoop(current) {
+      // Only while playing, so a paused player can be scrubbed anywhere.
+      if (!loopEnabled() || !player || !player.seekTo) return;
+      const bounds = loopBounds();
+      if (!bounds) return;
+      let playing = false;
+      try { playing = player.getPlayerState() === 1; } catch (error) { return; }
+      if (!playing) return;
+      // A seek takes a moment to show in the reported time.
+      if (performance.now() - lastLoopSeek < 600) return;
+      const start = Math.max(0, toVideo(bounds.start));
+      const end = toVideo(bounds.end);
+      if (!(end > start)) return;
+      if (current >= end || current < start - 0.75) seekToLoopStart(bounds);
+    }
+
     function syncFromPlayer() {
       if (!player || !player.getCurrentTime) return;
       let current = 0;
@@ -1203,6 +1626,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       } catch (error) {
         return;
       }
+      keepInsideLoop(current);
       document.getElementById("clock").textContent = formatClock(current) + " / " + formatClock(duration);
       const working = current - excerptStart - syncOffset;
       applyMeasure(measureAt(working));
@@ -1217,6 +1641,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       syncOffset = Math.max(-60, Math.min(60, next));
       showOffset();
       stampMeasurePlaces();
+      paintSelection();
       syncFromPlayer();
       fetch("sync-offset", {
         method: "POST",
@@ -1264,6 +1689,11 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         hit.style.width = ((maxX - minX) * scale) + "px";
         hit.style.height = ((maxY - minY) * scale) + "px";
         hit.addEventListener("click", function (event) {
+          if (selecting) {
+            // Marking a passage: the click chooses a measure and leaves the video where it is.
+            pickMeasure(Number(event.currentTarget.dataset.measure));
+            return;
+          }
           const chosen = anchorByMeasure[Number(event.currentTarget.dataset.measure)];
           if (!chosen || !player || !player.seekTo) return;
           player.seekTo(Math.max(0, chosen.time + excerptStart + syncOffset), true);
@@ -1271,7 +1701,17 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         });
         pageEl.appendChild(hit);
       }
+      paintSelection();
       syncFromPlayer();
+    }
+
+    function openingCue() {
+      // Where the video is cued when the page opens. ?w= names a time on the
+      // anchors' clock; a fragment opens on its passage; otherwise the excerpt start.
+      const asked = parseFloat(new URLSearchParams(window.location.search).get("w"));
+      if (isFinite(asked)) return Math.max(0, toVideo(asked));
+      if (passage) return Math.max(0, toVideo(passage.start));
+      return Math.max(0, excerptStart);
     }
 
     function onYouTubeIframeAPIReady() {
@@ -1279,11 +1719,16 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         playerVars: { rel: 0, modestbranding: 1, origin: window.location.origin },
         events: {
           onReady: function (event) {
-            event.target.cueVideoById({ videoId: config.videoId, startSeconds: Math.max(0, excerptStart) });
+            event.target.cueVideoById({ videoId: config.videoId, startSeconds: openingCue() });
             syncFromPlayer();
           },
           onStateChange: function (event) {
             document.getElementById("play").textContent = event.data === 1 ? "Pause" : "Play";
+            if (event.data === 0 && loopEnabled() && loopBounds()) {
+              // The video ran out before the passage's written end: go round again.
+              seekToLoopStart(loopBounds());
+              player.playVideo();
+            }
             syncFromPlayer();
           },
           onPlaybackRateChange: function (event) {
@@ -1320,6 +1765,29 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     document.getElementById("earlier").addEventListener("click", function () { setOffset(syncOffset + 0.1); });
     document.getElementById("later").addEventListener("click", function () { setOffset(syncOffset - 0.1); });
     document.getElementById("reset").addEventListener("click", function () { setOffset(0); });
+    document.getElementById("select-toggle").addEventListener("click", function () {
+      selecting = !selecting;
+      awaitingLast = false;
+      paintSelection();
+    });
+    document.getElementById("clear-passage").addEventListener("click", function () {
+      selection = null;
+      awaitingLast = false;
+      paintSelection();
+    });
+    document.getElementById("first-earlier").addEventListener("click", function () { moveEnd("first", -1); });
+    document.getElementById("first-later").addEventListener("click", function () { moveEnd("first", 1); });
+    document.getElementById("last-earlier").addEventListener("click", function () { moveEnd("last", -1); });
+    document.getElementById("last-later").addEventListener("click", function () { moveEnd("last", 1); });
+    document.getElementById("loop").addEventListener("change", syncFromPlayer);
+    (function () {
+      // A fragment's page loops its passage until told otherwise.
+      if (passage) document.getElementById("loop").checked = true;
+      // ?sel=12-15 arrives with those measures already selected.
+      const asked = /^(\\d+)(?:-(\\d+))?$/.exec(new URLSearchParams(window.location.search).get("sel") || "");
+      if (asked) setSelection(Number(asked[1]), Number(asked[2] || asked[1]));
+      paintSelection();
+    })();
     showOffset();
     setInterval(syncFromPlayer, 100);
     fetch("sync-offset").then(function (response) { return response.json(); }).then(function (payload) {

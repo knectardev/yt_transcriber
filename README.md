@@ -184,11 +184,35 @@ That opens a local site at <http://127.0.0.1:8765>. Links inside the site open i
 
 The home page has the controls that start a transcription (YouTube URL, local file, upload, or a MIDI file to draw without running the model; excerpt and notation settings are under an expander) and, below them, the library: a grid of the videos and recordings that already have a transcription. Each YouTube video appears once with its thumbnail; several runs of the same video are listed as chips on its card. A recording without a video gets a plain tile. Clicking a card opens that transcription's page. A run named in the parse history but missing from this computer is shown greyed out.
 
-A transcription's page is the video with the score under it. The header gives the note and pedal counts, excerpt length, tempo, meter, model, and the project folder. The highlighted measure follows the video; optional **Highlight notes** places a small attack dot above the staff (pitch names stay in the measure label). Scrolling the score turns off **Follow score** so playback stops forcing the viewport. Clicking a measure jumps the video there; with note highlight on, clicking the attack dot seeks to that onset. **Score only** shows the static two-staff score, and **Play with score** on that page comes back. A recording with no video opens on its score. The page is written again each time it is opened, so it shows the notes and harmony as they are now. It is served on a second local port that is chosen at each launch, so its address is not one to bookmark. Start from the home page.
+A transcription's page is the video with the score under it. The header gives the note and pedal counts, excerpt length, tempo, meter, model, and the project folder. The highlighted measure follows the video; optional **Highlight notes** places a small attack dot above the staff (pitch names stay in the measure label). Scrolling the score turns off **Follow score** so playback stops forcing the viewport. Clicking a measure jumps the video there; with note highlight on, clicking the attack dot seeks to that onset. **Select passage** marks a run of measures (click the first, then the last; the − and + buttons move either end). **Loop** replays that run at whatever speed the player is set to. **Extract fragment** sends the range to a form that saves it. **Score only** shows the static two-staff score, and **Play with score** on that page comes back. A recording with no video opens on its score. The page is written again each time it is opened, so it shows the notes and harmony as they are now. It is served on a second local port that is chosen at each launch, so its address is not one to bookmark. Start from the home page.
 
-**Edit & files** on that page opens `/project?project=<folder>`, which holds the rest. Its tabs are the working audio and the mix of that audio with a simple tone at each detected pitch (a check of timing, not a piano sound) with the plots, the editable note table with the tempo, meter, subdivision, and staff split used to rebuild MIDI and MusicXML, the Harmony tab described below, and the downloadable files with the run's warnings. A project transcribed from a local file can have a YouTube address attached there so the score can follow the video. **Back to video and score** returns to the transcription's page. A transcription that has just finished opens here, and so does a project that has no score yet.
+**Edit & files** on that page opens `/project?project=<folder>`, which holds the rest. Its tabs are the working audio and the mix of that audio with a simple tone at each detected pitch (a check of timing, not a piano sound) with the plots, the editable note table with the tempo, meter, subdivision, and staff split used to rebuild MIDI and MusicXML, the Harmony tab described below, the downloadable files with the run's warnings, and a **Fragments** tab that lists passages saved from this transcription and can open the extract form from measure numbers (the way to save a passage when there is no video). A project transcribed from a local file can have a YouTube address attached there so the score can follow the video. **Back to video and score** returns to the transcription's page. A transcription that has just finished opens here, and so does a project that has no score yet.
 
 `baroque-transcribe ui --project transcriptions\piece` opens straight to that project's Edit & files page.
+
+## Fragment library
+
+A fragment is a run of printed measures taken from a transcription and stored as its own folder under `data/fragments/<id>/`. It keeps its own `notes.json`, `grid.json`, `performance.mid`, `quantized.mid`, `score.musicxml`, and (when the parent had one) `harmony.json`. The parent transcription is only read. The quantized score is a slice of the parent's grid, not a second quantization, so the selected measures match the parent except at the two outer barlines.
+
+Membership is decided on the grid. A note the parent prints in the selection is kept even if it was played early or late. A note already sounding at the first barline is struck again at the start of the fragment, at its original loudness — an intentional approximation, because the real attack came earlier. A note that rings past the last barline is cut there. Those counts are shown on the extract form before you save.
+
+The fragment has its own clocks. Fragment time zero is the start of the playback window. The source-video interval is written once. A later sync nudge on the fragment's page writes only `sync.offset_seconds` in `fragment.json`; it moves where the player looks and does not change the duration or the stored interval.
+
+The **Fragment library** link on the home page opens `/fragments`. Search by text, analyzed key, tags, source, or a chord sequence (`V7 i` matches those labels next to each other; `V` and `v` are different chords). A fragment of a YouTube transcription opens with the video cued and looping on the passage and the fragment's own score. A fragment of a local recording has the score and the downloads, and no source-audio player: audio is never copied into a fragment. **Open source transcription** goes to the parent at that place when the parent is on this computer; otherwise **Open on YouTube** uses the stored timestamp.
+
+```text
+baroque-transcribe fragments extract transcriptions\piece --measures 12-15 --title "Descending fifths"
+baroque-transcribe fragments extract transcriptions\piece --measures 12-15 --dry-run
+baroque-transcribe fragments list --text cadence --tag sequence --key "G minor"
+baroque-transcribe fragments reindex
+baroque-transcribe fragments reindex --rebuild
+```
+
+The SQLite index at `.local/library.sqlite` is a local cache. JSON files under `data/fragments/` are authoritative. Deleting the index and running `fragments reindex --rebuild` restores search. **Check for changes** and **Rebuild library index** on the library page do the same. The index is not committed.
+
+The full storage map — working projects, parse history, fragment folders, the SQLite schema, and why the library is files rather than a database — is [STORAGE.md](STORAGE.md).
+
+Analyzed key (from the parent's `annotations.json`, used for Roman numerals and the key filter) is stored separately from the written MusicXML key signature. In v1 the MusicXML key is the analyzed key so spelling matches the parent; the pitches are not transposed.
 
 The same plots are written by the `transcribe` command. `baroque-transcribe diagnostics transcriptions\baroque_improvisation --position 12.5` redraws them with a cursor.
 
@@ -241,7 +265,7 @@ Commit `data/parses/` and pull it on the other machine. The history and the scor
 
 ## Using two computers
 
-The repository is the sync mechanism. Each machine has its own clone, its own `.venv`, its own model checkpoint, and its own `transcriptions/` folder. Only the parse history under `data/parses/` travels between them.
+The repository is the sync mechanism. Each machine has its own clone, its own `.venv`, its own model checkpoint, and its own `transcriptions/` folder. The parse history under `data/parses/` and the fragment library under `data/fragments/` travel between them.
 
 **What travels, and what does not**
 
@@ -249,6 +273,7 @@ The repository is the sync mechanism. Each machine has its own clone, its own `.
 | --- | --- |
 | The program, the tests, and these documents | `transcriptions/` (every project folder, including `manifest.json`) |
 | `data/parses/events/`: `event.json`, `notes.json`, `pedal.json`, `raw.mid`, `quantized.mid`, `score.musicxml`, and `annotations.json` for each run | All audio (`source.wav`, `working.wav`, diagnostics) |
+| `data/fragments/<id>/`: `fragment.json`, `notes.json`, `grid.json`, `harmony.json`, `performance.mid`, `quantized.mid`, `score.musicxml` | `.local/` (the fragment search index and generated fragment pages; rebuild with `fragments reindex`) |
 | | The 165 MB model checkpoint (`%USERPROFILE%\.cache\baroque_transcribe\`) |
 | | The thumbnail cache (`data/thumbnails\`); it is re-fetched on first view |
 | | `.venv\`, browser cookies, and YouTube sign-ins |
@@ -286,6 +311,8 @@ The same warning in reverse: a `git pull` and a restore never update a project f
 
 ## Layout
 
+See [STORAGE.md](STORAGE.md) for the on-disk layout, JSON contracts, and SQLite index. The table below is the Python modules.
+
 | Piece | Role |
 | --- | --- |
 | `audio.py` | YouTube or local file, trim, normalize |
@@ -301,9 +328,13 @@ The same warning in reverse: a `git pull` and a restore never update a project f
 | `analysis.py` | Harmonic draft: key estimate, chord labels, sequence spans in `annotations.json`; voice/imitation/cadence hooks still reserved |
 | `parse_store.py` | JSON history of each run, with the score files and a reserved PDF slot; also restores project folders from that history on another machine |
 | `library.py` | Cards for the home page: the parse history merged with the folders under `transcriptions/` |
-| `playback.py` | YouTube id parsing and the localhost server that writes and serves each transcription's page (video with score) and its score-only page |
-| `ui.py` | The local site: home page with the transcribe controls and the library, and an Edit & files page per project |
-| `cli.py` | `prepare`, `transcribe`, `quantize`, `compare`, `analyze`, `diagnostics`, `doctor`, `ui`, `history` |
+| `playback.py` | YouTube id parsing and the localhost server that writes and serves each transcription's page (video with score) and its score-only page, plus `/f/<token>/` for a saved fragment |
+| `fragments.py` | Plan and extract a measure range; fragment manifests, clocks, and metadata edits. Does not write the parent. |
+| `fragment_index.py` | Rebuildable SQLite search index over `data/fragments/` |
+| `fragment_pages.py` | Playback and score pages for a saved fragment, written under `.local/fragment_pages/` |
+| `fragment_ui.py` | Streamlit `/fragments`, `/extract`, `/fragment` |
+| `ui.py` | The local site: home page with the transcribe controls and the library, an Edit & files page per project, and the fragment library |
+| `cli.py` | `prepare`, `transcribe`, `quantize`, `compare`, `analyze`, `diagnostics`, `doctor`, `ui`, `history`, `fragments` |
 
 `notes.json` is the stable intermediate those later analyzers should read. They should write annotations beside the transcription and leave `raw.mid` alone. The harmonic analyzer does exactly that: it reads `notes.json` and writes `annotations.json`.
 

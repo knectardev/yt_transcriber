@@ -54,6 +54,7 @@ from baroque_transcribe.library import (
 # ``notation`` (music21), ``pipeline`` (model/diagnostics stack), and ``pandas``
 # are imported inside the handlers that use them. At the top they added
 # seconds to every first page load, including the home-page thumbnail grid.
+from baroque_transcribe import fragment_ui
 from baroque_transcribe.playback import (
     SyncError,
     detail_url,
@@ -126,6 +127,12 @@ _STYLE = """
   }
   .bt-back { color: var(--bt-accent-ink); text-decoration: none; font-weight: 500; font-size: 0.95rem; }
   .bt-back:hover { text-decoration: underline; }
+  .bt-frag { padding: 0.7rem 0 0.2rem; }
+  .bt-frag-meta { color: var(--bt-muted); font-size: 0.86rem; margin: 0.25rem 0 0.45rem; line-height: 1.4; }
+  .bt-brand .bt-tag a { color: var(--bt-accent-ink); text-decoration: none; font-weight: 500; }
+  .bt-brand .bt-tag a:hover { text-decoration: underline; }
+  .bt-section .bt-count a { color: var(--bt-accent-ink); text-decoration: none; }
+  .bt-section .bt-count a:hover { text-decoration: underline; }
 </style>
 """
 
@@ -141,11 +148,19 @@ def run() -> None:
     )
     st.html(_STYLE)
     shared_playback_server(_home_url())
+    fragment_ui.prepare_index()
     home = st.Page(_home_page, title="Library", url_path="", default=True)
     project = st.Page(_project_page, title="Project", url_path="project")
+    fragments = st.Page(fragment_ui.fragments_page, title="Fragments", url_path="fragments")
+    extract = st.Page(fragment_ui.extract_page, title="Extract fragment", url_path="extract")
+    fragment = st.Page(fragment_ui.fragment_page, title="Fragment", url_path="fragment")
     _PAGES["home"] = home
     _PAGES["project"] = project
-    navigation = st.navigation([home, project], position="hidden")
+    _PAGES["fragments"] = fragments
+    _PAGES["extract"] = extract
+    _PAGES["fragment"] = fragment
+    fragment_ui.bind_pages(_PAGES)
+    navigation = st.navigation([home, project, fragments, extract, fragment], position="hidden")
     _open_launch_project()
     navigation.run()
 
@@ -204,7 +219,8 @@ def _home_page() -> None:
     count = sum(1 for card in cards for run in card.runs if run.available)
     st.html(
         '<div class="bt-section"><h2>Library</h2>'
-        f'<span class="bt-count">{count} transcription{"" if count == 1 else "s"} on this computer</span></div>'
+        f'<span class="bt-count">{count} transcription{"" if count == 1 else "s"} on this computer'
+        ' · <a href="/fragments">Fragments</a></span></div>'
     )
     if not cards:
         st.html('<div class="bt-empty">Nothing has been transcribed yet. The first result will appear here.</div>')
@@ -536,7 +552,7 @@ def _project_page() -> None:
         st.info("This project has no score yet. Set a tempo on the Notes tab and rebuild.")
 
     manifest = _manifest(project)
-    tabs = st.tabs(["Listen", "Notes", "Harmony", "Files"])
+    tabs = st.tabs(["Listen", "Notes", "Harmony", "Files", "Fragments"])
     with tabs[0]:
         _listen_tab(project, manifest)
     with tabs[1]:
@@ -545,6 +561,8 @@ def _project_page() -> None:
         _harmony_tab(project, manifest)
     with tabs[3]:
         _files_tab(project, run, card, manifest)
+    with tabs[4]:
+        fragment_ui.project_tab(project)
 
 
 def _attach_video_form(project: Path) -> None:
@@ -990,7 +1008,10 @@ def _brand(crumb: str | None = None, *, crumb_href: str | None = None, leaf: str
             place += f" &nbsp;/&nbsp; {escape(leaf)}"
         trail = f'<span class="bt-crumb"><a href="/">Library</a> &nbsp;/&nbsp; {place}</span>'
     else:
-        trail = '<span class="bt-tag">Solo piano recordings into MIDI and a score, on this computer.</span>'
+        trail = (
+            '<span class="bt-tag">Solo piano recordings into MIDI and a score, on this computer. '
+            '<a href="/fragments">Fragment library</a></span>'
+        )
     st.html(f'<div class="bt-brand"><a class="bt-wordmark" href="/">Piano transcription</a>{trail}</div>')
 
 

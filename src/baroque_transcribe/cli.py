@@ -145,10 +145,156 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Restore only: also download the excerpt audio (section only). The model is never run.",
     )
 
+    fragments = sub.add_parser(
+        "fragments",
+        help="Extract a passage of a transcription as a reusable fragment, or list and index the saved fragments.",
+    )
+    fragment_sub = fragments.add_subparsers(dest="fragments_command", required=True)
+    extract = fragment_sub.add_parser(
+        "extract",
+        help="Save whole measures of a project as a fragment under data/fragments. The project is not changed.",
+    )
+    extract.add_argument("project", type=Path, help="Transcription directory.")
+    extract.add_argument(
+        "--measures",
+        required=True,
+        help="Printed measures to keep, such as 12-15, or one measure such as 12.",
+    )
+    extract.add_argument("--title", default=None, help="Name of the fragment. Required unless --dry-run is given.")
+    extract.add_argument("--description", default="")
+    extract.add_argument("--practice-notes", default="")
+    extract.add_argument("--tag", action="append", default=[], help="A tag. Repeat for more than one.")
+    extract.add_argument("--composer", default="")
+    extract.add_argument("--performer", default="")
+    extract.add_argument("--dry-run", action="store_true", help="Describe the fragment without saving it.")
+    _add_library_arguments(extract)
+
+    listing = fragment_sub.add_parser("list", help="List the saved fragments, newest change first, with optional filters.")
+    listing.add_argument("--text", default="", help="Words that must appear in the title, notes, source title, or tags.")
+    listing.add_argument("--tag", action="append", default=[], help="A tag the fragment must carry. Repeat to require more.")
+    listing.add_argument("--key", default="", help="Analyzed key, such as 'G minor', or a tonic alone, such as G.")
+    listing.add_argument(
+        "--progression",
+        default="",
+        help="Chord labels that must appear in a row, such as 'V7 i' or 'Dm7 G7'. Case matters: V is not v.",
+    )
+    _add_library_arguments(listing)
+
+    reindex = fragment_sub.add_parser(
+        "reindex",
+        help="Read every fragment manifest and bring the search index up to date.",
+    )
+    reindex.add_argument("--rebuild", action="store_true", help="Delete the index file and build it again from the manifests.")
+    _add_library_arguments(reindex)
+
     ui = sub.add_parser("ui", help="Open the local review window.")
     ui.add_argument("--port", type=int, default=DEFAULT_UI_PORT)
     ui.add_argument("--project", type=Path, default=None)
     return parser
+
+
+def _add_library_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--library",
+        type=Path,
+        default=None,
+        help="Folder that holds the fragments. Default: data/fragments in this repository.",
+    )
+    parser.add_argument(
+        "--index",
+        type=Path,
+        default=None,
+        help="Search index file. Default: .local/library.sqlite in this repository. It is rebuilt from the fragments.",
+    )
+
+
+def _parse_measures(text: str) -> tuple[int, int]:
+    """``12-15`` or ``12`` as a pair of printed measure numbers."""
+
+    from baroque_transcribe.fragments import parse_measures
+
+    return parse_measures(text)
+
+
+def _fragments(args: argparse.Namespace) -> int:
+    import sqlite3
+
+    from baroque_transcribe.fragment_index import reconcile, refresh_folder, search_fragments
+    from baroque_transcribe.fragments import describe_plan, extract_fragment, plan_fragment
+
+    try:
+        if args.fragments_command == "extract":
+            start, end = _parse_measures(args.measures)
+            if args.dry_run:
+                for line in describe_plan(plan_fragment(args.project, start, end)):
+                    print(line)
+                print("Nothing was saved.")
+                return 0
+            if not args.title:
+                raise ValueError("Give the fragment a name with --title.")
+            folder = extract_fragment(
+                args.project,
+                start,
+                end,
+                title=args.title,
+                description=args.description,
+                practice_notes=args.practice_notes,
+                tags=args.tag,
+                composer=args.composer,
+                performer=args.performer,
+                root=args.library,
+            )
+            for line in describe_plan(plan_fragment(args.project, start, end)):
+                print(line)
+            print(f"Saved fragment {folder.name} in {folder}")
+            try:
+                _print_index_report(refresh_folder(folder, args.index))
+            except (ValueError, OSError, sqlite3.Error) as exc:
+                # The fragment is saved. The index is only a way to search, and
+                # the next reindex will pick the fragment up.
+                print(f"warning: the search index was not updated: {exc}", file=sys.stderr)
+            return 0
+        if args.fragments_command == "reindex":
+            report = reconcile(args.library, args.index, mode="rebuild" if args.rebuild else "full")
+            print(("Rebuilt the index. " if args.rebuild else "") + report.summary())
+            _print_index_report(report, summary=False)
+            return 0
+        if args.fragments_command == "list":
+            _print_index_report(reconcile(args.library, args.index), summary=False)
+            tonic, _space, mode = " ".join(args.key.split()).partition(" ")
+            found = search_fragments(
+                args.index,
+                text=args.text,
+                tags=args.tag,
+                key_tonic=tonic,
+                key_mode=mode.lower(),
+                progression=args.progression,
+            )
+            for item in found:
+                where = f"m. {item.measure_start}-{item.measure_end}" if item.measure_start else ""
+                details = [part for part in (item.key, where, f"{item.duration:.1f} s", item.source_title) if part]
+                print(f"{item.id}  {item.title}  [{'; '.join(details)}]")
+                if item.tags:
+                    print(f"    tags: {', '.join(item.tags)}")
+                if item.roman:
+                    print(f"    harmony: {' '.join(item.roman)}")
+            print(f"{len(found)} fragment{'' if len(found) == 1 else 's'}.")
+            return 0
+    except (ValueError, OSError, sqlite3.Error) as exc:
+        # FragmentError, FragmentIndexError and QuantizeError are ValueErrors.
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    return 2
+
+
+def _print_index_report(report, *, summary: bool = True) -> None:
+    """Say what a reconcile did, and always name the folders it could not index."""
+
+    if summary:
+        print(f"Index: {report.summary()}")
+    for problem in report.problems:
+        note = " Its entry was removed from the index." if problem.was_indexed else ""
+        print(f"warning: {problem.folder}: {problem.message}{note}", file=sys.stderr)
 
 
 def _add_notation_arguments(parser: argparse.ArgumentParser) -> None:
@@ -409,6 +555,8 @@ def main(argv: list[str] | None = None) -> int:
         return _history(args.history_command, args.root, with_audio=args.with_audio)
     if args.command == "ui":
         return _launch_ui(args.port, args.project)
+    if args.command == "fragments":
+        return _fragments(args)
 
     from baroque_transcribe.analysis import AnalysisError
     from baroque_transcribe.audio import AudioError

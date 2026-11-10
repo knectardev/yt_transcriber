@@ -19,6 +19,12 @@ transcriptions/
 !data/parses/**/*.mid
 !data/parses/**/*.musicxml
 !data/parses/**/*.xml
+# Fragment library: manifests and small score files are committed.
+!data/fragments/**/*.mid
+!data/fragments/**/*.musicxml
+data/fragments/.tmp-*/
+# Machine-local fragment index and generated fragment pages.
+.local/
 .cache/
 data/thumbnails/
 *.part

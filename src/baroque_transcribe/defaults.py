@@ -53,6 +53,17 @@ MANIFEST = "manifest.json"
 DIAGNOSTICS_DIR = "diagnostics"
 COMPARISON_DIR = "comparison"
 
+# Fragment library. Fragment folders live under data/fragments and are
+# committed. The SQLite index and generated pages live under .local and are not.
+FRAGMENTS_DIR = "fragments"
+LOCAL_DIR = ".local"
+LIBRARY_INDEX = "library.sqlite"
+FRAGMENT_PAGES_DIR = "fragment_pages"
+FRAGMENT_JSON = "fragment.json"
+FRAGMENT_GRID_JSON = "grid.json"
+FRAGMENT_HARMONY_JSON = "harmony.json"
+FRAGMENT_PERFORMANCE_MID = "performance.mid"
+
 CHECKPOINT_FILENAME = "note_F1=0.9677_pedal_F1=0.9186.pth"
 CHECKPOINT_URL = (
     "https://zenodo.org/records/4034264/files/"

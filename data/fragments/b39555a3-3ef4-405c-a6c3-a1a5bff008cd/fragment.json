@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "id": "b39555a3-3ef4-405c-a6c3-a1a5bff008cd",
+  "title": "Test fragment",
+  "description": "",
+  "practice_notes": "",
+  "tags": [],
+  "composer": "",
+  "performer": "",
+  "source": {
+    "kind": "youtube",
+    "url": "https://www.youtube.com/watch?v=IuZCq1cMq1A",
+    "video_id": "IuZCq1cMq1A",
+    "title": "Baroque Improvisation Tip No. 4 - Use Counterpoint"
+  },
+  "parent": {
+    "project": "performance-20261109-181437",
+    "event_id": "20261110T181632Z-111ed130",
+    "notes_fingerprint": "587cd6295b4b8d6d",
+    "analysis_sha256": "0083b322b36060dd78031cfc7b14cd530811decf78dc68833db519e950b0e7b6",
+    "measure_start": 16,
+    "measure_end": 18,
+    "step_start": 240,
+    "step_end": 288
+  },
+  "time": {
+    "working_audio": {
+      "start_seconds": 40.83671,
+      "end_seconds": 49.0832
+    },
+    "source_video": {
+      "start_seconds": 40.83671,
+      "end_seconds": 49.0832,
+      "excerpt_start_seconds": 0.0
+    },
+    "duration_seconds": 8.24649
+  },
+  "sync": {
+    "offset_seconds": 0.0,
+    "parent_offset_at_extraction": 0.0
+  },
+  "music": {
+    "analyzed_key": {
+      "tonic": "G",
+      "mode": "minor",
+      "source": "automatic",
+      "confidence": 0.9453
+    },
+    "written_key_signature": {
+      "tonic": "G",
+      "mode": "minor"
+    },
+    "time_signature": "4/4",
+    "bpm": 89.29,
+    "subdivision": 16,
+    "staff_split": 60,
+    "measures": 3,
+    "parent_grid_mode": "follow",
+    "notation_style": "readable"
+  },
+  "harmony": {
+    "roman": [
+      "VI7",
+      "iv",
+      "I4/3",
+      "i7",
+      "i",
+      "v4/2",
+      "I6/5"
+    ],
+    "symbols": [
+      "Ebmaj7",
+      "Cm",
+      "Gmaj7/D",
+      "GmMaj7",
+      "Gm",
+      "Dm7/C",
+      "G7/B"
+    ]
+  },
+  "boundary": {
+    "notes": 27,
+    "owned": 27,
+    "carried_in": 0,
+    "cut_off": 0,
+    "unprinted_overlaps": 0,
+    "pedal_down_at_start": false
+  },
+  "artifacts": {
+    "notes": "notes.json",
+    "grid": "grid.json",
+    "performance_midi": "performance.mid",
+    "quantized_midi": "quantized.mid",
+    "musicxml": "score.musicxml",
+    "harmony": "harmony.json"
+  },
+  "warnings": [],
+  "created_at": "2026-11-10T20:45:54Z",
+  "modified_at": "2026-11-10T20:45:54Z"
+}

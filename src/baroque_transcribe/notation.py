@@ -362,10 +362,15 @@ def _fill_part(
     key_mode: str | None = None,
     include_tempo: bool = True,
     measure_number_offset: int = 0,
+    end_step: int | None = None,
 ) -> None:
     per_measure = quantization.steps_per_measure
     first = -quantization.lead_steps
     last_note = max((event.offset for event in events), default=per_measure)
+    if end_step is not None:
+        # Print at least through the bar that ends at ``end_step``, so a staff
+        # that falls silent early is not shorter than the other one.
+        last_note = max(last_note, end_step)
     last_bar = (max(last_note - 1, first) // per_measure) * per_measure
     if last_bar < first:
         last_bar = first
@@ -449,6 +454,27 @@ def _hidden_rests_to_forward(musicxml_text: str) -> str:
     return pattern.sub(replace, musicxml_text)
 
 
+def _cut_at_barline(elements: list[note.GeneralNote], bar_length: Fraction) -> list[note.GeneralNote]:
+    """Shorten the element that crosses the end of the bar, so nothing is written past it.
+
+    Interpreted voices can overlap, and an overlapping voice renders longer
+    than its bar. On export, music21 moves the part of a note that crosses
+    the barline into the next measure, and adds a measure when there is none.
+    In a whole transcription that tail lands in the following bar. A score
+    that must end at a given barline cuts the note there instead. Elements
+    that already begin past the barline are left as they are, as they are in
+    every other bar.
+    """
+
+    position = Fraction(0)
+    for element in elements:
+        length = Fraction(element.quarterLength).limit_denominator(1920)
+        if position < bar_length < position + length:
+            element.quarterLength = bar_length - position
+        position += length
+    return elements
+
+
 def _export_voice_number(staff: int, voice_id: int) -> int:
     """Disjoint MusicXML voice numbers for each staff of a PartStaff piano part.
 
@@ -472,6 +498,7 @@ def _fill_part_readable(
     colorize_voices: bool = False,
     include_tempo: bool = True,
     measure_number_offset: int = 0,
+    end_step: int | None = None,
 ) -> None:
     """Fill a part from interpreted voices, omitting absent-voice measures."""
 
@@ -481,6 +508,8 @@ def _fill_part_readable(
         (event.offset_step for voice in staff_voices for event in voice),
         default=per_measure,
     )
+    if end_step is not None:
+        last_note = max(last_note, end_step)
     last_bar = (max(last_note - 1, first) // per_measure) * per_measure
     if last_bar < first:
         last_bar = first
@@ -519,6 +548,8 @@ def _fill_part_readable(
                 key_mode=key_mode,
                 color=color,
             )
+            if end_step is not None and start == last_bar:
+                rendered = _cut_at_barline(rendered, _steps_to_ql(per_measure, quantization.subdivision))
             active.append((voice_id, rendered))
         if not active:
             measure.append(note.Rest(quarterLength=_steps_to_ql(per_measure, quantization.subdivision)))
@@ -584,6 +615,7 @@ def write_musicxml(
     preservation_report: Path | None = None,
     measure_number_offset: int = 0,
     voices_path: Path | None = None,
+    end_step: int | None = None,
 ) -> Path:
     """Write a conventional two-staff piano MusicXML score.
 
@@ -591,6 +623,11 @@ def write_musicxml(
     voices and written durations). ``colorize_voices`` paints each interpreted
     voice. When ``voices_path`` is set with readable style, a coloured sibling
     file is also written from the same interpretation.
+
+    ``end_step`` makes both staves print at least through the bar that ends
+    at that grid step, and keeps a readable score from running past its last
+    barline. Without it each staff ends at its own last note, which is the
+    behaviour of a whole transcription.
     """
 
     if style not in {"literal", "readable"}:
@@ -635,6 +672,7 @@ def write_musicxml(
                 colorize_voices=colorize,
                 include_tempo=True,
                 measure_number_offset=measure_number_offset,
+                end_step=end_step,
             )
             _fill_part_readable(
                 left,
@@ -647,6 +685,7 @@ def write_musicxml(
                 colorize_voices=colorize,
                 include_tempo=False,
                 measure_number_offset=measure_number_offset,
+                end_step=end_step,
             )
         else:
             events = _collapse(quantization.grid)
@@ -659,6 +698,7 @@ def write_musicxml(
                 key_mode=key_mode,
                 include_tempo=True,
                 measure_number_offset=measure_number_offset,
+                end_step=end_step,
             )
             _fill_part(
                 left,
@@ -669,6 +709,7 @@ def write_musicxml(
                 key_mode=key_mode,
                 include_tempo=False,
                 measure_number_offset=measure_number_offset,
+                end_step=end_step,
             )
 
         group = layout.StaffGroup(
@@ -794,6 +835,8 @@ def write_notation_page(
     playback_url: str | None = None,
     voices_score_path: Path | None = None,
     time_offset_seconds: float = 0.0,
+    home_label: str | None = None,
+    tools_label: str | None = None,
 ) -> Path:
     """Write an HTML page that draws the two-staff score in a browser tab.
 
@@ -810,7 +853,9 @@ def write_notation_page(
     ``facts`` are the chips from ``library.run_facts`` and ``folder`` is the
     project folder, shown under the title. ``playback_url`` links to the
     video with the score following it, and ``tools_url`` to the page with the
-    audio, the note table, the harmony editor, and the files.
+    audio, the note table, the harmony editor, and the files. ``home_label``
+    and ``tools_label`` reword those two links, for a score that belongs to
+    a saved fragment rather than to a project.
     """
 
     if not score_path.is_file():
@@ -849,9 +894,9 @@ def write_notation_page(
     home_link = "".join(
         f'<a class="home" href="{escape(address, quote=True)}">{label}</a>'
         for address, label in (
-            (home_url, "&larr; Library"),
+            (home_url, f"&larr; {escape(home_label)}" if home_label else "&larr; Library"),
             (playback_url, "Play with score"),
-            (tools_url, "Edit &amp; files"),
+            (tools_url, escape(tools_label) if tools_label else "Edit &amp; files"),
         )
         if address
     )

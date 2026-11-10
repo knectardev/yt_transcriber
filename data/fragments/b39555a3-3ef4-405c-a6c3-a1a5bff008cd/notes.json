@@ -1,0 +1,191 @@
+{
+  "version": 1,
+  "model": "bytedance-note-pedal",
+  "source": "https://www.youtube.com/watch?v=IuZCq1cMq1A",
+  "notes": [
+    {
+      "pitch": 79,
+      "onset": 0.0,
+      "offset": 1.38056,
+      "velocity": 96
+    },
+    {
+      "pitch": 63,
+      "onset": 0.02723,
+      "offset": 0.27823,
+      "velocity": 66
+    },
+    {
+      "pitch": 62,
+      "onset": 0.36531,
+      "offset": 0.67358,
+      "velocity": 55
+    },
+    {
+      "pitch": 60,
+      "onset": 0.67483,
+      "offset": 1.0506,
+      "velocity": 61
+    },
+    {
+      "pitch": 63,
+      "onset": 1.01548,
+      "offset": 1.37062,
+      "velocity": 60
+    },
+    {
+      "pitch": 78,
+      "onset": 1.36968,
+      "offset": 1.65329,
+      "velocity": 94
+    },
+    {
+      "pitch": 62,
+      "onset": 1.37676,
+      "offset": 1.60105,
+      "velocity": 72
+    },
+    {
+      "pitch": 79,
+      "onset": 2.09569,
+      "offset": 2.83329,
+      "velocity": 97
+    },
+    {
+      "pitch": 67,
+      "onset": 2.10697,
+      "offset": 3.48719,
+      "velocity": 69
+    },
+    {
+      "pitch": 82,
+      "onset": 2.78712,
+      "offset": 3.88329,
+      "velocity": 106
+    },
+    {
+      "pitch": 64,
+      "onset": 3.44871,
+      "offset": 3.82741,
+      "velocity": 62
+    },
+    {
+      "pitch": 67,
+      "onset": 3.79481,
+      "offset": 4.12289,
+      "velocity": 69
+    },
+    {
+      "pitch": 81,
+      "onset": 4.09856,
+      "offset": 4.79329,
+      "velocity": 83
+    },
+    {
+      "pitch": 66,
+      "onset": 4.10032,
+      "offset": 4.45848,
+      "velocity": 62
+    },
+    {
+      "pitch": 62,
+      "onset": 4.43604,
+      "offset": 4.83371,
+      "velocity": 65
+    },
+    {
+      "pitch": 67,
+      "onset": 4.79908,
+      "offset": 5.59329,
+      "velocity": 77
+    },
+    {
+      "pitch": 70,
+      "onset": 4.80008,
+      "offset": 5.28121,
+      "velocity": 95
+    },
+    {
+      "pitch": 79,
+      "onset": 5.49022,
+      "offset": 5.86437,
+      "velocity": 104
+    },
+    {
+      "pitch": 70,
+      "onset": 5.84331,
+      "offset": 6.22222,
+      "velocity": 70
+    },
+    {
+      "pitch": 72,
+      "onset": 6.2058,
+      "offset": 6.54698,
+      "velocity": 71
+    },
+    {
+      "pitch": 69,
+      "onset": 6.54778,
+      "offset": 6.87813,
+      "velocity": 65
+    },
+    {
+      "pitch": 77,
+      "onset": 6.8818,
+      "offset": 7.25718,
+      "velocity": 91
+    },
+    {
+      "pitch": 74,
+      "onset": 6.88758,
+      "offset": 7.26062,
+      "velocity": 67
+    },
+    {
+      "pitch": 72,
+      "onset": 7.22828,
+      "offset": 7.57898,
+      "velocity": 60
+    },
+    {
+      "pitch": 79,
+      "onset": 7.56057,
+      "offset": 7.8946,
+      "velocity": 92
+    },
+    {
+      "pitch": 71,
+      "onset": 7.56637,
+      "offset": 7.81329,
+      "velocity": 65
+    },
+    {
+      "pitch": 77,
+      "onset": 7.87031,
+      "offset": 8.24649,
+      "velocity": 67
+    }
+  ],
+  "pedals": [
+    {
+      "onset": 2.13329,
+      "offset": 2.79975
+    },
+    {
+      "onset": 2.92329,
+      "offset": 3.47226
+    },
+    {
+      "onset": 5.58329,
+      "offset": 5.86808
+    },
+    {
+      "onset": 5.99329,
+      "offset": 6.23329
+    },
+    {
+      "onset": 7.66329,
+      "offset": 7.88329
+    }
+  ]
+}
