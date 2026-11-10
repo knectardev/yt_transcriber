@@ -45,7 +45,15 @@ _CONVENTIONAL_STEPS = {1, 2, 3, 4, 6, 8, 12, 16, 24, 32}
 
 
 def voice_color(staff: int, voice: int) -> str:
-    return VOICE_COLORS[(staff * 8 + voice - 1) % len(VOICE_COLORS)]
+    """Two stable colours per staff so Color voices stays readable.
+
+    Extra structural voice IDs (rare overflows) reuse the staff's pair instead
+    of minting a new rainbow hue for a one-note fragment.
+    """
+
+    pair = ((staff - 1) * 2) % len(VOICE_COLORS)
+    slot = 0 if int(voice) <= 1 else (int(voice) - 1) % 2
+    return VOICE_COLORS[(pair + slot) % len(VOICE_COLORS)]
 
 
 def nearest_second(seconds: float) -> int:

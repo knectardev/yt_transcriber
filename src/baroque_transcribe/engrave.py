@@ -97,13 +97,28 @@ def _active_on_staff(voices: list[_VoiceState], staff: int, at_step: int) -> int
     return sum(1 for voice in voices if voice.staff == staff and voice.end_step > at_step)
 
 
+def _new_voice_cost(settings: NotationSettings, active: int) -> float:
+    """Cost of opening another voice on a staff that already has ``active`` sounding."""
+
+    from baroque_transcribe.defaults import DEFAULT_EXTRA_VOICE_SURCHARGE
+
+    cost = 1.15 + settings.extra_voice_cost * max(0, active - 1)
+    if active >= 2:
+        cost += DEFAULT_EXTRA_VOICE_SURCHARGE * (active - 1)
+    return cost
+
+
 def assign_voices(
     grid: list[GridNote],
     *,
     settings: NotationSettings,
     staff_split: int,
 ) -> list[WrittenNote]:
-    """Assign each grid note to a staff and voice with a soft two-voice preference."""
+    """Assign each grid note to a staff and voice with a soft two-voice preference.
+
+    Prefers continuing or reactivating an existing same-staff line across gaps
+    instead of minting short-lived voice IDs that fragment Color voices.
+    """
 
     ordered = sorted(grid, key=lambda item: (item.onset_step, item.pitch, item.source_index))
     voices: list[_VoiceState] = []
@@ -118,8 +133,8 @@ def assign_voices(
 
             if item.onset_step > voice.end_step:
                 gap = item.onset_step - voice.end_step
-                # Large gaps weaken continuity; a new voice may be better.
-                gap_cost = min(gap, 16) * 0.04
+                # Prefer dormant same-register lines over a brand-new voice ID.
+                gap_cost = min(gap, 32) * 0.015
                 kind = "continue"
                 score = pitch_cost + staff_cost + gap_cost
             elif item.onset_step == voice.last_onset:
@@ -147,22 +162,38 @@ def assign_voices(
             voices[best[1]].staff if best is not None else None,
         )
         active = _active_on_staff(voices, staff, item.onset_step)
-        new_cost = 1.15 + settings.extra_voice_cost * max(0, active - 1)
-        # Prefer opening a new voice over a weak continuation.
+        new_cost = _new_voice_cost(settings, active)
+        # Prefer continuing/reactivating over opening a weak new stream.
         if best is None or best[0] > new_cost:
-            voice_id = len(voices) + 1
-            voices.append(
-                _VoiceState(
-                    staff=staff,
-                    end_step=item.offset_step,
-                    last_pitch=item.pitch,
-                    last_onset=item.onset_step,
-                    last_offset=item.offset_step,
-                    members=[item.source_index],
+            # Last chance: reactivate the closest ended same-staff voice even when
+            # the generic loop preferred "new" slightly.
+            reactivate: tuple[float, int] | None = None
+            for index, voice in enumerate(voices):
+                predicted = _predicted_staff(item.pitch, staff_split, voice.staff)
+                if predicted != staff or voice.staff != staff:
+                    continue
+                if voice.end_step > item.onset_step:
+                    continue
+                gap = item.onset_step - voice.end_step
+                score = abs(item.pitch - voice.last_pitch) / 12.0 + min(gap, 48) * 0.012
+                if reactivate is None or score < reactivate[0]:
+                    reactivate = (score, index)
+            if reactivate is not None and reactivate[0] <= new_cost + 0.75:
+                best = (reactivate[0], reactivate[1], "continue")
+            else:
+                voice_id = len(voices) + 1
+                voices.append(
+                    _VoiceState(
+                        staff=staff,
+                        end_step=item.offset_step,
+                        last_pitch=item.pitch,
+                        last_onset=item.onset_step,
+                        last_offset=item.offset_step,
+                        members=[item.source_index],
+                    )
                 )
-            )
-            assignments[item.source_index] = (staff, voice_id)
-            continue
+                assignments[item.source_index] = (staff, voice_id)
+                continue
 
         score, index, kind = best
         voice = voices[index]
@@ -185,7 +216,6 @@ def assign_voices(
     staff_voice_map: dict[tuple[int, int], int] = {}
     next_id = {1: 1, 2: 1}
     written: list[WrittenNote] = []
-    by_source = {item.source_index: item for item in grid}
     for item in ordered:
         staff, raw_voice = assignments[item.source_index]
         key = (staff, raw_voice)
@@ -204,7 +234,128 @@ def assign_voices(
                 voice=staff_voice_map[key],
             )
         )
-    return written
+    return _compact_staff_voices(written, max_voices=2)
+
+
+def _ranges_overlap(start_a: int, end_a: int, start_b: int, end_b: int) -> bool:
+    return start_a < end_b and start_b < end_a
+
+
+def _compact_staff_voices(notes: list[WrittenNote], *, max_voices: int = 2) -> list[WrittenNote]:
+    """Fold sparse extra voices into the busiest lines when they do not collide.
+
+    Keeps Color voices closer to two stable colours per staff without dropping notes.
+    """
+
+    from collections import Counter
+
+    if max_voices < 1 or not notes:
+        return notes
+    result: list[WrittenNote] = []
+    by_staff: dict[int, list[WrittenNote]] = {}
+    for note in notes:
+        by_staff.setdefault(note.staff, []).append(note)
+    for staff, members in sorted(by_staff.items()):
+        counts = Counter(note.voice for note in members)
+        if len(counts) <= max_voices:
+            result.extend(members)
+            continue
+        keep = [voice for voice, _count in counts.most_common(max_voices)]
+        medians = {
+            voice: sorted(note.pitch for note in members if note.voice == voice)[
+                len([note for note in members if note.voice == voice]) // 2
+            ]
+            for voice in keep
+        }
+        occupied: dict[int, list[tuple[int, int]]] = {voice: [] for voice in keep}
+        remapped: list[WrittenNote] = []
+        overflow: list[WrittenNote] = []
+        for note in sorted(members, key=lambda item: (item.onset_step, item.pitch, item.source_index)):
+            if note.voice in keep:
+                occupied[note.voice].append((note.onset_step, note.written_offset_step))
+                remapped.append(note)
+                continue
+            candidates: list[tuple[float, int]] = []
+            for voice in keep:
+                if any(
+                    _ranges_overlap(note.onset_step, note.written_offset_step, start, end)
+                    for start, end in occupied[voice]
+                ):
+                    continue
+                candidates.append((abs(note.pitch - medians[voice]), voice))
+            if not candidates:
+                overflow.append(note)
+                continue
+            candidates.sort()
+            target = candidates[0][1]
+            occupied[target].append((note.onset_step, note.written_offset_step))
+            remapped.append(
+                WrittenNote(
+                    source_index=note.source_index,
+                    pitch=note.pitch,
+                    onset_step=note.onset_step,
+                    sounding_offset_step=note.sounding_offset_step,
+                    written_offset_step=note.written_offset_step,
+                    velocity=note.velocity,
+                    staff=note.staff,
+                    voice=target,
+                    chord_with=list(note.chord_with),
+                    gap_filled_steps=note.gap_filled_steps,
+                    overlap_trimmed_steps=note.overlap_trimmed_steps,
+                    clustered_ms=note.clustered_ms,
+                    adjustments=list(note.adjustments) + [f"voice_compact:{note.voice}->{target}"],
+                )
+            )
+        # Overflow keeps distinct voices only when a merge would collide in time.
+        next_voice = max(keep) + 1
+        overflow_map: dict[int, int] = {}
+        for note in overflow:
+            mapped = overflow_map.setdefault(note.voice, next_voice)
+            if mapped == next_voice:
+                next_voice += 1
+            remapped.append(
+                WrittenNote(
+                    source_index=note.source_index,
+                    pitch=note.pitch,
+                    onset_step=note.onset_step,
+                    sounding_offset_step=note.sounding_offset_step,
+                    written_offset_step=note.written_offset_step,
+                    velocity=note.velocity,
+                    staff=note.staff,
+                    voice=mapped,
+                    chord_with=list(note.chord_with),
+                    gap_filled_steps=note.gap_filled_steps,
+                    overlap_trimmed_steps=note.overlap_trimmed_steps,
+                    clustered_ms=note.clustered_ms,
+                    adjustments=list(note.adjustments) + [f"voice_overflow:{note.voice}->{mapped}"],
+                )
+            )
+        # Final dense renumber 1..n by first appearance.
+        order: dict[int, int] = {}
+        sequential = 1
+        for note in sorted(remapped, key=lambda item: (item.onset_step, item.voice, item.pitch)):
+            if note.voice not in order:
+                order[note.voice] = sequential
+                sequential += 1
+        for note in remapped:
+            result.append(
+                WrittenNote(
+                    source_index=note.source_index,
+                    pitch=note.pitch,
+                    onset_step=note.onset_step,
+                    sounding_offset_step=note.sounding_offset_step,
+                    written_offset_step=note.written_offset_step,
+                    velocity=note.velocity,
+                    staff=note.staff,
+                    voice=order[note.voice],
+                    chord_with=list(note.chord_with),
+                    gap_filled_steps=note.gap_filled_steps,
+                    overlap_trimmed_steps=note.overlap_trimmed_steps,
+                    clustered_ms=note.clustered_ms,
+                    adjustments=list(note.adjustments),
+                )
+            )
+    return result
 
 
 def _unify_chords(notes: list[WrittenNote], settings: NotationSettings) -> list[WrittenNote]:

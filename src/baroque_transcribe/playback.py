@@ -26,7 +26,7 @@ from baroque_transcribe.defaults import ANNOTATIONS_JSON, MANIFEST, NOTES_JSON, 
 from baroque_transcribe.notation_settings import settings_from_manifest
 from baroque_transcribe.quantize import quantization_from_manifest
 from baroque_transcribe.schema import read_transcription
-from baroque_transcribe.sync_map import MeasureAnchor, measure_anchors
+from baroque_transcribe.sync_map import MeasureAnchor, NoteAnchor, measure_anchors, note_anchors
 
 # Same file name as ``notation._NOTATION_LIBRARY``; duplicated so this module
 # (and the page template below) does not need the music21 import at startup.
@@ -204,6 +204,7 @@ class PlaybackContext:
     harmony: dict | None = None
     # Header chips (``library.run_facts``): note count, tempo, model, and so on.
     facts: list[dict[str, str]] = field(default_factory=list)
+    note_anchors: list[NoteAnchor] = field(default_factory=list)
 
 
 def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext:
@@ -259,6 +260,7 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
         sync_offset=offset,
         harmony=harmony,
         facts=run_facts(run) if run is not None else [],
+        note_anchors=note_anchors(quantization),
     )
 
 
@@ -333,6 +335,16 @@ def write_playback_page(context: PlaybackContext, dest: Path, *, home_url: str =
                     "opensBeforeAttack": anchor.opens_before_attack,
                 }
                 for anchor in context.anchors
+            ],
+            "noteAnchors": [
+                {
+                    "sourceIndex": note.source_index,
+                    "pitch": note.pitch,
+                    "onset": note.onset,
+                    "offset": note.offset,
+                    "measure": note.measure,
+                }
+                for note in context.note_anchors
             ],
         }
     ).replace("<", "\\u003c")
@@ -686,6 +698,8 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     #player, #player iframe { width: 100%; height: 100%; display: block; }
     .controls { display: flex; flex-direction: column; gap: 0.8rem; min-width: 0; }
     .transport { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; }
+    .transport.clock-row { flex-wrap: nowrap; }
+    .transport.toggles-row { gap: 0.55rem 0.85rem; }
     button {
       font-family: inherit; font-size: 0.92rem; padding: 0.42rem 0.9rem; border-radius: 999px;
       border: 1px solid var(--line); background: white; color: var(--ink); cursor: pointer;
@@ -697,8 +711,13 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     button#play:hover { background: var(--accent-ink); border-color: var(--accent-ink); color: white; }
     label, output, .readout { font-size: 0.92rem; }
     #clock, #measure-label, #offset-label { font-variant-numeric: tabular-nums; }
-    #clock { font-size: 1rem; }
-    #measure-label { color: var(--accent-ink); font-weight: 600; }
+    #clock { font-size: 1rem; min-width: 9.5ch; }
+    #measure-label {
+      color: var(--accent-ink); font-weight: 600;
+      display: inline-block; min-width: 24ch; max-width: 28ch;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 0.92rem;
+    }
     label.follow { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--muted); }
     label.follow[hidden], #voice-legend[hidden] { display: none !important; }
     .sync {
@@ -714,6 +733,12 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     .measure-hit { position: absolute; z-index: 3; cursor: pointer; border-radius: 3px; }
     .measure-hit:hover { outline: 1px solid rgba(180, 83, 9, 0.45); }
     .measure-hit.active { background: var(--accent-soft); }
+    .note-cursor {
+      position: absolute; z-index: 5; pointer-events: auto; cursor: pointer;
+      width: 8px; height: 8px; margin-left: -4px; border-radius: 999px;
+      background: rgba(194, 65, 12, 0.95);
+      box-shadow: 0 0 0 2px rgba(253, 243, 226, 0.95), 0 0 8px 1px rgba(194, 65, 12, 0.45);
+    }
     .harmony-label {
       position: absolute; z-index: 4; transform: translateX(-50%); pointer-events: none; white-space: nowrap;
       font-size: 11px; font-weight: 600; color: var(--accent-ink); background: rgba(253, 243, 226, 0.88);
@@ -744,11 +769,14 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
   <header class="stage">
     <div class="player-wrap"><div id="player"></div></div>
     <div class="controls">
-      <div class="transport">
+      <div class="transport clock-row">
         <button id="play" type="button">Play</button>
         <span id="clock">0:00 / 0:00</span>
         <span id="measure-label">Measure —</span>
+      </div>
+      <div class="transport toggles-row">
         <label class="follow"><input id="follow" type="checkbox" checked> Follow score</label>
+        <label class="follow"><input id="highlight-notes" type="checkbox"> Highlight notes</label>
         <label class="follow"><input id="show-harmony" type="checkbox" checked> Harmony</label>
         <label class="follow"><input id="lead-sheet" type="checkbox"> Lead-sheet chord symbols</label>
         <label class="follow" id="color-voices-label" hidden><input id="color-voices" type="checkbox"> Color voices</label>
@@ -760,7 +788,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         <button id="reset" type="button">Reset</button>
         <button id="later" type="button">Notation later</button>
       </div>
-      <p class="limit">The time in parentheses is that measure's place on the video clock. A measure can open with a rest or a held note before its first new note, and that opening follows the written tempo. Notation earlier moves the highlight backward. Notation later moves it forward. Click a measure to jump the video there.</p>
+      <p class="limit">The highlighted measure follows the video. Scroll the score to look around — that turns off Follow score so playback stops forcing the viewport; tick Follow score again to resume. Turn on Highlight notes for a small attack dot above the staff (pitch names stay in the measure label). Notation earlier/later move the cursor. Click a measure to jump there; with Highlight notes on, click the attack dot to seek to that onset.</p>
       <p id="player-error" class="limit" hidden>This video cannot be embedded. The working audio is still on the transcription page.</p>
     </div>
   </header>
@@ -832,8 +860,14 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       return chosen;
     }
 
+    let ignoreScoreScroll = false;
+
+    function followEnabled() {
+      return !!document.getElementById("follow").checked;
+    }
+
     function revealMeasure(element) {
-      if (!document.getElementById("follow").checked) return;
+      if (!followEnabled()) return;
       const pane = document.getElementById("score-pane");
       const paneRect = pane.getBoundingClientRect();
       const rect = element.getBoundingClientRect();
@@ -844,8 +878,24 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       const desired = paneRect.top + paneRect.height * 0.18;
       const delta = rect.top - desired;
       if (Math.abs(delta) < 2) return;
+      ignoreScoreScroll = true;
       pane.scrollTop += delta;
+      requestAnimationFrame(function () { ignoreScoreScroll = false; });
     }
+
+    (function () {
+      const pane = document.getElementById("score-pane");
+      const followBox = document.getElementById("follow");
+      // Manual browsing wins: scrolling the score turns Follow score off so
+      // playback no longer yanks the viewport back to the active measure.
+      pane.addEventListener("scroll", function () {
+        if (ignoreScoreScroll || !followBox.checked) return;
+        followBox.checked = false;
+      }, { passive: true });
+      followBox.addEventListener("change", function () {
+        if (followBox.checked) syncFromPlayer();
+      });
+    })();
 
     let playbackRate = 1;
     let clockMedia = 0;
@@ -915,16 +965,123 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       return formatPlace(anchor.time + excerptStart + syncOffset);
     }
 
+    const noteAnchors = config.noteAnchors || [];
+    const noteHighlightKey = "baroque-transcribe.highlight-notes";
+
+    function midiName(pitch) {
+      const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+      const value = Number(pitch);
+      if (!isFinite(value)) return String(pitch);
+      return names[((value % 12) + 12) % 12] + String(Math.floor(value / 12) - 1);
+    }
+
+    function noteHighlightEnabled() {
+      const box = document.getElementById("highlight-notes");
+      return !!(box && box.checked);
+    }
+
+    let currentMeasureNumber = null;
+
+    function refreshMeasureLabel() {
+      const chosen = currentMeasureNumber ? anchorByMeasure[currentMeasureNumber] : null;
+      const place = chosen ? " " + videoPlace(chosen) : "";
+      const base = currentMeasureNumber ? ("Measure " + currentMeasureNumber + place) : "Measure —";
+      const label = document.getElementById("measure-label");
+      label.textContent = base + (label.dataset.noteSuffix || "");
+    }
+
+    function clearNoteHighlights() {
+      document.querySelectorAll(".note-cursor").forEach(function (node) { node.remove(); });
+      const label = document.getElementById("measure-label");
+      label.dataset.noteSuffix = "";
+      refreshMeasureLabel();
+    }
+
     function applyMeasure(measureNumber) {
+      currentMeasureNumber = measureNumber;
       const hits = document.querySelectorAll(".measure-hit");
       hits.forEach(function (hit) {
         hit.classList.toggle("active", Number(hit.dataset.measure) === measureNumber);
       });
-      const chosen = measureNumber ? anchorByMeasure[measureNumber] : null;
-      const place = chosen ? " " + videoPlace(chosen) : "";
-      document.getElementById("measure-label").textContent = measureNumber ? ("Measure " + measureNumber + place) : "Measure —";
+      refreshMeasureLabel();
       const active = document.querySelector(".measure-hit.active");
       if (active) revealMeasure(active);
+    }
+
+    function measureSpan(measureNumber) {
+      const startAnchor = anchorByMeasure[measureNumber];
+      if (!startAnchor) return null;
+      const nextAnchor = anchorByMeasure[measureNumber + 1];
+      const start = startAnchor.time;
+      let end = nextAnchor ? nextAnchor.time : start + 2;
+      if (!(end > start)) end = start + 2;
+      return { start: start, end: end };
+    }
+
+    function attackFraction(onset, measureNumber) {
+      const span = measureSpan(measureNumber);
+      if (!span) return 0.08;
+      return Math.max(0.04, Math.min(0.96, (onset - span.start) / (span.end - span.start)));
+    }
+
+    function applyNotes(working) {
+      clearNoteHighlights();
+      if (!noteHighlightEnabled() || !osmd || !osmd.GraphicSheet) return;
+      // Current attack only: the latest onset at or before the playhead, plus
+      // any chord tones that share that onset. Do not light every held note.
+      let attackOnset = -Infinity;
+      noteAnchors.forEach(function (note) {
+        if (note.onset <= working + 1e-9 && note.onset >= attackOnset) attackOnset = note.onset;
+      });
+      const attackNotes = [];
+      if (isFinite(attackOnset) && attackOnset > -Infinity) {
+        noteAnchors.forEach(function (note) {
+          if (Math.abs(note.onset - attackOnset) <= 0.02) attackNotes.push(note);
+        });
+      }
+      const label = document.getElementById("measure-label");
+      if (!attackNotes.length) {
+        label.dataset.noteSuffix = "";
+        refreshMeasureLabel();
+        return;
+      }
+      attackNotes.sort(function (a, b) { return a.pitch - b.pitch; });
+      label.dataset.noteSuffix = " · " + attackNotes.map(function (note) { return midiName(note.pitch); }).join(" ");
+      refreshMeasureLabel();
+      const boxes = measureBoxes();
+      const byMeasure = {};
+      attackNotes.forEach(function (note) {
+        const key = String(note.measure);
+        if (!byMeasure[key]) byMeasure[key] = [];
+        byMeasure[key].push(note);
+      });
+      Object.keys(byMeasure).forEach(function (key) {
+        const measureNumber = Number(key);
+        const box = boxes.find(function (item) { return item.measure === measureNumber; });
+        if (!box) return;
+        box.pageEl.style.position = "relative";
+        const notes = byMeasure[key];
+        const fraction = attackFraction(notes[0].onset, measureNumber);
+        const x = (box.minX + (box.maxX - box.minX) * fraction) * box.scale;
+        // One small dot above the staff — pitch names stay in the measure label.
+        const cursor = document.createElement("div");
+        cursor.className = "note-cursor";
+        cursor.title = "Seek to " + notes.map(function (note) { return midiName(note.pitch); }).join(" ");
+        cursor.style.left = x + "px";
+        cursor.style.top = Math.max(2, (box.minY * box.scale) - 14) + "px";
+        cursor.addEventListener("click", function (event) {
+          event.stopPropagation();
+          if (!player || !player.seekTo) return;
+          player.seekTo(Math.max(0, notes[0].onset + excerptStart + syncOffset), true);
+          applyMeasure(measureNumber);
+          applyNotes(notes[0].onset);
+        });
+        box.pageEl.appendChild(cursor);
+        if (followEnabled()) {
+          const active = document.querySelector('.measure-hit[data-measure="' + measureNumber + '"]');
+          if (active) revealMeasure(active);
+        }
+      });
     }
 
     function stampMeasurePlaces() {
@@ -1047,7 +1204,9 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         return;
       }
       document.getElementById("clock").textContent = formatClock(current) + " / " + formatClock(duration);
-      applyMeasure(measureAt(current - excerptStart - syncOffset));
+      const working = current - excerptStart - syncOffset;
+      applyMeasure(measureAt(working));
+      applyNotes(working);
     }
 
     function showOffset() {
@@ -1150,6 +1309,14 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     });
     document.getElementById("show-harmony").addEventListener("change", drawHarmony);
     document.getElementById("lead-sheet").addEventListener("change", drawHarmony);
+    (function () {
+      const box = document.getElementById("highlight-notes");
+      try { box.checked = window.localStorage.getItem(noteHighlightKey) === "1"; } catch (error) {}
+      box.addEventListener("change", function () {
+        try { window.localStorage.setItem(noteHighlightKey, box.checked ? "1" : "0"); } catch (error) {}
+        syncFromPlayer();
+      });
+    })();
     document.getElementById("earlier").addEventListener("click", function () { setOffset(syncOffset + 0.1); });
     document.getElementById("later").addEventListener("click", function () { setOffset(syncOffset - 0.1); });
     document.getElementById("reset").addEventListener("click", function () { setOffset(0); });

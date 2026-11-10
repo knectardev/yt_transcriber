@@ -1,206 +1,46 @@
-Yes. There are several noticeable problems, and I think they point to something quite specific about your transcription pipeline.
+I think you're very close to merge-ready. The stray rests are gone, and the notation is substantially cleaner than the original. I wouldn't undertake another major round of interpretation changes on this branch.
 
-The score looks more like a literal encoding of detected piano events than a musician's interpretation of the performance.
+A few observations from the new screenshots:
 
-That's an important distinction. A computer can correctly identify many pitches and approximate their durations while still producing notation that is difficult for a pianist to read.
+- Measures 24–28: Much better. The rhythmic relationships are clearer, and the formerly floating rests no longer interrupt the score visually.
+- Measures 29–32: Still dense, especially where several upper voices overlap. But I'm no longer seeing an obvious engraving defect that demands attention.
+- Measures 33–35: The bass line is nicely coherent. The colored notation makes the relationship between the bass and upper voices particularly easy to follow.
+- Voice coloring: Working visually as intended. Some upper voices still appear fragmented, but we already know the current voice-assignment model has limitations. I would document these rather than delay the merge.
 
-Looking at measures 24–35, I see three main categories of issues:
+## My pre-merge checklist
 
-1. Rhythmic notation: Too many tiny rests, oddly divided durations, and competing rhythmic layers.
-2. Voice organization: Notes appear to be assigned to independent voices without sufficient regard for melodic continuity.
-3. Engraving and presentation: The software is faithfully displaying complex notation that should probably have been simplified before rendering.
+Release checks
 
-Some of this may be introduced by audio transcription, but my leading suspicion is that the larger problem occurs between MIDI transcription and MusicXML generation, particularly during rhythmic quantization and voice assignment.
+0 of 6 checked
 
-## 1. The most obvious problem: excessive rhythmic fragmentation
+Run the entire automated test suite and confirm the feature branch is clean.
 
-Measures 24–26
+Smoke-test playback synchronization: enable and disable Color voices during playback, verify that highlighting and measure-click seeking continue working.
 
-[How to Remove rests with multiple voices? | MuseScore](https://images.openai.com/static-rsc-4/WN7dhcp2NKmd9SMKBLRSR8dEZOIC_G0D_AMyR_BBhcs2jWoZED7DKSVzlxgmeg2LWbR5TUj3UifJ9DScv_mSjqIJ42jzVviH03_f9pnFGZJp-MrAzWaGigR9XQ6kPMI9mrPzYVFW5Tprtdkc0FgK3Q4D_WFeCTvcWmKiZjfAkG0?purpose=inline)
+Test an older project using fixed + literal, confirming that it loads unchanged and its existing score remains available.
 
-[musescore.org](https://musescore.org/en/node/321919?utm_source=chatgpt.com)
+Open a second transcription, particularly Tip No. 1, and check that nothing regressed even though its tempo-following behavior remains unresolved.
 
-Illustrative comparison subject; the observations below refer to your uploaded score.
+Validate the final MusicXML in MuseScore, including both colored and conventional output.
 
-In measure 24, notice the combination of sixteenth-note rests, dotted eighth rests, eighth notes and notes with independent stems. Similar patterns recur throughout the passage.
+Confirm that source notes.json, raw\.mid and existing project data were not unintentionally modified.
 
-A human editor would generally try to determine which notes belong to the same musical line and whether each apparent interruption represents a meaningful silence.
+## One thing I would explicitly defer
 
-For example, if a performer plays four notes with slightly unequal durations, an audio transcription system might produce something conceptually like:
+The musical identity of the colored voices.
 
-`note – 16th rest – note – 16th rest – note – 32nd rest – note`
+Your continuity metrics showed significant interruptions in treble voices 4 and 5. In the new screenshot, those colors still sometimes correspond to isolated melodic fragments rather than clearly continuous lines.
 
-But a human might reasonably interpret the same phrase as four connected eighth notes, or as a mixture of eighths and sixteenths grouped according to the meter.
+That isn't an obstacle to merging the current feature, provided the coloring is understood as the algorithm's interpretation.
 
-The issue isn't necessarily incorrect timing. It's using expressive performance timing as though it were deliberate rhythmic notation.
+But it's an important distinction for your eventual practice features, especially visual voice soloing. For that feature, I would want the system to identify coherent lines across phrases more reliably, potentially by assigning staff positions only after establishing voice continuity.
 
-This is especially important for Baroque improvisation, where the performer may play freely while maintaining an underlying contrapuntal and metrical structure.
+## My recommendation
 
-## 2. The more serious problem: voice assignment
+Assuming the regression tests pass, merge `feature/readable-notation` into `main` and retain `fixed + literal` as the default for now.
 
-This is where I think the score departs most dramatically from what a human editor would produce.
+I'd document three known limitations: occasional voice fragmentation, pitch-influenced staff assignment, and Tip No. 1's tempo-tracking regression.
 
-Look at measure 28 (1:13). The upper staff contains a sustained note, a separate moving line, and additional notes whose stems and rests suggest yet more independent voices.
+Then enjoy actually using the application for a while before embarking on the next development cycle.
 
-Now compare measure 26 (1:07). The lower staff contains a reasonably coherent moving line, while the upper staff has sustained notes and an additional lower note with its own rest pattern.
-
-The contrast is revealing. The software appears capable of representing a reasonably intelligible melodic line, but it struggles when multiple pitches overlap.
-
-A human transcriber would ask:
-
-Which notes belong to the same contrapuntal voice, rather than merely which notes overlap in time?
-
-For example, three overlapping notes do not necessarily imply three voices. They could represent a melody with lingering resonance, a two-note chord accompanied by a bass, or three genuinely independent contrapuntal lines.
-
-Your software appears to be resolving at least some of these ambiguities by creating additional notation voices.
-
-That would explain several symptoms:
-
-- Multiple rests occupying essentially the same rhythmic position.
-- Long notes with opposing stems surrounded by short-note activity.
-- Whole-measure rests appearing in one voice even though another voice on that staff is playing.
-- Notes separated into different voices despite potentially belonging to one continuous melody.
-
-This is my strongest diagnosis: the algorithm is solving the problem of representing simultaneous note events, rather than reconstructing contrapuntal lines.
-
-## 3. The suspicious rests and ties
-
-Look particularly at measures 29–33.
-
-There are several spots where you see a combination of a sustained lower note, independently notated upper notes, a dotted rest and another rest in close proximity.
-
-Some of those rests may be mathematically necessary given the assigned voices, but that doesn't make them musically useful.
-
-In measure 30, for example, there are two very short rests below the opening notes, followed by additional rests and notes distributed among different rhythmic layers.
-
-A human editor might consolidate those voices, suppress unnecessary rests, or interpret some apparent interruptions as articulation rather than silence.
-
-There's also a distinction between a note's acoustic duration and its notated duration. An eighth note played on a piano can continue sounding after its key is released. Conversely, a pianist can hold a key across the onset of another note without intending a separate sustained contrapuntal voice.
-
-If your MIDI-to-MusicXML conversion treats every detected note-off event as a strict instruction about written duration, this creates unnecessary rests and ties.
-
-Professional notation systems explicitly address this problem. Dorico's MIDI transcription options, for example, include filling short gaps between notes and reconstructing moving keyboard voices.&#x20;
-
-[image](https://www.google.com/s2/favicons?domain=https://blog.dorico.com\&sz=32)
-
-Dorico
-
-
-
-## 4. The grand staff and visual hierarchy
-
-There's another issue that might be quite straightforward to fix.
-
-Your two staves are each labeled `Pno.` and don't appear to be joined by the conventional piano brace.
-
-That suggests they may be represented internally as two independent piano parts rather than as the right- and left-hand staves of a single piano part.
-
-Normally, a piano score would use one instrument with two linked staves:
-
-Conventional piano grand-staff structure, illustrated schematically.
-
-That structural change won't solve the rhythmic problems, but it would make the score more conventional and could simplify cross-staff notation.
-
-I would also revisit line breaking and measure spacing. The dense measures around 29–34 are trying to accommodate a great deal of competing notation. Better automatic system breaks would help, although that is secondary to reducing unnecessary voices and rests.
-
-## 5. Accidentals and harmonic interpretation
-
-I also see frequent chromatic accidentals, including sharps, flats and naturals occurring in fairly rapid succession.
-
-That isn't inherently wrong, especially in improvised Baroque-style counterpoint. But a human editor would consider the harmonic function of each note when choosing its enharmonic spelling.
-
-An F-sharp functioning as the leading tone to G, for example, should generally be spelled F-sharp rather than G-flat.
-
-Your screenshot doesn't establish whether the actual pitches are misspelled. However, it is worth checking whether the MusicXML uses the inferred key and harmonic progression to choose note spellings.
-
-I would also give the Roman-numeral annotations their own quality-control pass. In the portion visible above measure 24, they change very frequently. That may reflect overly local chord classification rather than the slower-moving harmonic structure a human analyst would identify.
-
-A harmonic annotation should not necessarily change every time the collection of sounding pitches changes. Passing notes, suspensions, and neighbor tones need to be interpreted in relation to the underlying harmony.
-
-This is particularly relevant to your application, since you're using these analyses to extract useful improvisational fragments.
-
-## 6. My theory about what's happening in your pipeline
-
-I suspect your processing works approximately like this:
-
-Piano audio
-
-Continuous sound, resonance, expressive timing
-
-Audio-to-MIDI transcription
-
-Pitch, note onset, note release, velocity
-
-Rhythm quantization + voice assignment
-
-Likely source of much of the notation clutter
-
-MusicXML generation
-
-Durations, stems, rests, ties, staves
-
-Notation renderer
-
-Displays the encoded score, including its problems
-
-The key missing element may be a musical interpretation stage between note detection and score generation.
-
-This is a recognized distinction in automatic transcription research. Accurate note detection does not by itself guarantee correct meter, bar placement, voice organization, or readable scores.&#x20;
-
-[image](https://www.google.com/s2/favicons?domain=https://www.sciencedirect.com\&sz=32)
-
-ScienceDirect+1
-
-
-
-Your code could be doing a perfectly reasonable job of quantizing each individual note while producing a poor global transcription.
-
-And if you're using `music21`, one detail is worth investigating: its quantization functions can independently quantize onset times and note durations. Its notation processing can also insert rests into independent voices to fill rhythmic gaps. That combination could plausibly explain a fair amount of what we're seeing.&#x20;
-
-[image](https://www.google.com/s2/favicons?domain=https://music21.org\&sz=32)
-
-music21 Documentation+1
-
-
-
-## 7. What I would change first
-
-I would prioritize the changes as follows.
-
-| Priority | Improvement                                      | Expected benefit                          |
-| -------- | ------------------------------------------------ | ----------------------------------------- |
-| 1        | Voice-continuity analysis                        | Fewer spurious voices and scattered rests |
-| 2        | Separate played durations from written durations | Simpler, more natural rhythmic notation   |
-| 3        | Phrase- and beat-aware quantization              | Better beams, note groupings and ties     |
-| 4        | Rest consolidation                               | Less visual clutter                       |
-| 5        | Key-aware enharmonic spelling                    | More intelligible chromatic counterpoint  |
-| 6        | Proper grand-staff MusicXML structure            | Conventional piano presentation           |
-| 7        | Harmonic-rhythm smoothing                        | More useful Roman-numeral annotations     |
-
-For the first two, I'd preserve the original MIDI events completely and generate a separate notation interpretation. That way, improving readability would not reduce transcription fidelity or break the synchronization with YouTube.
-
-You might even provide a toggle between Literal transcription and Readable score, which would be especially valuable for comparing what the performer physically played with how the music is best understood.
-
-## 8. A useful diagnostic test for Cursor
-
-Rather than immediately rewriting the entire engraving pipeline, I'd test just measures 26–30.
-
-Have Cursor extract the raw MIDI events for those measures, then produce three versions of the score:
-
-- The current notation.
-- A version using the same notes and onset positions, but with simplified written durations and no unnecessary gaps.
-- A version with explicit voice-continuity tracking, capped initially at two voices per staff.
-
-Compare those versions both visually and against the original performance. Also open the same MusicXML in MuseScore to determine whether the clutter originates in the notation data or its browser rendering.
-
-If voice-continuity tracking produces a substantial improvement without changing the underlying pitches, that would strongly support this diagnosis.
-
-### One last observation
-
-The most interesting thing about your screenshot is that the lower staff in measure 26 actually looks relatively good. It suggests that at least some of the underlying transcription is producing coherent, recognizable musical material.
-
-That gives me more confidence in the idea that the immediate problem isn't necessarily your pitch-detection model.
-
-It's the transition from detected notes into the abstract, hierarchical language of written music.
-
-A pianist doesn't perceive a Bach-like improvisation as a pile of overlapping note events. They perceive a handful of moving lines, each with its own direction, rhythm and harmonic function. Your notation algorithm needs to reconstruct some of that understanding.
+One thing that stands out to me throughout this process: you started with a tool for transcribing performances, but you've now built the foundation for something more interesting—a tool for understanding how contrapuntal music is constructed. That's a meaningful shift in what the application can do.

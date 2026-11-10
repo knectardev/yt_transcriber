@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from music21 import converter
 
-from baroque_transcribe.engrave import interpret_quantization, write_notation_map
+from baroque_transcribe.engrave import assign_voices, interpret_quantization, write_notation_map
 from baroque_transcribe.notation import write_musicxml
 from baroque_transcribe.notation_settings import NotationSettings
 from baroque_transcribe.quantize import quantize_notes
@@ -41,6 +41,58 @@ def test_three_independent_voices_stay_three():
     interpretation = interpret_quantization(_q(notes), staff_split=60)
     treble_voices = interpretation.events_for_staff(1)
     assert len(treble_voices) >= 3
+
+
+def test_gap_continues_same_voice_instead_of_new_id():
+    # A line pauses, then resumes nearby in pitch: keep one voice ID.
+    notes = [
+        NoteEvent(72, 0.0, 0.5, 80),
+        NoteEvent(71, 0.5, 1.0, 80),
+        # Gap of about a half note, then continue the same register.
+        NoteEvent(74, 2.0, 2.5, 80),
+        NoteEvent(72, 2.5, 3.0, 80),
+        NoteEvent(48, 0.0, 3.0, 60),
+    ]
+    quantization = _q(notes)
+    written = assign_voices(quantization.grid, settings=quantization.settings, staff_split=60)
+    treble = [note for note in written if note.staff == 1]
+    assert len({note.voice for note in treble}) == 1
+
+
+def test_third_simultaneous_voice_is_discouraged_when_two_suffice():
+    # Two alternating mid-range lines should not mint a third ID for a later reprise.
+    notes = [
+        NoteEvent(67, 0.0, 0.5, 70),
+        NoteEvent(60, 0.0, 0.5, 65),
+        NoteEvent(67, 0.5, 1.0, 70),
+        NoteEvent(60, 0.5, 1.0, 65),
+        NoteEvent(69, 1.5, 2.0, 70),  # resumes upper after a gap
+        NoteEvent(62, 1.5, 2.0, 65),  # resumes lower after a gap
+        NoteEvent(48, 0.0, 2.0, 60),
+    ]
+    quantization = _q(notes)
+    written = assign_voices(quantization.grid, settings=quantization.settings, staff_split=60)
+    treble = [note for note in written if note.staff == 1]
+    assert len({note.voice for note in treble}) <= 2
+
+
+def test_sparse_third_voice_compacts_into_two():
+    # A brief third line that never collides with the two busy voices should fold in.
+    notes = [
+        NoteEvent(72, 0.0, 0.5, 80),
+        NoteEvent(60, 0.0, 0.5, 70),
+        NoteEvent(72, 0.5, 1.0, 80),
+        NoteEvent(60, 0.5, 1.0, 70),
+        NoteEvent(67, 1.25, 1.5, 75),  # mid-register fill between the pair
+        NoteEvent(72, 1.5, 2.0, 80),
+        NoteEvent(60, 1.5, 2.0, 70),
+        NoteEvent(48, 0.0, 2.0, 60),
+    ]
+    quantization = _q(notes)
+    written = assign_voices(quantization.grid, settings=quantization.settings, staff_split=60)
+    treble = [note for note in written if note.staff == 1]
+    assert len({note.voice for note in treble}) <= 2
+    assert len(treble) == 7
 
 
 def test_suspension_is_not_chorded_with_moving_line():

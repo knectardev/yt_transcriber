@@ -19,7 +19,9 @@ DEFAULT_FILL_GAP_STEPS = 1
 DEFAULT_KEEP_REST_STEPS = 2
 DEFAULT_OVERLAP_TRIM_STEPS = 1
 DEFAULT_CHORD_RELEASE_TOLERANCE_STEPS = 1
-DEFAULT_EXTRA_VOICE_COST = 1.0
+DEFAULT_EXTRA_VOICE_COST = 2.5
+# Soft cap: opening a 3rd+ simultaneous voice on one staff pays this surcharge per extra.
+DEFAULT_EXTRA_VOICE_SURCHARGE = 2.0
 DEFAULT_SILENCE_REANCHOR_SECONDS = 1.5
 
 # Paper defaults from Kong et al., high-resolution piano transcription.

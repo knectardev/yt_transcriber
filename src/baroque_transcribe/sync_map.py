@@ -36,6 +36,41 @@ class MeasureAnchor:
     opens_before_attack: bool
 
 
+@dataclass(frozen=True)
+class NoteAnchor:
+    """One quantized note for playback note-cursor highlighting and seek."""
+
+    source_index: int
+    pitch: int
+    onset: float
+    offset: float
+    measure: int
+
+
+def note_anchors(quantization: Quantization) -> list[NoteAnchor]:
+    """Build working-clock note anchors from the quantized grid."""
+
+    first, _count = printed_measure_span(quantization)
+    per = quantization.steps_per_measure
+    anchors: list[NoteAnchor] = []
+    for note in sorted(quantization.grid, key=lambda item: (item.onset_step, item.pitch, item.source_index)):
+        measure = ((note.onset_step - first) // per) + 1
+        onset = float(note.source_onset)
+        offset = float(note.source_offset)
+        if offset <= onset:
+            offset = onset + 0.05
+        anchors.append(
+            NoteAnchor(
+                source_index=note.source_index,
+                pitch=int(note.pitch),
+                onset=onset,
+                offset=offset,
+                measure=int(measure),
+            )
+        )
+    return anchors
+
+
 def printed_measure_span(quantization: Quantization) -> tuple[int, int]:
     """Return ``(first_step, measure_count)`` for the printed score.
 

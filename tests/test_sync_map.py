@@ -8,6 +8,7 @@ from baroque_transcribe.sync_map import (
     measure_anchors,
     measure_at_working_time,
     measure_seek_video,
+    note_anchors,
     video_time,
     working_time,
 )
@@ -34,6 +35,21 @@ def _hand_built(grid: list[GridNote]) -> Quantization:
         notes=[],
         grid=grid,
     )
+
+
+def test_note_anchors_carry_pitch_onset_and_measure():
+    quantization = _at_120(
+        NoteEvent(60, 0.0, 0.5, 80),
+        NoteEvent(64, 0.5, 1.0, 70),
+        NoteEvent(48, 0.0, 1.0, 60),
+    )
+    anchors = note_anchors(quantization)
+    assert [(item.pitch, round(item.onset, 3), item.measure) for item in anchors] == [
+        (48, 0.0, 1),
+        (60, 0.0, 1),
+        (64, 0.5, 1),
+    ]
+    assert all(item.offset > item.onset for item in anchors)
 
 
 def test_source_index_survives_the_grid_sort():

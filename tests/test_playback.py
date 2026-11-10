@@ -86,14 +86,26 @@ def test_playback_page_records_the_estimate_limitation(tmp_path):
     dest = write_playback_page(context, context_dir / "playback.html")
     text = dest.read_text(encoding="utf-8")
     assert "abcdefghijk" in text
-    assert "place on the video clock" in text
+    assert "Highlight notes" in text
+    assert "attack dot" in text
     assert "Follow score" in text
+    assert "ignoreScoreScroll" in text
+    assert "turns off Follow score" in text
     assert "Notation earlier" in text
     assert "seekTo" in text
     assert '"place": "(0:02)"' in text
     assert "stampMeasurePlaces" in text
     assert "getPlaybackRate" in text
     assert "onPlaybackRateChange" in text
+    assert "noteAnchors" in text
+    assert "note-cursor" in text
+    assert "applyNotes" in text
+    assert "highlight-notes" in text
+    assert "toggles-row" in text
+    assert "clock-row" in text
+    assert "var(--accent-soft)" in text
+    assert context.note_anchors
+    assert context.note_anchors[0].pitch == 60
     assert (context_dir / "opensheetmusicdisplay.min.js").is_file()
     assert context.anchors[0].measure == 1
 
@@ -154,7 +166,7 @@ def test_server_round_trips_the_offset_without_dropping_manifest_fields(tmp_path
         page = server.page_url(token)
         with urlopen(page) as response:
             body = response.read()
-        assert b"place on the video clock" in body
+        assert b"Highlight notes" in body
         request = Request(
             page + "sync-offset",
             data=json.dumps({"offset": -0.4}).encode("utf-8"),
@@ -243,8 +255,9 @@ def test_server_writes_the_playback_page_when_it_is_requested(tmp_path):
         with urlopen(server.page_url(token)) as response:
             body = response.read().decode("utf-8")
         assert "<h1>Toccata</h1>" in body
-        assert "place on the video clock" in body
+        assert "Highlight notes" in body
         assert '"syncOffset": 0.0' in body
+        assert "noteAnchors" in body
         # The page is written again on each request, so it follows the project.
         write_sync_offset(project, 0.3)
         assert server.register(project) == token
