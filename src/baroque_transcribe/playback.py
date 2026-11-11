@@ -203,7 +203,7 @@ class PlaybackContext:
     project: Path
     score_path: Path
     title: str
-    video_id: str
+    video_id: str | None
     anchors: list[MeasureAnchor]
     excerpt_start: float
     sync_offset: float
@@ -217,6 +217,9 @@ class PlaybackContext:
     # A fragment's page: the whole passage ``(start, end)`` on the anchors'
     # clock. The page cues the video there and loops it. None for a project.
     passage: tuple[float, float] | None = None
+    # Shared transport: youtube (IFrame), audio (preview WAV), or silent scrubber.
+    media_kind: str = "youtube"
+    media_url: str = ""
 
 
 def score_end_time(quantization: Quantization) -> float:
@@ -237,7 +240,9 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
     """Read the score timing from the project without rewriting the notation.
 
     ``title`` replaces the manifest title on the page, for a manifest whose
-    title is only the audio file name.
+    title is only the audio file name. YouTube is used when attached; otherwise
+    a synthesized preview WAV drives the clock, or a silent scrubber if synth
+    audio cannot be built.
     """
 
     notes_path = project / NOTES_JSON
@@ -250,8 +255,6 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
     except json.JSONDecodeError as exc:
         raise SyncError(f"Could not read {manifest_path.name}.") from exc
     video_id = project_youtube_id(manifest)
-    if video_id is None:
-        raise SyncError("This project has no YouTube video to play.")
     tempo = manifest.get("tempo") or {}
     if not tempo.get("bpm") or not tempo.get("time_signature"):
         raise SyncError("This project has no tempo, so the measures cannot be aligned.")
@@ -267,6 +270,17 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
         offset = float(manifest.get("sync_offset_seconds") or 0.0)
     except (OSError, TypeError, ValueError) as exc:
         raise SyncError(f"Could not align the measures: {exc}") from exc
+    media_kind = "youtube"
+    media_url = ""
+    if video_id is None:
+        try:
+            from baroque_transcribe.preview_audio import PreviewAudioError, ensure_project_preview_wav
+
+            ensure_project_preview_wav(project)
+            media_kind = "audio"
+            media_url = "preview.wav"
+        except (PreviewAudioError, OSError, ValueError, RuntimeError):
+            media_kind = "silent"
     harmony = None
     analysis = load_analysis(project / ANNOTATIONS_JSON)
     if analysis is not None:
@@ -288,6 +302,8 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
         facts=run_facts(run) if run is not None else [],
         note_anchors=note_anchors(quantization),
         end_time=score_end_time(quantization),
+        media_kind=media_kind,
+        media_url=media_url,
     )
 
 
@@ -378,6 +394,8 @@ def write_playback_page(
     config = json.dumps(
         {
             "videoId": context.video_id,
+            "mediaKind": context.media_kind,
+            "mediaUrl": context.media_url,
             "homeUrl": home_url or "",
             "toolsUrl": tools_url or "",
             "extractUrl": extract_url or "",
@@ -680,7 +698,15 @@ def _thumbnail_id(path: str) -> str | None:
     return video_id
 
 
-_PAGE_NAMES = {"", "index.html", "playback.html", "notation.html", "opensheetmusicdisplay.min.js", "sync-offset"}
+_PAGE_NAMES = {
+    "",
+    "index.html",
+    "playback.html",
+    "notation.html",
+    "opensheetmusicdisplay.min.js",
+    "sync-offset",
+    "preview.wav",
+}
 
 
 def _route(path: str) -> tuple[str, str] | None:
@@ -735,6 +761,16 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                 body = json.dumps({"offset": read_sync_offset(project)}).encode("utf-8")
                 self._send(200, "application/json", body)
                 return
+            if name == "preview.wav":
+                try:
+                    from baroque_transcribe.preview_audio import PreviewAudioError, ensure_project_preview_wav
+
+                    target = ensure_project_preview_wav(project)
+                except (PreviewAudioError, OSError, ValueError, RuntimeError):
+                    self.send_error(404)
+                    return
+                self._send(200, "audio/wav", target.read_bytes(), cache=True)
+                return
             content_type = "text/html; charset=utf-8"
             if name == "opensheetmusicdisplay.min.js":
                 target = project / name
@@ -749,8 +785,7 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                 try:
                     target = server.build_playback(token)
                 except (SyncError, OSError, ValueError) as exc:
-                    # No video to follow: the score alone is this project's
-                    # page. No score either: the tools page can build one.
+                    # Incomplete project (no notes/tempo): fall back to score-only.
                     if (project / SCORE_XML).is_file():
                         self._redirect(f"/p/{token}/notation.html" + self._query())
                     else:
@@ -943,7 +978,14 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       width: 100%; aspect-ratio: 16 / 9; background: #111; border-radius: 10px; overflow: hidden;
       box-shadow: 0 1px 2px rgba(28, 25, 23, 0.08), 0 8px 24px -16px rgba(28, 25, 23, 0.35);
     }
+    .player-wrap.audio, .player-wrap.silent {
+      aspect-ratio: auto; min-height: 4.5rem; background: var(--panel); border: 1px solid var(--line);
+      display: flex; align-items: center; padding: 0.85rem 1rem;
+    }
     #player, #player iframe { width: 100%; height: 100%; display: block; }
+    #player audio { width: 100%; display: block; }
+    #player .silent-meter { width: 100%; color: var(--muted); font-size: 0.9rem; }
+    #scrub { width: 100%; margin-top: 0.45rem; }
     .controls { display: flex; flex-direction: column; gap: 0.8rem; min-width: 0; }
     .transport { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; }
     .transport.clock-row { flex-wrap: nowrap; }
@@ -1032,7 +1074,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     </div>
   </nav>
   <header class="stage">
-    <div class="player-wrap"><div id="player"></div></div>
+    <div class="player-wrap" id="player-wrap"><div id="player"></div></div>
     <div class="controls">
       <div class="transport clock-row">
         <button id="play" type="button">Play</button>
@@ -1070,8 +1112,8 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         <button id="clear-passage" type="button" hidden>Clear</button>
         <a id="extract-link" href="#" target="_top" hidden>Extract fragment&hellip;</a>
       </div>
-      <p class="limit">The highlighted measure follows the video. Scroll the score to look around — that turns off Follow score so playback stops forcing the viewport; tick Follow score again to resume. Turn on Highlight notes for a small attack dot above the staff (pitch names stay in the measure label). Notation earlier/later move the cursor. Click a measure to jump there; with Highlight notes on, click the attack dot to seek to that onset.</p>
-      <p class="limit" id="passage-help">To mark a passage, choose Select passage, then click its first measure and its last; the − and + buttons move either end by a measure. While selecting, a click marks a measure and does not move the video. Choose the button again to go back to jumping. Loop replays the passage at whatever speed the player is set to, between the estimated starts of its measures.</p>
+      <p class="limit" id="follow-help">The highlighted measure follows the transport. Scroll the score to look around — that turns off Follow score so playback stops forcing the viewport; tick Follow score again to resume. Turn on Highlight notes for a small attack dot above the staff (pitch names stay in the measure label). Notation earlier/later move the cursor. Click a measure to jump there; with Highlight notes on, click the attack dot to seek to that onset.</p>
+      <p class="limit" id="passage-help">To mark a passage, choose Select passage, then click its first measure and its last; the − and + buttons move either end by a measure. While selecting, a click marks a measure and does not seek. Choose the button again to go back to jumping. Loop replays the passage at whatever speed the player is set to, between the estimated starts of its measures.</p>
       <p id="player-error" class="limit" hidden>This video cannot be embedded. The working audio is still on the transcription page.</p>
     </div>
   </header>
@@ -1122,21 +1164,31 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       folder.textContent = config.folder || "";
       folder.title = config.folder || "";
       meta.hidden = !(config.folder || (config.facts || []).length);
-      let watch = "https://www.youtube.com/watch?v=" + encodeURIComponent(config.videoId);
-      if (config.passage) {
-        // A fragment opens YouTube where the passage begins, in whole seconds.
-        const begins = Number(config.passage.start) + (Number(config.excerptStart) || 0) + (Number(config.syncOffset) || 0);
-        if (isFinite(begins) && begins >= 1) watch += "&t=" + Math.floor(begins) + "s";
+      const ytLink = document.getElementById("youtube-link");
+      if (config.mediaKind === "youtube" && config.videoId) {
+        let watch = "https://www.youtube.com/watch?v=" + encodeURIComponent(config.videoId);
+        if (config.passage) {
+          const begins = Number(config.passage.start) + (Number(config.excerptStart) || 0) + (Number(config.syncOffset) || 0);
+          if (isFinite(begins) && begins >= 1) watch += "&t=" + Math.floor(begins) + "s";
+        }
+        ytLink.href = watch;
+      } else {
+        ytLink.hidden = true;
       }
-      document.getElementById("youtube-link").href = watch;
+      const wrap = document.getElementById("player-wrap");
+      if (config.mediaKind === "audio" || config.mediaKind === "silent") {
+        wrap.classList.add(config.mediaKind);
+      }
     })();
     const anchors = config.anchors || [];
     const excerptStart = Number(config.excerptStart) || 0;
     let syncOffset = Number(config.syncOffset) || 0;
+    const mediaKind = config.mediaKind || (config.videoId ? "youtube" : "silent");
     const anchorByMeasure = {};
     anchors.forEach(function (anchor) { anchorByMeasure[anchor.measure] = anchor; });
     let player = null;
     let osmd = null;
+    let transport = null;
 
     function formatClock(seconds) {
       if (!isFinite(seconds) || seconds < 0) seconds = 0;
@@ -1213,10 +1265,35 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     }
 
     function mediaTime() {
-      // The highlight follows the video picture. getCurrentTime() is that
-      // position when the player is at 1x. At 0.5x the picture moves half as
-      // fast; if the reported clock keeps ticking near full speed, advance
-      // the highlight at getPlaybackRate() instead so it stays with the frame.
+      // Shared clock: YouTube, HTML5 audio, or silent scrubber. At 0.5x the
+      // YouTube picture can lag getCurrentTime(); predict from wall time then.
+      if (transport && transport.getCurrentTime) {
+        let reported = 0;
+        let playing = false;
+        try {
+          reported = transport.getCurrentTime() || 0;
+          playing = !!transport.isPlaying();
+          if (transport.getPlaybackRate) {
+            const rate = transport.getPlaybackRate();
+            if (typeof rate === "number" && isFinite(rate) && rate > 0) playbackRate = rate;
+          }
+        } catch (error) {
+          return clockMedia;
+        }
+        const jumped = lastReported !== null && Math.abs(reported - lastReported) > 1.5;
+        lastReported = reported;
+        if (!playing || !clockPlaying || jumped) {
+          clockPlaying = playing;
+          rebaseClock(reported);
+          return reported;
+        }
+        const elapsed = (performance.now() - clockWall) / 1000;
+        const predicted = clockMedia + elapsed * playbackRate;
+        const advanced = reported - clockMedia;
+        if (playbackRate < 0.999 && advanced > elapsed * playbackRate + 0.35) return predicted;
+        rebaseClock(reported);
+        return reported;
+      }
       if (!player || !player.getCurrentTime) return 0;
       let reported = 0;
       let playing = false;
@@ -1240,6 +1317,23 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       if (playbackRate < 0.999 && advanced > elapsed * playbackRate + 0.35) return predicted;
       rebaseClock(reported);
       return reported;
+    }
+
+    function seekMedia(seconds) {
+      const target = Math.max(0, seconds);
+      if (transport && transport.seek) transport.seek(target);
+      else if (player && player.seekTo) player.seekTo(target, true);
+    }
+
+    function mediaDuration() {
+      if (transport && transport.getDuration) {
+        const value = transport.getDuration();
+        if (typeof value === "number" && isFinite(value) && value > 0) return value;
+      }
+      if (typeof config.endTime === "number" && isFinite(config.endTime)) {
+        return config.endTime + excerptStart + syncOffset;
+      }
+      return 0;
     }
 
     function formatPlace(seconds) {
@@ -1367,8 +1461,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         cursor.style.top = Math.max(2, (box.minY * box.scale) - 14) + "px";
         cursor.addEventListener("click", function (event) {
           event.stopPropagation();
-          if (!player || !player.seekTo) return;
-          player.seekTo(Math.max(0, notes[0].onset + excerptStart + syncOffset), true);
+          seekMedia(Math.max(0, notes[0].onset + excerptStart + syncOffset));
           applyMeasure(measureNumber);
           applyNotes(notes[0].onset);
         });
@@ -1597,16 +1690,19 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     function seekToLoopStart(bounds) {
       lastLoopSeek = performance.now();
       clockPlaying = false;
-      player.seekTo(Math.max(0, toVideo(bounds.start)), true);
+      seekMedia(Math.max(0, toVideo(bounds.start)));
     }
 
     function keepInsideLoop(current) {
       // Only while playing, so a paused player can be scrubbed anywhere.
-      if (!loopEnabled() || !player || !player.seekTo) return;
+      if (!loopEnabled()) return;
+      if (!(transport || (player && player.seekTo))) return;
       const bounds = loopBounds();
       if (!bounds) return;
       let playing = false;
-      try { playing = player.getPlayerState() === 1; } catch (error) { return; }
+      try {
+        playing = transport ? !!transport.isPlaying() : player.getPlayerState() === 1;
+      } catch (error) { return; }
       if (!playing) return;
       // A seek takes a moment to show in the reported time.
       if (performance.now() - lastLoopSeek < 600) return;
@@ -1617,12 +1713,13 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     }
 
     function syncFromPlayer() {
-      if (!player || !player.getCurrentTime) return;
+      if (!(transport || (player && player.getCurrentTime))) return;
       let current = 0;
       let duration = 0;
       try {
         current = mediaTime();
-        duration = player.getDuration() || 0;
+        duration = mediaDuration();
+        if ((!duration || duration <= 0) && player && player.getDuration) duration = player.getDuration() || 0;
       } catch (error) {
         return;
       }
@@ -1695,8 +1792,8 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
             return;
           }
           const chosen = anchorByMeasure[Number(event.currentTarget.dataset.measure)];
-          if (!chosen || !player || !player.seekTo) return;
-          player.seekTo(Math.max(0, chosen.time + excerptStart + syncOffset), true);
+          if (!chosen) return;
+          seekMedia(Math.max(0, chosen.time + excerptStart + syncOffset));
           syncFromPlayer();
         });
         pageEl.appendChild(hit);
@@ -1706,7 +1803,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     }
 
     function openingCue() {
-      // Where the video is cued when the page opens. ?w= names a time on the
+      // Where the transport is cued when the page opens. ?w= names a time on the
       // anchors' clock; a fragment opens on its passage; otherwise the excerpt start.
       const asked = parseFloat(new URLSearchParams(window.location.search).get("w"));
       if (isFinite(asked)) return Math.max(0, toVideo(asked));
@@ -1714,18 +1811,113 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       return Math.max(0, excerptStart);
     }
 
+    function setPlayLabel(playing) {
+      document.getElementById("play").textContent = playing ? "Pause" : "Play";
+    }
+
+    function makeSilentTransport(startAt) {
+      let time = Math.max(0, startAt || 0);
+      let playing = false;
+      let wall = 0;
+      const duration = Math.max(
+        mediaDuration(),
+        (typeof config.endTime === "number" && isFinite(config.endTime) ? config.endTime : 0) + excerptStart + syncOffset
+      );
+      const host = document.getElementById("player");
+      host.innerHTML = '<div class="silent-meter">Silent transport (preview audio unavailable)<input id="scrub" type="range" min="0" max="1000" value="0" step="1"></div>';
+      const scrub = document.getElementById("scrub");
+      function paintScrub() {
+        if (!duration) return;
+        scrub.value = String(Math.round(1000 * Math.min(1, Math.max(0, time / duration))));
+      }
+      const api = {
+        getCurrentTime: function () {
+          if (playing) {
+            time = Math.min(duration || time + 1, time + (performance.now() - wall) / 1000);
+            wall = performance.now();
+            if (duration && time >= duration) {
+              playing = false;
+              setPlayLabel(false);
+              if (loopEnabled() && loopBounds()) {
+                seekToLoopStart(loopBounds());
+                api.play();
+              }
+            }
+            paintScrub();
+          }
+          return time;
+        },
+        getDuration: function () { return duration; },
+        seek: function (seconds) { time = Math.max(0, seconds); paintScrub(); },
+        play: function () { playing = true; wall = performance.now(); setPlayLabel(true); },
+        pause: function () { playing = false; setPlayLabel(false); },
+        isPlaying: function () { return playing; },
+        getPlaybackRate: function () { return 1; }
+      };
+      scrub.addEventListener("input", function () {
+        time = duration * (Number(scrub.value) / 1000);
+        playing = false;
+        setPlayLabel(false);
+        syncFromPlayer();
+      });
+      paintScrub();
+      return api;
+    }
+
+    function makeAudioTransport(startAt) {
+      const host = document.getElementById("player");
+      host.innerHTML = "";
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.preload = "auto";
+      audio.src = config.mediaUrl || "preview.wav";
+      host.appendChild(audio);
+      audio.currentTime = Math.max(0, startAt || 0);
+      audio.addEventListener("play", function () { setPlayLabel(true); syncFromPlayer(); });
+      audio.addEventListener("pause", function () { setPlayLabel(false); syncFromPlayer(); });
+      audio.addEventListener("ended", function () {
+        setPlayLabel(false);
+        if (loopEnabled() && loopBounds()) {
+          seekToLoopStart(loopBounds());
+          audio.play();
+        }
+        syncFromPlayer();
+      });
+      audio.addEventListener("timeupdate", function () { syncFromPlayer(); });
+      return {
+        getCurrentTime: function () { return audio.currentTime || 0; },
+        getDuration: function () { return audio.duration || mediaDuration(); },
+        seek: function (seconds) { audio.currentTime = Math.max(0, seconds); },
+        play: function () { audio.play(); },
+        pause: function () { audio.pause(); },
+        isPlaying: function () { return !audio.paused && !audio.ended; },
+        getPlaybackRate: function () { return audio.playbackRate || 1; }
+      };
+    }
+
     function onYouTubeIframeAPIReady() {
+      if (mediaKind !== "youtube") return;
       player = new YT.Player("player", {
         playerVars: { rel: 0, modestbranding: 1, origin: window.location.origin },
         events: {
           onReady: function (event) {
             event.target.cueVideoById({ videoId: config.videoId, startSeconds: openingCue() });
+            transport = {
+              getCurrentTime: function () { return player.getCurrentTime() || 0; },
+              getDuration: function () { return player.getDuration() || 0; },
+              seek: function (seconds) { player.seekTo(seconds, true); },
+              play: function () { player.playVideo(); },
+              pause: function () { player.pauseVideo(); },
+              isPlaying: function () { return player.getPlayerState() === 1; },
+              getPlaybackRate: function () {
+                try { return player.getPlaybackRate() || 1; } catch (error) { return 1; }
+              }
+            };
             syncFromPlayer();
           },
           onStateChange: function (event) {
-            document.getElementById("play").textContent = event.data === 1 ? "Pause" : "Play";
+            setPlayLabel(event.data === 1);
             if (event.data === 0 && loopEnabled() && loopBounds()) {
-              // The video ran out before the passage's written end: go round again.
               seekToLoopStart(loopBounds());
               player.playVideo();
             }
@@ -1747,7 +1939,20 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       });
     }
 
+    if (mediaKind === "audio") {
+      transport = makeAudioTransport(openingCue());
+      syncFromPlayer();
+    } else if (mediaKind === "silent") {
+      transport = makeSilentTransport(openingCue());
+      syncFromPlayer();
+    }
+
     document.getElementById("play").addEventListener("click", function () {
+      if (transport) {
+        if (transport.isPlaying()) transport.pause();
+        else transport.play();
+        return;
+      }
       if (!player || !player.getPlayerState) return;
       if (player.getPlayerState() === 1) player.pauseVideo();
       else player.playVideo();

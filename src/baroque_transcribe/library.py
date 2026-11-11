@@ -34,6 +34,7 @@ class Run:
     notes: int | None = None
     pedals: int | None = None
     model: str = ""
+    source_kind: str = ""
     bpm: float | None = None
     time_signature: str = ""
     excerpt_start: float | None = None
@@ -108,7 +109,9 @@ def run_facts(run: Run) -> list[dict[str, str]]:
         add(f"{run.bpm:g}", " BPM")
     if run.time_signature:
         add(run.time_signature)
-    if run.model:
+    if run.source_kind == "midi" or run.model == "midi-import":
+        add("", "MIDI file")
+    elif run.model:
         add("", run.model)
     if run.modified:
         add("", run.modified.strftime("%b %d, %Y %H:%M"))
@@ -163,6 +166,7 @@ def read_run(folder: Path, *, for_grid: bool = False) -> Run | None:
         notes=_int(counts.get("notes")),
         pedals=_int(counts.get("pedals")),
         model=str(manifest.get("model") or ""),
+        source_kind=str(manifest.get("source_kind") or ""),
         bpm=_float(tempo.get("bpm")),
         time_signature=str(tempo.get("time_signature") or ""),
         excerpt_start=_float(audio.get("excerpt_start_seconds")),

@@ -20,6 +20,9 @@ class NoteEvent:
     onset: float
     offset: float
     velocity: int
+    # Optional MusicXML/MIDI staff (1 = treble, 2 = bass). When set on import,
+    # notation prefers this over the mid-C staff_split heuristic.
+    staff: int | None = None
 
     @property
     def duration(self) -> float:
@@ -44,11 +47,22 @@ class Transcription:
     source: str = ""
 
     def to_dict(self) -> dict:
+        notes: list[dict] = []
+        for note in self.notes:
+            payload = {
+                "pitch": note.pitch,
+                "onset": note.onset,
+                "offset": note.offset,
+                "velocity": note.velocity,
+            }
+            if note.staff in (1, 2):
+                payload["staff"] = int(note.staff)
+            notes.append(payload)
         return {
             "version": SCHEMA_VERSION,
             "model": self.model,
             "source": self.source,
-            "notes": [asdict(note) for note in self.notes],
+            "notes": notes,
             "pedals": [asdict(pedal) for pedal in self.pedals],
         }
 
@@ -83,7 +97,8 @@ def clean_notes(notes: list[NoteEvent]) -> list[NoteEvent]:
         if offset - onset < 0.01:
             offset = onset + 0.01
         velocity = min(127, max(1, int(note.velocity)))
-        cleaned.append(NoteEvent(pitch, onset, offset, velocity))
+        staff = int(note.staff) if note.staff in (1, 2) else None
+        cleaned.append(NoteEvent(pitch, onset, offset, velocity, staff=staff))
     cleaned.sort(key=lambda item: (item.onset, item.pitch, item.offset))
     return cleaned
 
@@ -111,15 +126,19 @@ def transcription_from_dict(data: dict) -> Transcription:
         raise ValueError(
             f"notes.json uses schema version {version}; this program reads version {SCHEMA_VERSION}."
         )
-    notes = [
-        NoteEvent(
-            pitch=int(item["pitch"]),
-            onset=float(item["onset"]),
-            offset=float(item["offset"]),
-            velocity=int(item["velocity"]),
+    notes = []
+    for item in data.get("notes", []):
+        staff_raw = item.get("staff")
+        staff = int(staff_raw) if staff_raw in (1, 2, "1", "2") else None
+        notes.append(
+            NoteEvent(
+                pitch=int(item["pitch"]),
+                onset=float(item["onset"]),
+                offset=float(item["offset"]),
+                velocity=int(item["velocity"]),
+                staff=staff,
+            )
         )
-        for item in data.get("notes", [])
-    ]
     pedals = [
         PedalEvent(onset=float(item["onset"]), offset=float(item["offset"]))
         for item in data.get("pedals", [])

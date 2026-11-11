@@ -57,7 +57,13 @@ def write_raw_midi(
     midi.write(str(path))
 
 
-def write_quantized_midi(path: Path, quantization: Quantization, staff_split: int) -> None:
+def write_quantized_midi(
+    path: Path,
+    quantization: Quantization,
+    staff_split: int,
+    *,
+    staff_by_source: dict[int, int] | None = None,
+) -> None:
     midi = pretty_midi.PrettyMIDI(initial_tempo=quantization.bpm, resolution=RAW_MIDI_RESOLUTION)
     midi.time_signature_changes.append(
         pretty_midi.TimeSignature(quantization.numerator, quantization.denominator, 0.0)
@@ -69,8 +75,15 @@ def write_quantized_midi(path: Path, quantization: Quantization, staff_split: in
     for note in quantization.grid:
         start = quantization.step_to_score(note.onset_step)
         end = quantization.step_to_score(note.offset_step)
-        target = treble_notes if note.pitch >= staff_split else bass_notes
-        target.append((note.pitch, start, end, note.velocity))
+        staff = None if staff_by_source is None else staff_by_source.get(note.source_index)
+        if staff == 1:
+            treble_notes.append((note.pitch, start, end, note.velocity))
+        elif staff == 2:
+            bass_notes.append((note.pitch, start, end, note.velocity))
+        elif note.pitch >= staff_split:
+            treble_notes.append((note.pitch, start, end, note.velocity))
+        else:
+            bass_notes.append((note.pitch, start, end, note.velocity))
     _add_notes(treble, treble_notes)
     _add_notes(bass, bass_notes)
     midi.instruments.append(treble)

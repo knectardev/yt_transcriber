@@ -335,6 +335,26 @@ def _staff_events(events: list[GridEvent], staff_split: int, treble: bool) -> li
     return selected
 
 
+def _grid_notes_for_staff(
+    notes: list[GridNote],
+    staff_split: int,
+    treble: bool,
+    staff_by_source: dict[int, int] | None,
+) -> list[GridNote]:
+    """Pick grid notes for one staff, preferring explicit import staffs when present."""
+
+    selected: list[GridNote] = []
+    for item in notes:
+        staff = None if staff_by_source is None else staff_by_source.get(item.source_index)
+        if staff in (1, 2):
+            if (staff == 1) == treble:
+                selected.append(item)
+            continue
+        if (item.pitch >= staff_split) == treble:
+            selected.append(item)
+    return selected
+
+
 def _opening_key(key_tonic: str | None, key_mode: str | None):
     if not key_tonic or not key_mode:
         return None
@@ -616,6 +636,7 @@ def write_musicxml(
     measure_number_offset: int = 0,
     voices_path: Path | None = None,
     end_step: int | None = None,
+    staff_by_source: dict[int, int] | None = None,
 ) -> Path:
     """Write a conventional two-staff piano MusicXML score.
 
@@ -688,10 +709,20 @@ def write_musicxml(
                 end_step=end_step,
             )
         else:
-            events = _collapse(quantization.grid)
+            if staff_by_source:
+                right_events = _collapse(
+                    _grid_notes_for_staff(quantization.grid, staff_split, True, staff_by_source)
+                )
+                left_events = _collapse(
+                    _grid_notes_for_staff(quantization.grid, staff_split, False, staff_by_source)
+                )
+            else:
+                events = _collapse(quantization.grid)
+                right_events = _staff_events(events, staff_split, True)
+                left_events = _staff_events(events, staff_split, False)
             _fill_part(
                 right,
-                _staff_events(events, staff_split, True),
+                right_events,
                 quantization,
                 clef.TrebleClef(),
                 key_tonic=key_tonic,
@@ -702,7 +733,7 @@ def write_musicxml(
             )
             _fill_part(
                 left,
-                _staff_events(events, staff_split, False),
+                left_events,
                 quantization,
                 clef.BassClef(),
                 key_tonic=key_tonic,

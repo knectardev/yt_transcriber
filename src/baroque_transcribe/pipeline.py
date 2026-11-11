@@ -176,8 +176,18 @@ def notate_transcription(
         downbeat=downbeat,
         settings=resolved,
     )
+    staff_by_source = {
+        index: int(note.staff)
+        for index, note in enumerate(transcription.notes)
+        if note.staff in (1, 2)
+    } or None
     write_raw_midi(output_dir / RAW_MID, transcription.notes, transcription.pedals)
-    write_quantized_midi(output_dir / QUANTIZED_MID, quantization, staff_split)
+    write_quantized_midi(
+        output_dir / QUANTIZED_MID,
+        quantization,
+        staff_split,
+        staff_by_source=staff_by_source,
+    )
     map_path = output_dir / NOTATION_MAP_JSON if resolved.style == "readable" else None
     voices_path = output_dir / SCORE_VOICES_XML if resolved.style == "readable" else None
     preservation_path = output_dir / PRESERVATION_JSON if resolved.style == "readable" else None
@@ -191,6 +201,7 @@ def notate_transcription(
         pedals=transcription.pedals,
         voices_path=voices_path,
         preservation_report=preservation_path,
+        staff_by_source=staff_by_source,
     )
     if resolved.style != "readable":
         for leftover in (output_dir / SCORE_VOICES_XML, output_dir / NOTATION_MAP_JSON, output_dir / PRESERVATION_JSON):

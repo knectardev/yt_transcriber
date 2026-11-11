@@ -715,10 +715,18 @@ def describe_source(source: str, title: str = "", youtube_url: str | None = None
     if _is_http(source):
         return {"kind": "url", "url": source.strip(), "title": title}
     name = Path(source).name if source else ""
+    extension = Path(name).suffix.lower()
+    if extension in {".mid", ".midi"}:
+        return {
+            "kind": "midi",
+            "name": name,
+            "extension": extension,
+            "title": title,
+        }
     return {
         "kind": "file",
         "name": name,
-        "extension": Path(name).suffix.lower(),
+        "extension": extension,
         "title": title,
     }
 

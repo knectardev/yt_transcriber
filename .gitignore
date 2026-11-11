@@ -15,6 +15,8 @@ transcriptions/
 *.musicxml
 *.xml
 !tests/**/*.wav
+!tests/**/*.mid
+!tests/**/*.musicxml
 # Score copies in the parse history are committed. Audio stays ignored.
 !data/parses/**/*.mid
 !data/parses/**/*.musicxml

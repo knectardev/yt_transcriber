@@ -885,11 +885,41 @@ def read_manifest(folder: Path) -> dict:
 
 
 def _write_json(path: Path, payload: dict) -> None:
-    """Write through a temporary file, so a reader never sees half a document."""
+    """Write through a temporary file, so a reader never sees half a document.
 
-    temporary = path.with_name(path.name + ".tmp")
-    temporary.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    On Windows, ``os.replace`` onto an existing file can raise Access Denied
+    when another process briefly holds it (indexer, antivirus, a download
+    handle). Retry a few times, then fall back to writing the destination
+    in place with the same bytes.
+    """
+
+    import time
+
+    text = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f"{path.name}.{os.getpid()}.{threading.get_ident()}.tmp")
+    temporary.write_text(text, encoding="utf-8")
+    last_error: OSError | None = None
+    try:
+        for attempt in range(8):
+            try:
+                os.replace(temporary, path)
+                return
+            except PermissionError as exc:
+                last_error = exc
+                time.sleep(0.05 * (attempt + 1))
+        # Destination stayed locked: prefer a successful write over atomicity.
+        try:
+            path.write_text(text, encoding="utf-8")
+        except OSError:
+            if last_error is not None:
+                raise last_error
+            raise
+    finally:
+        temporary.unlink(missing_ok=True)
+        stale = path.with_name(path.name + ".tmp")
+        if stale.is_file():
+            stale.unlink(missing_ok=True)
 
 
 def _parent_event_id(project_name: str, store: Path | None) -> str:

@@ -256,123 +256,40 @@ def _library_toolbar() -> list[IndexedFragment]:
     )
 
 
-_ROW_HEIGHT = 46
-_LIST_MAX_HEIGHT = 720
-
-
 def _show_fragment_cards(rows: list[IndexedFragment]) -> None:
-    """One dense HTML list: Play, title, piano-roll, facts — Noiiz-like row height."""
+    """Dense fragment rows with working Details navigation.
+
+    Rendered with Streamlit controls (not ``components.html``): that iframe is
+    sandboxed without top-navigation, so Details links never left the list.
+    """
 
     import streamlit as st
-    import streamlit.components.v1 as components
 
     sound = str(st.session_state.get("frag-preview-sound") or DEFAULT_PREVIEW_SOUND)
     mode = str(st.session_state.get("frag-preview-mode") or "performance")
-    items: list[str] = []
-    for row in rows:
-        items.append(_fragment_row_html(row, sound=sound, mode=mode))
-    body = "\n".join(items)
-    height = min(_LIST_MAX_HEIGHT, 8 + len(rows) * _ROW_HEIGHT)
-    components.html(
-        f"""<!DOCTYPE html>
-<html><head><meta charset="utf-8"><style>
-  html, body {{ margin: 0; padding: 0; background: transparent; }}
-  body {{
-    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #1c1917;
-  }}
-  .bt-list {{ display: flex; flex-direction: column; }}
-  .bt-row {{
-    display: grid;
-    grid-template-columns: 3.4rem minmax(7rem, 0.9fr) minmax(8rem, 1.4fr) minmax(7rem, 0.9fr) auto;
-    gap: 0.55rem; align-items: center;
-    min-height: {_ROW_HEIGHT - 1}px; padding: 0 0.15rem;
-    border-bottom: 1px solid #e7e2da;
-    box-sizing: border-box;
-  }}
-  .bt-row button.play {{
-    font: inherit; font-size: 0.72rem; font-weight: 650; padding: 0.18rem 0.55rem;
-    border-radius: 999px; border: 1px solid #e7e2da; background: #b45309; color: #fff; cursor: pointer;
-    width: 3.2rem;
-  }}
-  .bt-row button.play:hover {{ background: #7c3a07; }}
-  .bt-row button.play:disabled {{ opacity: 0.45; cursor: default; background: #a8a29e; }}
-  .bt-row .title {{
-    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
-    font-size: 0.92rem; font-weight: 600; color: #1c1917; text-decoration: none;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }}
-  .bt-row .title:hover {{ color: #7c3a07; }}
-  .bt-row .roll {{ min-width: 0; line-height: 0; }}
-  .bt-row .roll svg {{ width: 100%; height: 34px; display: block; }}
-  .bt-row .meta {{
-    color: #6b6560; font-size: 0.72rem; line-height: 1.25;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }}
-  .bt-row .chip {{
-    font-size: 0.68rem; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid #e7e2da;
-    color: #7c3a07; background: #fdf3e2; text-decoration: none; white-space: nowrap;
-  }}
-  .bt-row .chip:hover {{ border-color: #b45309; }}
-</style></head><body>
-<div class="bt-list">
-{body}
-</div>
-<script>
-(function () {{
-  const volume = 0.2;
-  function stopAll(except) {{
-    document.querySelectorAll("audio").forEach(function (audio) {{
-      if (audio === except) return;
-      audio.pause();
-      audio.currentTime = 0;
-    }});
-    document.querySelectorAll("button.play").forEach(function (button) {{
-      if (!button.disabled) button.textContent = "Play";
-    }});
-  }}
-  document.querySelectorAll("button.play").forEach(function (button) {{
-    const audio = document.getElementById(button.getAttribute("data-audio"));
-    if (!audio) return;
-    audio.volume = volume;
-    button.addEventListener("click", function () {{
-      audio.volume = volume;
-      if (audio.paused) {{
-        stopAll(audio);
-        audio.play();
-        button.textContent = "Stop";
-      }} else {{
-        audio.pause();
-        audio.currentTime = 0;
-        button.textContent = "Play";
-      }}
-    }});
-    audio.addEventListener("ended", function () {{
-      audio.currentTime = 0;
-      button.textContent = "Play";
-    }});
-  }});
-}})();
-</script>
-</body></html>""",
-        height=height,
-        scrolling=len(rows) * _ROW_HEIGHT > _LIST_MAX_HEIGHT,
+    st.html(
+        "<style>"
+        ".bt-frag-meta { color: #6b6560; font-size: 0.72rem; line-height: 1.25; "
+        "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }"
+        ".bt-frag-roll svg { width: 100%; height: 34px; display: block; }"
+        "</style>"
     )
+    for row in rows:
+        _show_fragment_row(row, sound=sound, mode=mode)
 
 
-def _fragment_row_html(row: IndexedFragment, *, sound: str, mode: str) -> str:
-    import base64
+def _show_fragment_row(row: IndexedFragment, *, sound: str, mode: str) -> None:
+    import streamlit as st
 
     folder = find_fragment(row.id)
     player = fragment_detail_url(folder or Path(row.rel_dir))
-    details = fragment_href(row.id)
     measures = (
         f"mm. {row.measure_start}"
         if row.measure_start == row.measure_end
         else f"mm. {row.measure_start}–{row.measure_end}"
     )
     meta_bits = [
-        escape(part)
+        part
         for part in (
             row.source_title,
             measures,
@@ -382,35 +299,37 @@ def _fragment_row_html(row: IndexedFragment, *, sound: str, mode: str) -> str:
         )
         if part
     ]
-    audio_id = f"frag-audio-{row.id}"
-    play = (
-        f'<button type="button" class="play" disabled title="Preview unavailable">—</button>'
-        f'<audio id="{escape(audio_id, quote=True)}"></audio>'
-    )
     roll = piano_roll_svg([], float(row.duration or 1.0))
+    preview: bytes | None = None
     if folder is not None:
         try:
             notes, duration = preview_notes(folder, mode)
             roll = piano_roll_svg(notes, duration)
-            wav = ensure_fragment_preview_wav(folder, mode=mode, sound=sound)
-            payload = base64.b64encode(wav.read_bytes()).decode("ascii")
-            play = (
-                f'<button type="button" class="play" data-audio="{escape(audio_id, quote=True)}">Play</button>'
-                f'<audio id="{escape(audio_id, quote=True)}" preload="metadata" '
-                f'src="data:audio/wav;base64,{payload}"></audio>'
-            )
+            preview = ensure_fragment_preview_wav(folder, mode=mode, sound=sound).read_bytes()
         except (FragmentError, OSError, ValueError):
-            pass
-    return (
-        f'<div class="bt-row">'
-        f"<div>{play}</div>"
-        f'<a class="title" href="{escape(player, quote=True)}" target="_top" title="{escape(row.title)}">'
-        f"{escape(row.title)}</a>"
-        f'<div class="roll">{roll}</div>'
-        f'<div class="meta" title="{" · ".join(meta_bits)}">{" · ".join(meta_bits)}</div>'
-        f'<a class="chip" href="{escape(details, quote=True)}" target="_top">Details</a>'
-        f"</div>"
-    )
+            preview = None
+
+    play_c, title_c, roll_c, meta_c, details_c = st.columns([0.7, 1.4, 1.8, 1.4, 0.75], gap="small")
+    with play_c:
+        if preview:
+            st.audio(preview, format="audio/wav")
+        else:
+            st.caption("—")
+    with title_c:
+        st.link_button(row.title, player, use_container_width=True)
+    with roll_c:
+        st.html(f'<div class="bt-frag-roll">{roll}</div>')
+    with meta_c:
+        st.markdown(
+            f'<p class="bt-frag-meta" title="{escape( " · ".join(meta_bits), quote=True)}">'
+            f'{escape(" · ".join(meta_bits))}</p>',
+            unsafe_allow_html=True,
+        )
+    with details_c:
+        if st.button("Details", key=f"frag-details-{row.id}", use_container_width=True):
+            st.session_state["open_fragment"] = row.id
+            st.query_params["id"] = str(row.id)
+            st.switch_page(PAGES["fragment"])
 
 
 def _index_buttons() -> None:

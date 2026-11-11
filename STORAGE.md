@@ -115,16 +115,21 @@ Written by `pipeline.py`. This is not the fragment manifest. Typical keys:
 | Key | Role |
 | --- | --- |
 | `origin`, `title`, `youtube_url` | where the audio came from; YouTube URL can be attached later |
-| `audio.*` | `source.wav` / `working.wav`, sample rate, excerpt start/end, durations |
-| `model`, `device`, `thresholds` | how notes were produced |
+| `source_kind` | `"midi"` for MIDI imports; omitted for transcribed audio |
+| `audio.*` | `source.wav` / `working.wav`, sample rate, excerpt start/end, durations; MIDI imports set duration from the file end time |
+| `model`, `device`, `thresholds` | how notes were produced (`midi-import` for MIDI) |
 | `counts` | note and pedal counts |
-| `tempo` | bpm, downbeat, subdivision, time signature, grid mode, estimate |
-| `staff_split`, `notation` | staff split MIDI pitch; style and settings used to write the score |
+| `tempo` | bpm, downbeat, subdivision, time signature, grid mode, estimate; MIDI imports also store full `tempo_map` and `time_signature_map` |
+| `staff_split`, `staff_assignment`, `notation` | staff split MIDI pitch; `tracks` vs `pitch_split`; style and settings used to write the score |
 | `warnings` | assumptions (e.g. 4/4 placeholder) and failures that did not abort the run |
 | `sync_offset_seconds` | ear correction on the synced page; survives a later `quantize` |
 | `analysis` | summary pointing at `annotations.json` when harmony exists |
 
-Nothing in this file is a path into SQLite. `sync_offset_seconds` is a number of seconds added when mapping working-audio time to the YouTube player.
+Nothing in this file is a path into SQLite. `sync_offset_seconds` is a **linear** offset when mapping the canonical note timeline to a YouTube player. It does not provide nonlinear alignment with an expressive performance; that remains out of scope.
+
+### MIDI import projects
+
+Importing a `.mid` / `.midi` file creates a normal project under `transcriptions/` with `notes.json` times taken from pretty_midi absolute seconds (tempo map applied). Multi-track piano files keep track→staff layout in `score.musicxml` (and optional per-note `staff` in `notes.json`). Playback without YouTube uses a synthesized preview WAV under `.local/project_audio/`, or a silent scrubber if synthesis fails. Attaching a YouTube URL later switches the shared player to the video clock; only `sync_offset_seconds` aligns the two.
 
 ### `annotations.json` (schema version 1)
 

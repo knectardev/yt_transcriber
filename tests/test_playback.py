@@ -74,10 +74,15 @@ def test_youtube_address_is_saved_on_the_project_that_owns_the_midi(tmp_path):
     assert youtube_project_for_midi(loose, tmp_path / "empty") is None
 
 
-def test_load_playback_rejects_a_project_without_a_video(tmp_path):
+def test_load_playback_without_youtube_uses_audio_or_silent_transport(tmp_path):
     _write_min_project(tmp_path, origin="C:/recordings/piece.wav")
-    with pytest.raises(SyncError, match="no YouTube video"):
-        load_playback(tmp_path)
+    context = load_playback(tmp_path)
+    assert context.video_id is None
+    assert context.media_kind in {"audio", "silent"}
+    page = write_playback_page(context, tmp_path / "playback.html").read_text(encoding="utf-8")
+    assert f'"mediaKind": "{context.media_kind}"' in page
+    assert "noteAnchors" in page
+    assert "Select passage" in page
 
 
 def test_playback_page_records_the_estimate_limitation(tmp_path):
@@ -269,22 +274,36 @@ def test_server_writes_the_playback_page_when_it_is_requested(tmp_path):
         server.close()
 
 
-def test_project_without_a_video_opens_on_its_score(tmp_path, monkeypatch):
+def test_project_without_a_video_opens_playback_with_shared_transport(tmp_path):
+    project = _write_min_project(tmp_path, origin="C:/recordings/piece.wav")
+    server = PlaybackServer(home_url="http://127.0.0.1:8765/")
+    server.start()
+    try:
+        token = server.register(project, "Piece")
+        with urlopen(server.page_url(token)) as response:
+            body = response.read().decode("utf-8")
+        assert "<h1>Piece</h1>" in body
+        assert "mediaKind" in body
+        assert "Select passage" in body
+        assert "noteAnchors" in body
+    finally:
+        server.close()
+
+
+def test_project_without_notes_still_opens_score_only(tmp_path, monkeypatch):
     import baroque_transcribe.playback as playback
 
     project = _write_min_project(tmp_path, origin="C:/recordings/piece.wav")
+    (project / "notes.json").unlink()
     monkeypatch.setattr(playback, "write_notation_page", _fake_notation_page)
     server = PlaybackServer(home_url="http://127.0.0.1:8765/")
     server.start()
     try:
         token = server.register(project, "Piece")
         assert _get(server, f"/p/{token}/") == (302, f"/p/{token}/notation.html")
-        assert _get(server, f"/p/{token}/?embed=1") == (302, f"/p/{token}/notation.html?embed=1")
         with urlopen(server.page_url(token)) as response:
             body = response.read().decode("utf-8")
         assert "<h1>Piece</h1>" in body
-        assert "tools='http://127.0.0.1:8765/project?project=" in body
-        # There is no video, so the score page offers no synced playback.
         assert "playback='None'" in body
     finally:
         server.close()

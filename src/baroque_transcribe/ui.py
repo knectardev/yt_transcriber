@@ -60,7 +60,6 @@ from baroque_transcribe.playback import (
     detail_url,
     shared_playback_server,
     write_youtube_url,
-    youtube_project_for_midi,
     youtube_video_id,
 )
 from baroque_transcribe.progress import ProgressEvent
@@ -219,17 +218,31 @@ def _home_page() -> None:
     # The notes, audio, and score are read when a transcription is opened.
     cards = _with_local_thumbnails(library_cards(for_grid=True))
     count = sum(1 for card in cards for run in card.runs if run.available)
-    st.html(
-        '<div class="bt-section"><h2>Library</h2>'
-        f'<span class="bt-count">{count} transcription{"" if count == 1 else "s"} on this computer'
-        ' · <a href="/fragments">Fragments</a></span></div>'
-    )
+    heading, filter_col = st.columns([3, 2], vertical_alignment="bottom")
+    with heading:
+        st.html(
+            '<div class="bt-section"><h2>Library</h2>'
+            f'<span class="bt-count">{count} transcription{"" if count == 1 else "s"} on this computer'
+            ' · <a href="/fragments">Fragments</a></span></div>'
+        )
+    with filter_col:
+        kind = st.segmented_control(
+            "Show",
+            options=["All", "YouTube", "MIDI files"],
+            default="All",
+            key="library_source_filter",
+            label_visibility="collapsed",
+        )
+    kind = kind or "All"
+    visible = [card for card in cards if _card_matches_library_filter(card, kind)]
     if not cards:
         st.html('<div class="bt-empty">Nothing has been transcribed yet. The first result will appear here.</div>')
+    elif not visible:
+        st.html(f'<div class="bt-empty">No {escape(kind.lower())} in the library yet.</div>')
     else:
         # Same document as the Library heading. An iframe only receives a
         # height after its own measurement message, so the grid stayed blank.
-        _show_cards(cards)
+        _show_cards(visible)
 
 
 def _transcribe_fragment():
@@ -270,6 +283,21 @@ def _with_local_thumbnails(cards: list[Card]) -> list[Card]:
     return cards
 
 
+def _card_is_midi(card: Card) -> bool:
+    primary = card.primary
+    if primary is not None:
+        return primary.source_kind == "midi" or primary.model == "midi-import"
+    return any(run.source_kind == "midi" or run.model == "midi-import" for run in card.runs)
+
+
+def _card_matches_library_filter(card: Card, kind: str) -> bool:
+    if kind == "YouTube":
+        return bool(card.video_id)
+    if kind == "MIDI files":
+        return _card_is_midi(card)
+    return True
+
+
 def _show_cards(cards: list[Card]) -> None:
     """Draw the library from JPEGs already read into memory."""
 
@@ -300,6 +328,8 @@ def _show_card(card: Card) -> bool:
             heading = f'<span class="bt-title">{title}</span>'
         st.html(thumb + heading)
         bits: list[str] = []
+        if primary and (primary.source_kind == "midi" or primary.model == "midi-import"):
+            bits.append("MIDI file")
         if primary and primary.duration:
             bits.append(format_clock(primary.duration))
         if primary and primary.notes is not None:
@@ -434,14 +464,17 @@ def _transcribe_panel() -> None:
 def _midi_panel() -> None:
     import streamlit as st
 
-    st.caption("Open notation from a MIDI file. The piano model is not run.")
+    st.caption(
+        "Import a MIDI file as a Library project. The piano model is not run. "
+        "Playback uses synthesized preview audio (or a silent transport if that fails)."
+    )
     main, side = st.columns([3, 2], gap="medium")
     with main:
         midi_path = st.text_input(
             "MIDI path",
-            placeholder=r"transcriptions\piece\quantized.mid",
+            placeholder=r"C:\Music\piece.mid",
             key="midi_path",
-            help="A quantized.mid from a finished project opens that project's page.",
+            help="A quantized.mid beside notes.json opens that existing project instead of importing again.",
         )
         midi_upload = st.file_uploader("Or choose a .mid file", type=["mid", "midi"], key="midi_upload")
     with side:
@@ -451,11 +484,24 @@ def _midi_panel() -> None:
             key="midi_youtube_url",
             placeholder="https://youtu.be/…",
             help=(
-                "The MIDI file does not contain the video address. "
-                "A project folder saves it in manifest.json for synced playback."
+                "Optional. Attaching a video later uses a fixed sync offset only; "
+                "it does not warp the MIDI timeline to match an expressive performance."
             ),
         )
-    if not st.button("Open notation", type="primary"):
+    with st.expander("Import settings", expanded=False):
+        a, b, c, d = st.columns(4)
+        tempo = a.text_input("Tempo", value="auto", key="midi_tempo", help="BPM, or auto from the MIDI.")
+        meter = b.text_input("Time signature", value="", key="midi_meter", help="Leave empty to use the MIDI.")
+        subdivision = c.selectbox("Subdivision", [16, 8, 32], index=0, key="midi_subdivision")
+        staff_split = d.number_input(
+            "Treble from MIDI pitch",
+            min_value=21,
+            max_value=108,
+            value=60,
+            key="midi_staff_split",
+            help="Used only when the MIDI has a single track (no separate staves).",
+        )
+    if not st.button("Import MIDI", type="primary"):
         return
     chosen = _midi_from_input(midi_path, midi_upload, Path(output))
     attached = midi_youtube.strip()
@@ -465,47 +511,82 @@ def _midi_panel() -> None:
     if chosen is None:
         st.error("Choose a MIDI file first.")
         return
-    _open_midi(chosen, attached, Path(output))
+    bpm = None if (tempo or "").strip().lower() in {"", "auto"} else float(tempo)
+    meter_tuple = None
+    if (meter or "").strip():
+        from baroque_transcribe.quantize import parse_time_signature
+
+        try:
+            meter_tuple = parse_time_signature(meter)
+        except Exception as exc:
+            st.error(str(exc))
+            return
+    _open_midi(
+        chosen,
+        attached,
+        Path(output),
+        bpm=bpm,
+        time_signature=meter_tuple,
+        subdivision=int(subdivision),
+        staff_split=int(staff_split),
+    )
 
 
-def _open_midi(midi: Path, attached: str, output: Path) -> None:
-    """Open a project page for a project MIDI, or draw any other MIDI in a new tab."""
+def _open_midi(
+    midi: Path,
+    attached: str,
+    output: Path,
+    *,
+    bpm: float | None = None,
+    time_signature: tuple[int, int] | None = None,
+    subdivision: int = 16,
+    staff_split: int = 60,
+) -> None:
+    """Open an existing project MIDI, or import a loose MIDI as a Library project."""
 
     import streamlit as st
 
-    from baroque_transcribe.notation import NotationError, musicxml_for_midi, write_notation_page
+    from baroque_transcribe.midi_import import MidiImportError, import_midi_project
 
     midi = midi.expanduser().resolve()
     try:
-        score = musicxml_for_midi(midi)
-        project_score = midi.parent / SCORE_XML
-        used_existing = score == project_score and (midi.parent / NOTES_JSON).is_file()
-        saved_video = False
-        if attached:
-            remembered = youtube_project_for_midi(midi, output)
-            if remembered is not None:
-                write_youtube_url(remembered, attached)
-                saved_video = True
-        if used_existing:
-            if saved_video:
-                st.session_state["flash"] = ("success", "The YouTube address was saved with the project.")
-            st.session_state["open_project"] = str(midi.parent)
-            st.switch_page(_PAGES["project"])
-            return
-        page = write_notation_page(
-            score,
-            midi.parent / "notation.html",
-            title=midi.stem,
-            note="Each track in the MIDI file is one staff. The piano model was not run.",
+        used_existing = (midi.parent / NOTES_JSON).is_file() and (
+            midi.name.lower() in {"quantized.mid", "raw.mid", "source.mid"}
+            or (midi.parent / SCORE_XML).is_file()
         )
-        webbrowser.open_new_tab(page.as_uri())
-    except (NotationError, OSError, SyncError, json.JSONDecodeError) as exc:
+        saved_video = False
+        if used_existing:
+            project = midi.parent
+            if attached:
+                write_youtube_url(project, attached)
+                saved_video = True
+            st.session_state["open_project"] = str(project)
+            try:
+                webbrowser.open_new_tab(detail_url(project))
+            except Exception:
+                st.switch_page(_PAGES["project"])
+                return
+            if saved_video:
+                st.success("Opened the project and saved the YouTube address.")
+            else:
+                st.success(f"Opened existing project {project.name}.")
+            return
+
+        project = import_midi_project(
+            midi,
+            output,
+            youtube_url=attached or None,
+            bpm=bpm,
+            time_signature=time_signature,
+            subdivision=subdivision,
+            staff_split=staff_split,
+        )
+        st.session_state["open_project"] = str(project)
+        webbrowser.open_new_tab(detail_url(project))
+        st.success(f"Imported {midi.name} as Library project {project.name}.")
+    except (MidiImportError, SyncError, OSError, json.JSONDecodeError, ValueError) as exc:
         st.error(str(exc))
         return
-    message = f"Opened notation for {midi.name} in a new tab. The piano model was not run."
-    if saved_video:
-        message += " The YouTube address was saved with the project."
-    st.success(message)
 
 
 # ------------------------------------------------------------------------ project
