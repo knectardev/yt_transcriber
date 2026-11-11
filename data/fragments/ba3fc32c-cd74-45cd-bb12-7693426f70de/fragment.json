@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "id": "ba3fc32c-cd74-45cd-bb12-7693426f70de",
+  "title": "Measures 11–12",
+  "description": "",
+  "practice_notes": "",
+  "tags": [],
+  "composer": "",
+  "performer": "",
+  "source": {
+    "kind": "midi",
+    "name": "wtk2prelude1-20261110-205338.mid",
+    "extension": ".mid",
+    "title": "wtk2prelude1-20261110-205338"
+  },
+  "parent": {
+    "project": "performance-20261110-205338",
+    "event_id": "20261111T015340Z-0e3650fe",
+    "notes_fingerprint": "0219893470c6a94a",
+    "analysis_sha256": "",
+    "measure_start": 11,
+    "measure_end": 12,
+    "step_start": 160,
+    "step_end": 192
+  },
+  "time": {
+    "working_audio": {
+      "start_seconds": 34.28568,
+      "end_seconds": 41.14282
+    },
+    "source_video": {
+      "start_seconds": 34.28568,
+      "end_seconds": 41.14282,
+      "excerpt_start_seconds": 0.0
+    },
+    "duration_seconds": 6.85714
+  },
+  "sync": {
+    "offset_seconds": 0.0,
+    "parent_offset_at_extraction": 0.0
+  },
+  "music": {
+    "analyzed_key": {
+      "tonic": "C",
+      "mode": "major",
+      "source": "estimated-at-extraction",
+      "confidence": 0.95
+    },
+    "written_key_signature": {
+      "tonic": "C",
+      "mode": "major"
+    },
+    "time_signature": "4/4",
+    "bpm": 70.00007000007,
+    "subdivision": 16,
+    "staff_split": 60,
+    "measures": 2,
+    "parent_grid_mode": "fixed",
+    "notation_style": "literal"
+  },
+  "harmony": {
+    "roman": [],
+    "symbols": []
+  },
+  "boundary": {
+    "notes": 47,
+    "owned": 45,
+    "carried_in": 2,
+    "cut_off": 2,
+    "unprinted_overlaps": 0,
+    "pedal_down_at_start": false
+  },
+  "artifacts": {
+    "notes": "notes.json",
+    "grid": "grid.json",
+    "performance_midi": "performance.mid",
+    "quantized_midi": "quantized.mid",
+    "musicxml": "score.musicxml",
+    "harmony": null
+  },
+  "warnings": [
+    "The parent project has no harmonic analysis, so the fragment has no chord labels. The key was estimated from the parent's notes."
+  ],
+  "created_at": "2026-11-11T01:58:41Z",
+  "modified_at": "2026-11-11T01:58:46Z"
+}

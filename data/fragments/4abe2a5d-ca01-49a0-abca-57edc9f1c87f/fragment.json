@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "id": "4abe2a5d-ca01-49a0-abca-57edc9f1c87f",
+  "title": "Measure 2",
+  "description": "",
+  "practice_notes": "",
+  "tags": [],
+  "composer": "",
+  "performer": "",
+  "source": {
+    "kind": "midi",
+    "name": "wtk2prelude1-20261110-205431.mid",
+    "extension": ".mid",
+    "title": "wtk2prelude1-20261110-205431"
+  },
+  "parent": {
+    "project": "performance-20261110-205431",
+    "event_id": "20261111T015433Z-5b1e177d",
+    "notes_fingerprint": "0219893470c6a94a",
+    "analysis_sha256": "",
+    "measure_start": 2,
+    "measure_end": 2,
+    "step_start": 16,
+    "step_end": 32
+  },
+  "time": {
+    "working_audio": {
+      "start_seconds": 3.42857,
+      "end_seconds": 6.85714
+    },
+    "source_video": {
+      "start_seconds": 3.42857,
+      "end_seconds": 6.85714,
+      "excerpt_start_seconds": 0.0
+    },
+    "duration_seconds": 3.42857
+  },
+  "sync": {
+    "offset_seconds": 0.0,
+    "parent_offset_at_extraction": 0.0
+  },
+  "music": {
+    "analyzed_key": {
+      "tonic": "C",
+      "mode": "major",
+      "source": "estimated-at-extraction",
+      "confidence": 0.95
+    },
+    "written_key_signature": {
+      "tonic": "C",
+      "mode": "major"
+    },
+    "time_signature": "4/4",
+    "bpm": 70.00007000007,
+    "subdivision": 16,
+    "staff_split": 60,
+    "measures": 1,
+    "parent_grid_mode": "fixed",
+    "notation_style": "literal"
+  },
+  "harmony": {
+    "roman": [],
+    "symbols": []
+  },
+  "boundary": {
+    "notes": 20,
+    "owned": 18,
+    "carried_in": 2,
+    "cut_off": 2,
+    "unprinted_overlaps": 0,
+    "pedal_down_at_start": false
+  },
+  "artifacts": {
+    "notes": "notes.json",
+    "grid": "grid.json",
+    "performance_midi": "performance.mid",
+    "quantized_midi": "quantized.mid",
+    "musicxml": "score.musicxml",
+    "harmony": null
+  },
+  "warnings": [
+    "The parent project has no harmonic analysis, so the fragment has no chord labels. The key was estimated from the parent's notes."
+  ],
+  "created_at": "2026-11-11T01:55:51Z",
+  "modified_at": "2026-11-11T01:57:57Z"
+}
