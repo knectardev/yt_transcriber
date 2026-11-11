@@ -48,6 +48,18 @@ def test_sync_offset_preserves_the_rest_of_the_manifest(tmp_path):
     assert write_sync_offset(tmp_path, -80) == -60.0
 
 
+def test_manifest_edits_refuse_to_overwrite_corrupt_state(tmp_path):
+    manifest = tmp_path / "manifest.json"
+    corrupt = '{"title": "unfinished"'
+    manifest.write_text(corrupt, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Could not read"):
+        write_sync_offset(tmp_path, 0.25)
+    with pytest.raises(ValueError, match="Could not read"):
+        write_youtube_url(tmp_path, "https://youtu.be/abcdefghijk")
+    assert manifest.read_text(encoding="utf-8") == corrupt
+
+
 def test_attached_youtube_url_overrides_a_local_origin(tmp_path):
     project = _write_min_project(tmp_path, origin=r"C:\recordings\piece.wav")
     assert project_youtube_id(json.loads((project / "manifest.json").read_text(encoding="utf-8"))) is None

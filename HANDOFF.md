@@ -19,7 +19,7 @@ Where each object lives on disk, what Git tracks, and why the only SQLite file i
 
 | Module | Role |
 | --- | --- |
-| `src/baroque_transcribe/cli.py` | Commands: `prepare`, `transcribe`, `quantize`, `analyze`, `diagnostics`, `doctor`, `ui`, `history`, `fragments` |
+| `src/baroque_transcribe/cli.py` | Commands: `prepare`, `transcribe`, `quantize`, `analyze`, `diagnostics`, `doctor`, `ui`, `history`, `fragments`, `storage` |
 | `audio.py` | Local WAV, MP3, or FLAC, or a YouTube URL. Writes `source.wav` and a trimmed, mono, 16 kHz, peak-normalized `working.wav`. Does not modify the original file. |
 | `checkpoint.py` | Downloads the Kong et al. checkpoint with Python, so Windows does not need `wget`. Accepts both the old pickle checkpoint and newer zip checkpoints. |
 | `transcribe.py` | ByteDance piano model by default. Basic Pitch ONNX as a baseline. CUDA when PyTorch can see a GPU, otherwise CPU. |
@@ -41,12 +41,18 @@ Where each object lives on disk, what Git tracks, and why the only SQLite file i
 | `fragment_ui.py` | Streamlit handlers for the fragment library, extract form, fragment details, and the project Fragments tab. |
 | `analysis.py` | Harmonic draft implemented: key estimate/override, measure/beat chord labels (Roman numerals + lead-sheet symbols), sequence spans, edit preservation, `annotations.json` IO. Voice separation, imitation, and cadences remain `NotImplementedError` hooks. |
 | `pipeline.py` | Runs the stages and writes `manifest.json`. |
+| `project_manifest.py` | Shared versioned manifest IO, portable state, revision base, and generation-integrity helpers. |
+| `revision.py` | Canonical artifact/project fingerprints plus causal ancestry, heads, and status derivation. |
+| `parse_store.py` | Immutable v1/v2 events. New score events are staged, hashed, complete snapshots; analyze is a causal overlay. |
+| `project_restore.py` | Validated event preview/materialization, permanent recovery copies, rollback, explicit update, and legacy adoption. |
+| `storage_management.py` | Category disk report and validated local ZIP export. |
 
 Output of one run:
 
 ```text
 transcriptions/<name>/
   source.wav
+  source.mid             # MIDI import only
   working.wav
   notes.json
   pedal.json
@@ -73,18 +79,46 @@ MIDI time zero is the start of `working.wav`. If you pass `--start`, that is the
 - Diagnostic plots and a comparison mix.
 - A local site: a Streamlit home page with the transcribe controls and a thumbnail library, one page per transcription with the video and score in sync, and a Streamlit Edit & files page per project with the audio and plots, the note table, the harmony labels, and the files. Links between them open in the same tab.
 - Musical fragment extraction: a measure range becomes a self-contained folder under `data/fragments/<id>/` (manifest JSON, notes, sliced grid, both MIDI files, MusicXML, optional harmony). The parent is never modified. Search index in `.local/library.sqlite` (not committed). CLI `fragments extract|list|reindex`. Playback page: Select passage, Loop, Extract fragment. Streamlit `/fragments`, `/extract`, `/fragment`.
+- Revision safety: causal event-v2 lineage and fingerprints, complete independent score snapshots, v1 compatibility, derived synchronized/local/newer/diverged/conflict states, event-targeted preview/update, verified permanent recovery, rollback, and exact legacy adoption.
+- MIDI portability: source bytes/hash, complete tempo and meter maps, staff assignments, optional note staff, and score provenance survive publish/restore/requantize. Exact duplicate source publication requires an explicit override.
+- Fragment v2 parent provenance and read-time parent-staleness status; fragments remain immutable standalone artifacts during project restore/update.
+- Atomic JSON, MIDI, MusicXML, manifest, event, and fragment publication with generation integrity markers.
+- `storage report`, validated local project export, detailed recovery listing,
+  verified exact-confirmed rollback, and exact-confirmed deletion. Rollback
+  retains the selected recovery and safeguards the current state; recoveries
+  are never automatically deleted.
 - `baroque-transcribe doctor` for FFmpeg, PyTorch, the checkpoint, and optional packages.
 
 ## What was tested
 
-On Linux, Python 3.12, CPU PyTorch 2.15:
+Current revision-safety gate on Windows 10, Python 3.12.10
+(2026-11-10):
 
-- `python -m pytest`: 19 tests passed. They cover timestamps, trimming without modifying the source file, the quantization grid, MIDI round-trip, MusicXML pitch content, tempo estimation on a click train, the command-line prepare and quantize commands, and the checkpoint header check. They do not download the network or run the neural net.
+- `.venv\Scripts\python.exe -m pytest -q`: 281 tests passed in 73.33
+  seconds. The suite covers the original transcription behavior plus event-v2
+  lineage, every revision/conflict state, complete independent snapshots,
+  semantic-versus-byte integrity, path containment, v1 overlays and dirty
+  state, event-targeted recovery/update/rollback, permanent recovery
+  retention, export validation, atomic interruption, MIDI source/staff
+  publish/restore/requantize fidelity, duplicate MIDI safeguards, and
+  validated fragment provenance/staleness.
+- Focused revision, MIDI-import, and fragment suites passed. The running
+  Streamlit application rendered the ten-project library and legacy
+  unavailable-project state without an exception.
+- Python byte-compilation, repository diff checks, and configured IDE lints
+  passed. No project, committed event, or fragment data was modified by the
+  implementation or verification.
+
+Earlier Linux model smoke validation, retained because the test suite does
+not download the network or run the neural net:
+
 - The ByteDance model on the 40-second `cut_liszt.mp3` excerpt from the upstream repository: 523 notes, MIDI pitches 27 through 94, 25 pedal events, controller 64 in `raw.mid`, and a two-staff MusicXML score of 20 measures at the tempo that was passed in (120). The automatic tempo estimate on that clip was about 57 BPM, with about 114 as the double-time candidate.
 - Basic Pitch ONNX on the first 8 seconds of that same audio: 137 notes, no pedal events.
 - The Streamlit script loaded that 523-note project and presented the note table without an exception.
 
-Windows was not executed in this environment. The upstream piano package also says Windows was not part of its own test matrix. The code path avoids `wget` and uses normal Python and FFmpeg.
+The upstream piano package historically did not list Windows in its own test
+matrix. This application's Windows paths avoid `wget` and use normal Python
+and FFmpeg.
 
 YouTube was not transcribed. Both `https://youtu.be/IuZCq1cMq1A` and `https://www.youtube.com/watch?v=Anx1SFCbGow` (Baroque Improvisation Tip No. 1, the video open in the browser screenshot) returned YouTube's "Sign in to confirm you're not a bot" response. This machine has no browser cookie database, so a login in a browser on another computer could not be used.
 
@@ -167,12 +201,46 @@ Open `score.musicxml` in MuseScore. Compare `working.wav` with `raw.mid` when ch
 - **Fragments.** Membership is grid-only; the playback window is derived from members; clipping applies only at the outer barlines. A carried-in note is re-struck at time zero in MIDI (intentional approximation). Readable-style fragments keep the parent's voice assignment and omit a trimmed-overlap note from the printed score (`printed=False`) while leaving it in notes/grid/MIDI. A gap-filled tail that the parent prints in the first selected measure but whose parent note is not a member is omitted (documented boundary difference). `write_musicxml(..., end_step=)` is used only for fragments; the parent path is unchanged. Readable interpretation can leave overlapping events in one voice, so music21 may write an overfull measure; `_cut_at_barline` runs only on the `end_step` path so a fragment does not print an extra bar. Incremental index reconcile that sees the same mtime and size will not reread a file whose content changed in place; `full` / `refresh_folder` / Rebuild catch that. Local-file fragments have no source-audio playback in v1. Analyzed key and written key signature are separate manifest fields.
 - The harmonic layer is a draft over the quantized grid: one global key, no modulation, figuration and passing tones produce wrong or over-specific labels. It is drawn on the browser score pages and stored in `annotations.json`, which is copied into the parse history with the score. It is not embedded in MusicXML.
 - Pedal is kept in `raw.mid` and `pedal.json`. It is not written into the quantized score.
+- Complete event snapshots intentionally remain self-contained. Event-to-event artifact references are deferred; existing events and Git history are never rewritten.
+- Storage optimization is not active. `pedal.json`, manifest projections, generated project files, diagnostics/comparisons, and caches require separate approval after the recorded dependency audit. Recovery trees are excluded from all ordinary cleanup.
 - If you omit `--time-signature`, the score uses 4/4 and the manifest says that was an assumption.
 - Tempo estimation often locks onto half time or double time. The manifest lists those candidates.
 - The model was trained on acoustic piano. Harpsichord, organ, and heavily processed electric piano will do worse.
 - Speech inside the excerpt is transcribed as pitches.
 - YouTube downloads depend on `yt-dlp`, a JavaScript runtime, and cookies from a signed-in browser on the same computer.
-- This environment did not run the program on Windows.
+- The application suite and UI run on Windows; a fresh neural-model inference
+  was not part of the revision-safety gate.
+
+## Updating an existing laptop checkout
+
+This revision does not add packages and does not migrate old projects, events, or fragments. The install instructions use `pip install -e .`, so a pull updates the program in place. `requirements.txt`, `requirements-ui.txt`, and `requirements-dev.txt` are unchanged.
+
+Stop `baroque-transcribe ui` first. The running process keeps the code it loaded.
+
+```text
+git pull
+.venv\Scripts\activate
+baroque-transcribe history status
+baroque-transcribe ui
+```
+
+No `pip install` is required for this update. Run `baroque-transcribe doctor` only if the pull reports a conflict or the command itself is missing. Do not recreate the virtual environment.
+
+What the pull does and does not bring:
+
+- Published events and fragments arrive with the code. Old schema-v1 history remains readable, and nothing rewrites it.
+- `transcriptions\`, source audio, diagnostics, recovery copies, and `.local\` stay on the machine that created them. Pulling does not replace a project folder that already exists.
+- A project that exists only in the pulled history is greyed out. Restore that missing project with `baroque-transcribe history restore <project>`. Add `--with-audio` only when this laptop should download the excerpt. Do not run `history import` for a project whose events are already in the pulled history.
+- A project already on the laptop is left untouched. `history status` may call an unchanged older project `legacy_match`; the project page can record that exact event as its revision base. Do not delete the folder to make it match.
+- If this PC has unpublished work the laptop needs, create a validated ZIP with `baroque-transcribe storage export <project> <backup.zip> --with-audio` and copy that file. Git is not that backup.
+
+Color voices is the one musical file that does not travel inside the event. `--notation readable` writes the colored sibling `score.voices.musicxml` beside the project, while the committed event keeps the readable `score.musicxml`. After restoring a readable project on the laptop, regenerate only that local sibling and reopen its playback page:
+
+```text
+baroque-transcribe quantize transcriptions\<project> --notation readable
+```
+
+That reads the saved notes and does not run the piano model. The checkbox then appears beside Harmony. Its on/off choice is stored in that browser's `localStorage`, so it is not part of the pull.
 
 ## Recommended next steps
 

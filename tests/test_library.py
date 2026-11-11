@@ -31,6 +31,9 @@ def _project(folder: Path, *, origin: str, title: str = "Piece", notes: int = 3,
         manifest["youtube_url"] = youtube_url
     (folder / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     (folder / "notes.json").write_text('{"notes": []}', encoding="utf-8")
+    (folder / "pedal.json").write_text('{"pedals": []}', encoding="utf-8")
+    (folder / "raw.mid").write_bytes(b"raw")
+    (folder / "quantized.mid").write_bytes(b"quantized")
     (folder / "score.musicxml").write_text("<score/>", encoding="utf-8")
     return folder
 

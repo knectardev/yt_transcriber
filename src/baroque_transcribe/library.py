@@ -8,14 +8,26 @@ machine. A run can only be opened when its folder is on this computer.
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from baroque_transcribe.defaults import DIAGNOSTICS_DIR, MANIFEST, NOTES_JSON, SCORE_XML, WORKING_WAV
-from baroque_transcribe.parse_store import repo_root, thumbnail_url, transcribed_videos
+from baroque_transcribe.defaults import DIAGNOSTICS_DIR, NOTES_JSON, SCORE_XML, WORKING_WAV
+from baroque_transcribe.parse_store import (
+    EVENTS_DIR,
+    default_store,
+    load_events,
+    repo_root,
+    thumbnail_url,
+    transcribed_videos,
+)
 from baroque_transcribe.playback import project_youtube_id, youtube_video_id
+from baroque_transcribe.project_manifest import (
+    generation_mismatches,
+    load_project_manifest,
+)
+from baroque_transcribe.revision import revision_status
+from baroque_transcribe.storage_io import write_bytes_atomic
 
 TRANSCRIPTIONS_DIR = "transcriptions"
 _GENERIC_TITLES = {"", "source", "working", "audio"}
@@ -44,6 +56,10 @@ class Run:
     has_score: bool = False
     has_audio: bool = False
     has_overview: bool = False
+    revision_state: str = ""
+    revision_message: str = ""
+    target_event_id: str = ""
+    published_event_ids: tuple[str, ...] = ()
     warnings: list[str] = field(default_factory=list)
 
 
@@ -133,14 +149,7 @@ def read_run(folder: Path, *, for_grid: bool = False) -> Run | None:
     notes_path = folder / NOTES_JSON
     if not notes_path.is_file():
         return None
-    manifest: dict = {}
-    manifest_path = folder / MANIFEST
-    if manifest_path.is_file():
-        try:
-            loaded = json.loads(manifest_path.read_text(encoding="utf-8"))
-            manifest = loaded if isinstance(loaded, dict) else {}
-        except (OSError, json.JSONDecodeError):
-            manifest = {}
+    manifest = load_project_manifest(folder)
     counts = manifest.get("counts") if isinstance(manifest.get("counts"), dict) else {}
     tempo = manifest.get("tempo") if isinstance(manifest.get("tempo"), dict) else {}
     audio = manifest.get("audio") if isinstance(manifest.get("audio"), dict) else {}
@@ -176,7 +185,17 @@ def read_run(folder: Path, *, for_grid: bool = False) -> Run | None:
         has_score=False if for_grid else (folder / SCORE_XML).is_file(),
         has_audio=False if for_grid else (folder / WORKING_WAV).is_file(),
         has_overview=False if for_grid else (folder / DIAGNOSTICS_DIR / "overview.png").is_file(),
-        warnings=[] if for_grid else [str(item) for item in (manifest.get("warnings") or [])],
+        warnings=(
+            []
+            if for_grid
+            else [
+                *[str(item) for item in (manifest.get("warnings") or [])],
+                *[
+                    f"Generation integrity mismatch: {name}"
+                    for name in generation_mismatches(folder, manifest)
+                ],
+            ]
+        ),
     )
 
 
@@ -207,6 +226,22 @@ def library_cards(root: Path | None = None, store: Path | None = None, *, for_gr
 
     base = transcriptions_root(root)
     on_disk = {run.name: run for run in disk_runs(base, for_grid=for_grid)}
+    target_store = Path(store) if store is not None else default_store()
+    events = load_events(target_store)
+    event_projects = {
+        str(event.get("project") or "")
+        for event in events
+        if event.get("status") == "ok" and str(event.get("project") or "")
+    }
+    for name in sorted(set(on_disk) | event_projects):
+        run = on_disk.get(name)
+        project_dir = run.folder if run is not None else None
+        status = revision_status(name, project_dir, events, target_store)
+        if run is not None:
+            run.revision_state = status.state
+            run.revision_message = status.message
+            run.target_event_id = status.target_event_id
+            run.published_event_ids = status.published_event_ids
     cards: dict[str, Card] = {}
     for video in transcribed_videos(store):
         video_id = str(video["video_id"])
@@ -221,6 +256,11 @@ def library_cards(root: Path | None = None, store: Path | None = None, *, for_gr
             run = on_disk.get(name)
             if run is None:
                 run = Run(name=name, folder=base / name, available=False, video_id=video_id)
+                status = revision_status(name, None, events, target_store)
+                run.revision_state = status.state
+                run.revision_message = status.message
+                run.target_event_id = status.target_event_id
+                run.published_event_ids = status.published_event_ids
             card.runs.append(run)
         cards[video_id] = card
     for run in on_disk.values():
@@ -244,6 +284,43 @@ def library_cards(root: Path | None = None, store: Path | None = None, *, for_gr
         cards[key] = Card(
             key=key,
             title=run.title or run.name,
+            video_id=None,
+            url=None,
+            thumbnail=None,
+            runs=[run],
+        )
+    represented = {run.name for card in cards.values() for run in card.runs}
+    for name in sorted(event_projects - represented):
+        relevant = [
+            event
+            for event in events
+            if str(event.get("project") or "") == name and event.get("status") == "ok"
+        ]
+        score_events = [
+            event
+            for event in relevant
+            if (target_store / EVENTS_DIR / str(event.get("id") or "") / NOTES_JSON).is_file()
+        ]
+        if not score_events:
+            continue
+        event = score_events[-1]
+        source = event.get("source") if isinstance(event.get("source"), dict) else {}
+        status = revision_status(name, None, events, target_store)
+        run = Run(
+            name=name,
+            folder=base / name,
+            available=False,
+            title=_clean_title(str(source.get("title") or "")),
+            source_kind=str(source.get("kind") or ""),
+            revision_state=status.state,
+            revision_message=status.message,
+            target_event_id=status.target_event_id,
+            published_event_ids=status.published_event_ids,
+        )
+        label = run.title or str(source.get("name") or name)
+        cards[f"history:{name}"] = Card(
+            key=f"history:{name}",
+            title=label,
             video_id=None,
             url=None,
             thumbnail=None,
@@ -333,7 +410,7 @@ def load_thumbnail(video_id: str, *, cache_dir: Path | None = None) -> bytes | N
         return None
     try:
         folder.mkdir(parents=True, exist_ok=True)
-        cached.write_bytes(data)
+        write_bytes_atomic(cached, data)
     except OSError:
         return data
     return data

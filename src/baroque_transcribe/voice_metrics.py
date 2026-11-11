@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from baroque_transcribe.engrave import Interpretation, WrittenNote
 from baroque_transcribe.quantize import Quantization
+from baroque_transcribe.storage_io import write_json_atomic
 
 
 @dataclass
@@ -86,11 +86,7 @@ def voice_continuity_report(
 
 
 def write_voice_metrics(path: Path, rows: list[VoiceContinuity]) -> Path:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps({"voices": [row.to_dict() for row in rows]}, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    write_json_atomic(path, {"voices": [row.to_dict() for row in rows]})
     return path
 
 

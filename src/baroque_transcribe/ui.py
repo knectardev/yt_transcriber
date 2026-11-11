@@ -32,7 +32,6 @@ from urllib.parse import quote
 from baroque_transcribe.defaults import (
     ANNOTATIONS_JSON,
     DIAGNOSTICS_DIR,
-    MANIFEST,
     NOTES_JSON,
     PEDAL_JSON,
     QUANTIZED_MID,
@@ -63,7 +62,9 @@ from baroque_transcribe.playback import (
     youtube_video_id,
 )
 from baroque_transcribe.progress import ProgressEvent
+from baroque_transcribe.project_manifest import load_project_manifest
 from baroque_transcribe.schema import NoteEvent, PedalEvent, Transcription, read_transcription
+from baroque_transcribe.storage_io import write_bytes_atomic
 
 _STAGE_ORDER = ("prepare", "checkpoint", "load", "transcribe", "write")
 _STAGE_TITLES = {
@@ -338,6 +339,9 @@ def _show_card(card: Card) -> bool:
             bits.append(_relative(primary.modified))
         elif card.runs and primary is None:
             bits.append("not on this computer")
+        primary_revision = getattr(primary, "revision_state", "") if primary else ""
+        if primary_revision:
+            bits.append(_revision_label(primary_revision))
         if bits:
             st.caption(" · ".join(bits))
         if len(card.runs) > 1 or primary is None:
@@ -355,18 +359,53 @@ def _show_card(card: Card) -> bool:
                 continue
             # The score files for this run are in the parse history (they
             # arrived with the repo); only the project folder is missing.
+            target_event_id = getattr(run, "target_event_id", "")
+            choices = list(getattr(run, "published_event_ids", ()))
+            if target_event_id and target_event_id not in choices:
+                choices.append(target_event_id)
+            selected_event = target_event_id
+            if len(choices) > 1:
+                selected_event = st.selectbox(
+                    f"Published event for {run.name}",
+                    choices,
+                    index=(
+                        choices.index(target_event_id)
+                        if target_event_id in choices
+                        else 0
+                    ),
+                    key=f"restore-target-{card.key}-{run.name}",
+                    help="Choose the exact published event to restore.",
+                )
+            elif choices:
+                selected_event = choices[0]
+            if not selected_event:
+                st.warning(f"No independently restorable event is available for {run.name}.")
+                continue
             if st.button(
                 f"Restore {run.name} from history",
                 key=f"restore-{card.key}-{run.name}",
                 help="Copy the stored notes, MIDI, score, and harmonic analysis into a local project folder. Nothing is downloaded and no model is run.",
             ):
-                from baroque_transcribe.parse_store import restore_projects
+                from baroque_transcribe.parse_store import default_store, repo_root
+                from baroque_transcribe.project_restore import (
+                    RestoreError,
+                    restore_missing_project,
+                )
 
-                restored, _skipped = restore_projects(projects=[run.name])
-                if restored:
-                    st.session_state["flash"] = ("success", f"Restored {run.name} from the parse history. No model was run.")
+                try:
+                    restored = restore_missing_project(
+                        store=default_store(),
+                        projects_root=repo_root() / "transcriptions",
+                        event_id=selected_event,
+                    )
+                except RestoreError as exc:
+                    st.session_state["flash"] = ("error", str(exc))
                 else:
-                    st.session_state["flash"] = ("info", f"{run.name} has no stored score files to restore.")
+                    st.session_state["flash"] = (
+                        "success",
+                        f"Restored {restored.project.name} from event "
+                        f"{restored.target_event_id}. No model was run.",
+                    )
                 st.rerun()
     return bool(card.thumbnail)
 
@@ -375,6 +414,120 @@ def _detail_href(run: Run, card: Card) -> str:
     """Address of the run's own page (video and score), escaped for an ``href``."""
 
     return escape(detail_url(run.folder, title=run.title or card.title or run.name), quote=True)
+
+
+def _revision_label(state: str) -> str:
+    return {
+        "synchronized": "published",
+        "newer_published": "newer published revision",
+        "local_changes": "unpublished local changes",
+        "diverged": "local and published changes",
+        "published_conflict": "published conflict",
+        "independent": "not published",
+        "not_restored": "not restored",
+        "legacy_match": "legacy exact match",
+        "legacy_unknown": "revision relationship unknown",
+    }.get(state, state.replace("_", " "))
+
+
+def _revision_controls(project: Path, run: Run) -> None:
+    import streamlit as st
+
+    from baroque_transcribe.parse_store import default_store
+    from baroque_transcribe.project_restore import (
+        RestoreError,
+        adopt_exact_match,
+        preview_restore,
+        update_project,
+    )
+
+    state = getattr(run, "revision_state", "")
+    if not state:
+        return
+    text = getattr(run, "revision_message", "") or _revision_label(state)
+    if state in {"local_changes", "diverged", "legacy_unknown", "published_conflict"}:
+        st.warning(text)
+    elif state == "newer_published":
+        st.info(text)
+    else:
+        st.caption(f"Revision: {_revision_label(state)}")
+    store = default_store()
+    projects = project.parent
+    if state == "legacy_match":
+        if st.button("Adopt exact published match as revision base", key=f"adopt-{project.name}"):
+            try:
+                adopt_exact_match(store=store, projects_root=projects, project=project.name)
+            except RestoreError as exc:
+                st.error(str(exc))
+            else:
+                st.session_state["flash"] = (
+                    "success",
+                    "Recorded the exact published event as this project's revision base.",
+                )
+                st.rerun()
+        return
+    target_event_id = getattr(run, "target_event_id", "")
+    choices = list(getattr(run, "published_event_ids", ()))
+    if target_event_id and target_event_id not in choices:
+        choices.append(target_event_id)
+    if state not in {"newer_published", "diverged", "published_conflict"} or not choices:
+        return
+    with st.expander("Preview and apply a published revision", expanded=False):
+        selected = st.selectbox(
+            "Published event",
+            choices,
+            index=(choices.index(target_event_id) if target_event_id in choices else 0),
+            key=f"revision-target-{project.name}",
+        )
+        try:
+            preview = preview_restore(
+                store=store,
+                projects_root=projects,
+                event_id=selected,
+            )
+        except RestoreError as exc:
+            st.error(str(exc))
+            return
+        details = [
+            f"{preview.note_count:,} notes",
+            f"{preview.harmony_count:,} harmony entries",
+            preview.source_kind or "unknown source",
+        ]
+        st.caption(" · ".join(details))
+        st.write(
+            "Changed components: "
+            + (", ".join(preview.changed_components) or "none")
+        )
+        published_annotations = st.checkbox(
+            "Replace local annotations with the selected published annotations",
+            value=False,
+            key=f"published-annotations-{project.name}-{selected}",
+        )
+        confirmed = st.checkbox(
+            "I understand this replaces project artifacts after creating a permanent recovery copy",
+            value=False,
+            key=f"confirm-update-{project.name}-{selected}",
+        )
+        if st.button(
+            "Update from selected event",
+            disabled=not confirmed,
+            key=f"apply-update-{project.name}-{selected}",
+        ):
+            try:
+                result = update_project(
+                    store=store,
+                    projects_root=projects,
+                    event_id=selected,
+                    use_published_annotations=published_annotations,
+                )
+            except RestoreError as exc:
+                st.error(str(exc))
+            else:
+                st.session_state["flash"] = (
+                    "success",
+                    f"Updated from {selected}. Recovery retained at {result.recovery}.",
+                )
+                st.rerun()
 
 
 def _transcribe_panel() -> None:
@@ -501,6 +654,11 @@ def _midi_panel() -> None:
             key="midi_staff_split",
             help="Used only when the MIDI has a single track (no separate staves).",
         )
+        allow_duplicate = st.checkbox(
+            "Create another project even if this exact MIDI was already published",
+            value=False,
+            key="midi_allow_duplicate",
+        )
     if not st.button("Import MIDI", type="primary"):
         return
     chosen = _midi_from_input(midi_path, midi_upload, Path(output))
@@ -529,6 +687,7 @@ def _midi_panel() -> None:
         time_signature=meter_tuple,
         subdivision=int(subdivision),
         staff_split=int(staff_split),
+        allow_duplicate=bool(allow_duplicate),
     )
 
 
@@ -541,6 +700,7 @@ def _open_midi(
     time_signature: tuple[int, int] | None = None,
     subdivision: int = 16,
     staff_split: int = 60,
+    allow_duplicate: bool = False,
 ) -> None:
     """Open an existing project MIDI, or import a loose MIDI as a Library project."""
 
@@ -580,6 +740,7 @@ def _open_midi(
             time_signature=time_signature,
             subdivision=subdivision,
             staff_split=staff_split,
+            allow_duplicate=allow_duplicate,
         )
         st.session_state["open_project"] = str(project)
         webbrowser.open_new_tab(detail_url(project))
@@ -633,6 +794,18 @@ def _project_page() -> None:
             _attach_video_form(project)
     else:
         st.info("This project has no score yet. Set a tempo on the Notes tab and rebuild.")
+
+    if card is not None:
+        matching = next(
+            (
+                item
+                for item in card.runs
+                if item.available and item.folder.resolve() == project.resolve()
+            ),
+            None,
+        )
+        if matching is not None:
+            _revision_controls(project, matching)
 
     manifest = _manifest(project)
     tabs = st.tabs(["Listen", "Notes", "Harmony", "Files", "Fragments"])
@@ -701,7 +874,13 @@ def _notes_tab(project: Path, manifest: dict) -> None:
     )
     frame = pd.DataFrame(
         [
-            {"pitch": note.pitch, "onset": note.onset, "offset": note.offset, "velocity": note.velocity}
+            {
+                "pitch": note.pitch,
+                "onset": note.onset,
+                "offset": note.offset,
+                "velocity": note.velocity,
+                "staff": note.staff,
+            }
             for note in transcription.notes
         ]
     )
@@ -736,6 +915,11 @@ def _notes_tab(project: Path, manifest: dict) -> None:
                 onset=float(row["onset"]),
                 offset=float(row["offset"]),
                 velocity=int(row.get("velocity") or 80),
+                staff=(
+                    None
+                    if _blank(row.get("staff"))
+                    else int(row["staff"])
+                ),
             )
         )
     updated = Transcription(
@@ -1029,6 +1213,49 @@ def _files_tab(project: Path, run: Run, card: Card | None, manifest: dict) -> No
         "raw.mid keeps the performance timing at a 120 BPM clock. quantized.mid and score.musicxml are the "
         "rhythmic reading. Open the MusicXML in MuseScore."
     )
+    with st.expander("Export a validated project backup"):
+        revision_run = next(
+            (
+                item
+                for item in (card.runs if card else [])
+                if item.available and item.folder.resolve() == project.resolve()
+            ),
+            None,
+        )
+        if revision_run and (
+            getattr(revision_run, "revision_state", "")
+            in {"local_changes", "diverged", "independent"}
+        ):
+            st.warning(
+                "This project contains unpublished local work. The export preserves it "
+                "independently of Git history."
+            )
+        destination = st.text_input(
+            "Destination ZIP",
+            key=f"export-destination-{project.name}",
+            placeholder=str(project.parent / f"{project.name}-backup.zip"),
+        )
+        include_audio = st.checkbox(
+            "Include source, working, and diagnostic audio",
+            value=False,
+            key=f"export-audio-{project.name}",
+        )
+        if st.button("Create backup", key=f"export-project-{project.name}"):
+            if not destination.strip():
+                st.error("Choose a destination ZIP path.")
+            else:
+                from baroque_transcribe.storage_management import export_project
+
+                try:
+                    exported = export_project(
+                        project,
+                        Path(destination),
+                        include_audio=include_audio,
+                    )
+                except (OSError, ValueError) as exc:
+                    st.error(str(exc))
+                else:
+                    st.success(f"Validated backup written to {exported}")
 
     warnings = manifest.get("warnings") or []
     if warnings:
@@ -1118,14 +1345,7 @@ def _project_href(folder: Path) -> str:
 
 
 def _manifest(project: Path) -> dict:
-    path = project / MANIFEST
-    if not path.is_file():
-        return {}
-    try:
-        loaded = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return {}
-    return loaded if isinstance(loaded, dict) else {}
+    return load_project_manifest(project)
 
 
 def _relative(moment: datetime) -> str:
@@ -1150,7 +1370,7 @@ def _midi_from_input(text: str, upload, project: Path) -> Path | None:
         folder = project / "_midi"
         folder.mkdir(parents=True, exist_ok=True)
         dest = unique_path(folder / Path(upload.name).name)
-        dest.write_bytes(upload.getbuffer())
+        write_bytes_atomic(dest, bytes(upload.getbuffer()))
         return dest
     raw = text.strip()
     if not raw:
@@ -1245,7 +1465,7 @@ def _resolve_source(kind: str, youtube: str, local_path: str, upload, project: P
     inbox = project / "_uploads"
     inbox.mkdir(parents=True, exist_ok=True)
     dest = unique_path(inbox / upload.name)
-    dest.write_bytes(upload.getbuffer())
+    write_bytes_atomic(dest, bytes(upload.getbuffer()))
     return str(dest)
 
 

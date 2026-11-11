@@ -100,7 +100,9 @@ def test_record_copies_score_formats_and_leaves_audio(tmp_path):
     assert first is not None and second is not None
     assert first != second
     event = json.loads((first / "event.json").read_text(encoding="utf-8"))
-    assert event["version"] == 1
+    assert event["version"] == 2
+    assert event["revision"]["complete_snapshot"] is True
+    assert event["revision"]["parent_event_id"] is None
     assert event["source"]["video_id"] == "abcdefghijk"
     assert event["formats"]["notes_json"]["stored"] is True
     assert event["formats"]["musicxml"]["stored"] is True
@@ -128,9 +130,9 @@ def test_record_copies_score_formats_and_leaves_audio(tmp_path):
 def test_local_paths_and_home_directories_stay_out_of_the_event(tmp_path):
     origin = tmp_path / "private" / "recital.flac"
     described = describe_source(str(origin), title="Recital", youtube_url="https://youtu.be/abcdefghijk?t=12")
-    assert described["kind"] == "youtube"
+    assert described["kind"] == "file"
     assert described["video_id"] == "abcdefghijk"
-    assert described["local_name"] == "recital.flac"
+    assert described["name"] == "recital.flac"
     assert "private" not in json.dumps(described)
 
     store = tmp_path / "store"
@@ -170,8 +172,11 @@ def test_import_is_idempotent_and_uses_an_attached_youtube_url(tmp_path):
     assert len(events) == 2
     attached = next(event for event in events if event["project"] == "from-file")
     assert attached["via"] == "import"
+    assert attached["source"]["kind"] == "file"
     assert attached["source"]["video_id"] == "Anx1SFCbGow"
-    assert attached["source"]["url"].startswith("https://www.youtube.com/watch?v=")
+    assert attached["source"]["youtube_url"].startswith(
+        "https://www.youtube.com/watch?v="
+    )
     serialized = json.dumps(attached)
     assert "someone" not in serialized
     assert str(local_origin) not in serialized
@@ -196,13 +201,18 @@ def test_prepare_records_success_and_failure(tmp_path, monkeypatch):
     assert prepared.working_wav.is_file()
     event = next(item for item in load_events(store) if item["status"] == "ok")
     assert event["action"] == "prepare"
-    assert event["source"] == {
+    source = dict(event["source"])
+    source_hash = source.pop("sha256")
+    assert source == {
         "extension": ".wav",
         "kind": "file",
         "name": "phrase.wav",
         "title": "phrase",
     }
     assert event["formats"]["score_pdf"]["present"] is False
+    manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["source_sha256"] == source_hash
+    assert source_hash == event["project_state"]["source"]["sha256"]
     event_dir = store / "events" / event["id"]
     assert (event_dir / "notes.json").is_file()
     assert (event_dir / "score.musicxml").is_file()
@@ -232,6 +242,29 @@ def test_store_write_error_does_not_hide_the_prepared_audio(tmp_path, monkeypatc
     assert (tmp_path / "out" / "manifest.json").is_file()
     captured = capsys.readouterr()
     assert "could not write parse history" in captured.err
+
+
+def test_history_publication_refuses_to_overwrite_a_corrupt_manifest(tmp_path):
+    project = tmp_path / "recital"
+    _score_project(project, origin="https://youtu.be/abcdefghijk")
+    manifest = project / "manifest.json"
+    corrupt = '{"title": "unfinished"'
+    manifest.write_text(corrupt, encoding="utf-8")
+    store = tmp_path / "store"
+
+    assert (
+        record_parse(
+            action="transcribe",
+            status="ok",
+            source="https://youtu.be/abcdefghijk",
+            project=project.name,
+            project_dir=project,
+            store=store,
+        )
+        is None
+    )
+    assert manifest.read_text(encoding="utf-8") == corrupt
+    assert load_events(store) == []
 
 
 def test_default_store_is_not_written_during_pytest(tmp_path):
@@ -282,13 +315,14 @@ def test_restore_rebuilds_a_project_without_downloading(tmp_path):
     from baroque_transcribe.parse_store import restore_projects
 
     store = tmp_path / "store"
+    project = _scored_project(tmp_path / "original")
     record_parse(
         action="transcribe",
         status="ok",
         source="https://youtu.be/abcdefghijk",
         title="Toccata",
         project="take",
-        project_dir=_scored_project(tmp_path / "original"),
+        project_dir=project,
         store=store,
         excerpt_start=12.0,
         excerpt_end=42.0,
@@ -297,13 +331,14 @@ def test_restore_rebuilds_a_project_without_downloading(tmp_path):
         recorded_at=_when("2026-11-08T04:21:03Z"),
     )
     # A later run of the same project is the one restored.
+    _scored_project(project, note_count=3)
     record_parse(
         action="quantize",
         status="ok",
         source="https://youtu.be/abcdefghijk",
         title="Toccata",
         project="take",
-        project_dir=_scored_project(tmp_path / "edited", note_count=3),
+        project_dir=project,
         store=store,
         excerpt_start=12.0,
         excerpt_end=42.0,
@@ -399,7 +434,7 @@ def test_transcribed_videos_are_one_card_per_youtube_video(tmp_path):
         source="https://youtu.be/abcdefghijk",
         title="Baroque Improvisation Tip No. 1",
         project="excerpt",
-        project_dir=_notes_dir(tmp_path / "excerpt"),
+        project_dir=_scored_project(tmp_path / "excerpt"),
         store=store,
         recorded_at=_when("2026-11-07T20:35:15Z"),
     )
@@ -409,7 +444,7 @@ def test_transcribed_videos_are_one_card_per_youtube_video(tmp_path):
         source="https://www.youtube.com/watch?v=abcdefghijk",
         title="source",
         project="full-take",
-        project_dir=_notes_dir(tmp_path / "full-take"),
+        project_dir=_scored_project(tmp_path / "full-take"),
         store=store,
         recorded_at=_when("2026-11-08T04:21:03Z"),
     )
@@ -419,7 +454,7 @@ def test_transcribed_videos_are_one_card_per_youtube_video(tmp_path):
         source="https://youtu.be/bSfPnEfsEMY",
         title="Improvised baroque toccata",
         project="toccata",
-        project_dir=_notes_dir(tmp_path / "toccata"),
+        project_dir=_scored_project(tmp_path / "toccata"),
         store=store,
         recorded_at=_when("2026-11-08T04:49:18Z"),
     )
@@ -504,26 +539,27 @@ def test_an_older_analysis_is_not_applied_to_a_newer_score(tmp_path):
     from baroque_transcribe.parse_store import restore_projects
 
     store = tmp_path / "store"
-    early = _scored_project(tmp_path / "early")
-    (early / "annotations.json").write_text('{"label": "old"}\n', encoding="utf-8")
+    project = _scored_project(tmp_path / "take")
+    (project / "annotations.json").write_text('{"label": "old"}\n', encoding="utf-8")
     record_parse(
         action="transcribe",
         status="ok",
         source="https://youtu.be/abcdefghijk",
         title="Toccata",
         project="take",
-        project_dir=early,
+        project_dir=project,
         store=store,
         recorded_at=_when("2026-11-08T04:21:03Z"),
     )
-    later = _scored_project(tmp_path / "later", note_count=4)
+    (project / "annotations.json").unlink()
+    _scored_project(project, note_count=4)
     record_parse(
         action="quantize",
         status="ok",
         source="https://youtu.be/abcdefghijk",
         title="Toccata",
         project="take",
-        project_dir=later,
+        project_dir=project,
         store=store,
         recorded_at=_when("2026-11-08T05:21:03Z"),
     )
@@ -533,13 +569,6 @@ def test_an_older_analysis_is_not_applied_to_a_newer_score(tmp_path):
     notes = json.loads((dest / "notes.json").read_text(encoding="utf-8"))
     assert len(notes["notes"]) == 4
     assert not (dest / "annotations.json").exists()
-
-
-def _notes_dir(path: Path) -> Path:
-    path.mkdir(parents=True)
-    (path / "notes.json").write_text("{}\n", encoding="utf-8")
-    return path
-
 
 def _when(text: str):
     from datetime import datetime

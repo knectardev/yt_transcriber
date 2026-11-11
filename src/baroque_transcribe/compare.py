@@ -22,6 +22,7 @@ from baroque_transcribe.notation import write_musicxml, write_notation_page
 from baroque_transcribe.notation_settings import NotationSettings
 from baroque_transcribe.quantize import Quantization, quantize_notes
 from baroque_transcribe.schema import read_transcription
+from baroque_transcribe.storage_io import write_json_atomic
 
 
 class CompareError(ValueError):
@@ -251,5 +252,5 @@ def compare_project(
         raw_midi_unchanged=raw_unchanged,
         preservation=preservation_summary or None,
     )
-    (output_dir / "report.json").write_text(json.dumps(report.to_dict(), indent=2) + "\n", encoding="utf-8")
+    write_json_atomic(output_dir / "report.json", report.to_dict())
     return report

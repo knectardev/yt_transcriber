@@ -153,6 +153,11 @@ def fake_manifest(
             "parent": {
                 "project": project,
                 "event_id": "",
+                "lineage_id": "",
+                "base_event_id": "",
+                "base_snapshot_sha256": "",
+                "snapshot_sha256": "fixture-parent-snapshot",
+                "revision_state": "independent",
                 "notes_fingerprint": "0123456789abcdef",
                 "analysis_sha256": "",
                 "measure_start": measure_start,

@@ -8,16 +8,17 @@ The rest of this document is the map of the tree, the JSON contracts, the SQLite
 
 ## Design rule
 
-There are four classes of storage. Mixing them up is what makes the tree look like “stray files.”
+There are five classes of storage. Mixing them up is what makes the tree look like “stray files.”
 
 | Class | Where | Owned by | Survives deleting `.local/` | Travels with `git pull` |
 | --- | --- | --- | --- | --- |
 | Working project | `transcriptions/<name>/` | this machine | yes | no |
+| Recovery copy | `transcriptions/.recovery/<name>/<recovery-id>/` | the user | yes | no |
 | Published run | `data/parses/events/<id>/` | git | yes | yes |
 | Fragment | `data/fragments/<uuid>/` | git | yes | yes |
 | Machine cache | `.local/`, `data/thumbnails/`, the model checkpoint | this process / this machine | no (that is the point) | no |
 
-A **working project** is the folder you edit, requantize, and listen to. A **published run** is an immutable snapshot of one command (`transcribe`, `quantize`, `analyze`, …) copied into parse history so another machine can restore it. A **fragment** is a self-contained excerpt of printed measures; it does not need the parent project to open. A **cache** is anything derived that this computer can rebuild.
+A **working project** is the folder you edit, requantize, and listen to. A **recovery copy** is a verified, permanent copy made before an existing project is updated from history. A **published run** is an immutable snapshot of one command (`transcribe`, `quantize`, `analyze`, …) copied into parse history so another machine can restore it. A **fragment** is a self-contained excerpt of printed measures; it does not need the parent project to open. A **cache** is anything derived that this computer can rebuild.
 
 SQLite sits only in the last class, and only for fragments.
 
@@ -50,6 +51,7 @@ Paths are relative to the clone root (the directory that contains `pyproject.tom
     fragments/<uuid>/         committed fragment folders  ← the fragment library
     thumbnails/               ignored JPEG cache of YouTube stills
   transcriptions/<name>/      ignored working projects
+  transcriptions/.recovery/   ignored durable update recovery copies
   .local/
     library.sqlite            ignored fragment search index
     fragment_pages/           ignored generated HTML for fragments
@@ -68,7 +70,7 @@ Outside the clone:
 - `!data/parses/**/*.mid` and `!data/parses/**/*.musicxml`
 - `!data/fragments/**/*.mid` and `!data/fragments/**/*.musicxml`
 
-Staging folders `data/fragments/.tmp-*/` are ignored. `.local/` is ignored in full.
+Staging folders `data/fragments/.tmp-*/` and `data/parses/events/.tmp-*/` are ignored. `.local/` is ignored in full. Recovery trees are ignored because all of `transcriptions/` is local, but they are durable user data, not cache data.
 
 ## 1. Working project — `transcriptions/<name>/`
 
@@ -79,6 +81,7 @@ transcriptions/<name>/
   manifest.json              project metadata (tempo, excerpt, sync, warnings)
   source.wav                 downloaded or copied original (may be a section)
   working.wav                mono 16 kHz peak-normalized excerpt; MIDI time 0
+  source.mid                 original MIDI bytes for a MIDI-import project
   notes.json                 SOURCE OF TRUTH for pitches and times after the model
   pedal.json                 sustain-pedal intervals (also CC 64 in raw.mid)
   raw.mid                    unquantized performance MIDI (120 BPM as a clock)
@@ -124,12 +127,14 @@ Written by `pipeline.py`. This is not the fragment manifest. Typical keys:
 | `warnings` | assumptions (e.g. 4/4 placeholder) and failures that did not abort the run |
 | `sync_offset_seconds` | ear correction on the synced page; survives a later `quantize` |
 | `analysis` | summary pointing at `annotations.json` when harmony exists |
+| `revision` | causal `lineage_id`, `base_event_id`, and `base_snapshot_sha256`; current dirty state is derived, not stored |
+| `generation` | hashes written last after MIDI and MusicXML generation; a mismatch exposes an interrupted/mixed rebuild |
 
 Nothing in this file is a path into SQLite. `sync_offset_seconds` is a **linear** offset when mapping the canonical note timeline to a YouTube player. It does not provide nonlinear alignment with an expressive performance; that remains out of scope.
 
 ### MIDI import projects
 
-Importing a `.mid` / `.midi` file creates a normal project under `transcriptions/` with `notes.json` times taken from pretty_midi absolute seconds (tempo map applied). Multi-track piano files keep track→staff layout in `score.musicxml` (and optional per-note `staff` in `notes.json`). Playback without YouTube uses a synthesized preview WAV under `.local/project_audio/`, or a silent scrubber if synthesis fails. Attaching a YouTube URL later switches the shared player to the video clock; only `sync_offset_seconds` aligns the two.
+Importing a `.mid` / `.midi` file creates a normal project under `transcriptions/`. `source.mid` is the authority for original source bytes, tempo/meter maps, and track structure. `notes.json` is the editable authority for the app’s absolute-seconds performance timeline and optional per-note `staff`. The manifest stores the source SHA-256, complete tempo and time-signature maps, `staff_assignment`, and `notation.score_from`; requantization preserves them. Multi-track piano files keep track→staff layout in `score.musicxml`. Playback without YouTube uses a synthesized preview WAV under `.local/project_audio/`, or a silent scrubber if synthesis fails. Attaching a YouTube URL later switches the shared player to the video clock; only `sync_offset_seconds` aligns the two.
 
 ### `annotations.json` (schema version 1)
 
@@ -158,19 +163,40 @@ data/parses/events/<event-id>/
   quantized.mid
   score.musicxml
   annotations.json           copy, when the run produced or edited harmony
+  source.mid                 original source for MIDI score snapshots
 ```
 
 `score.pdf` is reserved (`"present": false`, `"status": "planned"`). Audio is **described** in `event.json` (`stored: false`) and left in `transcriptions/`.
 
-`event.json` (schema version 1) includes: `id`, `recorded_at`, `machine`, `action`, `status`, `project` (the working-folder name), `source` (`kind` youtube/file/url, url, video_id, title), `excerpt`, `audio` (file names and durations, not bytes), `formats` (which score files were copied), `error`.
+Readers retain immutable schema-v1 compatibility. New `event.json` files use schema version 2 and add:
 
-The home-page library (`library.py`) merges these events with whatever project folders exist on this computer. A run named in history but missing as a folder is shown greyed out (“not on this computer”). `history restore` copies the stored score files into a new `transcriptions/<project>/` and rebuilds a `manifest.json` from the event. It does not run the model. Audio is still missing unless you pass `--with-audio`.
+- `revision.lineage_id`, optional `parent_event_id`, and `complete_snapshot`
+- canonical per-artifact hashes plus one aggregate snapshot hash, separately
+  from raw SHA-256 file-integrity hashes
+- a portable `project_state` projection with source identity, tempo/meter maps, staff and notation provenance
+- MIDI source SHA-256 and a stored `source.mid` for every complete MIDI snapshot
+
+Canonical hashes exclude local absolute paths, revision timestamps, generated page names, and volatile MusicXML identifiers/dates. Raw file hashes still detect any byte change. Local-audio and MIDI identities include a source hash; an attached YouTube video remains an attachment instead of replacing that source identity. Score-producing `transcribe`, `quantize`, and MIDI `import` events remain complete, independently restorable snapshots. They never read artifact bytes through another event. `analyze` is the intentional exception: it stores an annotation overlay and points causally at its score ancestor, and publication is refused if that score no longer matches.
+
+An event is first built in a temporary sibling folder. Every stored hash and required artifact is validated, `event.json` is written last, and only then is the folder atomically renamed. A project’s revision base is updated after publication succeeds. Existing v1 events and every old folder remain byte-for-byte unchanged.
+
+The home-page library (`library.py`) merges these events with whatever project folders exist on this computer. It derives `synchronized`, `newer_published`, `local_changes`, `diverged`, `published_conflict`, `independent`, `not_restored`, and legacy relationship states from fingerprints and ancestry. Multiple incomparable heads are a conflict; timestamps do not choose a winner.
+
+`history restore` remains non-destructive and restores only missing projects. Explicit operations are:
+
+```text
+baroque-transcribe history status [project]
+baroque-transcribe history preview <event-id>
+baroque-transcribe history update <event-id> --confirm <event-id>
+```
+
+Preview validates the selected complete score snapshot and its causal analysis overlay before any project write. Updating an existing project never merges musical data. It first creates and verifies `transcriptions/.recovery/<project>/<recovery-id>/`, builds and validates the target in staging, and applies it with rollback. Local annotations are preserved unless `--published-annotations` is selected. Local audio is retained only when source and excerpt identity match.
 
 There is no index database for parse history. Listing history is “read every `event.json`.”
 
 ## 3. Fragment — `data/fragments/<uuid>/`
 
-Defined in `src/baroque_transcribe/fragments.py`. A fragment is a run of **printed measures** taken from a project and stored as its own folder. The parent is never modified. The folder is named after a new UUID. Extraction writes into `data/fragments/.tmp-<uuid>/` and then `os.replace`s that directory into place, so a reader never sees a half-written fragment. A folder is a fragment if and only if it contains `fragment.json`.
+Defined in `src/baroque_transcribe/fragments.py`. A fragment is a run of **printed measures** taken from a project and stored as its own folder. The parent is never modified. The folder is named after a new UUID. Extraction writes into `data/fragments/.tmp-<uuid>/`, reads back the v2 manifest and every referenced JSON/MIDI/MusicXML artifact, and only then `os.replace`s that directory into place, so a reader never sees a half-written fragment. A folder is a fragment if and only if it contains `fragment.json`.
 
 ```text
 data/fragments/<uuid>/
@@ -185,18 +211,18 @@ data/fragments/<uuid>/
 
 No WAV in the fragment folder. Audio is never copied into a fragment. The library **Preview** control synthesizes a short tone WAV from `notes.json` or the grid into `.local/fragment_audio/` (derived, deletable). A YouTube fragment can still open on its own page with the video at the stored timestamp. A local-file fragment has the score and downloads only.
 
-### `fragment.json` (schema version 1)
+### `fragment.json` (schema versions 1 and 2)
 
-Built by `build_manifest()`. Validated by `validate_manifest()`. This is the document Git tracks for title, tags, clocks, and sync. Edits from the fragment details form and a sync nudge on the fragment page write **this file**, then the index is refreshed from it.
+Built by `build_manifest()`. Validated by `validate_manifest()`. Existing v1 manifests remain readable. New v2 manifests add causal parent provenance: lineage, base event, base snapshot, and the exact local parent snapshot at extraction. This is the document Git tracks for title, tags, clocks, and sync. Edits from the fragment details form and a sync nudge on the fragment page write **this file** atomically, then the index is refreshed from it.
 
 User-editable after extraction: `title`, `description`, `practice_notes`, `tags`, `composer`, `performer`, `sync.offset_seconds`. Everything else is written once.
 
 | Block | What it records |
 | --- | --- |
-| `schema_version`, `id` | version 1; UUID, also the folder name |
+| `schema_version`, `id` | current version 2; UUID, also the folder name |
 | `title`, `description`, `practice_notes`, `tags`, `composer`, `performer` | library metadata |
 | `source` | parent’s source: `kind`, `title`, `url`, `video_id` (or local `name`) |
-| `parent` | project folder name, latest parse-history event id, notes fingerprint, analysis hash, measure/step span |
+| `parent` | project folder, causal lineage/base event/base snapshot, extraction snapshot, notes fingerprint, analysis hash, measure/step span |
 | `time.working_audio` | window on the parent’s working-audio clock (`t0` … `t1`) |
 | `time.source_video` | same window on the source-video clock, plus the parent’s excerpt start `E` |
 | `time.duration_seconds` | `t1 - t0`; not changed by a later sync nudge |
@@ -209,6 +235,8 @@ User-editable after extraction: `title`, `description`, `practice_notes`, `tags`
 | `warnings`, `created_at`, `modified_at` | extraction notes and UTC timestamps |
 
 `artifacts` is how the program finds sibling files. It is a map of roles to names in the same folder, not a database foreign key.
+
+Parent status is derived at read time and shown as `current`, `parent changed`, `published parent changed`, or `parent unavailable`. Restore/update never rewrites or re-extracts a fragment. Its notes, grid, both MIDI files, MusicXML, and optional harmony remain intentional standalone artifacts.
 
 ### `notes.json` and `grid.json` inside a fragment
 
@@ -364,6 +392,22 @@ Tone renderings for the fragment library **Preview** control. Named `<id>-<perfo
 | `%USERPROFILE%\.cache\baroque_transcribe\` | neural-net checkpoint |
 | Browser `localStorage` | UI toggles only: `baroque-transcribe.color-voices`, note-highlight preference. Not musical data |
 
+## Recovery retention, reporting, and export
+
+Recovery copies are permanent until the user selects one and supplies its exact confirmation string. Successful updates, failed updates, rollback, restart, cache cleanup, and export never delete them. They contain `recovery.json` with project, reason, prior fingerprint/base, target event, byte count, and an integrity inventory.
+
+```text
+baroque-transcribe storage report
+baroque-transcribe storage recoveries
+baroque-transcribe storage rollback-recovery <project>/<recovery-id> --confirm "RESTORE <project>/<recovery-id>"
+baroque-transcribe storage delete-recovery <project>/<recovery-id> --confirm "DELETE <project>/<recovery-id>"
+baroque-transcribe storage export <project> <destination.zip> [--with-audio]
+```
+
+The report separates active projects, durable recovery copies, committed events, committed fragments, and rebuildable caches. Recovery listing shows its path, reason, prior base, target event, size, and exact rollback/deletion confirmations. Rollback verifies the selected inventory, retains that recovery, and first preserves the current project as another recovery. Export writes a temporary ZIP, inventories and validates every member, then atomically publishes it to a user-chosen local destination. Git history is not a backup for unpublished `transcriptions/` data.
+
+There is intentionally no general storage cleanup command yet. `pedal.json`, manifest projections, generated project pages, diagnostics, comparisons, and caches are optimization candidates under separate review. `notes.json`, annotations, source audio, `source.mid`, manifests, recoveries, parse events, and fragment artifacts are never cache.
+
 ## What to open for a given job
 
 | Job | Read | Write |
@@ -379,6 +423,10 @@ Tone renderings for the fragment library **Preview** control. Named `<id>-<perfo
 | Publish a transcription to the other computer | copy score files into a new `data/parses/events/` folder (the pipeline already does this) | `git add data/parses` |
 | Publish fragments | the folders already under `data/fragments/` | `git add data/fragments` |
 | Rebuild search after `git pull` | fragment folders | `fragments reindex` or open the UI (full reconcile at start) |
+| Compare or update revisions | project manifest + parse events | `history status`, `preview`, then explicit `update` |
+| Back up unpublished work | one working project | `storage export` to a chosen ZIP |
+| Roll back to one recovery | verified `recovery.json` inventory and exact id | dedicated confirmed `storage rollback-recovery`; both states remain recoveries |
+| Remove one recovery | `recovery.json` and exact id | dedicated confirmed `storage delete-recovery` only |
 
 ## Two computers, compressed
 
@@ -391,21 +439,27 @@ Machine A searches     →  .local/library.sqlite     (local cache)
 git push / pull moves data/parses and data/fragments only.
 
 Machine B after pull   →  history shows the video greyed out
-                       →  history restore copies notes/MIDI/MusicXML into transcriptions/
+                       →  history restore validates and copies a missing project
+                       →  history status/preview/update safely handles an existing project
                        →  fragments are already openable (no restore step)
                        →  first UI start rebuilds .local/library.sqlite from those folders
 ```
 
 Fragments do not go through restore because they already are the portable object. Projects do, because the working folder is gitignored and the audio may still be missing.
 
+Git synchronization moves published event/fragment files; it does not back up unpublished working projects, local audio, or recovery copies. MIDI history is portable because every new complete MIDI event includes `source.mid`, source SHA-256, maps, staff provenance, and the full score artifact set.
+
 ## Source code that defines each contract
 
 | Contract | File |
 | --- | --- |
 | `notes.json` / `pedal.json` | `src/baroque_transcribe/schema.py` |
-| Project `manifest.json` | `src/baroque_transcribe/pipeline.py` |
+| Project `manifest.json` | `src/baroque_transcribe/project_manifest.py`, `pipeline.py` |
 | `annotations.json` | `src/baroque_transcribe/analysis.py` |
 | Parse-history `event.json` | `src/baroque_transcribe/parse_store.py` |
+| Revision fingerprints/status | `src/baroque_transcribe/revision.py` |
+| Validated restore/update/recovery | `src/baroque_transcribe/project_restore.py` |
+| Storage report and project export | `src/baroque_transcribe/storage_management.py` |
 | Home-page cards (no database) | `src/baroque_transcribe/library.py` |
 | `fragment.json`, `grid.json`, extraction | `src/baroque_transcribe/fragments.py` |
 | SQLite index | `src/baroque_transcribe/fragment_index.py` (`_SCHEMA`, `_manifest_row`) |

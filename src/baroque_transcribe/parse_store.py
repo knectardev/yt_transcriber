@@ -33,12 +33,42 @@ from baroque_transcribe.defaults import (
     QUANTIZED_MID,
     RAW_MID,
     SCORE_XML,
+    SOURCE_MID,
     SOURCE_WAV,
     WORKING_WAV,
 )
 from baroque_transcribe.playback import youtube_video_id
+from baroque_transcribe.project_manifest import (
+    public_project_state,
+    read_project_manifest,
+    revision_block,
+    with_revision,
+    write_project_manifest,
+)
+from baroque_transcribe.revision import (
+    Snapshot,
+    artifact_inventory,
+    event_folder,
+    event_heads,
+    event_is_complete,
+    event_lineage_id,
+    event_parent_id,
+    event_snapshot_sha256,
+    is_descendant,
+    revision_status,
+    file_inventory,
+    snapshot_for_folder,
+)
+from baroque_transcribe.storage_io import (
+    copy_file_atomic,
+    portable_name,
+    sha256_file,
+    write_json_atomic,
+    write_text_atomic,
+)
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+LEGACY_SCHEMA_VERSION = 1
 SCORE_PDF = "score.pdf"
 NOTATION_HTML = "notation.html"
 EVENTS_DIR = "events"
@@ -47,7 +77,23 @@ EVENTS_DIR = "events"
 # so a checkout does not carry the audio. annotations.json is the harmonic
 # draft; a later edit is published as its own event so the file travels
 # with git without rewriting an older event.json.
-_STORED_SCORE_FILES = (NOTES_JSON, PEDAL_JSON, RAW_MID, QUANTIZED_MID, SCORE_XML, ANNOTATIONS_JSON)
+_STORED_SCORE_FILES = (
+    NOTES_JSON,
+    PEDAL_JSON,
+    RAW_MID,
+    QUANTIZED_MID,
+    SCORE_XML,
+    ANNOTATIONS_JSON,
+    SOURCE_MID,
+)
+_REQUIRED_SCORE_FILES = (
+    NOTES_JSON,
+    PEDAL_JSON,
+    RAW_MID,
+    QUANTIZED_MID,
+    SCORE_XML,
+)
+_COMPLETE_ACTIONS = {"transcribe", "quantize", "import"}
 
 
 def default_store() -> Path:
@@ -115,18 +161,77 @@ def record_parse(
     when = recorded_at or datetime.now(timezone.utc)
     if when.tzinfo is None:
         when = when.replace(tzinfo=timezone.utc)
-    folder: Path | None = None
+    staging: Path | None = None
+    final: Path | None = None
     try:
         events = target / EVENTS_DIR
         events.mkdir(parents=True, exist_ok=True)
-        folder = _unique_folder(events, when)
+        ident, staging, final = _event_paths(events, when)
+        staging.mkdir()
         copied = (
-            _copy_scores(project_dir, folder, files)
+            _copy_scores(project_dir, staging, files)
             if status == "ok"
             else {name: False for name in _STORED_SCORE_FILES}
         )
+        manifest = read_project_manifest(project_dir) if project_dir is not None else {}
+        described_source = describe_source(source, title=title, youtube_url=youtube_url)
+        manifest = _manifest_with_event_context(
+            manifest,
+            source=source,
+            described_source=described_source,
+            title=title,
+            excerpt_start=excerpt_start,
+            excerpt_end=excerpt_end,
+            duration=duration,
+            full_duration=full_duration,
+            sample_rate=sample_rate,
+        )
+        if project_dir is not None and not manifest.get("tempo"):
+            inferred_tempo = _score_tempo(project_dir / SCORE_XML)
+            if inferred_tempo:
+                manifest["tempo"] = inferred_tempo
+                manifest.setdefault("staff_split", DEFAULT_STAFF_SPLIT)
+        if project_dir is not None and not manifest.get("model"):
+            try:
+                notes_payload = json.loads(
+                    (project_dir / NOTES_JSON).read_text(encoding="utf-8")
+                )
+                if isinstance(notes_payload, dict) and notes_payload.get("model"):
+                    manifest["model"] = str(notes_payload["model"])
+            except (OSError, json.JSONDecodeError):
+                pass
+        base = revision_block(manifest)
+        parent_event_id = str(base.get("base_event_id") or "")
+        lineage_id = str(base.get("lineage_id") or "") or parent_event_id or ident
+        project_state = public_project_state(manifest)
+        snapshot = None
+        if status == "ok" and project_dir is not None:
+            snapshot_source = (
+                staging if action in _COMPLETE_ACTIONS else project_dir
+            )
+            snapshot = snapshot_for_folder(snapshot_source, project_state)
+            if action == "analyze":
+                snapshot = Snapshot(
+                    sha256=snapshot.sha256,
+                    artifacts=snapshot.artifacts,
+                    files=file_inventory(staging),
+                    project_state_sha256=snapshot.project_state_sha256,
+                )
+        complete_snapshot = action in _COMPLETE_ACTIONS and all(
+            copied.get(name, False) for name in _REQUIRED_SCORE_FILES
+        )
+        if status == "ok" and action in _COMPLETE_ACTIONS and not complete_snapshot:
+            missing = [
+                name
+                for name in _REQUIRED_SCORE_FILES
+                if not copied.get(name, False)
+            ]
+            raise OSError(
+                f"Cannot publish {action} event without a complete score snapshot: "
+                f"{', '.join(missing)}."
+            )
         payload = _payload(
-            ident=folder.name,
+            ident=ident,
             action=action,
             status=status,
             source=source,
@@ -143,14 +248,38 @@ def record_parse(
             via=via,
             recorded_at=when,
             copied=copied,
+            lineage_id=lineage_id,
+            parent_event_id=parent_event_id,
+            complete_snapshot=complete_snapshot,
+            snapshot=snapshot.to_dict() if snapshot is not None else {},
+            project_state=project_state,
         )
-        _write_json(folder / "event.json", payload)
-    except OSError as exc:
-        if folder is not None and folder.exists() and not (folder / "event.json").is_file():
-            shutil.rmtree(folder, ignore_errors=True)
+        _write_json(staging / "event.json", payload)
+        validate_event(payload)
+        _validate_staged_event(staging, payload)
+        os.replace(staging, final)
+    except (OSError, ValueError) as exc:
+        if staging is not None:
+            shutil.rmtree(staging, ignore_errors=True)
         print(f"warning: could not write parse history: {exc}", file=sys.stderr)
         return None
-    return folder
+    if final is None:
+        return None
+    if status == "ok" and project_dir is not None and snapshot is not None:
+        try:
+            updated = with_revision(
+                manifest,
+                lineage_id=lineage_id,
+                base_event_id=final.name,
+                base_snapshot_sha256=snapshot.sha256,
+            )
+            write_project_manifest(project_dir, updated)
+        except (OSError, ValueError) as exc:
+            print(
+                f"warning: parse event {final.name} was published, but the project revision marker was not updated: {exc}",
+                file=sys.stderr,
+            )
+    return final
 
 
 def load_events(store: Path | None = None) -> list[dict]:
@@ -160,17 +289,211 @@ def load_events(store: Path | None = None) -> list[dict]:
     events_dir = target / EVENTS_DIR
     if not events_dir.is_dir():
         return []
+    resolved_events = events_dir.resolve()
     loaded: list[dict] = []
     for path in sorted(events_dir.glob("*/event.json")):
+        if path.parent.name.startswith(".tmp-"):
+            continue
         try:
-            payload = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
+            if path.resolve().parent.parent != resolved_events:
+                print(
+                    f"warning: skipped {path}: event path escapes the event store",
+                    file=sys.stderr,
+                )
+                continue
+        except OSError as exc:
             print(f"warning: skipped {path}: {exc}", file=sys.stderr)
             continue
-        if isinstance(payload, dict):
-            loaded.append(payload)
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            validate_event(payload)
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            print(f"warning: skipped {path}: {exc}", file=sys.stderr)
+            continue
+        loaded.append(payload)
     loaded.sort(key=lambda item: (str(item.get("recorded_at") or ""), str(item.get("id") or "")))
     return loaded
+
+
+def validate_event(payload: object) -> dict:
+    """Validate the event envelope while accepting immutable v1 history."""
+
+    if not isinstance(payload, dict):
+        raise ValueError("event.json is not a JSON object.")
+    try:
+        version = int(payload.get("version", LEGACY_SCHEMA_VERSION))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("event.json has an invalid version.") from exc
+    if version not in {LEGACY_SCHEMA_VERSION, SCHEMA_VERSION}:
+        raise ValueError(
+            f"event.json uses schema version {version}; this program reads versions "
+            f"{LEGACY_SCHEMA_VERSION} and {SCHEMA_VERSION}."
+        )
+    ident = str(payload.get("id") or "")
+    if not ident:
+        raise ValueError("event.json has no id.")
+    _validate_plain_name(ident, "id")
+    project = str(payload.get("project") or "")
+    if project:
+        _validate_plain_name(project, "project")
+    if version == LEGACY_SCHEMA_VERSION:
+        return payload
+    revision = payload.get("revision")
+    if not isinstance(revision, dict):
+        raise ValueError("event.json v2 has no revision object.")
+    if not str(revision.get("lineage_id") or ""):
+        raise ValueError("event.json v2 has no lineage_id.")
+    parent = revision.get("parent_event_id")
+    if parent is not None and not isinstance(parent, str):
+        raise ValueError("event.json v2 parent_event_id must be a string or null.")
+    if parent:
+        _validate_plain_name(parent, "revision.parent_event_id")
+    complete_snapshot = revision.get("complete_snapshot")
+    if not isinstance(complete_snapshot, bool):
+        raise ValueError("event.json v2 complete_snapshot must be true or false.")
+    if (
+        payload.get("status") == "ok"
+        and str(payload.get("action") or "") in _COMPLETE_ACTIONS
+        and not complete_snapshot
+    ):
+        raise ValueError("A successful score event must contain a complete snapshot.")
+    snapshot = revision.get("snapshot")
+    if payload.get("status") == "ok":
+        if not isinstance(snapshot, dict) or not str(snapshot.get("sha256") or ""):
+            raise ValueError("A successful event.json v2 has no snapshot fingerprint.")
+        artifacts = snapshot.get("artifacts")
+        if not isinstance(artifacts, dict):
+            raise ValueError("event.json v2 snapshot artifacts must be an object.")
+        for name, digest in artifacts.items():
+            if name not in _STORED_SCORE_FILES or not isinstance(digest, str):
+                raise ValueError(
+                    "event.json v2 snapshot artifacts contain an invalid file or hash."
+                )
+        files = snapshot.get("files")
+        if files is not None and (
+            not isinstance(files, dict)
+            or any(
+                name not in _STORED_SCORE_FILES or not isinstance(digest, str)
+                for name, digest in files.items()
+            )
+        ):
+            raise ValueError(
+                "event.json v2 snapshot files contain an invalid file or hash."
+            )
+    project_state = payload.get("project_state")
+    if project_state is not None and not isinstance(project_state, dict):
+        raise ValueError("event.json v2 project_state must be an object.")
+    formats = payload.get("formats")
+    if formats is not None:
+        if not isinstance(formats, dict):
+            raise ValueError("event.json v2 formats must be an object.")
+        for entry in formats.values():
+            if not isinstance(entry, dict):
+                continue
+            filename = str(entry.get("file") or "")
+            if filename:
+                _validate_plain_name(filename, "formats file")
+    source = payload.get("source") if isinstance(payload.get("source"), dict) else {}
+    if payload.get("status") == "ok" and source.get("kind") == "midi":
+        if not str(source.get("sha256") or ""):
+            raise ValueError("A successful MIDI event has no source SHA-256.")
+        formats = payload.get("formats") if isinstance(payload.get("formats"), dict) else {}
+        source_midi = (
+            formats.get("source_midi")
+            if isinstance(formats.get("source_midi"), dict)
+            else {}
+        )
+        if revision.get("complete_snapshot") and not source_midi.get("stored"):
+            raise ValueError("A complete MIDI event does not store source.mid.")
+        if revision.get("complete_snapshot"):
+            state = project_state if isinstance(project_state, dict) else {}
+            portable_source = (
+                state.get("source") if isinstance(state.get("source"), dict) else {}
+            )
+            tempo = state.get("tempo") if isinstance(state.get("tempo"), dict) else {}
+            notation = (
+                state.get("notation") if isinstance(state.get("notation"), dict) else {}
+            )
+            if str(portable_source.get("sha256") or "") != str(source.get("sha256") or ""):
+                raise ValueError("A complete MIDI event has inconsistent source hashes.")
+            if not isinstance(tempo.get("tempo_map"), list) or not isinstance(
+                tempo.get("time_signature_map"), list
+            ):
+                raise ValueError("A complete MIDI event has no full tempo or meter map.")
+            if not str(state.get("staff_assignment") or ""):
+                raise ValueError("A complete MIDI event has no staff assignment provenance.")
+            if not str(notation.get("score_from") or ""):
+                raise ValueError("A complete MIDI event has no score provenance.")
+    return payload
+
+
+def _validate_plain_name(value: str, field: str) -> None:
+    if (
+        not value
+        or value in {".", ".."}
+        or "/" in value
+        or "\\" in value
+        or ":" in value
+        or portable_name(value) != value
+        or value == ".recovery"
+        or value.startswith(".tmp-")
+    ):
+        raise ValueError(f"event.json {field} must be a plain name.")
+
+
+def _validate_staged_event(folder: Path, payload: dict) -> None:
+    if payload.get("status") != "ok":
+        return
+    revision = payload["revision"]
+    snapshot = revision["snapshot"]
+    artifacts = snapshot.get("artifacts") or {}
+    files = snapshot.get("files") or {}
+    formats = payload.get("formats") if isinstance(payload.get("formats"), dict) else {}
+    stored_names = {
+        str(entry.get("file") or "")
+        for entry in formats.values()
+        if isinstance(entry, dict) and entry.get("stored")
+    }
+    for name in sorted(stored_names):
+        path = folder / name
+        if not path.is_file():
+            raise OSError(f"Staged event is missing {name}.")
+        expected_file = str(files.get(name) or "")
+        expected_component = str(artifacts.get(name) or "")
+        if expected_file:
+            if sha256_file(path) != expected_file:
+                raise OSError(f"Staged event byte hash mismatch for {name}.")
+        elif expected_component:
+            from baroque_transcribe.revision import artifact_digest
+
+            if artifact_digest(path) != expected_component:
+                raise OSError(f"Staged event hash mismatch for {name}.")
+    if revision.get("complete_snapshot"):
+        missing = [name for name in artifacts if not (folder / name).is_file()]
+        if missing:
+            raise OSError(f"Complete staged event is missing: {', '.join(sorted(missing))}.")
+        missing_files = [name for name in files if not (folder / name).is_file()]
+        if missing_files:
+            raise OSError(
+                f"Complete staged event is missing byte-hashed files: "
+                f"{', '.join(sorted(missing_files))}."
+            )
+        required = list(_REQUIRED_SCORE_FILES)
+        source = payload.get("source") if isinstance(payload.get("source"), dict) else {}
+        if source.get("kind") == "midi":
+            required.append(SOURCE_MID)
+        absent = [name for name in required if not (folder / name).is_file()]
+        if absent:
+            raise OSError(f"Complete staged event lacks required files: {', '.join(absent)}.")
+        if source.get("kind") == "midi":
+            source_hash = str(source.get("sha256") or "")
+            if not source_hash or sha256_file(folder / SOURCE_MID) != source_hash:
+                raise OSError("Staged source.mid does not match the MIDI source hash.")
+        from baroque_transcribe.revision import snapshot_for_folder
+
+        actual = snapshot_for_folder(folder, payload.get("project_state") or {})
+        if actual.sha256 != str(snapshot.get("sha256") or ""):
+            raise OSError("Complete staged event aggregate snapshot hash mismatch.")
 
 
 def thumbnail_url(video_id: str) -> str:
@@ -323,15 +646,74 @@ def publish_analysis(project_dir: Path, store: Path | None = None) -> Path | Non
     annotations = project_dir / ANNOTATIONS_JSON
     if not annotations.is_file():
         return None
-    manifest: dict = {}
-    manifest_path = project_dir / MANIFEST
-    if manifest_path.is_file():
-        try:
-            loaded = json.loads(manifest_path.read_text(encoding="utf-8"))
-            if isinstance(loaded, dict):
-                manifest = loaded
-        except (OSError, json.JSONDecodeError):
-            manifest = {}
+    target = resolve_store(store)
+    if target is None:
+        return None
+    manifest = read_project_manifest(project_dir)
+    events = load_events(target)
+    status = revision_status(project_dir.name, project_dir, events, target)
+    if status.state == "legacy_match" and status.adoptable_event_id:
+        matched = next(
+            (
+                event
+                for event in events
+                if str(event.get("id") or "") == status.adoptable_event_id
+            ),
+            None,
+        )
+        if matched is not None:
+            manifest = with_revision(
+                manifest,
+                lineage_id=event_lineage_id(matched)
+                or status.adoptable_event_id,
+                base_event_id=status.adoptable_event_id,
+                base_snapshot_sha256=event_snapshot_sha256(matched)
+                or snapshot_for_folder(
+                    event_folder(target, matched),
+                    public_project_state(manifest),
+                ).sha256,
+            )
+            write_project_manifest(project_dir, manifest)
+    base = revision_block(manifest)
+    base_event_id = str(base.get("base_event_id") or "")
+    if not base_event_id:
+        print(
+            "warning: analysis remains local because no exact published score base exists.",
+            file=sys.stderr,
+        )
+        return None
+    try:
+        from baroque_transcribe.project_restore import resolve_event_selection
+
+        selection = resolve_event_selection(target, events, base_event_id)
+    except (OSError, ValueError) as exc:
+        print(f"warning: analysis remains local: {exc}", file=sys.stderr)
+        return None
+    local_score = artifact_inventory(project_dir)
+    local_score.pop(ANNOTATIONS_JSON, None)
+    score_revision = (
+        selection.score.get("revision")
+        if isinstance(selection.score.get("revision"), dict)
+        else {}
+    )
+    score_snapshot = (
+        score_revision.get("snapshot")
+        if isinstance(score_revision.get("snapshot"), dict)
+        else {}
+    )
+    published_score = dict(
+        score_snapshot.get("artifacts")
+        if isinstance(score_snapshot.get("artifacts"), dict)
+        else artifact_inventory(selection.score_folder)
+    )
+    published_score.pop(ANNOTATIONS_JSON, None)
+    if local_score != published_score:
+        print(
+            "warning: analysis remains local because the project score no longer "
+            "matches its causal published base.",
+            file=sys.stderr,
+        )
+        return None
     audio = manifest.get("audio") if isinstance(manifest.get("audio"), dict) else {}
     return record_parse(
         action="analyze",
@@ -346,12 +728,35 @@ def publish_analysis(project_dir: Path, store: Path | None = None) -> Path | Non
         duration=_number(audio.get("working_duration_seconds")),
         full_duration=_number(audio.get("full_duration_seconds")),
         sample_rate=audio.get("sample_rate"),
-        store=store,
+        store=target,
         files=(ANNOTATIONS_JSON,),
     )
 
 
 def restore_projects(
+    store: Path | None = None,
+    projects_root: Path | None = None,
+    projects: list[str] | None = None,
+    *,
+    with_audio: bool = False,
+) -> tuple[list[Path], list[str]]:
+    """Non-destructively restore missing projects from validated event snapshots."""
+
+    target = resolve_store(store)
+    if target is None:
+        return [], []
+    dest_base = projects_root if projects_root is not None else repo_root() / "transcriptions"
+    from baroque_transcribe.project_restore import restore_projects_compatible
+
+    return restore_projects_compatible(
+        store=target,
+        projects_root=dest_base,
+        projects=projects,
+        with_audio=with_audio,
+    )
+
+
+def _restore_projects_legacy(
     store: Path | None = None,
     projects_root: Path | None = None,
     projects: list[str] | None = None,
@@ -656,9 +1061,25 @@ def _payload(
     via: str | None,
     recorded_at: datetime,
     copied: dict[str, bool],
+    lineage_id: str,
+    parent_event_id: str,
+    complete_snapshot: bool,
+    snapshot: dict,
+    project_state: dict,
 ) -> dict:
     start = _number(excerpt_start)
     end = _number(excerpt_end)
+    described_source = describe_source(source, title=title, youtube_url=youtube_url)
+    portable_source = (
+        project_state.get("source")
+        if isinstance(project_state.get("source"), dict)
+        else {}
+    )
+    if (
+        described_source.get("kind") in {"file", "midi"}
+        and portable_source.get("sha256")
+    ):
+        described_source["sha256"] = str(portable_source["sha256"])
     payload = {
         "version": SCHEMA_VERSION,
         "id": ident,
@@ -667,8 +1088,8 @@ def _payload(
         "action": action,
         "status": status,
         "via": via,
-        "project": project,
-        "source": describe_source(source, title=title, youtube_url=youtube_url),
+        "project": portable_name(project) if project else "",
+        "source": described_source,
         "excerpt": {"start_seconds": start, "end_seconds": end},
         "audio": {
             "source_wav": {
@@ -687,6 +1108,13 @@ def _payload(
             "diagnostics": _diagnostic_names(project_dir),
         },
         "formats": _formats(copied, project_dir),
+        "project_state": project_state,
+        "revision": {
+            "lineage_id": lineage_id,
+            "parent_event_id": parent_event_id or None,
+            "complete_snapshot": complete_snapshot,
+            "snapshot": snapshot,
+        },
         "error": public_error(error, source) if error else None,
     }
     if via is None:
@@ -697,11 +1125,31 @@ def _payload(
 def describe_source(source: str, title: str = "", youtube_url: str | None = None) -> dict:
     """Public description of an input. Local absolute paths are reduced to a file name."""
 
+    name = portable_name(source) if source else ""
+    extension = Path(name).suffix.lower()
     youtube = ""
     for candidate in (youtube_url or "", source or ""):
         if youtube_video_id(candidate):
             youtube = candidate.strip()
             break
+    if source and not _is_http(source):
+        source_kind = "midi" if extension in {".mid", ".midi"} else "file"
+        described = {
+            "kind": source_kind,
+            "name": name,
+            "extension": extension,
+            "title": title,
+        }
+        if youtube:
+            described["youtube_url"] = youtube
+            described["video_id"] = youtube_video_id(youtube)
+        try:
+            path = Path(source).expanduser()
+            if path.is_file():
+                described["sha256"] = sha256_file(path)
+        except OSError:
+            pass
+        return described
     if youtube:
         described: dict = {
             "kind": "youtube",
@@ -710,25 +1158,58 @@ def describe_source(source: str, title: str = "", youtube_url: str | None = None
             "title": title,
         }
         if source and not _is_http(source):
-            described["local_name"] = Path(source).name
+            described["local_name"] = portable_name(source)
         return described
     if _is_http(source):
         return {"kind": "url", "url": source.strip(), "title": title}
-    name = Path(source).name if source else ""
-    extension = Path(name).suffix.lower()
-    if extension in {".mid", ".midi"}:
-        return {
-            "kind": "midi",
-            "name": name,
-            "extension": extension,
-            "title": title,
-        }
     return {
         "kind": "file",
         "name": name,
         "extension": extension,
         "title": title,
     }
+
+
+def _manifest_with_event_context(
+    manifest: dict,
+    *,
+    source: str,
+    described_source: dict,
+    title: str,
+    excerpt_start: float | None,
+    excerpt_end: float | None,
+    duration: float | None,
+    full_duration: float | None,
+    sample_rate: int | float | None,
+) -> dict:
+    """Fill portability fields missing from older/minimal project manifests."""
+
+    updated = dict(manifest)
+    if not updated.get("origin") and source:
+        updated["origin"] = source
+    if not updated.get("title") and title:
+        updated["title"] = title
+    kind = str(described_source.get("kind") or "")
+    if not updated.get("source_kind") and kind:
+        updated["source_kind"] = kind
+    if kind == "youtube" and not updated.get("youtube_url"):
+        updated["youtube_url"] = str(described_source.get("url") or "")
+    if described_source.get("sha256") and not updated.get("source_sha256"):
+        updated["source_sha256"] = str(described_source["sha256"])
+    audio = dict(updated.get("audio") or {})
+    values = {
+        "sample_rate": int(sample_rate) if sample_rate is not None else None,
+        "full_duration_seconds": _number(full_duration),
+        "excerpt_start_seconds": _number(excerpt_start),
+        "excerpt_end_seconds": _number(excerpt_end),
+        "working_duration_seconds": _number(duration),
+    }
+    for key, value in values.items():
+        if key not in audio and value is not None:
+            audio[key] = value
+    if audio:
+        updated["audio"] = audio
+    return updated
 
 
 def public_error(message: str, source: str = "") -> str:
@@ -750,7 +1231,7 @@ def public_error(message: str, source: str = "") -> str:
             expanded.add(item.replace("\\", "/"))
         for item in sorted(expanded, key=len, reverse=True):
             if item and item in text:
-                text = text.replace(item, Path(item).name)
+                text = text.replace(item, portable_name(item))
     return text[:500]
 
 
@@ -763,6 +1244,7 @@ def _formats(copied: dict[str, bool], project_dir: Path | None) -> dict:
         "quantized_midi": _format_entry(QUANTIZED_MID, copied.get(QUANTIZED_MID, False)),
         "musicxml": _format_entry(SCORE_XML, copied.get(SCORE_XML, False)),
         "annotations_json": _format_entry(ANNOTATIONS_JSON, copied.get(ANNOTATIONS_JSON, False)),
+        "source_midi": _format_entry(SOURCE_MID, copied.get(SOURCE_MID, False)),
         "notation_html": {"file": NOTATION_HTML, "present": notation_present, "stored": False},
         "score_pdf": {
             "file": SCORE_PDF,
@@ -797,21 +1279,21 @@ def _copy_score_file(src: Path, dest: Path) -> None:
     """Copy a score file. A local path in a JSON ``source`` field is reduced to its name."""
 
     if src.suffix.lower() != ".json":
-        shutil.copy2(src, dest)
+        copy_file_atomic(src, dest)
         return
     text = src.read_text(encoding="utf-8")
     try:
         payload = json.loads(text)
     except json.JSONDecodeError:
-        dest.write_text(text, encoding="utf-8")
+        write_text_atomic(dest, text)
         return
     source = payload.get("source") if isinstance(payload, dict) else None
     if isinstance(source, str) and source and not _is_http(source):
         encoded = json.dumps(source, ensure_ascii=False)
-        replacement = json.dumps(Path(source).name, ensure_ascii=False)
+        replacement = json.dumps(portable_name(source), ensure_ascii=False)
         if encoded in text:
             text = text.replace(encoded, replacement, 1)
-    dest.write_text(text, encoding="utf-8")
+    write_text_atomic(dest, text)
 
 
 def _diagnostic_names(project_dir: Path | None) -> list[str]:
@@ -833,14 +1315,14 @@ def _manifests(root: Path) -> list[Path]:
     return sorted(found)
 
 
-def _unique_folder(events: Path, when: datetime) -> Path:
+def _event_paths(events: Path, when: datetime) -> tuple[str, Path, Path]:
     for _ in range(5):
-        folder = events / _event_id(when)
-        try:
-            folder.mkdir()
-        except FileExistsError:
+        ident = _event_id(when)
+        final = events / ident
+        staging = events / f".tmp-{ident}"
+        if final.exists() or staging.exists():
             continue
-        return folder
+        return ident, staging, final
     raise OSError("Could not allocate a parse-history folder.")
 
 
@@ -850,7 +1332,7 @@ def _event_id(when: datetime) -> str:
 
 
 def _write_json(path: Path, payload: dict) -> None:
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+    write_json_atomic(path, payload, sort_keys=True)
 
 
 def _number(value: object) -> float | None:

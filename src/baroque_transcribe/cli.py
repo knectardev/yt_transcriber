@@ -131,7 +131,12 @@ def _build_parser() -> argparse.ArgumentParser:
         "history",
         help="List parse history, import existing transcription folders into it, or restore projects from it.",
     )
-    history.add_argument("history_command", nargs="?", choices=["import", "restore"], default=None)
+    history.add_argument(
+        "history_command",
+        nargs="?",
+        choices=["import", "restore", "status", "preview", "update", "adopt"],
+        default=None,
+    )
     history.add_argument(
         "root",
         nargs="?",
@@ -143,6 +148,53 @@ def _build_parser() -> argparse.ArgumentParser:
         "--with-audio",
         action="store_true",
         help="Restore only: also download the excerpt audio (section only). The model is never run.",
+    )
+    history.add_argument(
+        "--published-annotations",
+        action="store_true",
+        help="Update only: replace local annotations with the selected event's causal overlay.",
+    )
+    history.add_argument(
+        "--confirm",
+        default="",
+        help="Update only: repeat the exact target event id to confirm replacement.",
+    )
+
+    storage = sub.add_parser(
+        "storage",
+        help="Report storage, export a project backup, or manage durable recovery copies.",
+    )
+    storage.add_argument(
+        "storage_command",
+        choices=[
+            "report",
+            "export",
+            "recoveries",
+            "rollback-recovery",
+            "delete-recovery",
+        ],
+    )
+    storage.add_argument(
+        "target",
+        nargs="?",
+        type=Path,
+        help="Export: project folder/name. Recovery actions: project/recovery-id.",
+    )
+    storage.add_argument(
+        "destination",
+        nargs="?",
+        type=Path,
+        help="Export destination ZIP.",
+    )
+    storage.add_argument(
+        "--with-audio",
+        action="store_true",
+        help="Export: include source, working, and diagnostic audio.",
+    )
+    storage.add_argument(
+        "--confirm",
+        default="",
+        help="Recovery rollback/delete: exact confirmation shown by the recoveries report.",
     )
 
     fragments = sub.add_parser(
@@ -461,8 +513,94 @@ def _doctor() -> int:
     return 0 if ok else 1
 
 
-def _history(command: str | None, root: Path | None, *, with_audio: bool = False) -> int:
+def _history(
+    command: str | None,
+    root: Path | None,
+    *,
+    with_audio: bool = False,
+    published_annotations: bool = False,
+    confirm: str = "",
+) -> int:
     from baroque_transcribe.parse_store import default_store, format_event, import_projects, load_events, restore_projects
+
+    if command in {"status", "preview", "update", "adopt"}:
+        from baroque_transcribe.library import disk_runs, transcriptions_root
+        from baroque_transcribe.project_restore import (
+            RestoreError,
+            adopt_exact_match,
+            preview_restore,
+            update_project,
+        )
+        from baroque_transcribe.revision import revision_status
+
+        store = default_store()
+        projects_root = transcriptions_root()
+        events = load_events(store)
+        try:
+            if command == "status":
+                local = {run.name: run.folder for run in disk_runs(projects_root)}
+                published = {
+                    str(event.get("project") or "")
+                    for event in events
+                    if event.get("status") == "ok" and event.get("project")
+                }
+                names = {root.name} if root is not None else set(local) | published
+                for name in sorted(names):
+                    status = revision_status(name, local.get(name), events, store)
+                    targets = ",".join(status.published_event_ids)
+                    print(
+                        f"{name}\t{status.state}\tbase={status.base_event_id or '-'}"
+                        f"\ttarget={status.target_event_id or targets or '-'}"
+                    )
+                return 0
+            if root is None:
+                print(f"error: history {command} requires an event id or project name", file=sys.stderr)
+                return 1
+            value = root.name
+            if command == "preview":
+                preview = preview_restore(
+                    store=store,
+                    projects_root=projects_root,
+                    event_id=value,
+                )
+                print(f"Project: {preview.project}")
+                print(f"Target event: {preview.target_event_id}")
+                print(f"Score event: {preview.score_event_id}")
+                print(f"Analysis event: {preview.analysis_event_id or '-'}")
+                print(f"Source: {preview.source_kind or 'unknown'}")
+                print(f"Notes: {preview.note_count}; harmony entries: {preview.harmony_count}")
+                print(
+                    "Changed components: "
+                    + (", ".join(preview.changed_components) or "none")
+                )
+                print(f"Recovery required: {'yes' if preview.recovery_required else 'no'}")
+                return 0
+            if command == "adopt":
+                status = adopt_exact_match(
+                    store=store,
+                    projects_root=projects_root,
+                    project=value,
+                )
+                print(f"{value}: {status.state}")
+                return 0
+            if confirm != value:
+                print(
+                    f"error: repeat the exact event id with --confirm {value}",
+                    file=sys.stderr,
+                )
+                return 1
+            result = update_project(
+                store=store,
+                projects_root=projects_root,
+                event_id=value,
+                use_published_annotations=published_annotations,
+            )
+            print(f"Updated {result.project} from {result.target_event_id}")
+            print(f"Recovery retained at {result.recovery}")
+            return 0
+        except RestoreError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
 
     if command == "restore":
         projects = [root.name] if root is not None else None
@@ -489,6 +627,125 @@ def _history(command: str | None, root: Path | None, *, with_audio: bool = False
         print(format_event(event))
     print(f"{len(events)} event(s) in {default_store() / 'events'}")
     return 0
+
+
+def _storage(args) -> int:
+    from baroque_transcribe.library import find_project
+    from baroque_transcribe.parse_store import repo_root
+    from baroque_transcribe.project_restore import (
+        RestoreError,
+        list_recoveries,
+        remove_recovery,
+        rollback_recovery,
+    )
+    from baroque_transcribe.storage_management import export_project, storage_report
+
+    root = repo_root()
+    projects_root = root / "transcriptions"
+    if args.storage_command == "report":
+        report = storage_report(root)
+        print(f"Active projects: {_format_bytes(report.active_projects)}")
+        print(f"Recovery copies (durable): {_format_bytes(report.recovery_copies)}")
+        print(f"Committed parse events: {_format_bytes(report.parse_events)}")
+        print(f"Committed fragments: {_format_bytes(report.fragments)}")
+        print(f"Rebuildable caches: {_format_bytes(report.rebuildable_caches)}")
+        return 0
+    if args.storage_command == "recoveries":
+        found = list_recoveries(projects_root)
+        if not found:
+            print("No recovery copies.")
+            return 0
+        for item in found:
+            ident = f"{item.get('project')}/{item.get('id')}"
+            print(
+                f"{ident}\t{_format_bytes(int(item.get('actual_bytes') or 0))}"
+                f"\t{item.get('created_at')}\t{item.get('reason')}"
+            )
+            print(f"  path: {item.get('path')}")
+            print(
+                f"  prior base: {item.get('prior_base_event_id') or '-'}"
+                f"; target event: {item.get('target_event_id') or '-'}"
+            )
+            print(f"  rollback confirmation: RESTORE {ident}")
+            print(f"  delete confirmation: DELETE {ident}")
+        return 0
+    if args.storage_command == "export":
+        if args.target is None or args.destination is None:
+            print("error: storage export requires PROJECT DESTINATION", file=sys.stderr)
+            return 1
+        project = find_project(str(args.target))
+        if project is None:
+            print(f"error: project not found: {args.target}", file=sys.stderr)
+            return 1
+        from baroque_transcribe.parse_store import default_store, load_events
+        from baroque_transcribe.revision import revision_status
+
+        status = revision_status(
+            project.name,
+            project,
+            load_events(default_store()),
+            default_store(),
+        )
+        if status.has_local_changes or status.state == "independent":
+            print(
+                f"warning: {project.name} has unpublished local work; "
+                "this export is its independent backup.",
+                file=sys.stderr,
+            )
+        try:
+            exported = export_project(
+                project,
+                args.destination,
+                include_audio=args.with_audio,
+            )
+        except (OSError, ValueError) as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(f"Validated project backup: {exported}")
+        return 0
+    if args.target is None or len(args.target.parts) < 2:
+        print(
+            f"error: storage {args.storage_command} requires PROJECT/RECOVERY-ID",
+            file=sys.stderr,
+        )
+        return 1
+    project, recovery_id = args.target.parts[-2:]
+    if args.storage_command == "rollback-recovery":
+        try:
+            restored = rollback_recovery(
+                projects_root,
+                project=project,
+                recovery_id=recovery_id,
+                confirm=args.confirm,
+            )
+        except RestoreError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(f"Restored verified recovery to: {restored.project}")
+        if restored.recovery is not None:
+            print(f"Current state retained as recovery: {restored.recovery}")
+        return 0
+    try:
+        deleted = remove_recovery(
+            projects_root,
+            project=project,
+            recovery_id=recovery_id,
+            confirm=args.confirm,
+        )
+    except RestoreError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"Deleted selected recovery copy: {deleted}")
+    return 0
+
+
+def _format_bytes(value: int) -> str:
+    size = float(value)
+    for unit in ("B", "KiB", "MiB", "GiB"):
+        if size < 1024.0 or unit == "GiB":
+            return f"{size:.1f} {unit}"
+        size /= 1024.0
+    return f"{size:.1f} GiB"
 
 
 def _launch_ui(port: int, project: Path | None) -> int:
@@ -552,7 +809,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "doctor":
         return _doctor()
     if args.command == "history":
-        return _history(args.history_command, args.root, with_audio=args.with_audio)
+        return _history(
+            args.history_command,
+            args.root,
+            with_audio=args.with_audio,
+            published_annotations=args.published_annotations,
+            confirm=args.confirm,
+        )
+    if args.command == "storage":
+        return _storage(args)
     if args.command == "ui":
         return _launch_ui(args.port, args.project)
     if args.command == "fragments":

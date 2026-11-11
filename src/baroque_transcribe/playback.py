@@ -10,7 +10,6 @@ from __future__ import annotations
 import json
 import re
 import secrets
-import shutil
 import threading
 from dataclasses import dataclass, field
 from html import escape
@@ -24,8 +23,14 @@ from baroque_transcribe.defaults import ANNOTATIONS_JSON, MANIFEST, NOTES_JSON, 
 # write score pages, not here: this module is also imported for YouTube id
 # parsing on the UI home page, which must start without that weight.
 from baroque_transcribe.notation_settings import settings_from_manifest
+from baroque_transcribe.project_manifest import (
+    load_project_manifest,
+    read_project_manifest,
+    write_project_manifest,
+)
 from baroque_transcribe.quantize import Quantization, quantization_from_manifest
 from baroque_transcribe.schema import read_transcription
+from baroque_transcribe.storage_io import copy_file_atomic, write_text_atomic
 from baroque_transcribe.sync_map import (
     MeasureAnchor,
     NoteAnchor,
@@ -127,23 +132,17 @@ def write_youtube_url(project: Path, url: str) -> str:
     if youtube_video_id(url) is None:
         raise SyncError("That is not a YouTube URL.")
     stored = url.strip()
-    path = project / MANIFEST
-    payload: dict = {}
-    if path.is_file():
-        payload = json.loads(path.read_text(encoding="utf-8"))
+    payload = read_project_manifest(project)
     payload["youtube_url"] = stored
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    write_project_manifest(project, payload)
     return stored
 
 
 def read_sync_offset(project: Path) -> float:
-    path = project / MANIFEST
-    if not path.is_file():
-        return 0.0
     try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload = load_project_manifest(project)
         return float(payload.get("sync_offset_seconds") or 0.0)
-    except (OSError, json.JSONDecodeError, TypeError, ValueError):
+    except (OSError, TypeError, ValueError):
         return 0.0
 
 
@@ -155,12 +154,9 @@ def write_sync_offset(project: Path, offset: float) -> float:
     """
 
     stored = max(-_OFFSET_LIMIT, min(_OFFSET_LIMIT, round(float(offset), 4)))
-    path = project / MANIFEST
-    payload: dict = {}
-    if path.is_file():
-        payload = json.loads(path.read_text(encoding="utf-8"))
+    payload = read_project_manifest(project)
     payload["sync_offset_seconds"] = stored
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    write_project_manifest(project, payload)
     return stored
 
 
@@ -317,7 +313,7 @@ def _ensure_library(dest_dir: Path) -> None:
     local = dest_dir / _NOTATION_LIBRARY
     dest_dir.mkdir(parents=True, exist_ok=True)
     if library.resolve() != local.resolve():
-        shutil.copyfile(library, local)
+        copy_file_atomic(library, local)
 
 
 def tools_page_url(home_url: str, project: Path) -> str:
@@ -440,7 +436,7 @@ def write_playback_page(
     page = _PLAYBACK_TEMPLATE.replace("__TITLE__", title).replace("__CONFIG__", config)
     page = page.replace("__XML__", xml).replace("__XML_VOICES__", xml_voices)
     page = page.replace("__LIBRARY__", _NOTATION_LIBRARY)
-    dest.write_text(page, encoding="utf-8")
+    write_text_atomic(dest, page)
     return dest
 
 

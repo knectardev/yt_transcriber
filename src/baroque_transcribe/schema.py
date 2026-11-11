@@ -11,6 +11,8 @@ import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+from baroque_transcribe.storage_io import write_json_atomic
+
 SCHEMA_VERSION = 1
 
 
@@ -67,7 +69,7 @@ class Transcription:
         }
 
     def write(self, path: Path) -> None:
-        path.write_text(json.dumps(self.to_dict(), indent=2) + "\n", encoding="utf-8")
+        write_json_atomic(path, self.to_dict())
 
 
 def clean_notes(notes: list[NoteEvent]) -> list[NoteEvent]:
@@ -167,4 +169,4 @@ def write_pedal_file(path: Path, pedals: list[PedalEvent], model: str) -> None:
         ),
         "pedals": [asdict(pedal) for pedal in pedals],
     }
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    write_json_atomic(path, payload)

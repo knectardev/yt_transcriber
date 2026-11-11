@@ -11,8 +11,16 @@ import pytest
 
 from baroque_transcribe.fragments import extract_fragment, plan_fragment
 from baroque_transcribe.library import library_cards, read_run
-from baroque_transcribe.midi_import import MidiImportError, import_midi_project, parse_midi
+from baroque_transcribe.midi_import import (
+    DuplicateMidiImportError,
+    MidiImportError,
+    import_midi_project,
+    parse_midi,
+)
+from baroque_transcribe.parse_store import load_events
+from baroque_transcribe.pipeline import requantize_project
 from baroque_transcribe.playback import PlaybackServer, load_playback, write_playback_page
+from baroque_transcribe.project_restore import restore_missing_project
 from baroque_transcribe.schema import read_transcription
 
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "wtk2prelude1.mid"
@@ -57,6 +65,13 @@ def test_import_midi_project_creates_library_run(bwv_midi: Path, tmp_path: Path)
     assert manifest["tempo"]["tempo_map"]
     assert manifest["tempo"]["time_signature_map"]
     assert manifest["notation"].get("score_from") == "midi_tracks"
+    assert set(manifest["generation"]["artifacts"]) == {
+        "notes.json",
+        "pedal.json",
+        "raw.mid",
+        "quantized.mid",
+        "score.musicxml",
+    }
 
     cards = library_cards(root=tmp_path, store=tmp_path / "empty-store")
     # library_cards looks under transcriptions/; point root at parent holding project
@@ -64,6 +79,11 @@ def test_import_midi_project_creates_library_run(bwv_midi: Path, tmp_path: Path)
     midi_cards = [card for card in cards if card.primary and card.primary.name == project.name]
     assert midi_cards
     assert midi_cards[0].video_id is None
+    (project / "raw.mid").write_bytes(b"mixed generation")
+    assert any(
+        "Generation integrity mismatch: raw.mid" in warning
+        for warning in read_run(project).warnings
+    )
 
 
 def test_imported_score_keeps_two_staves(bwv_midi: Path, tmp_path: Path):
@@ -143,3 +163,96 @@ def test_single_track_midi_uses_pitch_split(tmp_path: Path):
 def test_missing_midi_raises(tmp_path: Path):
     with pytest.raises(MidiImportError):
         parse_midi(tmp_path / "missing.mid")
+
+
+def test_midi_event_round_trip_and_duplicate_override(tmp_path: Path):
+    midi = pretty_midi.PrettyMIDI(initial_tempo=96)
+    right = pretty_midi.Instrument(program=0, name="Right hand")
+    left = pretty_midi.Instrument(program=0, name="Left hand")
+    right.notes.append(
+        pretty_midi.Note(velocity=88, pitch=48, start=0.0, end=0.5)
+    )
+    left.notes.append(
+        pretty_midi.Note(velocity=76, pitch=72, start=0.0, end=0.75)
+    )
+    midi.instruments.extend([right, left])
+    midi.time_signature_changes.append(pretty_midi.TimeSignature(3, 4, 0.0))
+    source = tmp_path / "portable.mid"
+    midi.write(str(source))
+    store = tmp_path / "store"
+
+    project = import_midi_project(
+        source,
+        tmp_path / "published" / "portable",
+        history_store=store,
+        youtube_url="https://youtu.be/abcdefghijk",
+    )
+    event = load_events(store)[-1]
+    event_id = str(event["id"])
+    folder = store / "events" / event_id
+    assert (folder / "source.mid").read_bytes() == source.read_bytes()
+    assert event["source"]["sha256"]
+    assert event["source"]["kind"] == "midi"
+    assert event["source"]["video_id"] == "abcdefghijk"
+    assert event["revision"]["complete_snapshot"] is True
+    assert event["project_state"]["tempo"]["tempo_map"]
+    assert event["project_state"]["tempo"]["time_signature_map"]
+
+    restored = restore_missing_project(
+        store=store,
+        projects_root=tmp_path / "restored",
+        event_id=event_id,
+    ).project
+    assert (restored / "source.mid").read_bytes() == source.read_bytes()
+    before = json.loads((restored / "manifest.json").read_text(encoding="utf-8"))
+    assert before["source_kind"] == "midi"
+    assert before["youtube_url"] == "https://youtu.be/abcdefghijk"
+    notes = read_transcription(restored / "notes.json")
+    assert {note.staff for note in notes.notes} == {1, 2}
+    requantize_project(restored, diagnostics=False, history_store=tmp_path / "second-store")
+    after = json.loads((restored / "manifest.json").read_text(encoding="utf-8"))
+    assert after["tempo"]["tempo_map"] == before["tempo"]["tempo_map"]
+    assert after["tempo"]["time_signature_map"] == before["tempo"]["time_signature_map"]
+    assert after["staff_assignment"] == "tracks"
+    assert after["notation"]["score_from"] == "midi_tracks"
+    assert {note.staff for note in read_transcription(restored / "notes.json").notes} == {
+        1,
+        2,
+    }
+    fragment = extract_fragment(
+        restored,
+        1,
+        1,
+        title="Restored MIDI fragment",
+        root=tmp_path / "restored-fragments",
+    )
+    assert (fragment / "score.musicxml").is_file()
+    fragment_notes = read_transcription(fragment / "notes.json")
+    assert {note.pitch: note.staff for note in fragment_notes.notes} == {
+        48: 1,
+        72: 2,
+    }
+    fragment_midi = pretty_midi.PrettyMIDI(str(fragment / "quantized.mid"))
+    assert {note.pitch for note in fragment_midi.instruments[0].notes} == {48}
+    assert {note.pitch for note in fragment_midi.instruments[1].notes} == {72}
+
+    with pytest.raises(DuplicateMidiImportError):
+        import_midi_project(
+            source,
+            tmp_path / "duplicate",
+            history_store=store,
+        )
+    alternate = import_midi_project(
+        source,
+        tmp_path / "alternate-settings",
+        history_store=store,
+        bpm=97,
+    )
+    assert alternate.is_dir()
+    duplicate = import_midi_project(
+        source,
+        tmp_path / "duplicate",
+        history_store=store,
+        allow_duplicate=True,
+    )
+    assert duplicate.is_dir()

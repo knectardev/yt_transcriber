@@ -8,6 +8,7 @@ snapped grid, split into treble and bass tracks for MuseScore.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pretty_midi
@@ -15,6 +16,7 @@ import pretty_midi
 from baroque_transcribe.defaults import RAW_MIDI_RESOLUTION, RAW_MIDI_TEMPO
 from baroque_transcribe.quantize import Quantization
 from baroque_transcribe.schema import NoteEvent, PedalEvent
+from baroque_transcribe.storage_io import temporary_path
 
 
 def _instrument(name: str) -> pretty_midi.Instrument:
@@ -53,8 +55,7 @@ def write_raw_midi(
         )
     piano.control_changes.sort(key=lambda change: (change.time, -change.value))
     midi.instruments.append(piano)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    midi.write(str(path))
+    _write_midi_atomic(midi, path)
 
 
 def write_quantized_midi(
@@ -88,5 +89,18 @@ def write_quantized_midi(
     _add_notes(bass, bass_notes)
     midi.instruments.append(treble)
     midi.instruments.append(bass)
+    _write_midi_atomic(midi, path)
+
+
+def _write_midi_atomic(midi: pretty_midi.PrettyMIDI, path: Path) -> None:
+    """Publish a MIDI only after pretty_midi can read the completed temporary file."""
+
+    path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    midi.write(str(path))
+    temporary = temporary_path(path)
+    try:
+        midi.write(str(temporary))
+        pretty_midi.PrettyMIDI(str(temporary))
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)

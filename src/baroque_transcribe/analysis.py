@@ -21,6 +21,7 @@ from pathlib import Path
 
 from baroque_transcribe.quantize import Quantization
 from baroque_transcribe.schema import Transcription
+from baroque_transcribe.storage_io import write_json_atomic
 
 SCHEMA_VERSION = 1
 
@@ -184,10 +185,7 @@ def load_analysis(path: Path) -> HarmonicAnalysis | None:
 
 
 def write_analysis(path: Path, analysis: HarmonicAnalysis) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(analysis.to_dict(), indent=2) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    write_json_atomic(path, analysis.to_dict())
 
 
 def notes_fingerprint(quantization: Quantization) -> str:

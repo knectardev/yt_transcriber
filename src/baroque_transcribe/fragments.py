@@ -70,11 +70,13 @@ from baroque_transcribe.defaults import (
     SCORE_XML,
 )
 from baroque_transcribe.notation_settings import NotationSettings, settings_from_dict, settings_from_manifest
+from baroque_transcribe.project_manifest import load_project_manifest
 from baroque_transcribe.quantize import GridNote, Quantization, quantization_from_manifest
 from baroque_transcribe.schema import NoteEvent, PedalEvent, Transcription, read_transcription
 from baroque_transcribe.sync_map import measure_anchors, printed_measure_span
 
-FRAGMENT_SCHEMA_VERSION = 1
+FRAGMENT_SCHEMA_VERSION = 2
+LEGACY_FRAGMENT_SCHEMA_VERSION = 1
 GRID_SCHEMA_VERSION = 1
 SYNC_OFFSET_LIMIT = 60.0
 # The shortest note this program writes (``schema.clean_notes`` uses the same floor).
@@ -214,6 +216,7 @@ class FragmentNote:
     carried_in: bool
     cut_off: bool
     parent_index: int
+    source_staff: int | None = None
     staff: int | None = None
     voice: int | None = None
     written_offset_step: int | None = None
@@ -347,8 +350,7 @@ def plan_fragment(project: Path, measure_start: int, measure_end: int) -> Fragme
     notes_path = project / NOTES_JSON
     if not notes_path.is_file():
         raise FragmentError(f"No {NOTES_JSON} in {project}. Transcribe the recording first.")
-    manifest_path = project / MANIFEST
-    manifest = _read_json_object(manifest_path) if manifest_path.is_file() else {}
+    manifest = load_project_manifest(project)
     tempo = manifest.get("tempo") if isinstance(manifest.get("tempo"), dict) else {}
     if not tempo.get("bpm"):
         raise FragmentError("This project has no tempo, so it has no measures to select. Rebuild its score first.")
@@ -441,6 +443,11 @@ def plan_fragment(project: Path, measure_start: int, measure_end: int) -> Fragme
         duration = max(duration, offset_seconds)
         onset_step = max(item.onset_step, s0) - s0
         offset_step = min(item.offset_step, s1) - s0
+        source_staff = None
+        if 0 <= item.source_index < len(transcription.notes):
+            candidate_staff = transcription.notes[item.source_index].staff
+            if candidate_staff in (1, 2):
+                source_staff = int(candidate_staff)
         note = FragmentNote(
             index=-1,
             pitch=int(item.pitch),
@@ -452,10 +459,13 @@ def plan_fragment(project: Path, measure_start: int, measure_end: int) -> Fragme
             carried_in=carried,
             cut_off=cut,
             parent_index=item.source_index,
+            source_staff=source_staff,
+            staff=source_staff,
         )
         written = interpretation_by_source.get(item.source_index)
         if written is not None:
-            note.staff = int(written.staff)  # type: ignore[attr-defined]
+            if note.staff not in (1, 2):
+                note.staff = int(written.staff)  # type: ignore[attr-defined]
             note.voice = int(written.voice)  # type: ignore[attr-defined]
             written_offset = min(int(written.written_offset_step), s1) - s0  # type: ignore[attr-defined]
             if written_offset <= onset_step:
@@ -836,9 +846,10 @@ def validate_manifest(payload: object) -> dict:
         version = int(payload.get("schema_version"))  # type: ignore[arg-type]
     except (TypeError, ValueError) as exc:
         raise FragmentError("The manifest has no schema version.") from exc
-    if version != FRAGMENT_SCHEMA_VERSION:
+    if version not in {LEGACY_FRAGMENT_SCHEMA_VERSION, FRAGMENT_SCHEMA_VERSION}:
         raise FragmentError(
-            f"The manifest uses schema version {version}; this program reads version {FRAGMENT_SCHEMA_VERSION}."
+            f"The manifest uses schema version {version}; this program reads versions "
+            f"{LEGACY_FRAGMENT_SCHEMA_VERSION} and {FRAGMENT_SCHEMA_VERSION}."
         )
     ident = payload.get("id")
     if not isinstance(ident, str) or not ident.strip():
@@ -867,6 +878,19 @@ def validate_manifest(payload: object) -> dict:
     for block in ("source", "parent", "music"):
         if not isinstance(payload.get(block), dict):
             raise FragmentError(f"The manifest has no {block} block.")
+    if version == FRAGMENT_SCHEMA_VERSION:
+        parent = payload["parent"]
+        for key in (
+            "lineage_id",
+            "base_event_id",
+            "base_snapshot_sha256",
+            "snapshot_sha256",
+            "revision_state",
+        ):
+            if not isinstance(parent.get(key), str):
+                raise FragmentError(f"The manifest parent.{key} field is not text.")
+        if not parent.get("snapshot_sha256"):
+            raise FragmentError("The manifest has no parent snapshot fingerprint.")
     artifacts = payload.get("artifacts")
     if not isinstance(artifacts, dict):
         raise FragmentError("The manifest has no artifacts block.")
@@ -884,13 +908,66 @@ def read_manifest(folder: Path) -> dict:
     return validate_manifest(_read_json_object(Path(folder) / FRAGMENT_JSON))
 
 
+def fragment_parent_status(
+    fragment: Path | dict,
+    *,
+    projects_root: Path | None = None,
+    store: Path | None = None,
+) -> str:
+    """Return current, parent_changed, published_parent_changed, or parent_unavailable."""
+
+    from baroque_transcribe.parse_store import load_events, repo_root, resolve_store
+    from baroque_transcribe.revision import event_heads, event_lineage_id, snapshot_for_project
+
+    manifest = read_manifest(fragment) if isinstance(fragment, Path) else validate_manifest(fragment)
+    parent = manifest.get("parent") if isinstance(manifest.get("parent"), dict) else {}
+    project_name = str(parent.get("project") or "")
+    root = Path(projects_root) if projects_root is not None else repo_root() / "transcriptions"
+    project = root / Path(project_name).name
+    if not project_name or not (project / NOTES_JSON).is_file():
+        return "parent_unavailable"
+    recorded_snapshot = str(parent.get("snapshot_sha256") or "")
+    if recorded_snapshot:
+        try:
+            if snapshot_for_project(project).sha256 != recorded_snapshot:
+                return "parent_changed"
+        except OSError:
+            return "parent_unavailable"
+    else:
+        recorded_notes = str(parent.get("notes_fingerprint") or "")
+        try:
+            transcription = read_transcription(project / NOTES_JSON)
+            project_manifest = _read_json_object(project / MANIFEST)
+            tempo = project_manifest.get("tempo") or {}
+            quantization = quantization_from_manifest(
+                transcription.notes,
+                tempo,
+                settings=settings_from_manifest(project_manifest),
+                manifest=project_manifest,
+            )
+            if recorded_notes and notes_fingerprint(quantization) != recorded_notes:
+                return "parent_changed"
+        except (OSError, KeyError, TypeError, ValueError):
+            return "parent_unavailable"
+    lineage_id = str(parent.get("lineage_id") or "")
+    base_event_id = str(parent.get("base_event_id") or parent.get("event_id") or "")
+    target = resolve_store(store)
+    if target is not None and lineage_id and base_event_id:
+        events = load_events(target)
+        heads = event_heads(events, lineage_id)
+        if any(str(head.get("id") or "") != base_event_id for head in heads):
+            return "published_parent_changed"
+        if not any(str(event.get("id") or "") == base_event_id for event in events):
+            return "published_parent_changed"
+    return "current"
+
+
 def _write_json(path: Path, payload: dict) -> None:
     """Write through a temporary file, so a reader never sees half a document.
 
     On Windows, ``os.replace`` onto an existing file can raise Access Denied
-    when another process briefly holds it (indexer, antivirus, a download
-    handle). Retry a few times, then fall back to writing the destination
-    in place with the same bytes.
+    when another process briefly holds it. Retry a few times, then fail
+    without changing the prior document.
     """
 
     import time
@@ -908,13 +985,9 @@ def _write_json(path: Path, payload: dict) -> None:
             except PermissionError as exc:
                 last_error = exc
                 time.sleep(0.05 * (attempt + 1))
-        # Destination stayed locked: prefer a successful write over atomicity.
-        try:
-            path.write_text(text, encoding="utf-8")
-        except OSError:
-            if last_error is not None:
-                raise last_error
-            raise
+        if last_error is not None:
+            raise last_error
+        raise OSError(f"Could not atomically replace {path}.")
     finally:
         temporary.unlink(missing_ok=True)
         stale = path.with_name(path.name + ".tmp")
@@ -922,22 +995,50 @@ def _write_json(path: Path, payload: dict) -> None:
             stale.unlink(missing_ok=True)
 
 
-def _parent_event_id(project_name: str, store: Path | None) -> str:
-    """The newest parse-history run that stored this project's notes, if any."""
+def _parent_provenance(project: Path, store: Path | None) -> dict:
+    """Causal base and local snapshot at extraction, without mutating the parent."""
 
-    from baroque_transcribe.parse_store import EVENTS_DIR, load_events, resolve_store
+    from baroque_transcribe.parse_store import load_events, resolve_store
+    from baroque_transcribe.project_manifest import load_project_manifest, revision_block
+    from baroque_transcribe.revision import (
+        event_lineage_id,
+        event_snapshot_sha256,
+        revision_status,
+        snapshot_for_project,
+    )
 
+    manifest = load_project_manifest(project)
+    revision = revision_block(manifest)
+    lineage_id = str(revision.get("lineage_id") or "")
+    base_event_id = str(revision.get("base_event_id") or "")
+    base_snapshot = str(revision.get("base_snapshot_sha256") or "")
+    local_snapshot = snapshot_for_project(project).sha256
+    state = "independent"
     target = resolve_store(store)
-    if target is None:
-        return ""
-    latest = ""
-    for event in load_events(target):
-        if event.get("status") != "ok" or str(event.get("project") or "") != project_name:
-            continue
-        ident = str(event.get("id") or "")
-        if ident and (target / EVENTS_DIR / ident / NOTES_JSON).is_file():
-            latest = ident
-    return latest
+    if target is not None:
+        events = load_events(target)
+        status = revision_status(project.name, project, events, target)
+        state = status.state
+        if not base_event_id and status.adoptable_event_id:
+            base_event_id = status.adoptable_event_id
+            matched = next(
+                (
+                    event
+                    for event in events
+                    if str(event.get("id") or "") == base_event_id
+                ),
+                {},
+            )
+            lineage_id = event_lineage_id(matched) or base_event_id
+            base_snapshot = event_snapshot_sha256(matched) or local_snapshot
+    return {
+        "event_id": base_event_id,
+        "lineage_id": lineage_id,
+        "base_event_id": base_event_id,
+        "base_snapshot_sha256": base_snapshot,
+        "snapshot_sha256": local_snapshot,
+        "revision_state": state,
+    }
 
 
 def _describe_parent_source(manifest: dict) -> dict:
@@ -961,10 +1062,14 @@ def build_manifest(
     composer: str = "",
     performer: str = "",
     event_id: str = "",
+    parent_provenance: dict | None = None,
     now: datetime | None = None,
 ) -> dict:
     stamp = _timestamp(now)
     harmony_file = FRAGMENT_HARMONY_JSON if plan.harmony is not None else None
+    provenance = dict(parent_provenance or {})
+    if event_id and not provenance.get("event_id"):
+        provenance["event_id"] = event_id
     return {
         "schema_version": FRAGMENT_SCHEMA_VERSION,
         "id": fragment_id,
@@ -977,7 +1082,14 @@ def build_manifest(
         "source": _describe_parent_source(plan.parent_manifest),
         "parent": {
             "project": plan.project.name,
-            "event_id": event_id,
+            "event_id": str(provenance.get("event_id") or ""),
+            "lineage_id": str(provenance.get("lineage_id") or ""),
+            "base_event_id": str(provenance.get("base_event_id") or ""),
+            "base_snapshot_sha256": str(
+                provenance.get("base_snapshot_sha256") or ""
+            ),
+            "snapshot_sha256": str(provenance.get("snapshot_sha256") or ""),
+            "revision_state": str(provenance.get("revision_state") or ""),
             "notes_fingerprint": plan.parent_fingerprint,
             "analysis_sha256": plan.parent_analysis_sha256,
             "measure_start": plan.measure_start,
@@ -1137,7 +1249,7 @@ def extract_fragment(
         tags=tags,
         composer=composer,
         performer=performer,
-        event_id=_parent_event_id(plan.project.name, store),
+        parent_provenance=_parent_provenance(plan.project, store),
         now=now,
     )
     source = manifest["source"]
@@ -1146,7 +1258,13 @@ def extract_fragment(
         from baroque_transcribe.midi_export import write_quantized_midi, write_raw_midi
 
         performance = [
-            NoteEvent(pitch=note.pitch, onset=note.onset_seconds, offset=note.offset_seconds, velocity=note.velocity)
+            NoteEvent(
+                pitch=note.pitch,
+                onset=note.onset_seconds,
+                offset=note.offset_seconds,
+                velocity=note.velocity,
+                staff=note.source_staff,
+            )
             for note in plan.notes
         ]
         Transcription(
@@ -1157,7 +1275,17 @@ def extract_fragment(
         ).write(staging / NOTES_JSON)
         _write_json(staging / FRAGMENT_GRID_JSON, grid_payload(plan))
         write_raw_midi(staging / FRAGMENT_PERFORMANCE_MID, performance, plan.pedals)
-        write_quantized_midi(staging / QUANTIZED_MID, plan.quantization, plan.staff_split)
+        staff_by_source = {
+            note.parent_index: int(note.source_staff)
+            for note in plan.notes
+            if note.source_staff in (1, 2)
+        }
+        write_quantized_midi(
+            staging / QUANTIZED_MID,
+            plan.quantization,
+            plan.staff_split,
+            staff_by_source=staff_by_source or None,
+        )
         write_fragment_score(
             staging / SCORE_XML,
             plan.quantization,
@@ -1183,11 +1311,48 @@ def extract_fragment(
             _write_json(staging / FRAGMENT_HARMONY_JSON, harmony)
         # The manifest is last: a folder with a manifest is a complete fragment.
         _write_json(staging / FRAGMENT_JSON, manifest)
+        _validate_staged_fragment(staging, expected_id=fragment_id)
         os.replace(staging, final)
     except BaseException:
         shutil.rmtree(staging, ignore_errors=True)
         raise
     return final
+
+
+def _validate_staged_fragment(folder: Path, *, expected_id: str) -> None:
+    """Read back every referenced artifact before publishing the staged folder."""
+
+    manifest = read_manifest(folder)
+    if str(manifest.get("id") or "") != expected_id:
+        raise FragmentError("The staged fragment id does not match its destination.")
+    artifacts = manifest.get("artifacts") or {}
+    referenced = [str(name) for name in artifacts.values() if name is not None]
+    missing = [name for name in referenced if not (folder / name).is_file()]
+    if missing:
+        raise FragmentError(
+            f"The staged fragment is missing {', '.join(sorted(missing))}."
+        )
+    transcription = read_transcription(folder / NOTES_JSON)
+    grid = read_grid(folder)
+    expected_notes = int((manifest.get("boundary") or {}).get("notes") or 0)
+    if len(transcription.notes) != expected_notes or len(grid.get("notes") or []) != expected_notes:
+        raise FragmentError("The staged fragment note counts do not match its manifest.")
+
+    import pretty_midi
+    import xml.etree.ElementTree as element_tree
+
+    for name in (FRAGMENT_PERFORMANCE_MID, QUANTIZED_MID):
+        try:
+            pretty_midi.PrettyMIDI(str(folder / name))
+        except Exception as exc:
+            raise FragmentError(f"The staged fragment has invalid {name}: {exc}") from exc
+    try:
+        element_tree.parse(folder / SCORE_XML)
+    except (OSError, element_tree.ParseError) as exc:
+        raise FragmentError(f"The staged fragment has invalid MusicXML: {exc}") from exc
+    harmony_name = artifacts.get("harmony")
+    if harmony_name:
+        _read_json_object(folder / str(harmony_name))
 
 
 # --------------------------------------------------------------------------

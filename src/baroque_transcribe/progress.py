@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+from baroque_transcribe.storage_io import write_json_atomic
+
 # Overall bar spans. Transcription is most of a CPU run; the other stages
 # are short, so they occupy a thin slice of the bar.
 STAGE_SPAN: dict[str, tuple[float, float]] = {
@@ -168,7 +170,7 @@ def save_pace(device: str, seconds_per_window: float, *, path: Path | None = Non
             "seconds_per_window": seconds_per_window,
             "updated": datetime.now(timezone.utc).isoformat(),
         }
-        file.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        write_json_atomic(file, payload)
     except OSError:
         return
 

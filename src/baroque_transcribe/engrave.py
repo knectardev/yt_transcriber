@@ -7,7 +7,6 @@ stays accountable in the score.
 
 from __future__ import annotations
 
-import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
@@ -15,6 +14,7 @@ from baroque_transcribe.defaults import DEFAULT_STAFF_SPLIT, NOTATION_MAP_JSON
 from baroque_transcribe.notation_settings import NotationSettings
 from baroque_transcribe.quantize import GridNote, Quantization
 from baroque_transcribe.schema import PedalEvent
+from baroque_transcribe.storage_io import write_json_atomic
 
 
 class EngraveError(ValueError):
@@ -628,8 +628,7 @@ def write_notation_map(path: Path, interpretation: Interpretation, quantization:
         "suppressed_rests": [asdict(item) for item in interpretation.suppressed_rests],
         "warnings": interpretation.warnings,
     }
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    write_json_atomic(path, payload)
     return path
 
 
@@ -751,8 +750,7 @@ def validate_note_preservation(
 
 
 def write_preservation_report(path: Path, report: PreservationReport) -> Path:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(report.to_dict(), indent=2) + "\n", encoding="utf-8")
+    write_json_atomic(path, report.to_dict())
     return path
 
 

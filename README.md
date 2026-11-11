@@ -138,6 +138,7 @@ For a YouTube source, passing `--start` or `--end` downloads only that section o
 ```text
 transcriptions/baroque_improvisation/
   source.wav
+  source.mid          # MIDI imports only: original source bytes
   working.wav
   notes.json
   pedal.json
@@ -186,9 +187,9 @@ The home page has the controls that start a transcription (YouTube URL, local fi
 
 A transcription's page is the transport with the score under it. For YouTube projects that is the video; for MIDI imports (and other projects without a video) it is synthesized preview audio, or a silent scrubber if synthesis fails. The header gives the note and pedal counts, excerpt length, tempo, meter, model, and the project folder. The highlighted measure follows the transport; optional **Highlight notes** places a small attack dot above the staff (pitch names stay in the measure label). Scrolling the score turns off **Follow score** so playback stops forcing the viewport. Clicking a measure jumps there; with note highlight on, clicking the attack dot seeks to that onset. **Select passage** marks a run of measures (click the first, then the last; the − and + buttons move either end). **Loop** replays that run at whatever speed the player is set to. **Extract fragment** sends the range to a form that saves it. **Score only** shows the static two-staff score, and **Play with score** on that page comes back. The page is written again each time it is opened, so it shows the notes and harmony as they are now. It is served on a second local port that is chosen at each launch, so its address is not one to bookmark. Start from the home page.
 
-MIDI imports keep pretty_midi absolute note times as the canonical timeline. A YouTube URL can be attached later; only a fixed sync offset aligns video time to that timeline (nonlinear performance alignment is out of scope).
+MIDI imports keep `source.mid` as the original source authority and pretty_midi absolute note times in `notes.json` as the editable app timeline. Full tempo/meter maps, source SHA-256, track/pitch-split staff assignment, optional per-note `staff`, and score origin survive publication, restore, and requantization. A YouTube URL can be attached later; only a fixed sync offset aligns video time to that timeline (nonlinear performance alignment is out of scope). Importing an already-published source warns and requires the explicit duplicate override in the UI.
 
-**Edit & files** on that page opens `/project?project=<folder>`, which holds the rest. Its tabs are the working audio and the mix of that audio with a simple tone at each detected pitch (a check of timing, not a piano sound) with the plots, the editable note table with the tempo, meter, subdivision, and staff split used to rebuild MIDI and MusicXML, the Harmony tab described below, the downloadable files with the run's warnings, and a **Fragments** tab that lists passages saved from this transcription and can open the extract form from measure numbers (the way to save a passage when there is no video). A project transcribed from a local file can have a YouTube address attached there so the score can follow the video. **Back to video and score** returns to the transcription's page. A transcription that has just finished opens here, and so does a project that has no score yet.
+**Edit & files** on that page opens `/project?project=<folder>`, which holds the rest. Its tabs are the working audio and the mix of that audio with a simple tone at each detected pitch (a check of timing, not a piano sound) with the plots, the editable note table with the tempo, meter, subdivision, staff split, and optional MIDI staff used to rebuild MIDI and MusicXML, the Harmony tab described below, the downloadable files with the run's warnings, and a **Fragments** tab that lists passages saved from this transcription and can open the extract form from measure numbers (the way to save a passage when there is no video). Revision indicators warn about unpublished, newer, divergent, or conflicting history. A published update is previewed and selected by event, then requires confirmation and creates a permanent recovery copy before replacement. The Files tab can write a validated ZIP backup, optionally with audio, to a user-chosen local path. A project transcribed from a local file can have a YouTube address attached there so the score can follow the video. **Back to video and score** returns to the transcription's page. A transcription that has just finished opens here, and so does a project that has no score yet.
 
 `baroque-transcribe ui --project transcriptions\piece` opens straight to that project's Edit & files page.
 
@@ -200,7 +201,7 @@ Membership is decided on the grid. A note the parent prints in the selection is 
 
 The fragment has its own clocks. Fragment time zero is the start of the playback window. The source-video interval is written once. A later sync nudge on the fragment's page writes only `sync.offset_seconds` in `fragment.json`; it moves where the player looks and does not change the duration or the stored interval.
 
-The **Fragment library** link on the home page opens `/fragments`. Search by text, analyzed key, tags, source, or a chord sequence (`V7 i` matches those labels next to each other; `V` and `v` are different chords). The list is a dense row per fragment: **Play**, title, a piano-roll strip, and a few facts, with a synthetic piano or electric-piano tone rendering (as-played or quantized) cached under `.local/fragment_audio/`. Audio is never copied into a fragment. A fragment of a YouTube transcription can still open on its own page with the video cued and looping on the passage. A fragment of a local recording has the score and the downloads, and no source-audio player. **Open source transcription** goes to the parent at that place when the parent is on this computer; otherwise **Open on YouTube** uses the stored timestamp.
+The **Fragment library** link on the home page opens `/fragments`. Search by text, analyzed key, tags, source, or a chord sequence (`V7 i` matches those labels next to each other; `V` and `v` are different chords). The list is a dense row per fragment: **Play**, title, a piano-roll strip, and a few facts, with a synthetic piano or electric-piano tone rendering (as-played or quantized) cached under `.local/fragment_audio/`. Audio is never copied into a fragment. A fragment of a YouTube transcription can still open on its own page with the video cued and looping on the passage. A fragment of a local recording has the score and the downloads, and no source-audio player. **Open source transcription** goes to the parent at that place when the parent is on this computer; otherwise **Open on YouTube** uses the stored timestamp. New fragment manifests record the parent lineage, base event, base snapshot, and extraction snapshot; the details page reports whether the parent is current, changed locally, changed in published history, or unavailable. Parent restore/update never mutates a fragment.
 
 ```text
 baroque-transcribe fragments extract transcriptions\piece --measures 12-15 --title "Descending fifths"
@@ -214,7 +215,7 @@ The SQLite index at `.local/library.sqlite` is a local cache. JSON files under `
 
 The full storage map — working projects, parse history, fragment folders, the SQLite schema, and why the library is files rather than a database — is [STORAGE.md](STORAGE.md).
 
-Analyzed key (from the parent's `annotations.json`, used for Roman numerals and the key filter) is stored separately from the written MusicXML key signature. In v1 the MusicXML key is the analyzed key so spelling matches the parent; the pitches are not transposed.
+Analyzed key (from the parent's `annotations.json`, used for Roman numerals and the key filter) is stored separately from the written MusicXML key signature. The MusicXML key is the analyzed key so spelling matches the parent; the pitches are not transposed.
 
 The same plots are written by the `transcribe` command. `baroque-transcribe diagnostics transcriptions\baroque_improvisation --position 12.5` redraws them with a cursor.
 
@@ -250,31 +251,38 @@ Do not treat `score.musicxml` as a finished edition until you have checked it ag
 
 ## Parse history
 
-Every `prepare`, `transcribe`, `quantize`, and `analyze` adds a folder under `data/parses/events/`. Each folder is one run. `event.json` is written once and left as it was, so history added on two machines merges as new folders.
+Every `prepare`, `transcribe`, `quantize`, MIDI `import`, and `analyze` adds a folder under `data/parses/events/`. Each folder is one run. `event.json` is written once and left as it was, so history added on two machines merges as new folders. Existing schema-v1 events remain readable. New schema-v2 events carry causal lineage, canonical component hashes, separate raw file-integrity hashes, a portable settings projection, and a complete independently restorable artifact snapshot for score-producing runs. Analyze-only events are causal annotation overlays and are published only while their score still matches the causal base; no event reads artifact bytes through another event.
 
-The folder also holds the score files from that run, when the run produced them: `notes.json`, `pedal.json`, `raw.mid`, `quantized.mid`, `score.musicxml`, and `annotations.json`. An `analyze` event, including one written when harmony edits are saved, stores `annotations.json` and leaves the earlier score files where they are. `source.wav`, `working.wav`, and the diagnostic wavs stay in `transcriptions/` and are only described in `event.json`. Cookie files and absolute home-directory paths are not stored. The machine name in the event is the computer that wrote it.
+The folder also holds the score files from that run, when the run produced them: `notes.json`, `pedal.json`, `raw.mid`, `quantized.mid`, `score.musicxml`, and `annotations.json`; complete MIDI events also hold `source.mid`. An `analyze` event, including one written when harmony edits are saved, stores `annotations.json` and leaves the earlier score files where they are. `source.wav`, `working.wav`, and the diagnostic wavs stay in `transcriptions/` and are only described in `event.json`. Cookie files and absolute home-directory paths are not stored. The machine name in the event is the computer that wrote it.
 
 `score.pdf` is listed in every event with `"present": false` and `"status": "planned"`. A later `baroque-transcribe pdf <project>` command will write that PDF next to `score.musicxml` by asking music21 for a MusicXML PDF, which needs MuseScore on `PATH`. The PDF will be copied into the event folder as a new file, with a sibling `pdf.json` saying when and on which machine. `event.json` stays as first written. The review page can then offer the PDF beside MusicXML.
 
 ```text
 baroque-transcribe history
 baroque-transcribe history import transcriptions
+baroque-transcribe history status
+baroque-transcribe history preview <event-id>
+baroque-transcribe history update <event-id> --confirm <event-id>
 ```
 
 Import reads each `manifest.json` once. Running it again skips a project already imported with the same video (or file name), excerpt, and folder name.
 
 Commit `data/parses/` and pull it on the other machine. The history and the score files come with the pull. The audio does not, so a YouTube download still has to be run on a computer where YouTube is signed in.
 
+Status is ancestry-based: synchronized, newer published, unpublished local edits, diverged, multiple published heads, independent, not restored, or a legacy relationship. A timestamp never resolves incomparable branches. `history restore` remains non-destructive for missing projects. `history update` is event-targeted, validates before writing, makes a verified recovery under `transcriptions/.recovery/`, stages the replacement, and rolls back on failure. It preserves local annotations unless `--published-annotations` is given and retains local audio only when source/excerpt identity matches.
+
 ## Using two computers
 
 The repository is the sync mechanism. Each machine has its own clone, its own `.venv`, its own model checkpoint, and its own `transcriptions/` folder. The parse history under `data/parses/` and the fragment library under `data/fragments/` travel between them.
+
+On a laptop that already has an editable install, stop the running UI, run `git pull`, and start `baroque-transcribe ui` again. This revision adds no packages and no migration. Use `history restore <project>` for a pulled run whose project folder is absent; leave an existing project folder in place and inspect it with `history status`. The colored `score.voices.musicxml` sibling is local, so a restored readable project needs one local `quantize --notation readable` before its Color voices checkbox appears. The full sequence is in [HANDOFF.md](HANDOFF.md).
 
 **What travels, and what does not**
 
 | Comes with `git pull` | Stays on the machine that made it |
 | --- | --- |
 | The program, the tests, and these documents | `transcriptions/` (every project folder, including `manifest.json`) |
-| `data/parses/events/`: `event.json`, `notes.json`, `pedal.json`, `raw.mid`, `quantized.mid`, `score.musicxml`, and `annotations.json` for each run | All audio (`source.wav`, `working.wav`, diagnostics) |
+| `data/parses/events/`: `event.json`, complete score artifacts, annotations, and `source.mid` for new MIDI score events | All audio (`source.wav`, `working.wav`, diagnostics) |
 | `data/fragments/<id>/`: `fragment.json`, `notes.json`, `grid.json`, `harmony.json`, `performance.mid`, `quantized.mid`, `score.musicxml` | `.local/` (the fragment search index and generated fragment pages; rebuild with `fragments reindex`) |
 | | The 165 MB model checkpoint (`%USERPROFILE%\.cache\baroque_transcribe\`) |
 | | The thumbnail cache (`data/thumbnails\`); it is re-fetched on first view |
@@ -300,7 +308,7 @@ The library shows the new video and its runs greyed out, marked "not on this com
 baroque-transcribe history restore
 ```
 
-That rebuilds every missing project (or one project, with `baroque-transcribe history restore <project>`) by copying the stored notes, pedal, MIDI, MusicXML, and `annotations.json` into `transcriptions/<project>` and writing a manifest rebuilt from the event, with the tempo and meter read back from the score. A newer `analyze` event supplies the harmony file when the score event does not have one. **Nothing is downloaded and no model is run**: a restored project is the pulled transcription itself, not a new one, and restoring records no new history. A project that already exists on this machine keeps its notes and score. If `annotations.json` is missing there, restore fills that file in and leaves an analysis that is already present. The same restore is a button on each greyed-out library card in the review window.
+That rebuilds every missing project (or one project, with `baroque-transcribe history restore <project>`) from a validated complete score event plus its causal analysis overlay. **Nothing is downloaded and no model is run**: a restored project is the pulled transcription itself, not a new one, and restoring records no new history. A project that already exists on this machine keeps its notes and score. If `annotations.json` is missing there, restore fills that file in and leaves an analysis that is already present. The same restore is a button on each greyed-out library card in the review window.
 
 Two limits of a restored project, both because audio does not travel in the repo:
 
@@ -309,7 +317,21 @@ Two limits of a restored project, both because audio does not travel in the repo
 
 The alternatives are still there: open `data/parses/events/<run>/score.musicxml` directly in MuseScore for just the score, or re-transcribe on this machine, which downloads and runs the model again and records a *new* history run rather than reusing the pulled one. Do **not** run `baroque-transcribe history import transcriptions` for a folder whose runs are already in the pulled history; import is for projects that predate the history, and it would record those runs a second time.
 
-The same warning in reverse: a `git pull` and a restore never update a project folder you already have. If notes were edited and requantized on the other machine, the new scores arrive as a new event folder while your local `transcriptions/<project>` still holds the old ones, and restore skips it because it exists. Delete that folder and restore again, or replace it with a fresh copy, before trusting the local page.
+The same warning in reverse: a `git pull` and a restore never update a project folder you already have. If a newer event arrives, inspect it with `history status` and `history preview <event-id>`, then use the explicit confirmed `history update` command or the project-page action. Do not delete the local folder to update it: the safe path preserves it as a verified recovery and rolls back if application fails.
+
+Recovery copies are durable and never expire automatically:
+
+```text
+baroque-transcribe storage report
+baroque-transcribe storage recoveries
+baroque-transcribe storage export <project> <backup.zip> --with-audio
+baroque-transcribe storage rollback-recovery <project>/<recovery-id> --confirm "RESTORE <project>/<recovery-id>"
+baroque-transcribe storage delete-recovery <project>/<recovery-id> --confirm "DELETE <project>/<recovery-id>"
+```
+
+The storage report lists recovery bytes separately from rebuildable caches. Recovery listing shows the path, prior/target events, and exact confirmation strings. A rollback verifies and retains the selected recovery and first preserves the current project as another recovery. Deletion requires the exact selected recovery id and confirmation. Git does not back up unpublished working projects; use `storage export` for a validated local ZIP.
+
+This safety revision does not remove or deduplicate score artifacts. `pedal.json` is still written, published, restored, downloaded, and tested. Generated files and cache cleanup remain a separately approved storage-optimization decision; existing events, fragments, and Git history are never rewritten.
 
 ## Layout
 
@@ -329,6 +351,10 @@ See [STORAGE.md](STORAGE.md) for the on-disk layout, JSON contracts, and SQLite 
 | `diagnostics.py` | Plots and the comparison mix |
 | `analysis.py` | Harmonic draft: key estimate, chord labels, sequence spans in `annotations.json`; voice/imitation/cadence hooks still reserved |
 | `parse_store.py` | JSON history of each run, with the score files and a reserved PDF slot; also restores project folders from that history on another machine |
+| `revision.py` | Canonical fingerprints, lineage heads/ancestry, and derived project revision states |
+| `project_manifest.py` | Shared versioned manifest IO, portable settings projection, revision and generation blocks |
+| `project_restore.py` | Event validation/materialization, preview, recovery, rollback, and explicit update |
+| `storage_management.py` | Category disk report and validated project ZIP export |
 | `library.py` | Cards for the home page: the parse history merged with the folders under `transcriptions/` |
 | `playback.py` | YouTube id parsing and the localhost server that writes and serves each transcription's page (video with score) and its score-only page, plus `/f/<token>/` for a saved fragment |
 | `fragments.py` | Plan and extract a measure range; fragment manifests, clocks, and metadata edits. Does not write the parent. |
@@ -336,7 +362,7 @@ See [STORAGE.md](STORAGE.md) for the on-disk layout, JSON contracts, and SQLite 
 | `fragment_pages.py` | Playback and score pages for a saved fragment, written under `.local/fragment_pages/` |
 | `fragment_ui.py` | Streamlit `/fragments`, `/extract`, `/fragment` |
 | `ui.py` | The local site: home page with the transcribe controls and the library, an Edit & files page per project, and the fragment library |
-| `cli.py` | `prepare`, `transcribe`, `quantize`, `compare`, `analyze`, `diagnostics`, `doctor`, `ui`, `history`, `fragments` |
+| `cli.py` | `prepare`, `transcribe`, `quantize`, `compare`, `analyze`, `diagnostics`, `doctor`, `ui`, `history`, `fragments`, `storage` |
 
 `notes.json` is the stable intermediate those later analyzers should read. They should write annotations beside the transcription and leave `raw.mid` alone. The harmonic analyzer does exactly that: it reads `notes.json` and writes `annotations.json`.
 

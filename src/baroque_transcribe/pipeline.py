@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import platform
 from dataclasses import dataclass
 from datetime import datetime
@@ -57,7 +56,9 @@ from baroque_transcribe.parse_store import record_parse
 from baroque_transcribe.notation_settings import NotationSettings, settings_from_manifest
 from baroque_transcribe.quantize import Quantization, parse_time_signature, quantization_from_manifest, quantize_notes
 from baroque_transcribe.progress import ProgressCallback, ProgressEvent, emit, fraction_for
+from baroque_transcribe.project_manifest import read_project_manifest, write_project_manifest
 from baroque_transcribe.schema import Transcription, read_transcription, write_pedal_file
+from baroque_transcribe.storage_io import sha256_file
 from baroque_transcribe.tempo import TempoEstimate, estimate_tempo
 from baroque_transcribe.transcribe import transcribe_basic_pitch, transcribe_bytedance
 
@@ -73,13 +74,11 @@ class ProjectResult:
 
 
 def _write_manifest(path: Path, payload: dict) -> None:
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    write_project_manifest(path, payload)
 
 
 def _read_manifest(path: Path) -> dict:
-    if not path.exists():
-        return {}
-    return json.loads(path.read_text(encoding="utf-8"))
+    return read_project_manifest(path)
 
 
 def resolve_output_dir(source: str, output: Path | None, name: str | None) -> Path:
@@ -165,6 +164,7 @@ def notate_transcription(
     tempo_info: dict,
     time_signature_assumed: bool,
     settings: NotationSettings | None = None,
+    write_score: bool = True,
 ) -> Quantization:
     resolved = settings or NotationSettings()
     quantization = quantize_notes(
@@ -191,18 +191,19 @@ def notate_transcription(
     map_path = output_dir / NOTATION_MAP_JSON if resolved.style == "readable" else None
     voices_path = output_dir / SCORE_VOICES_XML if resolved.style == "readable" else None
     preservation_path = output_dir / PRESERVATION_JSON if resolved.style == "readable" else None
-    write_musicxml(
-        output_dir / SCORE_XML,
-        quantization,
-        staff_split=staff_split,
-        title=title,
-        style=resolved.style,
-        notation_map=map_path,
-        pedals=transcription.pedals,
-        voices_path=voices_path,
-        preservation_report=preservation_path,
-        staff_by_source=staff_by_source,
-    )
+    if write_score:
+        write_musicxml(
+            output_dir / SCORE_XML,
+            quantization,
+            staff_split=staff_split,
+            title=title,
+            style=resolved.style,
+            notation_map=map_path,
+            pedals=transcription.pedals,
+            voices_path=voices_path,
+            preservation_report=preservation_path,
+            staff_by_source=staff_by_source,
+        )
     if resolved.style != "readable":
         for leftover in (output_dir / SCORE_VOICES_XML, output_dir / NOTATION_MAP_JSON, output_dir / PRESERVATION_JSON):
             if leftover.is_file():
@@ -217,17 +218,25 @@ def notate_transcription(
         "grid": resolved.grid,
         **tempo_info,
     }
+    previous_notation = (
+        manifest.get("notation") if isinstance(manifest.get("notation"), dict) else {}
+    )
+    notation = {
+        "quantized_mid": QUANTIZED_MID,
+        "score": SCORE_XML,
+        "raw_mid": RAW_MID,
+        "style": resolved.style,
+        "settings": resolved.to_dict(),
+        "score_from": str(
+            previous_notation.get("score_from")
+            or ("notes_staff" if staff_by_source else "quantized_grid")
+        ),
+    }
     manifest.update(
         {
             "tempo": tempo_block,
             "staff_split": staff_split,
-            "notation": {
-                "quantized_mid": QUANTIZED_MID,
-                "score": SCORE_XML,
-                "raw_mid": RAW_MID,
-                "style": resolved.style,
-                "settings": resolved.to_dict(),
-            },
+            "notation": notation,
         }
     )
     if quantization.warnings:
@@ -235,7 +244,24 @@ def notate_transcription(
         warnings.extend(quantization.warnings)
         manifest["warnings"] = warnings
     _write_manifest(output_dir / MANIFEST, manifest)
+    if write_score:
+        finalize_project_generation(output_dir)
     return quantization
+
+
+def finalize_project_generation(output_dir: Path) -> None:
+    """Publish integrity hashes only after every generated score artifact validates."""
+
+    names = (NOTES_JSON, PEDAL_JSON, RAW_MID, QUANTIZED_MID, SCORE_XML)
+    missing = [name for name in names if not (output_dir / name).is_file()]
+    if missing:
+        raise OSError(f"Cannot complete score generation; missing {', '.join(missing)}.")
+    manifest = _read_manifest(output_dir / MANIFEST)
+    manifest["generation"] = {
+        "version": 1,
+        "artifacts": {name: sha256_file(output_dir / name) for name in names},
+    }
+    _write_manifest(output_dir / MANIFEST, manifest)
 
 
 def _analysis_summary(analysis: HarmonicAnalysis) -> dict:
@@ -463,6 +489,7 @@ def run_transcription(
         "python": platform.python_version(),
         "system": platform.platform(),
         "origin": prepared.origin,
+        "source_sha256": sha256_file(prepared.source_wav),
         "title": prepared.title,
         "model": model_id,
         "device": resolved_device,
@@ -624,12 +651,21 @@ def requantize_project(
     else:
         parsed = parse_timestamp(downbeat)
         downbeat_seconds = 0.0 if parsed is None else parsed
-    split = DEFAULT_STAFF_SPLIT if staff_split is None else staff_split
+    split = (
+        int(manifest.get("staff_split") or DEFAULT_STAFF_SPLIT)
+        if staff_split is None
+        else staff_split
+    )
     title = str(manifest.get("title") or output_dir.name)
 
     write_raw_midi(output_dir / RAW_MID, transcription.notes, transcription.pedals)
     write_pedal_file(output_dir / PEDAL_JSON, transcription.pedals, transcription.model)
     resolved = settings or settings_from_manifest(manifest)
+    preserved_tempo = {
+        key: previous[key]
+        for key in ("tempo_map", "time_signature_map", "constant_tempo")
+        if key in previous
+    }
     quantization = notate_transcription(
         transcription,
         output_dir,
@@ -639,7 +675,15 @@ def requantize_project(
         downbeat=downbeat_seconds,
         staff_split=split,
         title=title,
-        tempo_info={"source": "manual" if tempo not in (None, "auto") else "previous-or-estimated", "assumed_bpm": assumed},
+        tempo_info={
+            **preserved_tempo,
+            "source": (
+                str(previous.get("source") or "previous-or-estimated")
+                if tempo in (None, "auto")
+                else "manual"
+            ),
+            "assumed_bpm": assumed,
+        },
         time_signature_assumed=assumed_meter,
         settings=resolved,
     )
@@ -737,6 +781,7 @@ def prepare_only(
     manifest = {
         "program": f"baroque-transcribe {__version__}",
         "origin": prepared.origin,
+        "source_sha256": sha256_file(prepared.source_wav),
         "title": prepared.title,
         "audio": {
             "source": "source.wav",

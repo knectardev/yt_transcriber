@@ -21,6 +21,7 @@ transcriptions/
 !data/parses/**/*.mid
 !data/parses/**/*.musicxml
 !data/parses/**/*.xml
+data/parses/events/.tmp-*/
 # Fragment library: manifests and small score files are committed.
 !data/fragments/**/*.mid
 !data/fragments/**/*.musicxml

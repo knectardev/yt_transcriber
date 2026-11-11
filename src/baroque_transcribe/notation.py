@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 import math
-import shutil
+import os
 from dataclasses import dataclass
 from fractions import Fraction
 from html import escape
@@ -21,6 +21,11 @@ from music21 import chord, clef, instrument, key as m21key, layout, meter, note,
 from baroque_transcribe.analysis import load_analysis, spell_pitch_name
 from baroque_transcribe.defaults import ANNOTATIONS_JSON, NOTES_JSON, SCORE_XML
 from baroque_transcribe.quantize import GridNote, Quantization
+from baroque_transcribe.storage_io import (
+    copy_file_atomic,
+    temporary_path,
+    write_text_atomic,
+)
 
 
 class NotationError(RuntimeError):
@@ -785,20 +790,31 @@ def write_musicxml(
 
     def export(score_obj: stream.Score, dest: Path) -> Path:
         dest.parent.mkdir(parents=True, exist_ok=True)
+        temporary = temporary_path(dest)
         try:
-            written = score_obj.write("musicxml", fp=str(dest))
-        except Exception as exc:
-            raise NotationError(f"MusicXML export failed: {exc}") from exc
-        written_path = Path(str(written)) if written else dest
-        if written_path != dest and written_path.exists():
-            written_path.replace(dest)
-        if not dest.exists():
-            raise NotationError(f"music21 did not write {dest}.")
-        if style == "readable":
-            text = dest.read_text(encoding="utf-8")
-            converted = _hidden_rests_to_forward(text)
-            if converted != text:
-                dest.write_text(converted, encoding="utf-8")
+            try:
+                written = score_obj.write("musicxml", fp=str(temporary))
+            except Exception as exc:
+                raise NotationError(f"MusicXML export failed: {exc}") from exc
+            written_path = Path(str(written)) if written else temporary
+            if written_path != temporary and written_path.exists():
+                written_path.replace(temporary)
+            if not temporary.exists():
+                raise NotationError(f"music21 did not write {dest}.")
+            if style == "readable":
+                text = temporary.read_text(encoding="utf-8")
+                converted = _hidden_rests_to_forward(text)
+                if converted != text:
+                    temporary.write_text(converted, encoding="utf-8")
+            try:
+                import xml.etree.ElementTree as element_tree
+
+                element_tree.parse(temporary)
+            except (OSError, element_tree.ParseError) as exc:
+                raise NotationError(f"MusicXML validation failed: {exc}") from exc
+            os.replace(temporary, dest)
+        finally:
+            temporary.unlink(missing_ok=True)
         return dest
 
     export(build(colorize_voices), path)
@@ -839,16 +855,29 @@ def musicxml_for_midi(midi_path: Path) -> Path:
         return dest
     from music21 import converter
 
+    temporary = temporary_path(dest)
     try:
-        parsed = converter.parse(str(midi_path))
-        written = parsed.write("musicxml", fp=str(dest))
-    except Exception as exc:
-        raise NotationError(f"Could not read {midi_path.name} as notation: {exc}") from exc
-    written_path = Path(str(written)) if written else dest
-    if written_path != dest and written_path.exists():
-        written_path.replace(dest)
-    if not dest.exists():
-        raise NotationError(f"music21 did not write {dest}.")
+        try:
+            parsed = converter.parse(str(midi_path))
+            written = parsed.write("musicxml", fp=str(temporary))
+        except Exception as exc:
+            raise NotationError(
+                f"Could not read {midi_path.name} as notation: {exc}"
+            ) from exc
+        written_path = Path(str(written)) if written else temporary
+        if written_path != temporary and written_path.exists():
+            written_path.replace(temporary)
+        if not temporary.exists():
+            raise NotationError(f"music21 did not write {dest}.")
+        try:
+            import xml.etree.ElementTree as element_tree
+
+            element_tree.parse(temporary)
+        except (OSError, element_tree.ParseError) as exc:
+            raise NotationError(f"MusicXML validation failed: {exc}") from exc
+        os.replace(temporary, dest)
+    finally:
+        temporary.unlink(missing_ok=True)
     return dest
 
 
@@ -895,7 +924,7 @@ def write_notation_page(
     dest.parent.mkdir(parents=True, exist_ok=True)
     local_library = dest.parent / _NOTATION_LIBRARY
     if library.resolve() != local_library.resolve():
-        shutil.copyfile(library, local_library)
+        copy_file_atomic(library, local_library)
     xml = score_path.read_text(encoding="utf-8")
     # Keep a literal "</script>" in the MusicXML from closing the HTML script early.
     payload = json.dumps(xml).replace("<", "\\u003c")
@@ -943,7 +972,8 @@ def write_notation_page(
         f'<div class="path">{escape(folder)}</div>' if folder else ""
     )
     dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(
+    write_text_atomic(
+        dest,
         f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1165,6 +1195,5 @@ def write_notation_page(
 </body>
 </html>
 """,
-        encoding="utf-8",
     )
     return dest

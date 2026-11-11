@@ -7,9 +7,9 @@ for the score instead of re-splitting at middle C.
 
 from __future__ import annotations
 
-import json
+import os
 import re
-import shutil
+import xml.etree.ElementTree as element_tree
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -27,7 +27,15 @@ from baroque_transcribe.defaults import (
 )
 from baroque_transcribe.midi_export import write_raw_midi
 from baroque_transcribe.notation_settings import NotationSettings
-from baroque_transcribe.pipeline import notate_transcription, unique_output_dir
+from baroque_transcribe.pipeline import (
+    finalize_project_generation,
+    notate_transcription,
+    unique_output_dir,
+)
+from baroque_transcribe.project_manifest import (
+    read_project_manifest,
+    write_project_manifest,
+)
 from baroque_transcribe.schema import (
     NoteEvent,
     PedalEvent,
@@ -36,12 +44,22 @@ from baroque_transcribe.schema import (
     clean_pedals,
     write_pedal_file,
 )
+from baroque_transcribe.storage_io import (
+    copy_file_atomic,
+    sha256_file,
+    sha256_json,
+    temporary_path,
+)
 
 _RIGHT_NAME = re.compile(r"(right|treble|rh\b|hand\s*1|staff\s*1)", re.I)
 _LEFT_NAME = re.compile(r"(left|bass|lh\b|hand\s*2|staff\s*2)", re.I)
 
 
 class MidiImportError(ValueError):
+    pass
+
+
+class DuplicateMidiImportError(MidiImportError):
     pass
 
 
@@ -164,19 +182,30 @@ def _write_score_from_midi(midi_path: Path, dest: Path, *, title: str) -> Path:
 
     from baroque_transcribe.notation import NotationError
 
+    temporary = temporary_path(dest)
     try:
-        parsed = converter.parse(str(midi_path))
-        if parsed.metadata is None:
-            parsed.metadata = metadata.Metadata()
-        parsed.metadata.title = title
-        written = parsed.write("musicxml", fp=str(dest))
-    except Exception as exc:
-        raise MidiImportError(f"Could not write MusicXML from {midi_path.name}: {exc}") from exc
-    written_path = Path(str(written)) if written else dest
-    if written_path != dest and written_path.exists():
-        written_path.replace(dest)
-    if not dest.is_file():
-        raise NotationError(f"music21 did not write {dest}.")
+        try:
+            parsed = converter.parse(str(midi_path))
+            if parsed.metadata is None:
+                parsed.metadata = metadata.Metadata()
+            parsed.metadata.title = title
+            written = parsed.write("musicxml", fp=str(temporary))
+        except Exception as exc:
+            raise MidiImportError(
+                f"Could not write MusicXML from {midi_path.name}: {exc}"
+            ) from exc
+        written_path = Path(str(written)) if written else temporary
+        if written_path != temporary and written_path.exists():
+            written_path.replace(temporary)
+        if not temporary.is_file():
+            raise NotationError(f"music21 did not write {dest}.")
+        try:
+            element_tree.parse(temporary)
+        except (OSError, element_tree.ParseError) as exc:
+            raise MidiImportError(f"MusicXML validation failed: {exc}") from exc
+        os.replace(temporary, dest)
+    finally:
+        temporary.unlink(missing_ok=True)
     return dest
 
 
@@ -192,26 +221,54 @@ def import_midi_project(
     downbeat: float = 0.0,
     staff_split: int = DEFAULT_STAFF_SPLIT,
     settings: NotationSettings | None = None,
+    history_store: Path | None = None,
+    allow_duplicate: bool = False,
 ) -> Path:
     """Create a Library project from a MIDI file and return its folder."""
 
     midi_path = Path(midi_path).expanduser().resolve()
     transcription, timing = parse_midi(midi_path)
+    source_sha256 = sha256_file(midi_path)
+    resolved_bpm = float(bpm) if bpm is not None else timing.bpm
+    resolved_meter = time_signature or timing.time_signature
+    resolved_settings = settings or NotationSettings()
+    import_settings_sha256 = sha256_json(
+        {
+            "bpm": resolved_bpm,
+            "time_signature": list(resolved_meter),
+            "subdivision": int(subdivision),
+            "downbeat": float(downbeat),
+            "staff_split": int(staff_split),
+            "staff_assignment": "tracks" if timing.track_staffs else "pitch_split",
+            "notation": resolved_settings.to_dict(),
+        }
+    )
+    if not allow_duplicate:
+        duplicate = _duplicate_import(
+            source_sha256,
+            import_settings_sha256,
+            history_store,
+        )
+        if duplicate:
+            duplicate_project, duplicate_event = duplicate
+            raise DuplicateMidiImportError(
+                f"This MIDI source and import settings already have published project "
+                f"{duplicate_project!r} in event {duplicate_event}. "
+                "Choose the existing project or explicitly allow another project."
+            )
     resolved_title = (title or Path(midi_path).stem or "MIDI import").strip() or "MIDI import"
     project = unique_output_dir(Path(output_dir))
     project.mkdir(parents=True, exist_ok=True)
 
     stored_midi = project / SOURCE_MID
     if midi_path.resolve() != stored_midi.resolve():
-        shutil.copy2(midi_path, stored_midi)
+        copy_file_atomic(midi_path, stored_midi)
 
     transcription.source = midi_path.name
     transcription.write(project / NOTES_JSON)
     write_pedal_file(project / PEDAL_JSON, transcription.pedals, transcription.model)
     write_raw_midi(project / RAW_MID, transcription.notes, transcription.pedals)
 
-    resolved_bpm = float(bpm) if bpm is not None else timing.bpm
-    resolved_meter = time_signature or timing.time_signature
     meter_assumed = time_signature is None and not timing.has_time_signature_events
 
     warnings: list[str] = []
@@ -230,6 +287,8 @@ def import_midi_project(
         "title": resolved_title,
         "model": "midi-import",
         "source_kind": "midi",
+        "source_sha256": source_sha256,
+        "import_settings_sha256": import_settings_sha256,
         "counts": {"notes": len(transcription.notes), "pedals": len(transcription.pedals)},
         "audio": {
             "working_duration_seconds": round(timing.end_time, 5),
@@ -241,7 +300,7 @@ def import_midi_project(
     }
     if youtube_url:
         manifest["youtube_url"] = youtube_url.strip()
-    (project / MANIFEST).write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    write_project_manifest(project, manifest)
 
     tempo_info = {
         "source": "midi",
@@ -260,17 +319,19 @@ def import_midi_project(
         title=resolved_title,
         tempo_info=tempo_info,
         time_signature_assumed=bool(meter_assumed),
-        settings=settings,
+        settings=resolved_settings,
+        write_score=not timing.track_staffs,
     )
 
     if timing.track_staffs:
         # Replace the pitch-split score with music21's track→staff rendering.
         _write_score_from_midi(stored_midi, project / SCORE_XML, title=resolved_title)
-        updated = json.loads((project / MANIFEST).read_text(encoding="utf-8"))
+        updated = read_project_manifest(project)
         notation = dict(updated.get("notation") or {})
         notation["score_from"] = "midi_tracks"
         updated["notation"] = notation
-        (project / MANIFEST).write_text(json.dumps(updated, indent=2) + "\n", encoding="utf-8")
+        write_project_manifest(project, updated)
+        finalize_project_generation(project)
 
     try:
         from baroque_transcribe.parse_store import record_parse
@@ -285,8 +346,32 @@ def import_midi_project(
             youtube_url=youtube_url,
             duration=timing.end_time,
             via="midi-import",
+            store=history_store,
         )
     except Exception:
         pass
 
     return project
+
+
+def _duplicate_import(
+    source_sha256: str,
+    import_settings_sha256: str,
+    store: Path | None,
+) -> tuple[str, str] | None:
+    from baroque_transcribe.parse_store import load_events, resolve_store
+
+    target = resolve_store(store)
+    if target is None:
+        return None
+    for event in reversed(load_events(target)):
+        source = event.get("source") if isinstance(event.get("source"), dict) else {}
+        if (
+            event.get("status") == "ok"
+            and source.get("kind") == "midi"
+            and str(source.get("sha256") or "") == source_sha256
+            and str((event.get("project_state") or {}).get("import_settings_sha256") or "")
+            == import_settings_sha256
+        ):
+            return str(event.get("project") or ""), str(event.get("id") or "")
+    return None

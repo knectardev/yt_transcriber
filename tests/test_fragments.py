@@ -955,6 +955,20 @@ def test_failed_extraction_leaves_nothing_behind(monkeypatch, tmp_path: Path):
     assert F.fragment_folders(root) == []
 
 
+def test_staged_fragment_is_read_back_before_publication(monkeypatch, tmp_path: Path):
+    project = make_project(tmp_path, barline_piece())
+    root = tmp_path / "fragments"
+
+    def invalid_score(path, *args, **kwargs):
+        path.write_text("<not-closed>", encoding="utf-8")
+        return path
+
+    monkeypatch.setattr(F, "write_fragment_score", invalid_score)
+    with pytest.raises(F.FragmentError, match="invalid MusicXML"):
+        F.extract_fragment(project, 1, 2, title="Never", root=root)
+    assert list(root.iterdir()) == []
+
+
 def test_selection_is_validated(tmp_path: Path):
     project = make_project(tmp_path, barline_piece() + [n(60, 8.0, 8.5)])
     root = tmp_path / "fragments"
@@ -989,8 +1003,18 @@ def test_manifest_validation_names_the_problem(tmp_path: Path):
         payload.update(updates)
         return payload
 
-    with pytest.raises(F.FragmentError, match="schema version 2"):
-        F.validate_manifest(changed(schema_version=2))
+    with pytest.raises(F.FragmentError, match="versions 1 and 2"):
+        F.validate_manifest(changed(schema_version=3))
+    legacy = changed(schema_version=1)
+    for key in (
+        "lineage_id",
+        "base_event_id",
+        "base_snapshot_sha256",
+        "snapshot_sha256",
+        "revision_state",
+    ):
+        legacy["parent"].pop(key, None)
+    assert F.validate_manifest(legacy)["schema_version"] == 1
     with pytest.raises(F.FragmentError, match="no fragment id"):
         F.validate_manifest(changed(id=""))
     with pytest.raises(F.FragmentError, match="no title"):
@@ -1007,6 +1031,120 @@ def test_manifest_validation_names_the_problem(tmp_path: Path):
     (folder / FRAGMENT_JSON).write_text("{ not json", encoding="utf-8")
     with pytest.raises(F.FragmentError, match="not valid JSON"):
         F.read_manifest(folder)
+
+
+def test_fragment_v2_records_parent_snapshot_and_reports_local_staleness(tmp_path: Path):
+    project = make_project(tmp_path, barline_piece())
+    folder = F.extract_fragment(
+        project,
+        1,
+        2,
+        title="Provenance",
+        root=tmp_path / "fragments",
+    )
+    manifest = F.read_manifest(folder)
+    assert manifest["schema_version"] == 2
+    assert manifest["parent"]["snapshot_sha256"]
+    assert (
+        F.fragment_parent_status(manifest, projects_root=project.parent)
+        == "current"
+    )
+
+    notes_path = project / NOTES_JSON
+    notes = json.loads(notes_path.read_text(encoding="utf-8"))
+    notes["notes"][0]["pitch"] += 1
+    notes_path.write_text(json.dumps(notes), encoding="utf-8")
+    assert (
+        F.fragment_parent_status(manifest, projects_root=project.parent)
+        == "parent_changed"
+    )
+
+
+def test_fragment_reports_published_parent_change_and_unavailable_parent(
+    tmp_path: Path,
+):
+    project = make_project(tmp_path, barline_piece())
+    folder = F.extract_fragment(
+        project,
+        1,
+        2,
+        title="Published provenance",
+        root=tmp_path / "fragments",
+    )
+    manifest = F.read_manifest(folder)
+    manifest["parent"].update(
+        {
+            "lineage_id": "lineage",
+            "base_event_id": "base",
+            "event_id": "base",
+        }
+    )
+    store = tmp_path / "store"
+    for ident, parent in (("base", None), ("new-head", "base")):
+        event_folder = store / "events" / ident
+        event_folder.mkdir(parents=True)
+        (event_folder / "event.json").write_text(
+            json.dumps(
+                {
+                    "version": 2,
+                    "id": ident,
+                    "recorded_at": f"2026-01-0{1 if ident == 'base' else 2}T00:00:00Z",
+                    "action": "prepare",
+                    "status": "ok",
+                    "project": project.name,
+                    "source": {"kind": "file", "name": "source.wav"},
+                    "revision": {
+                        "lineage_id": "lineage",
+                        "parent_event_id": parent,
+                        "complete_snapshot": False,
+                        "snapshot": {"sha256": ident, "artifacts": {}},
+                    },
+                    "project_state": {},
+                }
+            ),
+            encoding="utf-8",
+        )
+    assert (
+        F.fragment_parent_status(
+            manifest,
+            projects_root=project.parent,
+            store=store,
+        )
+        == "published_parent_changed"
+    )
+    assert (
+        F.fragment_parent_status(
+            manifest,
+            projects_root=tmp_path / "missing-projects",
+            store=store,
+        )
+        == "parent_unavailable"
+    )
+
+
+def test_fragment_metadata_atomic_failure_preserves_prior_manifest(
+    tmp_path: Path, monkeypatch
+):
+    project = make_project(tmp_path, barline_piece())
+    folder = F.extract_fragment(
+        project,
+        1,
+        2,
+        title="Before",
+        root=tmp_path / "fragments",
+    )
+    manifest_path = folder / FRAGMENT_JSON
+    before = manifest_path.read_bytes()
+
+    def locked(source, destination):
+        raise PermissionError("locked")
+
+    monkeypatch.setattr(F.os, "replace", locked)
+    monkeypatch.setattr("time.sleep", lambda _seconds: None)
+    with pytest.raises(PermissionError, match="locked"):
+        F.update_fragment_metadata(folder, title="After")
+    assert manifest_path.read_bytes() == before
+    assert not list(folder.glob("fragment.json.*.tmp"))
 
 
 def test_metadata_edit_changes_only_the_named_fields(tmp_path: Path):

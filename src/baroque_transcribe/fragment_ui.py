@@ -46,6 +46,7 @@ from baroque_transcribe.fragments import (
     ensure_fragment_preview_wav,
     extract_fragment,
     find_fragment,
+    fragment_parent_status,
     normalize_tags,
     parse_measures,
     plan_fragment,
@@ -533,6 +534,14 @@ def _fragment_links(folder: Path, manifest: dict) -> None:
         chips.append(f'<a class="bt-chip" href="{escape(address, quote=True)}">Open source transcription</a>')
     parent = manifest.get("parent") if isinstance(manifest.get("parent"), dict) else {}
     name = str(parent.get("project") or "")
+    status = fragment_parent_status(manifest)
+    labels = {
+        "current": "Parent revision: current",
+        "parent_changed": "Parent revision: local parent changed since extraction",
+        "published_parent_changed": "Parent revision: a newer or conflicting published parent exists",
+        "parent_unavailable": "Parent revision: parent unavailable on this computer",
+    }
+    st.caption(labels[status])
     if name and find_project(name) is None and not chips:
         st.caption("The parent transcription is not on this computer. The fragment still plays on its own.")
     if chips:
