@@ -1,0 +1,86 @@
+{
+  "action": "transcribe",
+  "audio": {
+    "diagnostics": [
+      "comparison.wav",
+      "overview.png",
+      "piano_roll.png",
+      "resynthesis.wav",
+      "spectrogram.png",
+      "waveform.png"
+    ],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": 258.2613,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 258.2613,
+      "excerpt_end_seconds": 258.2613,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": 16000,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": 258.2613,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    }
+  },
+  "id": "20261111T153743Z-38377834",
+  "machine": "Knectar_Alien",
+  "project": "performance-20261111-103420",
+  "recorded_at": "2026-11-11T15:37:43Z",
+  "source": {
+    "kind": "youtube",
+    "title": "On Practicing Three-Part (3 Voice) Piano Improvisations (with counterpoint)",
+    "url": "https://www.youtube.com/watch?v=kcD5GoStYek",
+    "video_id": "kcD5GoStYek"
+  },
+  "status": "ok",
+  "version": 1
+}

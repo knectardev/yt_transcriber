@@ -1,0 +1,160 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [
+      "comparison.wav",
+      "overview.png",
+      "piano_roll.png",
+      "resynthesis.wav",
+      "spectrogram.png",
+      "waveform.png"
+    ],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": 258.2613,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 258.2613,
+      "excerpt_end_seconds": 258.2613,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": 16000,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": 258.2613,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": false,
+      "stored": false
+    }
+  },
+  "id": "20261111T170933Z-d67d7734",
+  "machine": "Knectar_Alien",
+  "project": "performance-20261111-103420",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": 258.2613,
+      "excerpt_start_seconds": 0.0,
+      "full_duration_seconds": 258.2613,
+      "sample_rate": 16000,
+      "working_duration_seconds": 258.2613
+    },
+    "import_settings_sha256": "",
+    "model": "bytedance-note-pedal",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "youtube",
+      "video_id": "kcD5GoStYek"
+    },
+    "staff_assignment": "",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": true,
+      "bpm": 144.23,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "estimated",
+      "subdivision": 16,
+      "time_signature": "4/4",
+      "time_signature_assumed": true
+    },
+    "title": "On Practicing Three-Part (3 Voice) Piano Improvisations (with counterpoint)"
+  },
+  "recorded_at": "2026-11-11T17:09:33Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261111T170933Z-d67d7734",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "c6e72fcdf658fd7721119c87363cbce0a70f7bb77e05971d68aff5480ea2c004",
+        "notes.json": "26ed955f2f8224114f986ca619979b775761b54bbf607dfe8e699695921889df",
+        "pedal.json": "ed68080f9ba0c37ab9aa311a888df53aaf14fb9437c032a9e6e9bffb4ebdb19d",
+        "quantized.mid": "f6fb90cc840945f425393285b0f244dca0ac2f527e4cb3827c8c0c5c925af526",
+        "raw.mid": "f0e068e7126aa7c2fbdd1a5f015b27d071dd9b2f2ee48eccea7b598b13a945ec",
+        "score.musicxml": "749e8e1f3b9c27ca4ca1205a76ff446b64de04187707b27a443d874554eb8d6a"
+      },
+      "files": {
+        "annotations.json": "b5006aa46c37d1e279faaee367858491a7d81f0f3091af488b8b1c9a13cc10d5",
+        "notes.json": "8207e0b20b7846da306fa1fe5e588dc1f740bb3e6cb033506335c3d4337c4af0",
+        "pedal.json": "86b97d9df664ead407f9dda5d48509741d7ba615dd5bac6fcb055342872d63d0",
+        "quantized.mid": "f6fb90cc840945f425393285b0f244dca0ac2f527e4cb3827c8c0c5c925af526",
+        "raw.mid": "f0e068e7126aa7c2fbdd1a5f015b27d071dd9b2f2ee48eccea7b598b13a945ec",
+        "score.musicxml": "f39b0a146afea199c1046d5f5cf078ac2890b7a735fd33813cace560a66696a9"
+      },
+      "project_state_sha256": "d360488d6b10d18342afcf403f274d8ec90d771a5f346c08affc331b31e080a5",
+      "sha256": "3b89ec29f8bb84364b38a99ea3fd3629e16ee52d47d50de52efa24a62ebf926a"
+    }
+  },
+  "source": {
+    "kind": "youtube",
+    "title": "On Practicing Three-Part (3 Voice) Piano Improvisations (with counterpoint)",
+    "url": "https://www.youtube.com/watch?v=kcD5GoStYek",
+    "video_id": "kcD5GoStYek"
+  },
+  "status": "ok",
+  "version": 2
+}
