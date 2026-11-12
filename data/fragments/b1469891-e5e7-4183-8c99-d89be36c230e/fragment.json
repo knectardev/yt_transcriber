@@ -1,0 +1,103 @@
+{
+  "schema_version": 2,
+  "id": "b1469891-e5e7-4183-8c99-d89be36c230e",
+  "title": "Measures 4–6",
+  "description": "",
+  "practice_notes": "",
+  "tags": [],
+  "composer": "",
+  "performer": "",
+  "source": {
+    "kind": "youtube",
+    "url": "https://www.youtube.com/watch?v=kcD5GoStYek",
+    "video_id": "kcD5GoStYek",
+    "title": "On Practicing Three-Part (3 Voice) Piano Improvisations (with counterpoint)"
+  },
+  "parent": {
+    "project": "performance-20261112-170721",
+    "event_id": "20261112T220800Z-fce414d6",
+    "lineage_id": "20261112T220800Z-fce414d6",
+    "base_event_id": "20261112T220800Z-fce414d6",
+    "base_snapshot_sha256": "309652da675ad909975b30598de5a2c52552873d0dcd4f495a1712f8cc6baa85",
+    "snapshot_sha256": "309652da675ad909975b30598de5a2c52552873d0dcd4f495a1712f8cc6baa85",
+    "revision_state": "synchronized",
+    "notes_fingerprint": "47642456f286e660",
+    "analysis_sha256": "299dad76e5677074f8ccd4059d19d48985fef5c32bc2fe30d23b5c4ecbd28a7b",
+    "measure_start": 4,
+    "measure_end": 6,
+    "step_start": 48,
+    "step_end": 96
+  },
+  "time": {
+    "working_audio": {
+      "start_seconds": 5.81419,
+      "end_seconds": 11.57972
+    },
+    "source_video": {
+      "start_seconds": 25.81419,
+      "end_seconds": 31.57972,
+      "excerpt_start_seconds": 20.0
+    },
+    "duration_seconds": 5.76553
+  },
+  "sync": {
+    "offset_seconds": 0.0,
+    "parent_offset_at_extraction": 0.0
+  },
+  "music": {
+    "analyzed_key": {
+      "tonic": "G",
+      "mode": "major",
+      "source": "automatic",
+      "confidence": 0.8162
+    },
+    "written_key_signature": {
+      "tonic": "G",
+      "mode": "major"
+    },
+    "time_signature": "4/4",
+    "bpm": 125.0,
+    "subdivision": 16,
+    "staff_split": 60,
+    "measures": 3,
+    "parent_grid_mode": "fixed",
+    "notation_style": "literal"
+  },
+  "harmony": {
+    "roman": [
+      "V6/5",
+      "V6/4",
+      "III+",
+      "I",
+      "VII6/4",
+      "II7"
+    ],
+    "symbols": [
+      "D7/F#",
+      "D6/A",
+      "Baug",
+      "G",
+      "F#sus4/C#",
+      "A7"
+    ]
+  },
+  "boundary": {
+    "notes": 18,
+    "owned": 15,
+    "carried_in": 3,
+    "cut_off": 1,
+    "unprinted_overlaps": 0,
+    "pedal_down_at_start": false
+  },
+  "artifacts": {
+    "notes": "notes.json",
+    "grid": "grid.json",
+    "performance_midi": "performance.mid",
+    "quantized_midi": "quantized.mid",
+    "musicxml": "score.musicxml",
+    "harmony": "harmony.json"
+  },
+  "warnings": [],
+  "created_at": "2026-11-12T22:08:39Z",
+  "modified_at": "2026-11-12T22:08:39Z"
+}

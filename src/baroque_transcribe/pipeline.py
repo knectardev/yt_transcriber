@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import platform
+import shutil
+import threading
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -27,6 +29,7 @@ from baroque_transcribe.defaults import (
     DEFAULT_STAFF_SPLIT,
     DEFAULT_SUBDIVISION,
     DEFAULT_TIME_SIGNATURE,
+    INCOMPLETE_MARKER,
     ANNOTATIONS_JSON,
     DIAGNOSTICS_DIR,
     MANIFEST,
@@ -110,14 +113,25 @@ def holds_saved_work(path: Path) -> bool:
     return any((path / name).exists() for name in _SAVED_WORK)
 
 
+def output_in_progress(path: Path) -> bool:
+    """True while a transcription job owns this folder."""
+
+    return (Path(path) / INCOMPLETE_MARKER).is_file()
+
+
+def _output_taken(path: Path) -> bool:
+    return holds_saved_work(path) or output_in_progress(path)
+
+
 def unique_output_dir(path: Path, *, now: datetime | None = None) -> Path:
     """Return ``path`` when it is empty, otherwise a new sibling folder.
 
     The sibling is ``name-YYYYMMDD-HHMMSS``. An existing transcription, including
-    ``quantized.mid``, stays where it is.
+    ``quantized.mid``, stays where it is. A folder marked in progress is left
+    alone as well, so a second run cannot write into it.
     """
 
-    if not holds_saved_work(path):
+    if not _output_taken(path):
         return path
     moment = (now or datetime.now()).strftime("%Y%m%d-%H%M%S")
     candidate = path.parent / f"{path.name}-{moment}"
@@ -142,13 +156,81 @@ def unique_path(path: Path, *, now: datetime | None = None) -> Path:
     return candidate
 
 
+_OUTPUT_CLAIM_LOCK = threading.Lock()
+
+
 def _claim_output_dir(output_dir: Path) -> Path:
-    requested = output_dir
-    claimed = unique_output_dir(output_dir)
+    with _OUTPUT_CLAIM_LOCK:
+        requested = output_dir
+        claimed = unique_output_dir(output_dir)
     if claimed != requested:
         print(f"Keeping the transcription already in {requested}")
         print(f"Writing this run to {claimed}")
     return claimed
+
+
+def _fresh_sibling(path: Path, *, now: datetime | None = None) -> Path:
+    moment = (now or datetime.now()).strftime("%Y%m%d-%H%M%S")
+    candidate = path.parent / f"{path.name}-{moment}"
+    suffix = 2
+    while candidate.exists():
+        candidate = path.parent / f"{path.name}-{moment}-{suffix}"
+        suffix += 1
+    return candidate
+
+
+def claim_fresh_output_dir(path: Path, job_id: str) -> Path:
+    """Create an empty folder for one job and mark it in progress.
+
+    The marker keeps the library and any later claim from using the folder
+    until :func:`release_incomplete` or :func:`discard_incomplete`.
+    """
+
+    owner = job_id.strip()
+    if not owner or "/" in owner or "\\" in owner or ".." in owner:
+        raise ValueError("Job id cannot be a path.")
+    path = Path(path)
+    with _OUTPUT_CLAIM_LOCK:
+        dest = unique_output_dir(path)
+        while True:
+            try:
+                dest.mkdir(parents=True, exist_ok=False)
+                break
+            except FileExistsError:
+                dest = _fresh_sibling(dest)
+        (dest / INCOMPLETE_MARKER).write_text(owner + "\n", encoding="utf-8")
+        return dest
+
+
+def release_incomplete(path: Path, job_id: str) -> None:
+    """Drop the in-progress marker after a job has finished writing."""
+
+    marker = Path(path) / INCOMPLETE_MARKER
+    try:
+        owner = marker.read_text(encoding="utf-8").strip()
+    except OSError:
+        return
+    if owner == job_id.strip():
+        marker.unlink(missing_ok=True)
+
+
+def discard_incomplete(path: Path, job_id: str) -> bool:
+    """Delete a folder this job created, and only that folder.
+
+    A finished project has no marker, so a late or repeated call does not
+    remove it. A folder marked by a different job is left alone.
+    """
+
+    folder = Path(path).resolve()
+    marker = folder / INCOMPLETE_MARKER
+    try:
+        owner = marker.read_text(encoding="utf-8").strip()
+    except OSError:
+        return False
+    if owner != job_id.strip() or not folder.is_dir() or folder.parent == folder:
+        return False
+    shutil.rmtree(folder)
+    return True
 
 
 def notate_transcription(
@@ -366,8 +448,10 @@ def run_transcription(
     on_progress: ProgressCallback | None = None,
     history_store: Path | None = None,
     settings: NotationSettings | None = None,
+    already_claimed: bool = False,
 ) -> ProjectResult:
-    output_dir = _claim_output_dir(output_dir)
+    if not already_claimed:
+        output_dir = _claim_output_dir(output_dir)
     start_seconds = None
     end_seconds = None
     try:

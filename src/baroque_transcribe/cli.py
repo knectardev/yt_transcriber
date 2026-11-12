@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import os
 import platform
 import shutil
+import socket
 import sys
 from pathlib import Path
 
@@ -13,7 +15,9 @@ from baroque_transcribe.defaults import (
     DEFAULT_GRID_MODE,
     DEFAULT_NOTATION_STYLE,
     DEFAULT_STAFF_SPLIT,
+    DEFAULT_PLAYBACK_PORT,
     DEFAULT_SUBDIVISION,
+    DEFAULT_UI_ADDRESS,
     DEFAULT_UI_PORT,
 )
 
@@ -241,6 +245,11 @@ def _build_parser() -> argparse.ArgumentParser:
 
     ui = sub.add_parser("ui", help="Open the local review window.")
     ui.add_argument("--port", type=int, default=DEFAULT_UI_PORT)
+    ui.add_argument(
+        "--address",
+        default=DEFAULT_UI_ADDRESS,
+        help="127.0.0.1 keeps the app on this PC. 0.0.0.0 also accepts browsers on the LAN.",
+    )
     ui.add_argument("--project", type=Path, default=None)
     return parser
 
@@ -748,7 +757,21 @@ def _format_bytes(value: int) -> str:
     return f"{size:.1f} GiB"
 
 
-def _launch_ui(port: int, project: Path | None) -> int:
+def _route_ipv4() -> str | None:
+    """The IPv4 address the default route would use, when one can be found."""
+
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.connect(("8.8.8.8", 1))
+            address = sock.getsockname()[0]
+    except OSError:
+        return None
+    if not address or address.startswith("169.254."):
+        return None
+    return address
+
+
+def _launch_ui(port: int, project: Path | None, address: str) -> int:
     ui_path = Path(__file__).with_name("ui.py")
     if shutil.which("streamlit") is None and not _module_exists("streamlit"):
         print(
@@ -756,10 +779,17 @@ def _launch_ui(port: int, project: Path | None) -> int:
             file=sys.stderr,
         )
         return 1
-    import os
-
+    bind = address.strip()
+    if bind == "localhost":
+        bind = "127.0.0.1"
+    if bind not in {"127.0.0.1", "0.0.0.0"}:
+        print("error: --address must be 127.0.0.1 or 0.0.0.0", file=sys.stderr)
+        return 1
     if project is not None:
         os.environ["BAROQUE_UI_PROJECT"] = str(project)
+    os.environ["BAROQUE_UI_ADDRESS"] = bind
+    if bind == "0.0.0.0":
+        os.environ["BAROQUE_PLAYBACK_PORT"] = os.environ.get("BAROQUE_PLAYBACK_PORT", str(DEFAULT_PLAYBACK_PORT))
     command = [
         sys.executable,
         "-m",
@@ -769,7 +799,7 @@ def _launch_ui(port: int, project: Path | None) -> int:
         "--server.port",
         str(port),
         "--server.address",
-        "127.0.0.1",
+        bind,
         "--server.headless",
         "true",
         "--browser.gatherUsageStats",
@@ -778,10 +808,36 @@ def _launch_ui(port: int, project: Path | None) -> int:
         "minimal",
         *_UI_THEME,
     ]
+    if bind == "0.0.0.0":
+        for origin in _lan_origins(port):
+            command.extend(["--server.corsAllowedOrigins", origin])
     import subprocess
 
     print(f"Review UI: http://127.0.0.1:{port}")
+    if bind == "0.0.0.0":
+        lan = _route_ipv4()
+        if lan:
+            print(f"LAN UI: http://{lan}:{port}")
+        print(f"Playback port: {os.environ['BAROQUE_PLAYBACK_PORT']}")
+        print("Stop the server with Ctrl+C. Logs stay in this window.")
     return subprocess.call(command)
+
+
+def _lan_origins(port: int) -> list[str]:
+    """Hostnames Streamlit should accept in addition to the machine's LAN address.
+
+    The LAN address itself is allowed by Streamlit's own origin check. These
+    names cover the computer hostname and ``BAROQUE_ALLOWED_HOSTS``.
+    """
+
+    names = {socket.gethostname().strip(), socket.getfqdn().strip()}
+    extra = os.environ.get("BAROQUE_ALLOWED_HOSTS", "")
+    names.update(part.strip() for part in extra.split(",") if part.strip())
+    origins = []
+    for name in sorted(names):
+        if name and "://" not in name and "/" not in name:
+            origins.append(f"http://{name}:{port}")
+    return origins
 
 
 # Warm paper palette shared with the score and playback pages.
@@ -819,7 +875,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "storage":
         return _storage(args)
     if args.command == "ui":
-        return _launch_ui(args.port, args.project)
+        return _launch_ui(args.port, args.project, args.address)
     if args.command == "fragments":
         return _fragments(args)
 

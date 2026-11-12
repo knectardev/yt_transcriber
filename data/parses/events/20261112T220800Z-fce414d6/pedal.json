@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "model": "bytedance-note-pedal",
+  "control": 64,
+  "description": "Sustain pedal down/up times in seconds, relative to working.wav. The same events are also stored as MIDI CC 64 inside raw.mid.",
+  "pedals": [
+    {
+      "onset": 1.09,
+      "offset": 1.15
+    },
+    {
+      "onset": 5.83,
+      "offset": 5.86
+    },
+    {
+      "onset": 6.28,
+      "offset": 6.4
+    },
+    {
+      "onset": 7.53,
+      "offset": 7.91366
+    },
+    {
+      "onset": 8.43,
+      "offset": 8.76
+    },
+    {
+      "onset": 10.41,
+      "offset": 10.79101
+    },
+    {
+      "onset": 10.96,
+      "offset": 11.24
+    },
+    {
+      "onset": 11.78,
+      "offset": 12.22014
+    },
+    {
+      "onset": 12.33,
+      "offset": 12.67
+    },
+    {
+      "onset": 12.82,
+      "offset": 13.18
+    },
+    {
+      "onset": 13.55,
+      "offset": 13.63
+    },
+    {
+      "onset": 13.82,
+      "offset": 14.09933
+    },
+    {
+      "onset": 14.24,
+      "offset": 14.55568
+    },
+    {
+      "onset": 14.74,
+      "offset": 15.03686
+    },
+    {
+      "onset": 15.45,
+      "offset": 15.5
+    },
+    {
+      "onset": 15.69,
+      "offset": 15.98
+    },
+    {
+      "onset": 17.2,
+      "offset": 17.23
+    },
+    {
+      "onset": 17.55,
+      "offset": 17.88307
+    },
+    {
+      "onset": 19.04,
+      "offset": 19.06
+    },
+    {
+      "onset": 20.29,
+      "offset": 20.65911
+    },
+    {
+      "onset": 21.81,
+      "offset": 21.95
+    },
+    {
+      "onset": 23.56,
+      "offset": 23.94264
+    },
+    {
+      "onset": 25.46,
+      "offset": 25.55
+    },
+    {
+      "onset": 27.36,
+      "offset": 27.42
+    },
+    {
+      "onset": 28.61,
+      "offset": 28.97866
+    },
+    {
+      "onset": 29.12,
+      "offset": 29.52808
+    }
+  ]
+}

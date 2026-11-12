@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "model": "bytedance-note-pedal",
+  "source": "https://www.youtube.com/watch?v=kcD5GoStYek",
+  "notes": [
+    {
+      "pitch": 66,
+      "onset": 0.0,
+      "offset": 0.02581,
+      "velocity": 65
+    },
+    {
+      "pitch": 69,
+      "onset": 0.0,
+      "offset": 0.71775,
+      "velocity": 83
+    },
+    {
+      "pitch": 72,
+      "onset": 0.0,
+      "offset": 0.24035,
+      "velocity": 65
+    },
+    {
+      "pitch": 74,
+      "onset": 0.24,
+      "offset": 0.72554,
+      "velocity": 88
+    },
+    {
+      "pitch": 71,
+      "onset": 0.70157,
+      "offset": 1.17216,
+      "velocity": 82
+    },
+    {
+      "pitch": 67,
+      "onset": 1.15389,
+      "offset": 2.53581,
+      "velocity": 79
+    },
+    {
+      "pitch": 71,
+      "onset": 1.61384,
+      "offset": 2.09868,
+      "velocity": 92
+    },
+    {
+      "pitch": 74,
+      "onset": 2.05698,
+      "offset": 2.51696,
+      "velocity": 82
+    },
+    {
+      "pitch": 79,
+      "onset": 2.52989,
+      "offset": 3.54581,
+      "velocity": 101
+    },
+    {
+      "pitch": 71,
+      "onset": 2.53012,
+      "offset": 3.09039,
+      "velocity": 87
+    },
+    {
+      "pitch": 74,
+      "onset": 3.03165,
+      "offset": 3.54078,
+      "velocity": 75
+    },
+    {
+      "pitch": 73,
+      "onset": 3.4945,
+      "offset": 4.00292,
+      "velocity": 76
+    },
+    {
+      "pitch": 71,
+      "onset": 3.98018,
+      "offset": 4.52074,
+      "velocity": 73
+    },
+    {
+      "pitch": 57,
+      "onset": 4.48438,
+      "offset": 5.48581,
+      "velocity": 61
+    },
+    {
+      "pitch": 79,
+      "onset": 4.48879,
+      "offset": 5.43581,
+      "velocity": 82
+    },
+    {
+      "pitch": 73,
+      "onset": 4.49127,
+      "offset": 4.96731,
+      "velocity": 85
+    },
+    {
+      "pitch": 74,
+      "onset": 4.96415,
+      "offset": 5.42304,
+      "velocity": 84
+    },
+    {
+      "pitch": 76,
+      "onset": 5.40553,
+      "offset": 5.76553,
+      "velocity": 71
+    }
+  ],
+  "pedals": [
+    {
+      "onset": 0.01581,
+      "offset": 0.04581
+    },
+    {
+      "onset": 0.46581,
+      "offset": 0.58581
+    },
+    {
+      "onset": 1.71581,
+      "offset": 2.09947
+    },
+    {
+      "onset": 2.61581,
+      "offset": 2.94581
+    },
+    {
+      "onset": 4.59581,
+      "offset": 4.97682
+    },
+    {
+      "onset": 5.14581,
+      "offset": 5.42581
+    }
+  ]
+}

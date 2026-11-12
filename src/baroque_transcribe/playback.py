@@ -7,9 +7,12 @@ The static notation page is left alone.
 
 from __future__ import annotations
 
+import contextvars
 import json
+import os
 import re
 import secrets
+import socket
 import threading
 from dataclasses import dataclass, field
 from html import escape
@@ -44,6 +47,169 @@ from baroque_transcribe.sync_map import (
 _NOTATION_LIBRARY = "opensheetmusicdisplay.min.js"
 
 
+def hostname_from(value: str) -> str:
+    """Hostname from a Host header or an absolute ``http`` URL.
+
+    Empty when the value carries a user, a path, or another character that
+    must not be copied into a link or a redirect. An ``http`` origin is accepted.
+    """
+
+    text = (value or "").strip()
+    if not text or any(char in text for char in "\r\n\x00\\@"):
+        return ""
+    if "://" in text:
+        parsed = urlparse(text)
+        if parsed.scheme != "http" or parsed.username or parsed.password or not parsed.hostname:
+            return ""
+        if parsed.path not in {"", "/"}:
+            return ""
+        return parsed.hostname
+    if any(char in text for char in " /") or text.startswith("["):
+        return ""
+    if ":" in text:
+        host, separator, port = text.rpartition(":")
+        if not separator or not port.isdigit() or not host:
+            return ""
+        return host
+    return text
+
+
+def port_from(value: str) -> int | None:
+    """Port from a Host header or an absolute ``http`` URL."""
+
+    text = (value or "").strip()
+    if not text or any(char in text for char in "\r\n\x00\\"):
+        return None
+    if "://" in text:
+        parsed = urlparse(text)
+        if parsed.scheme != "http" or parsed.username:
+            return None
+        return parsed.port
+    if ":" not in text or text.startswith("["):
+        return None
+    _host, separator, port = text.rpartition(":")
+    if separator and port.isdigit():
+        number = int(port)
+        if 1 <= number <= 65535:
+            return number
+    return None
+
+
+def _safe_hostname(hostname: str) -> bool:
+    name = hostname.strip().rstrip(".").lower()
+    if not name or name != hostname.strip().rstrip(".").lower():
+        return False
+    if ".." in name or name.startswith((".", "-")) or name.endswith((".", "-")):
+        return False
+    return _HOST_TEXT.match(name) is not None
+
+
+def local_ipv4_addresses() -> set[str]:
+    """Loopback and the IPv4 address the default route would use."""
+
+    found = {"127.0.0.1"}
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.connect(("8.8.8.8", 1))
+            address = sock.getsockname()[0]
+            if address and not address.startswith("169.254."):
+                found.add(address)
+    except OSError:
+        pass
+    return found
+
+
+def configured_hostnames() -> set[str]:
+    """This PC's hostname, plus any names in ``BAROQUE_ALLOWED_HOSTS``."""
+
+    names = set()
+    for value in (socket.gethostname(), socket.getfqdn()):
+        name = value.strip().rstrip(".").lower()
+        if name:
+            names.add(name)
+    extra = os.environ.get("BAROQUE_ALLOWED_HOSTS", "")
+    for part in extra.split(","):
+        name = part.strip().rstrip(".").lower()
+        if name:
+            names.add(name)
+    return {name for name in names if _safe_hostname(name)}
+
+
+def host_is_allowed(hostname: str) -> bool:
+    """True for loopback, this machine's addresses, its hostname, or an allow-listed name."""
+
+    name = hostname.strip().rstrip(".").lower()
+    if not _safe_hostname(name):
+        return False
+    if name in {"localhost", "127.0.0.1"}:
+        return True
+    if name in configured_hostnames():
+        return True
+    return name in local_ipv4_addresses()
+
+
+def set_request_host(value: str) -> None:
+    """Remember the browser host for playback links built on this thread."""
+
+    name = hostname_from(value) or value.strip()
+    if name and host_is_allowed(name):
+        _REQUEST_HOST.set(name.strip().rstrip(".").lower())
+    else:
+        _REQUEST_HOST.set("")
+
+
+def request_host() -> str:
+    """Host to put in playback links. Unknown hosts stay on loopback."""
+
+    name = _REQUEST_HOST.get()
+    if name and host_is_allowed(name):
+        return name
+    return "127.0.0.1"
+
+
+def public_origin(host_header: str, port: int) -> str:
+    """Streamlit origin for this request, or loopback when the Host header is not ours."""
+
+    name = hostname_from(host_header)
+    if not name or not host_is_allowed(name):
+        return f"http://127.0.0.1:{port}/"
+    seen = port_from(host_header)
+    return f"http://{name}:{seen or port}/"
+
+
+def acceptable_app_url(value: str) -> bool:
+    """True for an empty link or an ``http`` URL whose host this PC may advertise."""
+
+    if not value:
+        return True
+    if any(char in value for char in "\r\n\x00\\"):
+        return False
+    parsed = urlparse(value)
+    if parsed.scheme != "http" or parsed.username or parsed.password or not parsed.hostname:
+        return False
+    return host_is_allowed(parsed.hostname)
+
+
+def redirect_target_ok(location: str) -> bool:
+    """A playback redirect may be a relative path or an allowed app URL."""
+
+    if not location or any(char in location for char in "\r\n\x00\\"):
+        return False
+    if location.startswith("/") and not location.startswith("//"):
+        return True
+    return acceptable_app_url(location)
+
+
+def _within(root: Path, target: Path) -> bool:
+    """True when ``target`` is an existing file inside ``root`` after resolving links."""
+
+    try:
+        target.resolve().relative_to(root.resolve())
+    except (ValueError, OSError):
+        return False
+    return target.is_file()
+
+
 def _notation_library() -> Path:
     """Locate the vendored notation drawing library (see ``notation``)."""
 
@@ -61,6 +227,10 @@ def write_notation_page(*args: object, **kwargs: object) -> Path:
 
 
 _VIDEO_ID = re.compile(r"^[A-Za-z0-9_-]{11}$")
+_TOKEN = re.compile(r"^[A-Za-z0-9_-]{8,64}$")
+_HOST_TEXT = re.compile(r"^[A-Za-z0-9._-]{1,253}$")
+_REQUEST_HOST: contextvars.ContextVar[str] = contextvars.ContextVar("baroque_request_host", default="")
+_BIND_HOSTS = {"127.0.0.1", "0.0.0.0"}
 _YOUTUBE_HOSTS = {"youtube.com", "m.youtube.com", "music.youtube.com"}
 _OFFSET_LIMIT = 60.0
 _SERVER: "PlaybackServer | None" = None
@@ -483,7 +653,21 @@ def shared_playback_server(home_url: str | None = None) -> "PlaybackServer":
     global _SERVER
     with _SERVER_LOCK:
         if _SERVER is None:
-            _SERVER = PlaybackServer()
+            bind = os.environ.get("BAROQUE_UI_ADDRESS", "127.0.0.1").strip()
+            if bind == "localhost":
+                bind = "127.0.0.1"
+            if bind not in _BIND_HOSTS:
+                bind = "127.0.0.1"
+            playback_port = 0
+            if bind == "0.0.0.0":
+                raw_port = os.environ.get("BAROQUE_PLAYBACK_PORT", "8766")
+                try:
+                    playback_port = int(raw_port)
+                except ValueError:
+                    playback_port = 8766
+                if not 1 <= playback_port <= 65535:
+                    playback_port = 8766
+            _SERVER = PlaybackServer(bind_host=bind, port=playback_port)
             _SERVER.start()
         if home_url is not None:
             _SERVER.home_url = home_url
@@ -493,17 +677,18 @@ def shared_playback_server(home_url: str | None = None) -> "PlaybackServer":
 class PlaybackServer:
     """Serve one project's playback page and its sync-offset field.
 
-    Bound to 127.0.0.1. Tokens are random, and the only files offered are the
-    generated pages and the local notation library. A page is written again
-    each time it is requested, so it shows the notes and harmony as they are
-    now.
+    Tokens are random. A request is served only when its token was registered
+    by this process, and the only files read are the generated pages, the
+    preview cache, and the notation library. A page is written again each
+    time it is requested, so it shows the notes and harmony as they are now.
+    The default bind is loopback. LAN mode binds all interfaces on a fixed port.
 
     A saved fragment is served the same way under ``/f/<token>/``. Its pages
     are written outside the fragment folder, which holds only what is
     committed, and its sync offset is the one in ``fragment.json``.
     """
 
-    def __init__(self, home_url: str = "") -> None:
+    def __init__(self, home_url: str = "", *, bind_host: str = "127.0.0.1", port: int = 0) -> None:
         self._projects: dict[str, Path] = {}
         self._titles: dict[str, str] = {}
         self._fragments: dict[str, Path] = {}
@@ -515,14 +700,27 @@ class PlaybackServer:
         self._build_lock = threading.Lock()
         self._httpd: ThreadingHTTPServer | None = None
         self._thread: threading.Thread | None = None
+        self._bind_host = bind_host if bind_host in _BIND_HOSTS else "127.0.0.1"
+        self._requested_port = port if isinstance(port, int) and 0 <= port <= 65535 else 0
         self.port = 0
+        self._home_url = ""
         self.home_url = home_url
+
+    @property
+    def home_url(self) -> str:
+        return self._home_url
+
+    @home_url.setter
+    def home_url(self, value: str) -> None:
+        # A forged Host header must not become a redirect off this PC.
+        if acceptable_app_url(value):
+            self._home_url = value
 
     def start(self) -> None:
         if self._httpd is not None:
             return
         handler = _handler_class(self)
-        self._httpd = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+        self._httpd = ThreadingHTTPServer((self._bind_host, self._requested_port), handler)
         self.port = int(self._httpd.server_address[1])
         self._thread = threading.Thread(target=self._httpd.serve_forever, name="playback", daemon=True)
         self._thread.start()
@@ -563,7 +761,7 @@ class PlaybackServer:
             return self._titles.get(token)
 
     def page_url(self, token: str) -> str:
-        return f"http://127.0.0.1:{self.port}/p/{token}/"
+        return f"http://{request_host()}:{self.port}/p/{token}/"
 
     def build_playback(self, token: str) -> Path:
         """Write the synced playback page from the project's files as they are now."""
@@ -599,7 +797,7 @@ class PlaybackServer:
             return self._fragments.get(token)
 
     def fragment_url(self, token: str) -> str:
-        return f"http://127.0.0.1:{self.port}/f/{token}/"
+        return f"http://{request_host()}:{self.port}/f/{token}/"
 
     def _fragment_pages(self) -> Path:
         if self.fragment_pages is not None:
@@ -710,7 +908,7 @@ def _route(path: str) -> tuple[str, str] | None:
     if len(parts) < 2 or parts[0] != "p" or len(parts) > 3:
         return None
     name = parts[2] if len(parts) == 3 else ""
-    if name not in _PAGE_NAMES:
+    if not _TOKEN.match(parts[1]) or name not in _PAGE_NAMES:
         return None
     return parts[1], name
 
@@ -722,7 +920,7 @@ def _fragment_route(path: str) -> tuple[str, str] | None:
     if len(parts) < 2 or parts[0] != "f" or len(parts) > 3:
         return None
     name = parts[2] if len(parts) == 3 else ""
-    if name not in _PAGE_NAMES:
+    if not _TOKEN.match(parts[1]) or name not in _PAGE_NAMES:
         return None
     return parts[1], name
 
@@ -759,10 +957,18 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                 return
             if name == "preview.wav":
                 try:
-                    from baroque_transcribe.preview_audio import PreviewAudioError, ensure_project_preview_wav
+                    from baroque_transcribe.preview_audio import (
+                        PreviewAudioError,
+                        ensure_project_preview_wav,
+                        project_audio_root,
+                    )
 
                     target = ensure_project_preview_wav(project)
+                    audio_root = project_audio_root()
                 except (PreviewAudioError, OSError, ValueError, RuntimeError):
+                    self.send_error(404)
+                    return
+                if not _within(audio_root, target):
                     self.send_error(404)
                     return
                 self._send(200, "audio/wav", target.read_bytes(), cache=True)
@@ -771,6 +977,9 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
             if name == "opensheetmusicdisplay.min.js":
                 target = project / name
                 content_type = "text/javascript; charset=utf-8"
+                if not _within(project, target):
+                    self.send_error(404)
+                    return
             elif name == "notation.html":
                 try:
                     target = server.build_notation(token)
@@ -787,12 +996,15 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                     else:
                         self._send_to_tools(project, str(exc))
                     return
-            if not target.is_file():
+            if not _within(project, target):
                 self.send_error(404)
                 return
             self._send(200, content_type, target.read_bytes())
 
         def do_POST(self) -> None:  # noqa: N802
+            if not self._post_allowed():
+                self.send_error(403)
+                return
             fragment = _fragment_route(self.path)
             if fragment is not None:
                 self._post_fragment(*fragment)
@@ -852,10 +1064,30 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                     else:
                         self._send_to_fragment_details(folder, str(exc))
                     return
-            if not target.is_file():
+            pages = server._fragment_pages()
+            if not _within(pages, target):
                 self.send_error(404)
                 return
             self._send(200, "text/html; charset=utf-8", target.read_bytes())
+
+        def _post_allowed(self) -> bool:
+            """Browser writes must come from the playback page itself.
+
+            A request with no Origin is allowed so same-machine tools and the
+            tests can store a sync offset. A browser POST always sends Origin.
+            """
+
+            origin = self.headers.get("Origin")
+            if not origin:
+                return True
+            host = self.headers.get("Host") or ""
+            origin_host = hostname_from(origin)
+            request_host = hostname_from(host)
+            origin_port = port_from(origin)
+            request_port = port_from(host)
+            if not origin_host or not request_host or origin_port is None or request_port is None:
+                return False
+            return origin_host.lower() == request_host.lower() and origin_port == request_port
 
         def _post_fragment(self, token: str, name: str) -> None:
             """Store a fragment's sync offset. Only ``fragment.json`` is written."""
@@ -891,9 +1123,14 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
 
         def _query(self) -> str:
             query = urlparse(self.path).query
-            return f"?{query}" if query else ""
+            if not query or any(char in query for char in "\r\n\x00"):
+                return ""
+            return f"?{query}"
 
         def _redirect(self, location: str) -> None:
+            if not redirect_target_ok(location):
+                self.send_error(400)
+                return
             self.send_response(302)
             self.send_header("Location", location)
             self.send_header("Content-Length", "0")

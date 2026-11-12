@@ -449,3 +449,63 @@ def _write_min_project(folder, *, origin: str):
     }
     (folder / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     return folder
+
+
+def test_playback_ignores_a_foreign_host_and_rejects_traversal(tmp_path, monkeypatch):
+    from http.client import HTTPConnection
+
+    from baroque_transcribe.playback import (
+        host_is_allowed,
+        public_origin,
+        set_request_host,
+    )
+
+    monkeypatch.delenv("BAROQUE_ALLOWED_HOSTS", raising=False)
+    assert host_is_allowed("evil.example") is False
+    assert host_is_allowed("127.0.0.1") is True
+    assert public_origin("evil.example:8765", 8765) == "http://127.0.0.1:8765/"
+    monkeypatch.setenv("BAROQUE_ALLOWED_HOSTS", "transcriber.home.arpa")
+    assert host_is_allowed("transcriber.home.arpa") is True
+
+    project = _write_min_project(tmp_path / "piece", origin="https://youtu.be/abcdefghijk")
+    server = PlaybackServer()
+    server.start()
+    try:
+        token = server.register(project)
+        set_request_host("evil.example")
+        assert server.page_url(token).startswith("http://127.0.0.1:")
+        set_request_host("transcriber.home.arpa")
+        assert server.page_url(token).startswith("http://transcriber.home.arpa:")
+        server.home_url = "http://evil.example/phish\r\nLocation: http://evil.example"
+        assert server.home_url == ""
+        assert _get(server, f"/p/{token}/../../notes.json")[0] == 404
+        assert _get(server, f"/p/{token}/%2e%2e/notes.json")[0] == 404
+        body = json.dumps({"offset": 0.2}).encode("utf-8")
+        connection = HTTPConnection("127.0.0.1", server.port, timeout=10)
+        connection.request(
+            "POST",
+            f"/p/{token}/sync-offset",
+            body=body,
+            headers={"Origin": "http://evil.example", "Content-Type": "application/json"},
+        )
+        denied = connection.getresponse()
+        denied.read()
+        assert denied.status == 403
+        connection.close()
+        allowed = HTTPConnection("127.0.0.1", server.port, timeout=10)
+        allowed.request(
+            "POST",
+            f"/p/{token}/sync-offset",
+            body=body,
+            headers={
+                "Origin": f"http://127.0.0.1:{server.port}",
+                "Content-Type": "application/json",
+            },
+        )
+        response = allowed.getresponse()
+        assert response.status == 200
+        assert json.loads(response.read().decode("utf-8"))["offset"] == pytest.approx(0.2)
+        allowed.close()
+    finally:
+        set_request_host("")
+        server.close()

@@ -54,14 +54,17 @@ from baroque_transcribe.library import (
 # are imported inside the handlers that use them. At the top they added
 # seconds to every first page load, including the home-page thumbnail grid.
 from baroque_transcribe import fragment_ui
+from baroque_transcribe.jobs import get_job, list_jobs, start_transcription
 from baroque_transcribe.playback import (
     SyncError,
     detail_url,
+    hostname_from,
+    public_origin,
+    set_request_host,
     shared_playback_server,
     write_youtube_url,
     youtube_video_id,
 )
-from baroque_transcribe.progress import ProgressEvent
 from baroque_transcribe.project_manifest import load_project_manifest
 from baroque_transcribe.schema import NoteEvent, PedalEvent, Transcription, read_transcription
 from baroque_transcribe.storage_io import write_bytes_atomic
@@ -77,6 +80,8 @@ _STAGE_TITLES = {
 _SOURCE_KINDS = ("YouTube URL", "Local file", "Upload", "MIDI file")
 _DEFAULT_OUTPUT = "transcriptions/performance"
 _PAGES: dict[str, object] = {}
+_JOB_WATCHER = None
+_JOBS_BOARD = None
 
 
 _TRANSCRIBE_FRAGMENT = None
@@ -149,6 +154,7 @@ def run() -> None:
         initial_sidebar_state="collapsed",
     )
     st.html(_STYLE)
+    _remember_browser_host()
     shared_playback_server(_home_url())
     fragment_ui.prepare_index()
     home = st.Page(_home_page, title="Library", url_path="", default=True)
@@ -167,17 +173,32 @@ def run() -> None:
     navigation.run()
 
 
+def _browser_host_header() -> str:
+    import streamlit as st
+
+    try:
+        return str(st.context.headers.get("Host") or "")
+    except Exception:
+        return ""
+
+
+def _remember_browser_host() -> None:
+    """Playback links follow this browser, and only when the host is this PC."""
+
+    set_request_host(_browser_host_header())
+
+
 def _home_url() -> str:
     import streamlit as st
 
-    host = ""
-    try:
-        host = str(st.context.headers.get("Host") or "")
-    except Exception:
-        host = ""
-    if not host:
-        host = f"127.0.0.1:{st.get_option('server.port')}"
-    return f"http://{host}/"
+    return public_origin(_browser_host_header(), int(st.get_option("server.port")))
+
+
+def _browser_is_on_this_pc() -> bool:
+    """True when this Streamlit request came from a browser on the server itself."""
+
+    name = hostname_from(_browser_host_header()).strip().lower()
+    return name in {"", "127.0.0.1", "localhost"}
 
 
 def _open_launch_project() -> None:
@@ -213,6 +234,7 @@ def _home_page() -> None:
     )
     with st.container(border=True):
         _transcribe_fragment()()
+    _jobs_board()()
 
     # Card metadata only: titles, counts, and the cached thumbnail JPEG
     # (fetched from YouTube once per video, then read from disk).
@@ -579,7 +601,13 @@ def _transcribe_panel() -> None:
     run_clicked = button_col.button("Transcribe", type="primary", width="stretch")
     hint_col.caption("The first run downloads the piano model (about 165 MB). A long video takes several minutes on CPU.")
 
+    if st.session_state.get("transcription_job_id"):
+        _job_watcher()()
     if not run_clicked:
+        return
+    active = get_job(str(st.session_state.get("transcription_job_id") or ""))
+    if active is not None and active.status == "running":
+        st.info(f"Job {active.id} is already running on this PC.")
         return
     project = Path(output)
     source = _resolve_source(kind, youtube, local_path, upload, project)
@@ -589,29 +617,21 @@ def _transcribe_panel() -> None:
     if kind == "YouTube URL" and youtube_video_id(source) is None:
         st.error("That is not a YouTube URL.")
         return
-    try:
-        written = _run_with_progress(
-            source,
-            project,
-            start=start or None,
-            end=end or None,
-            model=model,
-            device=device,
-            tempo=tempo or "auto",
-            meter=meter or None,
-            subdivision=int(subdivision),
-            downbeat=downbeat or "0",
-            staff_split=int(staff_split),
-        )
-    except Exception as exc:
-        st.exception(exc)
-        return
-    message = f"Wrote {written}"
-    if written != project:
-        message += f". The transcription already in {project} was left unchanged."
-    st.session_state["transcription_message"] = message
-    st.session_state["open_project"] = str(written)
-    st.switch_page(_PAGES["project"])
+    job = start_transcription(
+        source,
+        project,
+        start=start or None,
+        end=end or None,
+        model=model,
+        device=device,
+        tempo=tempo or "auto",
+        meter=meter or None,
+        subdivision=int(subdivision),
+        downbeat=downbeat or "0",
+        staff_split=int(staff_split),
+    )
+    st.session_state["transcription_job_id"] = job.id
+    st.rerun()
 
 
 def _midi_panel() -> None:
@@ -721,11 +741,7 @@ def _open_midi(
                 write_youtube_url(project, attached)
                 saved_video = True
             st.session_state["open_project"] = str(project)
-            try:
-                webbrowser.open_new_tab(detail_url(project))
-            except Exception:
-                st.switch_page(_PAGES["project"])
-                return
+            _open_playback(project)
             if saved_video:
                 st.success("Opened the project and saved the YouTube address.")
             else:
@@ -743,7 +759,7 @@ def _open_midi(
             allow_duplicate=allow_duplicate,
         )
         st.session_state["open_project"] = str(project)
-        webbrowser.open_new_tab(detail_url(project))
+        _open_playback(project)
         st.success(f"Imported {midi.name} as Library project {project.name}.")
     except (MidiImportError, SyncError, OSError, json.JSONDecodeError, ValueError) as exc:
         st.error(str(exc))
@@ -1197,7 +1213,11 @@ def _files_tab(project: Path, run: Run, card: Card | None, manifest: dict) -> No
     import pandas as pd
     import streamlit as st
 
-    st.markdown("**Download**")
+    st.markdown("**Download to this browser**")
+    st.caption(
+        "These buttons send the file to the computer you are browsing from. "
+        "They do not write a copy on the server."
+    )
     columns = st.columns(5)
     for column, filename, label in zip(
         columns,
@@ -1213,7 +1233,12 @@ def _files_tab(project: Path, run: Run, card: Card | None, manifest: dict) -> No
         "raw.mid keeps the performance timing at a 120 BPM clock. quantized.mid and score.musicxml are the "
         "rhythmic reading. Open the MusicXML in MuseScore."
     )
-    with st.expander("Export a validated project backup"):
+    with st.expander("Write a ZIP backup on the server"):
+        st.caption(
+            "This writes a ZIP on the Windows PC that runs the app, at the path below. "
+            "It does not download the ZIP to this browser. Use the buttons above when "
+            "you want a file on the computer you are using now."
+        )
         revision_run = next(
             (
                 item
@@ -1231,16 +1256,17 @@ def _files_tab(project: Path, run: Run, card: Card | None, manifest: dict) -> No
                 "independently of Git history."
             )
         destination = st.text_input(
-            "Destination ZIP",
+            "ZIP path on the server",
             key=f"export-destination-{project.name}",
             placeholder=str(project.parent / f"{project.name}-backup.zip"),
+            help="A folder on the PC running the app, not a folder on this browser's computer.",
         )
         include_audio = st.checkbox(
             "Include source, working, and diagnostic audio",
             value=False,
             key=f"export-audio-{project.name}",
         )
-        if st.button("Create backup", key=f"export-project-{project.name}"):
+        if st.button("Write ZIP on the server", key=f"export-project-{project.name}"):
             if not destination.strip():
                 st.error("Choose a destination ZIP path.")
             else:
@@ -1255,7 +1281,9 @@ def _files_tab(project: Path, run: Run, card: Card | None, manifest: dict) -> No
                 except (OSError, ValueError) as exc:
                     st.error(str(exc))
                 else:
-                    st.success(f"Validated backup written to {exported}")
+                    st.success(
+                        f"ZIP written on the server at {exported}. It was not downloaded to this browser."
+                    )
 
     warnings = manifest.get("warnings") or []
     if warnings:
@@ -1378,70 +1406,97 @@ def _midi_from_input(text: str, upload, project: Path) -> Path | None:
     return Path(raw)
 
 
-def _run_with_progress(
-    source: str,
-    project: Path,
-    *,
-    start: str | None,
-    end: str | None,
-    model: str,
-    device: str,
-    tempo: str,
-    meter: str | None,
-    subdivision: int,
-    downbeat: str,
-    staff_split: int,
-) -> Path:
+def _job_watcher():
+    """Poll the session's transcription job without tying it to this browser."""
+
+    global _JOB_WATCHER
+    from datetime import timedelta
+
     import streamlit as st
 
-    from baroque_transcribe.pipeline import run_transcription
+    if _JOB_WATCHER is None:
+        _JOB_WATCHER = st.fragment(run_every=timedelta(seconds=1))(_render_job_watcher)
+    return _JOB_WATCHER
 
-    labels: dict[str, str] = {}
-    with st.status("Starting transcription…", expanded=True) as status:
-        slots = {stage: st.empty() for stage in _STAGE_ORDER}
-        for stage in _STAGE_ORDER:
-            slots[stage].markdown(f"{_STAGE_TITLES[stage]} — waiting")
-        bar = st.progress(0.0, text="Starting")
 
-        def on_progress(event: ProgressEvent) -> None:
-            labels[event.stage] = event.label
-            active = _STAGE_ORDER.index(event.stage) if event.stage in _STAGE_ORDER else 0
-            for index, stage in enumerate(_STAGE_ORDER):
-                title = _STAGE_TITLES[stage]
-                text = labels.get(stage)
-                if stage == event.stage:
-                    slots[stage].markdown(f"**{title}** — {text}")
-                elif text and index < active:
-                    slots[stage].markdown(f"Done. {title} — {text}")
-                elif text:
-                    slots[stage].markdown(f"{title} — {text}")
-                else:
-                    slots[stage].markdown(f"{title} — waiting")
-            if event.fraction is not None:
-                bar.progress(min(1.0, max(0.0, event.fraction)), text=event.label)
-            status.update(label=event.label, state="running")
+def _render_job_watcher() -> None:
+    import streamlit as st
 
+    job_id = st.session_state.get("transcription_job_id")
+    if not job_id:
+        return
+    job = get_job(str(job_id))
+    if job is None:
+        st.session_state.pop("transcription_job_id", None)
+        return
+    st.caption(f"Job {job.id} runs on this PC. Closing this browser does not stop it.")
+    for stage in _STAGE_ORDER:
+        title = _STAGE_TITLES[stage]
+        text = job.stages.get(stage)
+        st.markdown(f"**{title}** — {text}" if text else f"{title} — waiting")
+    fraction = 0.0 if job.fraction is None else min(1.0, max(0.0, job.fraction))
+    st.progress(fraction, text=job.label)
+    if job.status == "running":
+        return
+    if job.status == "failed":
+        st.session_state["flash"] = ("error", f"Job {job.id} failed. {job.error or 'Transcription failed.'}")
+        st.session_state.pop("transcription_job_id", None)
+        st.rerun()
+        return
+    written = Path(job.output_dir or job.requested_output)
+    message = f"Wrote {written}"
+    if written != Path(job.requested_output):
+        message += f". The transcription already in {job.requested_output} was left unchanged."
+    st.session_state["transcription_message"] = message
+    st.session_state["open_project"] = str(written)
+    st.session_state.pop("transcription_job_id", None)
+    st.switch_page(_PAGES["project"])
+
+
+def _jobs_board():
+    global _JOBS_BOARD
+    from datetime import timedelta
+
+    import streamlit as st
+
+    if _JOBS_BOARD is None:
+        _JOBS_BOARD = st.fragment(run_every=timedelta(seconds=2))(_render_jobs_board)
+    return _JOBS_BOARD
+
+
+def _render_jobs_board() -> None:
+    import streamlit as st
+
+    jobs = list_jobs()
+    if not jobs:
+        return
+    st.markdown("**Transcription jobs on this PC**")
+    st.caption("Every browser shares this list. A job stays until the app process stops.")
+    for job in jobs:
+        fraction = "" if job.fraction is None else f" {job.fraction:.0%}"
+        line = f"`{job.id}` {job.status} — {job.label}{fraction}"
+        if job.status == "failed":
+            st.error(f"{line} — {job.error or 'failed'}")
+        elif job.status == "succeeded" and job.output_dir:
+            st.success(f"{line} — {job.output_dir}")
+        else:
+            st.write(line)
+
+
+def _open_playback(project: Path) -> None:
+    """Open the score on this PC's browser, or hand a remote browser a link."""
+
+    import streamlit as st
+
+    url = detail_url(project)
+    if _browser_is_on_this_pc():
         try:
-            written = run_transcription(
-                source,
-                project,
-                start=start,
-                end=end,
-                model=model,
-                device=device,
-                tempo=tempo,
-                time_signature=meter,
-                subdivision=subdivision,
-                downbeat=downbeat,
-                staff_split=staff_split,
-                on_progress=on_progress,
-            )
+            webbrowser.open_new_tab(url)
         except Exception:
-            status.update(label="Transcription failed", state="error")
-            raise
-        status.update(label="Transcription finished", state="complete")
-        bar.progress(1.0, text="Transcription finished")
-        return written.output_dir
+            st.switch_page(_PAGES["project"])
+        return
+    st.link_button("Open the score", url)
+    st.caption("This link opens the score on the server. It does not copy the project onto this computer.")
 
 
 def _blank(value: object) -> bool:

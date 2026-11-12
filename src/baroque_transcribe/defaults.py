@@ -5,6 +5,12 @@ WORKING_PEAK = 0.95
 RAW_MIDI_TEMPO = 120.0
 RAW_MIDI_RESOLUTION = 480
 
+DEFAULT_UI_ADDRESS = "127.0.0.1"
+DEFAULT_PLAYBACK_PORT = 8766
+# Written into a new project folder for the life of a transcription job.
+# The library ignores that folder until the job removes the marker.
+INCOMPLETE_MARKER = ".transcribe-incomplete"
+
 DEFAULT_SUBDIVISION = 16
 DEFAULT_TIME_SIGNATURE = (4, 4)
 DEFAULT_STAFF_SPLIT = 60

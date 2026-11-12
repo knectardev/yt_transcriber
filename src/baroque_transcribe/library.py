@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from baroque_transcribe.defaults import DIAGNOSTICS_DIR, NOTES_JSON, SCORE_XML, WORKING_WAV
+from baroque_transcribe.defaults import DIAGNOSTICS_DIR, INCOMPLETE_MARKER, NOTES_JSON, SCORE_XML, WORKING_WAV
 from baroque_transcribe.parse_store import (
     EVENTS_DIR,
     default_store,
@@ -209,6 +209,9 @@ def disk_runs(root: Path | None = None, *, for_grid: bool = False) -> list[Run]:
     for folder in sorted(base.iterdir()):
         if not folder.is_dir() or folder.name.startswith(("_", ".")):
             continue
+        # A job still writing this folder must not be opened or edited.
+        if (folder / INCOMPLETE_MARKER).is_file():
+            continue
         run = read_run(folder, for_grid=for_grid)
         if run is not None:
             runs.append(run)
@@ -343,7 +346,7 @@ def find_project(value: str | None, root: Path | None = None) -> Path | None:
     candidate = Path(raw).expanduser()
     if not candidate.is_absolute() and len(candidate.parts) == 1:
         candidate = transcriptions_root(root) / candidate
-    if not (candidate / NOTES_JSON).is_file():
+    if not (candidate / NOTES_JSON).is_file() or (candidate / INCOMPLETE_MARKER).is_file():
         return None
     return candidate.resolve()
 
