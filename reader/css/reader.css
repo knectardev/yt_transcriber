@@ -91,7 +91,7 @@ body.performance #app-header .setup-only {
   border-bottom: 1px solid var(--line);
 }
 
-#catalog-list button.open-piece {
+#catalog-list a.open-piece {
   appearance: none;
   border: 0;
   background: transparent;
@@ -100,6 +100,12 @@ body.performance #app-header .setup-only {
   text-align: left;
   cursor: pointer;
   padding: 0;
+  text-decoration: none;
+}
+
+#catalog-list a.open-piece:hover .bwv,
+#catalog-list a.open-piece:focus-visible .bwv {
+  color: var(--accent);
 }
 
 #catalog-list .bwv {

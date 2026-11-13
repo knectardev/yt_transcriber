@@ -50,6 +50,20 @@ python -m http.server 4173 --directory reader
 
 Open `http://127.0.0.1:4173/`.
 
+## Shareable piece URLs
+
+Each published score has a stable query link (no catalog search required):
+
+```text
+https://yt-transcriber-self.vercel.app/?id=bwv-0772
+https://yt-transcriber-self.vercel.app/?id=bwv-0772&m=12
+```
+
+- `id` — catalog entry id (for example `bwv-0772`)
+- `m` — optional printed measure number to restore reading position
+
+Opening a piece from the catalog updates the address bar; browser Back returns to the catalog list.
+
 ## What is not on Vercel
 
 Streamlit, playback server, transcription model, `transcriptions/`, LAN tooling, write APIs, and private audio.
