@@ -32,9 +32,33 @@ const gestureAxis = document.getElementById("gesture-axis");
 const gestureDirection = document.getElementById("gesture-direction");
 const gestureSensitivity = document.getElementById("gesture-sensitivity");
 const gestureHold = document.getElementById("gesture-hold");
+const gestureSensitivityValue = document.getElementById("gesture-sensitivity-value");
+const gestureHoldValue = document.getElementById("gesture-hold-value");
 const cameraStatus = document.getElementById("camera-status");
 const cameraPreview = document.getElementById("camera-preview");
 const trackingPill = document.getElementById("tracking-pill");
+
+function setCameraStatus(message, tone = "") {
+  if (!cameraStatus) return;
+  cameraStatus.textContent = message || "";
+  cameraStatus.classList.toggle("is-warning", tone === "warning");
+  cameraStatus.classList.toggle("is-error", tone === "error");
+}
+
+function syncGestureReadouts() {
+  if (gestureSensitivityValue && gestureSensitivity) {
+    gestureSensitivityValue.textContent = `${gestureSensitivity.value}°`;
+  }
+  if (gestureHoldValue && gestureHold) {
+    gestureHoldValue.textContent = `${gestureHold.value} ms`;
+  }
+}
+
+function setCameraPanelOpen(open) {
+  if (!cameraPanel || !btnCameraPanel) return;
+  cameraPanel.hidden = !open;
+  btnCameraPanel.setAttribute("aria-expanded", open ? "true" : "false");
+}
 
 let settings = loadSettings();
 let catalogRows = [];
@@ -62,7 +86,8 @@ function applyChrome() {
   if (gestureDirection) gestureDirection.value = settings.gestureDirection;
   if (gestureSensitivity) gestureSensitivity.value = String(settings.gestureSensitivity);
   if (gestureHold) gestureHold.value = String(settings.gestureHoldMs);
-  if (settings.performanceMode && cameraPanel) cameraPanel.hidden = true;
+  syncGestureReadouts();
+  if (settings.performanceMode) setCameraPanelOpen(false);
 }
 
 function applyGestureOptions() {
@@ -83,9 +108,9 @@ function ensureGestures() {
       if (direction === "next") score.nextSystem();
       else score.previousSystem();
       syncLocationFromScore({ replace: true });
-      if (cameraStatus) {
-        cameraStatus.textContent = direction === "next" ? "Gesture: next system" : "Gesture: previous system";
-      }
+      setCameraStatus(
+        direction === "next" ? "Turned to next system." : "Turned to previous system.",
+      );
     },
     onStatus(status) {
       if (trackingPill) {
@@ -93,24 +118,30 @@ function ensureGestures() {
         if (!status.running) {
           trackingPill.textContent = "Camera off";
           trackingPill.className = "tracking-pill setup-only";
+          trackingPill.title = "Open camera setup";
         } else if (!status.calibrated) {
-          trackingPill.textContent = "Calibrate";
-          trackingPill.className = "tracking-pill setup-only lost";
+          trackingPill.textContent = "Needs calibrate";
+          trackingPill.className = "tracking-pill setup-only needs-calibrate";
+          trackingPill.title = "Open camera setup and set neutral pose";
         } else if (status.tracking) {
           trackingPill.textContent = "Tracking";
           trackingPill.className = "tracking-pill setup-only on";
+          trackingPill.title = "Head tracking active";
         } else {
-          trackingPill.textContent = "Tracking lost";
+          trackingPill.textContent = "Face lost";
           trackingPill.className = "tracking-pill setup-only lost";
+          trackingPill.title = "Keep your face in the camera preview";
         }
       }
-      if (cameraStatus && status.error) cameraStatus.textContent = status.error;
-      else if (cameraStatus && status.running) {
-        cameraStatus.textContent = status.calibrated
-          ? status.tracking
-            ? "Tracking — tilt deliberately, then return to neutral"
-            : "Looking for face…"
-          : "Camera on — hold still and press Calibrate neutral";
+      if (status.error) setCameraStatus(status.error, "error");
+      else if (!status.running) {
+        setCameraStatus("Camera off. Start the camera, then calibrate your neutral sitting pose.");
+      } else if (!status.calibrated) {
+        setCameraStatus("Hold still in your playing posture, then press Set neutral pose.", "warning");
+      } else if (status.tracking) {
+        setCameraStatus("Tracking. Make a deliberate tilt/turn, then return to neutral.");
+      } else {
+        setCameraStatus("Looking for your face…", "warning");
       }
       if (btnCameraStart) btnCameraStart.disabled = Boolean(status.running);
       if (btnCameraStop) btnCameraStop.disabled = !status.running;
@@ -519,8 +550,19 @@ function wireControls() {
   }
   if (btnCameraPanel && cameraPanel) {
     btnCameraPanel.addEventListener("click", async () => {
-      cameraPanel.hidden = !cameraPanel.hidden;
-      if (!cameraPanel.hidden) await refreshCameraList();
+      const open = cameraPanel.hidden;
+      setCameraPanelOpen(open);
+      if (open) await refreshCameraList();
+    });
+  }
+  if (trackingPill) {
+    trackingPill.addEventListener("click", async () => {
+      setCameraPanelOpen(true);
+      await refreshCameraList();
+      if (gestures && !btnCalibrate?.disabled) {
+        // Focus the calibrate action when setup is incomplete.
+        btnCalibrate?.focus();
+      }
     });
   }
   if (btnCameraStart) {
@@ -533,19 +575,20 @@ function wireControls() {
         settings = saveSettings({ cameraDeviceId: preferred });
         await refreshCameraList();
       } catch (error) {
-        if (cameraStatus) cameraStatus.textContent = error.message || String(error);
+        setCameraStatus(error.message || String(error), "error");
       }
     });
   }
   if (btnCameraStop) {
     btnCameraStop.addEventListener("click", () => {
       if (gestures) gestures.stop();
-      if (cameraStatus) cameraStatus.textContent = "Camera off";
+      setCameraStatus("Camera off. Start the camera, then calibrate your neutral sitting pose.");
     });
   }
   if (btnCalibrate) {
     btnCalibrate.addEventListener("click", () => {
       if (gestures) gestures.calibrate();
+      setCameraStatus("Neutral pose saved. Try a deliberate tilt, then return to center.");
     });
   }
   if (gestureAxis) {
@@ -563,12 +606,14 @@ function wireControls() {
   if (gestureSensitivity) {
     gestureSensitivity.addEventListener("input", () => {
       settings = saveSettings({ gestureSensitivity: Number(gestureSensitivity.value) });
+      syncGestureReadouts();
       applyGestureOptions();
     });
   }
   if (gestureHold) {
     gestureHold.addEventListener("input", () => {
       settings = saveSettings({ gestureHoldMs: Number(gestureHold.value) });
+      syncGestureReadouts();
       applyGestureOptions();
     });
   }

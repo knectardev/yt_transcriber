@@ -48,44 +48,70 @@
           Overlap
           <input id="overlap" type="range" min="0" max="0.4" step="0.05" value="0.15" />
         </label>
-        <button type="button" id="btn-camera-panel" class="setup-only">Camera</button>
-        <span id="tracking-pill" class="tracking-pill setup-only" hidden>Camera off</span>
+        <button type="button" id="btn-camera-panel" class="setup-only" aria-expanded="false" aria-controls="camera-panel">Camera</button>
+        <button type="button" id="tracking-pill" class="tracking-pill setup-only" hidden>Camera off</button>
         <button type="button" id="btn-performance" class="setup-only">Performance</button>
       </div>
       <div id="camera-panel" class="setup-only" hidden>
-        <div class="camera-controls">
-          <label>
-            Camera
-            <select id="camera-select"></select>
-          </label>
-          <button type="button" id="btn-camera-start">Start camera</button>
-          <button type="button" id="btn-camera-stop" disabled>Stop</button>
-          <button type="button" id="btn-calibrate" disabled>Calibrate neutral</button>
-          <label>
-            Axis
-            <select id="gesture-axis">
-              <option value="roll">Roll (tilt ear to shoulder)</option>
-              <option value="yaw">Yaw (turn left/right)</option>
-            </select>
-          </label>
-          <label>
-            Direction
-            <select id="gesture-direction">
-              <option value="pos-next">Tilt/turn right → next</option>
-              <option value="pos-prev">Tilt/turn right → previous</option>
-            </select>
-          </label>
-          <label>
-            Sensitivity
-            <input id="gesture-sensitivity" type="range" min="8" max="28" step="1" value="14" />
-          </label>
-          <label>
-            Hold ms
-            <input id="gesture-hold" type="range" min="120" max="800" step="20" value="280" />
-          </label>
-          <p id="camera-status" class="camera-status">Camera off</p>
+        <div class="camera-body">
+          <p id="camera-status" class="camera-status" role="status">Camera off. Start the camera, then calibrate your neutral sitting pose.</p>
+          <div class="camera-steps">
+            <section class="camera-step" aria-labelledby="camera-step-1-title">
+              <h2 id="camera-step-1-title" class="camera-step-title"><span class="camera-step-num">1</span> Camera</h2>
+              <div class="camera-step-row">
+                <label class="camera-field">
+                  <span class="camera-field-label">Device</span>
+                  <select id="camera-select"></select>
+                </label>
+                <div class="camera-actions">
+                  <button type="button" id="btn-camera-start">Start</button>
+                  <button type="button" id="btn-camera-stop" disabled>Stop</button>
+                </div>
+              </div>
+            </section>
+            <section class="camera-step" aria-labelledby="camera-step-2-title">
+              <h2 id="camera-step-2-title" class="camera-step-title"><span class="camera-step-num">2</span> Calibrate</h2>
+              <p class="camera-hint">Sit as you will at the piano, look at the score, then set neutral.</p>
+              <button type="button" id="btn-calibrate" class="camera-primary" disabled>Set neutral pose</button>
+            </section>
+            <section class="camera-step" aria-labelledby="camera-step-3-title">
+              <h2 id="camera-step-3-title" class="camera-step-title"><span class="camera-step-num">3</span> Gesture</h2>
+              <div class="camera-step-row">
+                <label class="camera-field">
+                  <span class="camera-field-label">Motion</span>
+                  <select id="gesture-axis">
+                    <option value="roll">Tilt ear toward shoulder</option>
+                    <option value="yaw">Turn head left / right</option>
+                  </select>
+                </label>
+                <label class="camera-field">
+                  <span class="camera-field-label">Mapping</span>
+                  <select id="gesture-direction">
+                    <option value="pos-next">Right → next system</option>
+                    <option value="pos-prev">Right → previous system</option>
+                  </select>
+                </label>
+              </div>
+              <details class="camera-advanced">
+                <summary>Fine-tune</summary>
+                <div class="camera-step-row">
+                  <label class="camera-field camera-field-range">
+                    <span class="camera-field-label">Sensitivity <output id="gesture-sensitivity-value" for="gesture-sensitivity">14°</output></span>
+                    <input id="gesture-sensitivity" type="range" min="8" max="28" step="1" value="14" />
+                  </label>
+                  <label class="camera-field camera-field-range">
+                    <span class="camera-field-label">Hold before turn <output id="gesture-hold-value" for="gesture-hold">280 ms</output></span>
+                    <input id="gesture-hold" type="range" min="120" max="800" step="20" value="280" />
+                  </label>
+                </div>
+              </details>
+            </section>
+          </div>
         </div>
-        <video id="camera-preview" playsinline muted></video>
+        <div class="camera-preview-wrap">
+          <video id="camera-preview" playsinline muted></video>
+          <p class="camera-preview-caption">Preview (mirrored)</p>
+        </div>
       </div>
       <div id="score-pane">
         <div id="score"><p class="osmd-loading">Loading score…</p></div>
