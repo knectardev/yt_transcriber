@@ -7,11 +7,18 @@ const catalogList = document.getElementById("catalog-list");
 const catalogEmpty = document.getElementById("catalog-empty");
 const errorBanner = document.getElementById("error-banner");
 const pieceTitle = document.getElementById("piece-title");
+const sectionLabel = document.getElementById("section-label");
 const systemLabel = document.getElementById("system-label");
 const zoomInput = document.getElementById("zoom");
 const overlapInput = document.getElementById("overlap");
+const colorToggle = document.getElementById("color-toggle");
+const colorVoices = document.getElementById("color-voices");
 const btnPrev = document.getElementById("btn-prev");
 const btnNext = document.getElementById("btn-next");
+const btnPrevSection = document.getElementById("btn-prev-section");
+const btnNextSection = document.getElementById("btn-next-section");
+const sectionPickerWrap = document.getElementById("section-picker-wrap");
+const sectionPicker = document.getElementById("section-picker");
 const btnBack = document.getElementById("btn-back");
 const btnPerformance = document.getElementById("btn-performance");
 
@@ -20,6 +27,7 @@ let catalogRows = [];
 let score = null;
 let activeEntryId = null;
 let activeMovementId = null;
+let activePackage = null;
 
 function showError(message) {
   if (!errorBanner) return;
@@ -34,6 +42,7 @@ function applyChrome() {
   }
   if (zoomInput) zoomInput.value = String(settings.zoom);
   if (overlapInput) overlapInput.value = String(settings.overlap);
+  if (colorVoices) colorVoices.checked = Boolean(settings.colorVoices);
 }
 
 function pieceQueryId(entry) {
@@ -96,6 +105,7 @@ function setPieceLocation(entry, { movementId = null, anchorMeasure = null, repl
 function setCatalogLocation({ replace = false } = {}) {
   activeEntryId = null;
   activeMovementId = null;
+  activePackage = null;
   const url = window.location.pathname || "./";
   if (replace) window.history.replaceState({ catalog: true }, "", url);
   else window.history.pushState({ catalog: true }, "", url);
@@ -111,6 +121,63 @@ function syncLocationFromScore({ replace = true } = {}) {
     anchorMeasure: score.getAnchor(),
     replace,
   });
+}
+
+function selectedXml(pkg) {
+  if (!pkg) return "";
+  if (settings.colorVoices && pkg.musicxmlVoices) return pkg.musicxmlVoices;
+  return pkg.musicxml || pkg.musicxmlVoices || "";
+}
+
+function updateSectionChrome(entry, movementId) {
+  const sections = entry && Array.isArray(entry.sections) ? entry.sections : [];
+  const hasSections = sections.length > 1;
+  const section = movementId ? findSection(entry, movementId) : null;
+  const sectionIndex = section ? sections.findIndex((row) => row.id === section.id) : -1;
+
+  if (sectionLabel) {
+    if (hasSections && section) {
+      sectionLabel.hidden = false;
+      sectionLabel.textContent = `${section.title} · section ${sectionIndex + 1} of ${sections.length}`;
+    } else if (entry && /suite/i.test(entry.title || entry.displayTitle || "")) {
+      sectionLabel.hidden = false;
+      sectionLabel.textContent = `${entry.collection || "Suite"} · complete work (no section split published)`;
+    } else {
+      sectionLabel.hidden = true;
+      sectionLabel.textContent = "";
+    }
+  }
+
+  if (pieceTitle && entry) {
+    pieceTitle.textContent = entry.displayTitle || entry.title || entry.entryId;
+  }
+
+  if (btnPrevSection && btnNextSection && sectionPickerWrap && sectionPicker) {
+    btnPrevSection.hidden = !hasSections;
+    btnNextSection.hidden = !hasSections;
+    sectionPickerWrap.hidden = !hasSections;
+    if (hasSections) {
+      btnPrevSection.disabled = sectionIndex <= 0;
+      btnNextSection.disabled = sectionIndex < 0 || sectionIndex >= sections.length - 1;
+      sectionPicker.innerHTML = "";
+      for (const row of sections) {
+        const option = document.createElement("option");
+        option.value = row.id;
+        option.textContent = row.title || row.id;
+        if (row.id === movementId) option.selected = true;
+        sectionPicker.appendChild(option);
+      }
+    }
+  }
+}
+
+function updateColorToggle(pkg) {
+  const hasVoices = Boolean(pkg && pkg.musicxmlVoices && pkg.musicxml);
+  if (colorToggle) colorToggle.hidden = !hasVoices;
+  if (colorVoices) {
+    colorVoices.disabled = !hasVoices;
+    colorVoices.checked = Boolean(settings.colorVoices);
+  }
 }
 
 function renderCatalog() {
@@ -210,14 +277,16 @@ async function openEntry(
       pkg = await loadPackage(entry);
       resolvedMovement = null;
     }
-    const xml = pkg.musicxmlVoices || pkg.musicxml;
+    const xml = selectedXml(pkg);
     if (!xml) throw new Error("Package has no MusicXML. Open a section of this suite.");
     const pieceId = pkg.id || entry.id || `catalog:${entry.entryId}`;
     activeEntryId = pieceQueryId(entry);
     activeMovementId = resolvedMovement;
+    activePackage = pkg;
     document.body.classList.add("score-open");
     btnBack.hidden = false;
-    pieceTitle.textContent = pkg.displayTitle || pkg.title || entry.title || entry.entryId;
+    updateSectionChrome(entry, resolvedMovement);
+    updateColorToggle(pkg);
     ensureScore().setPieceId(pieceId);
     let anchor = anchorMeasure;
     if (anchor == null && restoreAnchor) {
@@ -240,16 +309,31 @@ async function openEntry(
   }
 }
 
+async function reloadWithColorPreference() {
+  if (!activePackage || !score) return;
+  const xml = selectedXml(activePackage);
+  if (!xml) return;
+  const anchor = score.getAnchor();
+  await score.loadMusicXml(xml, { anchorMeasure: anchor || 1 });
+}
+
 function showCatalog({ updateHistory = true } = {}) {
   if (score) score.persist();
   document.body.classList.remove("score-open");
   btnBack.hidden = true;
   pieceTitle.textContent = "Performance reader";
   systemLabel.textContent = "Bach keyboard catalog";
+  if (sectionLabel) {
+    sectionLabel.hidden = true;
+    sectionLabel.textContent = "";
+  }
+  updateSectionChrome(null, null);
+  updateColorToggle(null);
   if (updateHistory) setCatalogLocation();
   else {
     activeEntryId = null;
     activeMovementId = null;
+    activePackage = null;
     document.title = "Performance reader";
   }
 }
@@ -281,6 +365,11 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
+function currentSections() {
+  const entry = findEntry(activeEntryId);
+  return entry && Array.isArray(entry.sections) ? entry.sections : [];
+}
+
 function wireControls() {
   btnPrev.addEventListener("click", () => {
     ensureScore().previousSystem();
@@ -290,10 +379,33 @@ function wireControls() {
     ensureScore().nextSystem();
     syncLocationFromScore({ replace: true });
   });
+  btnPrevSection.addEventListener("click", () => {
+    const entry = findEntry(activeEntryId);
+    const sections = currentSections();
+    const index = sections.findIndex((row) => row.id === activeMovementId);
+    if (!entry || index <= 0) return;
+    openEntry(entry, { movementId: sections[index - 1].id, updateHistory: true });
+  });
+  btnNextSection.addEventListener("click", () => {
+    const entry = findEntry(activeEntryId);
+    const sections = currentSections();
+    const index = sections.findIndex((row) => row.id === activeMovementId);
+    if (!entry || index < 0 || index >= sections.length - 1) return;
+    openEntry(entry, { movementId: sections[index + 1].id, updateHistory: true });
+  });
+  sectionPicker.addEventListener("change", () => {
+    const entry = findEntry(activeEntryId);
+    if (!entry || !sectionPicker.value) return;
+    openEntry(entry, { movementId: sectionPicker.value, updateHistory: true });
+  });
   btnBack.addEventListener("click", () => showCatalog({ updateHistory: true }));
   btnPerformance.addEventListener("click", () => {
     settings = saveSettings({ performanceMode: !settings.performanceMode });
     applyChrome();
+  });
+  colorVoices.addEventListener("change", async () => {
+    settings = saveSettings({ colorVoices: colorVoices.checked });
+    await reloadWithColorPreference();
   });
   zoomInput.addEventListener("input", () => {
     settings = saveSettings({ zoom: Number(zoomInput.value) });

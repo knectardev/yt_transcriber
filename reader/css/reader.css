@@ -60,6 +60,20 @@ a {
   font-size: 0.85rem;
 }
 
+#section-label {
+  color: var(--ink);
+  font-size: 0.95rem;
+  margin-top: 0.15rem;
+}
+
+#section-label[hidden] {
+  display: none;
+}
+
+#section-picker-wrap select {
+  max-width: 14rem;
+}
+
 body.performance #app-header .setup-only {
   display: none;
 }

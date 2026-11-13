@@ -13,6 +13,7 @@
     <header id="app-header">
       <div>
         <h1 id="piece-title">Performance reader</h1>
+        <div class="meta" id="section-label" hidden></div>
         <div class="meta" id="system-label">Bach keyboard catalog</div>
       </div>
       <button type="button" id="btn-back" class="setup-only" hidden>Catalog</button>
@@ -27,8 +28,18 @@
 
     <section id="view-score" aria-label="Score">
       <div id="score-toolbar">
+        <button type="button" id="btn-prev-section" hidden>Previous section</button>
+        <button type="button" id="btn-next-section" hidden>Next section</button>
+        <label id="section-picker-wrap" hidden>
+          Section
+          <select id="section-picker"></select>
+        </label>
         <button type="button" id="btn-prev">Previous system</button>
         <button type="button" id="btn-next">Next system</button>
+        <label id="color-toggle" class="setup-only" hidden>
+          <input type="checkbox" id="color-voices" />
+          Color voices
+        </label>
         <label class="setup-only">
           Zoom
           <input id="zoom" type="range" min="0.5" max="1.6" step="0.05" value="1" />

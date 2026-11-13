@@ -1,22 +1,33 @@
 /** Local performance-reader preferences (zoom, system overlap). */
 
 export const SETTINGS_KEY = "baroque-performance.settings";
+export const COLOR_VOICES_KEY = "baroque-transcribe.color-voices";
 
 const DEFAULTS = {
   zoom: 1,
   overlap: 0.15,
   performanceMode: false,
+  colorVoices: true,
 };
 
 export function loadSettings() {
   try {
     const raw = window.localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return { ...DEFAULTS };
-    const data = JSON.parse(raw);
+    const data = raw ? JSON.parse(raw) : {};
+    let colorVoices = DEFAULTS.colorVoices;
+    try {
+      const legacy = window.localStorage.getItem(COLOR_VOICES_KEY);
+      if (legacy === "1") colorVoices = true;
+      else if (legacy === "0") colorVoices = false;
+      else if (typeof data.colorVoices === "boolean") colorVoices = data.colorVoices;
+    } catch (_error) {
+      if (typeof data.colorVoices === "boolean") colorVoices = data.colorVoices;
+    }
     return {
       zoom: clamp(Number(data.zoom), 0.45, 1.8, DEFAULTS.zoom),
       overlap: clamp(Number(data.overlap), 0, 0.45, DEFAULTS.overlap),
       performanceMode: Boolean(data.performanceMode),
+      colorVoices,
     };
   } catch (_error) {
     return { ...DEFAULTS };
@@ -28,8 +39,10 @@ export function saveSettings(partial) {
   next.zoom = clamp(Number(next.zoom), 0.45, 1.8, DEFAULTS.zoom);
   next.overlap = clamp(Number(next.overlap), 0, 0.45, DEFAULTS.overlap);
   next.performanceMode = Boolean(next.performanceMode);
+  next.colorVoices = Boolean(next.colorVoices);
   try {
     window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+    window.localStorage.setItem(COLOR_VOICES_KEY, next.colorVoices ? "1" : "0");
   } catch (_error) {
     /* ignore */
   }
