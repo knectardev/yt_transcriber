@@ -1,11 +1,12 @@
 # Deploy only the static reader partition. Keep the desktop Python app off Vercel.
+# Patterns with a leading / are repo-root only — do NOT ignore reader/catalog/.
 .venv
-src
-tests
-transcriptions
-data
-catalog
-scripts
+/src
+/tests
+/transcriptions
+/data
+/catalog
+/scripts
 *.md
 !PERFORMANCE_READER.md
 pyproject.toml
