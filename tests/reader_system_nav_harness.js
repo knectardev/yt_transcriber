@@ -63,6 +63,23 @@ function testPosition() {
   console.log("position: ok");
 }
 
+function testGesturesEuler() {
+  const bag = runExported("gestures.js", ["eulerFromMatrix"]);
+  // Identity → near-zero angles
+  const identity = [
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1,
+  ];
+  const zero = bag.eulerFromMatrix(identity);
+  assert.ok(Math.abs(zero.yaw) < 1e-6);
+  assert.ok(Math.abs(zero.pitch) < 1e-6);
+  assert.ok(Math.abs(zero.roll) < 1e-6);
+  console.log("gestures-euler: ok");
+}
+
 testSystemNav();
 testPosition();
+testGesturesEuler();
 console.log("reader harness passed");

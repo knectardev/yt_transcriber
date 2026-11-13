@@ -8,6 +8,11 @@ const DEFAULTS = {
   overlap: 0.15,
   performanceMode: false,
   colorVoices: true,
+  gestureAxis: "roll",
+  gestureDirection: "pos-next",
+  gestureSensitivity: 14,
+  gestureHoldMs: 280,
+  cameraDeviceId: "",
 };
 
 export function loadSettings() {
@@ -28,6 +33,11 @@ export function loadSettings() {
       overlap: clamp(Number(data.overlap), 0, 0.45, DEFAULTS.overlap),
       performanceMode: Boolean(data.performanceMode),
       colorVoices,
+      gestureAxis: data.gestureAxis === "yaw" ? "yaw" : "roll",
+      gestureDirection: data.gestureDirection === "pos-prev" ? "pos-prev" : "pos-next",
+      gestureSensitivity: clamp(Number(data.gestureSensitivity), 8, 28, DEFAULTS.gestureSensitivity),
+      gestureHoldMs: clamp(Number(data.gestureHoldMs), 120, 800, DEFAULTS.gestureHoldMs),
+      cameraDeviceId: typeof data.cameraDeviceId === "string" ? data.cameraDeviceId : "",
     };
   } catch (_error) {
     return { ...DEFAULTS };
@@ -40,6 +50,11 @@ export function saveSettings(partial) {
   next.overlap = clamp(Number(next.overlap), 0, 0.45, DEFAULTS.overlap);
   next.performanceMode = Boolean(next.performanceMode);
   next.colorVoices = Boolean(next.colorVoices);
+  next.gestureAxis = next.gestureAxis === "yaw" ? "yaw" : "roll";
+  next.gestureDirection = next.gestureDirection === "pos-prev" ? "pos-prev" : "pos-next";
+  next.gestureSensitivity = clamp(Number(next.gestureSensitivity), 8, 28, DEFAULTS.gestureSensitivity);
+  next.gestureHoldMs = clamp(Number(next.gestureHoldMs), 120, 800, DEFAULTS.gestureHoldMs);
+  next.cameraDeviceId = typeof next.cameraDeviceId === "string" ? next.cameraDeviceId : "";
   try {
     window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
     window.localStorage.setItem(COLOR_VOICES_KEY, next.colorVoices ? "1" : "0");

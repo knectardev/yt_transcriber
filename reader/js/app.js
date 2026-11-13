@@ -1,4 +1,5 @@
 import { loadCatalogIndex, loadCatalogLibrary, loadPackage, mergeCatalogViews } from "./catalog.js";
+import { createGestureController } from "./gestures.js";
 import { loadReadingPosition, saveReadingPosition } from "./position.js";
 import { createScoreController } from "./score.js";
 import { loadSettings, saveSettings } from "./settings.js";
@@ -21,6 +22,19 @@ const sectionPickerWrap = document.getElementById("section-picker-wrap");
 const sectionPicker = document.getElementById("section-picker");
 const btnCatalog = document.getElementById("btn-catalog");
 const btnPerformance = document.getElementById("btn-performance");
+const btnCameraPanel = document.getElementById("btn-camera-panel");
+const cameraPanel = document.getElementById("camera-panel");
+const cameraSelect = document.getElementById("camera-select");
+const btnCameraStart = document.getElementById("btn-camera-start");
+const btnCameraStop = document.getElementById("btn-camera-stop");
+const btnCalibrate = document.getElementById("btn-calibrate");
+const gestureAxis = document.getElementById("gesture-axis");
+const gestureDirection = document.getElementById("gesture-direction");
+const gestureSensitivity = document.getElementById("gesture-sensitivity");
+const gestureHold = document.getElementById("gesture-hold");
+const cameraStatus = document.getElementById("camera-status");
+const cameraPreview = document.getElementById("camera-preview");
+const trackingPill = document.getElementById("tracking-pill");
 
 let settings = loadSettings();
 let catalogRows = [];
@@ -28,6 +42,7 @@ let score = null;
 let activeEntryId = null;
 let activeMovementId = null;
 let activePackage = null;
+let gestures = null;
 
 function showError(message) {
   if (!errorBanner) return;
@@ -43,6 +58,91 @@ function applyChrome() {
   if (zoomInput) zoomInput.value = String(settings.zoom);
   if (overlapInput) overlapInput.value = String(settings.overlap);
   if (colorVoices) colorVoices.checked = Boolean(settings.colorVoices);
+  if (gestureAxis) gestureAxis.value = settings.gestureAxis;
+  if (gestureDirection) gestureDirection.value = settings.gestureDirection;
+  if (gestureSensitivity) gestureSensitivity.value = String(settings.gestureSensitivity);
+  if (gestureHold) gestureHold.value = String(settings.gestureHoldMs);
+  if (settings.performanceMode && cameraPanel) cameraPanel.hidden = true;
+}
+
+function applyGestureOptions() {
+  if (!gestures) return;
+  gestures.configure({
+    axis: settings.gestureAxis,
+    nextOnPositive: settings.gestureDirection !== "pos-prev",
+    sensitivityDeg: settings.gestureSensitivity,
+    minDurationMs: settings.gestureHoldMs,
+  });
+}
+
+function ensureGestures() {
+  if (gestures) return gestures;
+  gestures = createGestureController({
+    onFire(direction) {
+      if (!document.body.classList.contains("score-open") || !score) return;
+      if (direction === "next") score.nextSystem();
+      else score.previousSystem();
+      syncLocationFromScore({ replace: true });
+      if (cameraStatus) {
+        cameraStatus.textContent = direction === "next" ? "Gesture: next system" : "Gesture: previous system";
+      }
+    },
+    onStatus(status) {
+      if (trackingPill) {
+        trackingPill.hidden = false;
+        if (!status.running) {
+          trackingPill.textContent = "Camera off";
+          trackingPill.className = "tracking-pill setup-only";
+        } else if (!status.calibrated) {
+          trackingPill.textContent = "Calibrate";
+          trackingPill.className = "tracking-pill setup-only lost";
+        } else if (status.tracking) {
+          trackingPill.textContent = "Tracking";
+          trackingPill.className = "tracking-pill setup-only on";
+        } else {
+          trackingPill.textContent = "Tracking lost";
+          trackingPill.className = "tracking-pill setup-only lost";
+        }
+      }
+      if (cameraStatus && status.error) cameraStatus.textContent = status.error;
+      else if (cameraStatus && status.running) {
+        cameraStatus.textContent = status.calibrated
+          ? status.tracking
+            ? "Tracking — tilt deliberately, then return to neutral"
+            : "Looking for face…"
+          : "Camera on — hold still and press Calibrate neutral";
+      }
+      if (btnCameraStart) btnCameraStart.disabled = Boolean(status.running);
+      if (btnCameraStop) btnCameraStop.disabled = !status.running;
+      if (btnCalibrate) btnCalibrate.disabled = !status.running;
+    },
+  });
+  applyGestureOptions();
+  return gestures;
+}
+
+async function refreshCameraList() {
+  if (!cameraSelect) return;
+  try {
+    const devices = await ensureGestures().listCameras();
+    cameraSelect.innerHTML = "";
+    if (!devices.length) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "No camera found";
+      cameraSelect.appendChild(option);
+      return;
+    }
+    for (const device of devices) {
+      const option = document.createElement("option");
+      option.value = device.deviceId;
+      option.textContent = device.label || `Camera ${cameraSelect.options.length + 1}`;
+      if (device.deviceId === settings.cameraDeviceId) option.selected = true;
+      cameraSelect.appendChild(option);
+    }
+  } catch (_error) {
+    cameraSelect.innerHTML = "<option value=\"\">Camera list unavailable</option>";
+  }
 }
 
 function pieceQueryId(entry) {
@@ -417,6 +517,66 @@ function wireControls() {
       await reloadWithColorPreference();
     });
   }
+  if (btnCameraPanel && cameraPanel) {
+    btnCameraPanel.addEventListener("click", async () => {
+      cameraPanel.hidden = !cameraPanel.hidden;
+      if (!cameraPanel.hidden) await refreshCameraList();
+    });
+  }
+  if (btnCameraStart) {
+    btnCameraStart.addEventListener("click", async () => {
+      try {
+        const controller = ensureGestures();
+        applyGestureOptions();
+        const preferred = (cameraSelect && cameraSelect.value) || settings.cameraDeviceId || "";
+        await controller.start({ videoElement: cameraPreview, preferredDeviceId: preferred });
+        settings = saveSettings({ cameraDeviceId: preferred });
+        await refreshCameraList();
+      } catch (error) {
+        if (cameraStatus) cameraStatus.textContent = error.message || String(error);
+      }
+    });
+  }
+  if (btnCameraStop) {
+    btnCameraStop.addEventListener("click", () => {
+      if (gestures) gestures.stop();
+      if (cameraStatus) cameraStatus.textContent = "Camera off";
+    });
+  }
+  if (btnCalibrate) {
+    btnCalibrate.addEventListener("click", () => {
+      if (gestures) gestures.calibrate();
+    });
+  }
+  if (gestureAxis) {
+    gestureAxis.addEventListener("change", () => {
+      settings = saveSettings({ gestureAxis: gestureAxis.value });
+      applyGestureOptions();
+    });
+  }
+  if (gestureDirection) {
+    gestureDirection.addEventListener("change", () => {
+      settings = saveSettings({ gestureDirection: gestureDirection.value });
+      applyGestureOptions();
+    });
+  }
+  if (gestureSensitivity) {
+    gestureSensitivity.addEventListener("input", () => {
+      settings = saveSettings({ gestureSensitivity: Number(gestureSensitivity.value) });
+      applyGestureOptions();
+    });
+  }
+  if (gestureHold) {
+    gestureHold.addEventListener("input", () => {
+      settings = saveSettings({ gestureHoldMs: Number(gestureHold.value) });
+      applyGestureOptions();
+    });
+  }
+  if (cameraSelect) {
+    cameraSelect.addEventListener("change", () => {
+      settings = saveSettings({ cameraDeviceId: cameraSelect.value });
+    });
+  }
   zoomInput.addEventListener("input", () => {
     settings = saveSettings({ zoom: Number(zoomInput.value) });
     if (document.body.classList.contains("score-open")) {
@@ -451,6 +611,7 @@ function wireControls() {
   });
   window.addEventListener("beforeunload", () => {
     if (score) score.persist();
+    if (gestures) gestures.stop();
   });
   window.addEventListener("popstate", async () => {
     const params = new URLSearchParams(window.location.search);

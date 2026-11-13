@@ -86,6 +86,73 @@ a {
   color: var(--ink);
 }
 
+.tracking-pill {
+  font-size: 0.8rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.tracking-pill.on {
+  color: #065f46;
+  border-color: #6ee7b7;
+  background: #ecfdf5;
+}
+
+.tracking-pill.lost {
+  color: var(--danger);
+  border-color: #fecdd3;
+  background: #fff1f2;
+}
+
+#camera-panel {
+  display: grid;
+  grid-template-columns: minmax(16rem, 1fr) 220px;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+
+#camera-panel[hidden] {
+  display: none !important;
+}
+
+#camera-panel .camera-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+}
+
+#camera-panel .camera-status {
+  margin: 0;
+  width: 100%;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+#camera-preview {
+  width: 220px;
+  height: 160px;
+  object-fit: cover;
+  background: #111;
+  border-radius: 0.35rem;
+  transform: scaleX(-1);
+}
+
+@media (max-width: 800px) {
+  #camera-panel {
+    grid-template-columns: 1fr;
+  }
+
+  #camera-preview {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
 #section-label {
   color: var(--ink);
   font-size: 0.95rem;

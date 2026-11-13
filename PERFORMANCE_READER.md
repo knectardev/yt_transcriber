@@ -72,6 +72,19 @@ baroque-transcribe reader publish --collection bwv-806-811-english-suites
 
 Opening a piece from the catalog updates the address bar; browser Back returns to the catalog list.
 
+## Webcam page turning (Milestone 2)
+
+On a published score page (HTTPS required):
+
+1. Open **Camera** in the toolbar.
+2. **Start camera**, allow permission, choose the device if needed.
+3. Sit in playing posture, look at the score, press **Calibrate neutral**.
+4. Deliberate head **roll** (ear toward shoulder) advances/rewinds by musical system. Switch Axis to **Yaw** if roll is unreliable.
+5. Use **Direction** if left/right feels mirrored.
+6. Enter **Performance** to hide the camera panel; keyboard/touch still work if tracking fails.
+
+Assets live under `reader/vendor/mediapipe/` (Face Landmarker model + WASM). Frames are processed locally in the browser.
+
 ## What is not on Vercel
 
 Streamlit, playback server, transcription model, `transcriptions/`, LAN tooling, write APIs, and private audio.
