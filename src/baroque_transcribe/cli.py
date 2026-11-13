@@ -344,7 +344,7 @@ def _build_parser() -> argparse.ArgumentParser:
     catalog_preprocess.add_argument(
         "--force",
         action="store_true",
-        help="Re-import even when a scored project already exists.",
+        help="Re-engrave with readable color voices even when score.voices already exists.",
     )
     catalog_preprocess.add_argument("--manifest", type=Path, default=None)
 
@@ -629,14 +629,19 @@ def _catalog(args: argparse.Namespace) -> int:
                 entry_ids = None
                 needed = entries_needing_preprocess(catalog)
                 if not args.confirm:
-                    print(f"Would preprocess {len(needed)} downloaded entr{'y' if len(needed) == 1 else 'ies'} that are not yet scored projects.")
-                    print("Re-run with --confirm to start.")
+                    print(
+                        f"Would preprocess {len(needed)} downloaded entr"
+                        f"{'y' if len(needed) == 1 else 'ies'} that lack readable "
+                        "color-voice scores (score.voices + notation_map)."
+                    )
+                    print("Re-run with --confirm to start. Use --force to re-engrave all.")
                     return 2
             else:
                 print("Give --all or one or more --entry ids.", file=sys.stderr)
                 return 2
             print(
-                "Starting catalog preprocess"
+                "Starting catalog preprocess (readable / color voices)"
+                + (" with force re-engrave" if args.force else "")
                 + (" with keep-awake" if args.keep_awake else "")
                 + "."
             )

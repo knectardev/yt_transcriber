@@ -13,6 +13,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 from baroque_transcribe.defaults import (
+    DEFAULT_UI_PORT,
     FRAGMENT_GRID_JSON,
     FRAGMENT_HARMONY_JSON,
     FRAGMENT_JSON,
@@ -263,20 +264,80 @@ _LIST_MAX_HEIGHT = 720
 _PREVIEW_VOLUME = 0.3
 
 
+def _library_home_url() -> str:
+    """Absolute Streamlit origin for links that must leave a ``components.html`` iframe.
+
+    Refreshes ``shared_playback_server().home_url`` from this request's Host header
+    so Details never falls back to a root-relative ``/fragment?id=…`` (that resolves
+    against the iframe/srcdoc and breaks).
+    """
+
+    import streamlit as st
+
+    from baroque_transcribe.playback import public_origin, shared_playback_server
+
+    try:
+        host = str(st.context.headers.get("Host") or "")
+        port = int(st.get_option("server.port") or DEFAULT_UI_PORT)
+    except Exception:
+        host, port = "", DEFAULT_UI_PORT
+    origin = public_origin(host, port) or f"http://127.0.0.1:{DEFAULT_UI_PORT}/"
+    server = shared_playback_server(origin)
+    return (server.home_url or origin).rstrip("/") + "/"
+
+
+def _inject_iframe_navigator() -> None:
+    """Listen for navigate messages from the sandboxed fragment-list iframe.
+
+    Streamlit's ``components.html`` iframe omits ``allow-top-navigation``, so
+    ``target="_top"`` and ``window.top.location`` are blocked. The iframe posts
+    a message; this parent-page script performs the real navigation.
+    """
+
+    import streamlit as st
+
+    st.html(
+        """
+<script>
+(function () {
+  if (window.__btFragNav) return;
+  window.__btFragNav = true;
+  window.addEventListener("message", function (event) {
+    var data = event && event.data;
+    if (!data || data.type !== "baroque-navigate" || typeof data.url !== "string") return;
+    var url = data.url;
+    var origin = window.location.origin;
+    var ok = url.indexOf(origin) === 0
+      || /^https?:\\/\\/(127\\.0\\.0\\.1|localhost)(:\\d+)?\\//i.test(url)
+      || /^https?:\\/\\/\\d{1,3}(?:\\.\\d{1,3}){3}(:\\d+)?\\//.test(url);
+    if (!ok) return;
+    window.location.href = url;
+  });
+})();
+</script>
+""",
+        unsafe_allow_javascript=True,
+    )
+
+
 def _show_fragment_cards(rows: list[IndexedFragment]) -> None:
     """Dense HTML list: Play, title, piano-roll, key/meter, Details.
 
     ``components.html`` keeps the SVG piano-roll (``st.html`` strips ``<svg>``
-    via DOMPurify) and lets the preview start at 30% volume. Details uses an
-    absolute library URL with ``target="_top"`` so the iframe can leave the list.
+    via DOMPurify) and lets the preview start at 30% volume. Title/Details
+    navigate via ``postMessage`` because the iframe sandbox blocks ``_top``.
     """
 
     import streamlit as st
     import streamlit.components.v1 as components
 
+    _inject_iframe_navigator()
+    home = _library_home_url()
     sound = str(st.session_state.get("frag-preview-sound") or DEFAULT_PREVIEW_SOUND)
     mode = str(st.session_state.get("frag-preview-mode") or "performance")
-    body = "\n".join(_fragment_row_html(row, sound=sound, mode=mode) for row in rows)
+    body = "\n".join(
+        _fragment_row_html(row, sound=sound, mode=mode, home_url=home) for row in rows
+    )
     height = min(_LIST_MAX_HEIGHT, 8 + len(rows) * _ROW_HEIGHT)
     components.html(
         f"""<!DOCTYPE html>
@@ -357,6 +418,29 @@ def _show_fragment_cards(rows: list[IndexedFragment]) -> None:
       button.textContent = "Play";
     }});
   }});
+  // Streamlit's components.html sandbox omits allow-top-navigation, so target=_top
+  // is a no-op. With allow-same-origin, srcdoc shares the app origin — navigate the parent.
+  function go(url) {{
+    if (!url) return;
+    try {{ window.parent.location.assign(url); return; }} catch (err) {{}}
+    try {{ window.parent.postMessage({{ type: "baroque-navigate", url: url }}, "*"); }} catch (err2) {{}}
+  }}
+  try {{
+    if (window.parent && !window.parent.__btFragNav) {{
+      window.parent.__btFragNav = true;
+      window.parent.addEventListener("message", function (event) {{
+        var data = event && event.data;
+        if (!data || data.type !== "baroque-navigate" || typeof data.url !== "string") return;
+        try {{ window.parent.location.assign(data.url); }} catch (err) {{}}
+      }});
+    }}
+  }} catch (err) {{}}
+  document.querySelectorAll("a.title, a.chip").forEach(function (link) {{
+    link.addEventListener("click", function (event) {{
+      event.preventDefault();
+      go(link.href);
+    }});
+  }});
 }})();
 </script>
 </body></html>""",
@@ -365,17 +449,22 @@ def _show_fragment_cards(rows: list[IndexedFragment]) -> None:
     )
 
 
-def _fragment_row_html(row: IndexedFragment, *, sound: str, mode: str) -> str:
+def _fragment_row_html(
+    row: IndexedFragment,
+    *,
+    sound: str,
+    mode: str,
+    home_url: str | None = None,
+) -> str:
     import base64
-
-    from baroque_transcribe.playback import shared_playback_server
 
     folder = find_fragment(row.id)
     player = fragment_detail_url(folder or Path(row.rel_dir))
-    # Absolute URL: this row is rendered inside a components.html iframe
-    # (srcdoc), where a root-relative /fragment?id=… link does not navigate
-    # the Streamlit app.
-    details = fragment_details_url(shared_playback_server().home_url, row.id) or fragment_href(row.id)
+    # Absolute Streamlit URL only — never root-relative (breaks inside srcdoc iframe).
+    home = home_url or _library_home_url()
+    details = fragment_details_url(home, row.id)
+    if not details:
+        details = f"{home.rstrip('/')}/fragment?id={quote(str(row.id), safe='')}"
     measures = (
         f"mm. {row.measure_start}"
         if row.measure_start == row.measure_end
@@ -416,11 +505,11 @@ def _fragment_row_html(row: IndexedFragment, *, sound: str, mode: str) -> str:
     return (
         f'<div class="bt-row">'
         f"<div>{play}</div>"
-        f'<a class="title" href="{escape(player, quote=True)}" target="_top" title="{escape(row.title)}">'
+        f'<a class="title" href="{escape(player, quote=True)}" title="{escape(row.title)}">'
         f"{escape(row.title)}</a>"
         f'<div class="roll">{roll}</div>'
         f'<div class="meta" title="{" · ".join(meta_bits)}">{" · ".join(meta_bits)}</div>'
-        f'<a class="chip" href="{escape(details, quote=True)}" target="_top">Details</a>'
+        f'<a class="chip" href="{escape(details, quote=True)}">Details</a>'
         f"</div>"
     )
 

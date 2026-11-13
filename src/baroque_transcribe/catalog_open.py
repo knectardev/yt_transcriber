@@ -19,9 +19,13 @@ from baroque_transcribe.midi_import import (
     DuplicateMidiImportError,
     import_midi_project,
 )
+from baroque_transcribe.notation_settings import NotationSettings
 from baroque_transcribe.parse_store import load_events, resolve_store
 from baroque_transcribe.project_manifest import load_project_manifest
 from baroque_transcribe.storage_io import sha256_file
+
+# Catalog Bach scores use the readable engraver (global voices + color sibling).
+CATALOG_NOTATION = NotationSettings(style="readable")
 
 
 def open_catalog_entry(
@@ -33,6 +37,7 @@ def open_catalog_entry(
     history_store: Path | None = None,
     allow_duplicate: bool = False,
     sync_if_missing: bool = True,
+    settings: NotationSettings | None = None,
 ) -> Path:
     """Ensure local MIDI exists, then open or import a Library project.
 
@@ -40,6 +45,10 @@ def open_catalog_entry(
     1. An existing ``transcriptions/`` project that already records this catalog id
     2. A published MIDI import with the same source hash (unless ``allow_duplicate``)
     3. A fresh ``import_midi_project`` with catalog provenance
+
+    New imports default to readable notation (two-voice-preferring color map).
+    Existing projects are returned as-is; callers that need voices rewritten
+    should re-quantize (see catalog preprocess ``--force``).
     """
 
     catalog = load_catalog(path=manifest_path, root=root)
@@ -100,6 +109,7 @@ def open_catalog_entry(
     provenance = catalog_provenance(entry, midi_sha256=source_hash)
     provenance["attribution"] = catalog.source.attribution
 
+    resolved_settings = settings if settings is not None else CATALOG_NOTATION
     try:
         project = import_midi_project(
             midi_path,
@@ -109,6 +119,7 @@ def open_catalog_entry(
             time_signature=time_signature,
             subdivision=subdivision,
             staff_split=staff_split,
+            settings=resolved_settings,
             history_store=history_store,
             allow_duplicate=allow_duplicate,
             catalog=provenance,

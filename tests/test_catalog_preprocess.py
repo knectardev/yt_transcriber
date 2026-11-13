@@ -12,8 +12,18 @@ from baroque_transcribe.catalog_movements import (
     build_draft_overlay,
     propose_movements_from_midi,
 )
-from baroque_transcribe.catalog_preprocess import preprocess_catalog, project_is_scored
-from baroque_transcribe.defaults import NOTES_JSON, SCORE_XML, SOURCE_MID
+from baroque_transcribe.catalog_preprocess import (
+    preprocess_catalog,
+    project_has_readable_voices,
+    project_is_scored,
+)
+from baroque_transcribe.defaults import (
+    NOTATION_MAP_JSON,
+    NOTES_JSON,
+    SCORE_VOICES_XML,
+    SCORE_XML,
+    SOURCE_MID,
+)
 from baroque_transcribe.playback import detail_url, shared_playback_server
 
 
@@ -80,7 +90,7 @@ def test_propose_movements_from_tempo_map(tmp_path: Path):
     assert row.movements[-1].end_seconds > row.movements[0].start_seconds
 
 
-def test_preprocess_skips_scored_project(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+def test_preprocess_skips_readable_voice_project(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     entry = {
         "id": "bwv-0772",
         "bwv": "772",
@@ -103,6 +113,8 @@ def test_preprocess_skips_scored_project(tmp_path: Path, monkeypatch: pytest.Mon
     project.mkdir(parents=True)
     (project / NOTES_JSON).write_text('{"schema_version":1,"notes":[]}', encoding="utf-8")
     (project / SCORE_XML).write_text("<score/>", encoding="utf-8")
+    (project / SCORE_VOICES_XML).write_text("<score-voices/>", encoding="utf-8")
+    (project / NOTATION_MAP_JSON).write_text('{"notes":[]}', encoding="utf-8")
 
     monkeypatch.setattr(
         "baroque_transcribe.catalog_preprocess.find_project_for_entry",
@@ -123,6 +135,67 @@ def test_preprocess_skips_scored_project(tmp_path: Path, monkeypatch: pytest.Mon
     assert report.skipped == 1
     assert opened == []
     assert project_is_scored(project)
+    assert project_has_readable_voices(project)
+
+
+def test_preprocess_force_requantizes_readable_project(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    entry = {
+        "id": "bwv-0772",
+        "bwv": "772",
+        "title": "Invention No. 1",
+        "collection_id": "inv",
+        "collection": "Inventions",
+        "order_in_collection": 1,
+        "key": "",
+        "is_variant": False,
+        "is_arrangement": False,
+        "source_page": "https://example.test/inventions/",
+        "midi_url": "https://example.test/BWV_0772.mid",
+        "source_filename": "BWV_0772.mid",
+        "sha256": "",
+    }
+    catalog = validate_catalog(_manifest_with([entry]))
+    midi = tmp_path / "catalog" / "midi" / "bwv-0772" / SOURCE_MID
+    _mini_midi(midi)
+    project = tmp_path / "transcriptions" / "already"
+    project.mkdir(parents=True)
+    (project / NOTES_JSON).write_text('{"schema_version":1,"notes":[]}', encoding="utf-8")
+    (project / SCORE_XML).write_text("<score/>", encoding="utf-8")
+    (project / SCORE_VOICES_XML).write_text("<score-voices/>", encoding="utf-8")
+    (project / NOTATION_MAP_JSON).write_text('{"notes":[]}', encoding="utf-8")
+    (project / "manifest.json").write_text(
+        '{"title":"Invention","tempo":{"bpm":120,"time_signature":"4/4","subdivision":16,"downbeat_seconds":0}}',
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        "baroque_transcribe.catalog_preprocess.find_project_for_entry",
+        lambda entry_id, root=None: project,
+    )
+    monkeypatch.setattr(
+        "baroque_transcribe.catalog_preprocess.entry_midi_path",
+        lambda entry_id, root=None: midi,
+    )
+    monkeypatch.setattr(
+        "baroque_transcribe.catalog_preprocess.open_catalog_entry",
+        lambda entry_id, **kwargs: project,
+    )
+    calls = []
+
+    def fake_requantize(path, **kwargs):
+        calls.append((path, kwargs.get("settings")))
+        (path / SCORE_VOICES_XML).write_text("<score-voices/>", encoding="utf-8")
+        (path / NOTATION_MAP_JSON).write_text('{"notes":[]}', encoding="utf-8")
+        (path / SCORE_XML).write_text("<score/>", encoding="utf-8")
+
+    monkeypatch.setattr(
+        "baroque_transcribe.pipeline.requantize_project",
+        fake_requantize,
+    )
+    report = preprocess_catalog(catalog, root=tmp_path, entry_ids=["bwv-0772"], force=True)
+    assert report.requantized == 1
+    assert len(calls) == 1
+    assert calls[0][1].style == "readable"
 
 
 def test_detail_url_appends_movement_query(tmp_path: Path):

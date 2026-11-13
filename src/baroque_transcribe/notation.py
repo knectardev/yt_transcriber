@@ -560,9 +560,11 @@ def _fill_part_readable(
                 measure.insert(0, opening_key)
         active: list[tuple[int, list[note.GeneralNote]]] = []
         for local_slot, events in enumerate(staff_voices, start=1):
-            sounding = any(event.onset_step < end and event.offset_step > start for event in events)
-            if not sounding:
+            if not events:
                 continue
+            # Always emit every staff voice stream (rests when silent). Omitting
+            # a voice from one measure breaks music21 makeTies/makeRests on
+            # export (KeyError on the Voice id in the next measure).
             # Colour follows the structural/global voice id on the events, not
             # the local MusicXML packing slot on this staff.
             structural = int(events[0].voice) if events else local_slot

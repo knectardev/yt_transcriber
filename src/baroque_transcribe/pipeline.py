@@ -41,6 +41,7 @@ from baroque_transcribe.defaults import (
     RAW_MID,
     SCORE_VOICES_XML,
     SCORE_XML,
+    SOURCE_MID,
     SOURCE_WAV,
     WORKING_WAV,
 )
@@ -703,14 +704,41 @@ def requantize_project(
     previous = manifest.get("tempo") or {}
     warnings = list(manifest.get("warnings") or [])
 
+    midi_timing = None
+    source_mid = output_dir / SOURCE_MID
+    if source_mid.is_file() and (
+        tempo in (None, "auto")
+        and not previous.get("bpm")
+        or (time_signature is None and not previous.get("time_signature"))
+    ):
+        try:
+            from baroque_transcribe.midi_import import parse_midi
+
+            _ignored, midi_timing = parse_midi(source_mid)
+        except (OSError, ValueError, RuntimeError):
+            midi_timing = None
+
     if tempo in (None, "auto"):
         if previous.get("bpm"):
             bpm = float(previous["bpm"])
             assumed = bool(previous.get("assumed_bpm"))
+        elif midi_timing is not None and float(midi_timing.bpm) > 0:
+            bpm = float(midi_timing.bpm)
+            assumed = False
+            previous = {
+                **previous,
+                "source": "midi",
+                "tempo_map": midi_timing.tempo_map,
+                "time_signature_map": midi_timing.time_signature_map,
+                "constant_tempo": midi_timing.constant_tempo,
+            }
         else:
             working = output_dir / WORKING_WAV
             if not working.exists():
-                raise FileNotFoundError("Pass --tempo. There is no previous tempo and no working.wav to estimate from.")
+                raise FileNotFoundError(
+                    "Pass --tempo. There is no previous tempo, no source.mid timing, "
+                    "and no working.wav to estimate from."
+                )
             audio, sample_rate = load_working_audio(working)
             estimate = estimate_tempo(audio, sample_rate)
             bpm, assumed = _choose_tempo("auto", estimate, warnings)
@@ -726,6 +754,9 @@ def requantize_project(
     elif previous.get("time_signature"):
         signature = parse_time_signature(str(previous["time_signature"]))
         assumed_meter = bool(previous.get("time_signature_assumed"))
+    elif midi_timing is not None:
+        signature = tuple(midi_timing.time_signature)
+        assumed_meter = False
     else:
         signature = DEFAULT_TIME_SIGNATURE
         assumed_meter = True
