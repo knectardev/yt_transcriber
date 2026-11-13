@@ -234,6 +234,8 @@ The SQLite index at `.local/library.sqlite` is a local cache. JSON files under `
 
 The full storage map — working projects, parse history, fragment folders, the SQLite schema, and why the library is files rather than a database — is [STORAGE.md](STORAGE.md).
 
+The **performance reader** is a separate static partition under [`reader/`](reader/), published to Vercel (Root Directory `reader` only — not the desktop Python app). See [PERFORMANCE_READER.md](PERFORMANCE_READER.md).
+
 Analyzed key (from the parent's `annotations.json`, used for Roman numerals and the key filter) is stored separately from the written MusicXML key signature. The MusicXML key is the analyzed key so spelling matches the parent; the pitches are not transposed.
 
 The same plots are written by the `transcribe` command. `baroque-transcribe diagnostics transcriptions\baroque_improvisation --position 12.5` redraws them with a cursor.

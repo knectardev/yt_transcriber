@@ -366,6 +366,43 @@ def _build_parser() -> argparse.ArgumentParser:
         help="127.0.0.1 keeps the app on this PC. 0.0.0.0 also accepts browsers on the LAN.",
     )
     ui.add_argument("--project", type=Path, default=None)
+
+    reader = sub.add_parser(
+        "reader",
+        help="Publish read-only score packages into the reader/ static partition for Vercel.",
+    )
+    reader_sub = reader.add_subparsers(dest="reader_command", required=True)
+    reader_publish = reader_sub.add_parser(
+        "publish",
+        help="Add or refresh selected catalog scores in reader/ without removing others.",
+    )
+    reader_publish.add_argument(
+        "--id",
+        action="append",
+        dest="entry_ids",
+        default=[],
+        help="Catalog entry id such as bwv-0772. Repeatable.",
+    )
+    reader_publish.add_argument(
+        "--dist",
+        type=Path,
+        default=None,
+        help="Output root. Default: reader/ in this repository.",
+    )
+    reader_remove = reader_sub.add_parser(
+        "remove",
+        help="Remove selected published scores from reader/. Others are kept.",
+    )
+    reader_remove.add_argument(
+        "--id",
+        action="append",
+        dest="entry_ids",
+        default=[],
+        help="Catalog entry id to remove. Repeatable.",
+    )
+    reader_remove.add_argument("--dist", type=Path, default=None)
+    reader_list = reader_sub.add_parser("list", help="List scores currently published under reader/.")
+    reader_list.add_argument("--dist", type=Path, default=None)
     return parser
 
 
@@ -471,6 +508,59 @@ def _print_index_report(report, *, summary: bool = True) -> None:
     for problem in report.problems:
         note = " Its entry was removed from the index." if problem.was_indexed else ""
         print(f"warning: {problem.folder}: {problem.message}{note}", file=sys.stderr)
+
+
+def _reader(args: argparse.Namespace) -> int:
+    from baroque_transcribe.reader_publish import (
+        ReaderPublishError,
+        list_published,
+        publish_scores,
+        remove_published,
+    )
+
+    try:
+        if args.reader_command == "list":
+            rows = list_published(dist_root=args.dist)
+            if not rows:
+                print("No scores published in reader/ yet.")
+                return 0
+            for row in rows:
+                print(
+                    f"{row.get('entryId')}  BWV {row.get('bwv')}  {row.get('title')}  "
+                    f"hash={str(row.get('contentHash') or '')[:12]}…"
+                )
+            print(f"{len(rows)} published.")
+            return 0
+        if args.reader_command == "publish":
+            if not args.entry_ids:
+                print("Pass at least one --id (catalog entry id).", file=sys.stderr)
+                return 2
+            result = publish_scores(args.entry_ids, dist_root=args.dist)
+            for label, items in (
+                ("added", result.added),
+                ("updated", result.updated),
+                ("unchanged", result.unchanged),
+            ):
+                for entry_id in items:
+                    print(f"{label}: {entry_id}")
+            for entry_id, message in result.errors:
+                print(f"error: {entry_id}: {message}", file=sys.stderr)
+            return 1 if result.errors and not (result.added or result.updated or result.unchanged) else 0
+        if args.reader_command == "remove":
+            if not args.entry_ids:
+                print("Pass at least one --id to remove.", file=sys.stderr)
+                return 2
+            result = remove_published(args.entry_ids, dist_root=args.dist)
+            for entry_id in result.removed:
+                print(f"removed: {entry_id}")
+            for entry_id, message in result.errors:
+                print(f"error: {entry_id}: {message}", file=sys.stderr)
+            return 1 if result.errors and not result.removed else 0
+    except ReaderPublishError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"Unknown reader command: {args.reader_command}", file=sys.stderr)
+    return 2
 
 
 def _catalog(args: argparse.Namespace) -> int:
@@ -1214,6 +1304,8 @@ def main(argv: list[str] | None = None) -> int:
         return _fragments(args)
     if args.command == "catalog":
         return _catalog(args)
+    if args.command == "reader":
+        return _reader(args)
 
     from baroque_transcribe.analysis import AnalysisError
     from baroque_transcribe.audio import AudioError

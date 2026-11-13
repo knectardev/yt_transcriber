@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-13T17:23:00Z",
+  "entries": [
+    {
+      "id": "catalog:bwv-0772",
+      "entryId": "bwv-0772",
+      "bwv": "772",
+      "title": "Invention No. 1",
+      "displayTitle": "BWV 772 — Invention No. 1",
+      "collection": "BWV 772-786 Inventions",
+      "packagePath": "catalog/packages/bwv-0772.json",
+      "contentHash": "92884f5f9d7480390c2d101e2d6218e0eca639f121704b5d9ed28fcac1691bfc",
+      "publishedAt": "2026-11-13T17:22:58Z",
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de)."
+    },
+    {
+      "id": "catalog:bwv-0773",
+      "entryId": "bwv-0773",
+      "bwv": "773",
+      "title": "Invention No. 2",
+      "displayTitle": "BWV 773 — Invention No. 2",
+      "collection": "BWV 772-786 Inventions",
+      "packagePath": "catalog/packages/bwv-0773.json",
+      "contentHash": "b08a5d5316f2b40035c1f3c091c95cc5570f7bfcdfe2027d80376afa2af98314",
+      "publishedAt": "2026-11-13T17:22:58Z",
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de)."
+    }
+  ]
+}

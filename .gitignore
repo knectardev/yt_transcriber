@@ -30,6 +30,11 @@ data/fragments/.tmp-*/
 catalog/
 !data/catalog/
 !data/catalog/**/*.json
+# Performance reader partition (Vercel Root Directory). Git-tracked static deploy.
+# Do not ignore reader/ or reader/catalog/*.json — that is the public projection.
+!reader/
+!reader/**
+# Keep root build/dist ignored; reader/ is not those folders.
 # Machine-local fragment index and generated fragment pages.
 .local/
 .cache/
