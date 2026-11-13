@@ -57,10 +57,18 @@ Each published score has a stable query link (no catalog search required):
 ```text
 https://yt-transcriber-self.vercel.app/?id=bwv-0772
 https://yt-transcriber-self.vercel.app/?id=bwv-0772&m=12
+https://yt-transcriber-self.vercel.app/?id=bwv-0806&mov=prelude
 ```
 
 - `id` — catalog entry id (for example `bwv-0772`)
+- `mov` — optional movement/section id for multi-movement works (English suites, etc.)
 - `m` — optional printed measure number to restore reading position
+
+`catalog/library.json` lists the **full** Bach keyboard catalog for browsing. Only entries you publish get MusicXML packages (`catalog/index.json`). Multi-movement works publish section packages (not one giant suite file).
+
+```text
+baroque-transcribe reader publish --collection bwv-806-811-english-suites
+```
 
 Opening a piece from the catalog updates the address bar; browser Back returns to the catalog list.
 

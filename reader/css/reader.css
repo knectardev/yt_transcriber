@@ -79,16 +79,55 @@ body.performance #app-header .setup-only {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-width: 42rem;
+  max-width: 46rem;
 }
 
-#catalog-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+#catalog-list > li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 1rem;
   padding: 0.85rem 0;
   border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+
+#catalog-list > li.collection-heading {
+  display: block;
+  margin-top: 1.25rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--font-score-ui);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+#catalog-list > li.collection-heading:first-child {
+  margin-top: 0;
+}
+
+#catalog-list > li.unpublished .open-piece {
+  opacity: 0.72;
+}
+
+#catalog-list .section-list {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+}
+
+#catalog-list .section-list a {
+  color: var(--accent);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+#catalog-list .section-list a:hover,
+#catalog-list .section-list a:focus-visible {
+  text-decoration: underline;
 }
 
 #catalog-list a.open-piece {

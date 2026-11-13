@@ -384,6 +384,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Catalog entry id such as bwv-0772. Repeatable.",
     )
     reader_publish.add_argument(
+        "--collection",
+        default="",
+        help="Publish every entry in a catalog collection id, such as bwv-806-811-english-suites.",
+    )
+    reader_publish.add_argument(
         "--dist",
         type=Path,
         default=None,
@@ -516,6 +521,8 @@ def _reader(args: argparse.Namespace) -> int:
         list_published,
         publish_scores,
         remove_published,
+        resolve_publish_ids,
+        write_catalog_library,
     )
 
     try:
@@ -525,17 +532,24 @@ def _reader(args: argparse.Namespace) -> int:
                 print("No scores published in reader/ yet.")
                 return 0
             for row in rows:
+                sections = row.get("sections") or []
+                extra = f"  sections={len(sections)}" if sections else ""
                 print(
                     f"{row.get('entryId')}  BWV {row.get('bwv')}  {row.get('title')}  "
-                    f"hash={str(row.get('contentHash') or '')[:12]}…"
+                    f"hash={str(row.get('contentHash') or '')[:12]}…{extra}"
                 )
             print(f"{len(rows)} published.")
             return 0
         if args.reader_command == "publish":
-            if not args.entry_ids:
-                print("Pass at least one --id (catalog entry id).", file=sys.stderr)
+            entry_ids = resolve_publish_ids(
+                entry_ids=args.entry_ids,
+                collection_id=getattr(args, "collection", "") or "",
+            )
+            if not entry_ids:
+                print("Pass at least one --id or --collection.", file=sys.stderr)
                 return 2
-            result = publish_scores(args.entry_ids, dist_root=args.dist)
+            result = publish_scores(entry_ids, dist_root=args.dist)
+            write_catalog_library(dist_root=args.dist)
             for label, items in (
                 ("added", result.added),
                 ("updated", result.updated),

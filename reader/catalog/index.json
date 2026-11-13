@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-13T17:23:00Z",
+  "updatedAt": "2026-11-13T17:47:57Z",
   "entries": [
     {
       "id": "catalog:bwv-0772",
@@ -24,6 +24,278 @@
       "packagePath": "catalog/packages/bwv-0773.json",
       "contentHash": "b08a5d5316f2b40035c1f3c091c95cc5570f7bfcdfe2027d80376afa2af98314",
       "publishedAt": "2026-11-13T17:22:58Z",
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de)."
+    },
+    {
+      "id": "catalog:bwv-0806",
+      "entryId": "bwv-0806",
+      "bwv": "806",
+      "title": "Suite No. 1 in A major",
+      "displayTitle": "BWV 806 — Suite No. 1 in A major",
+      "collection": "BWV 806-811 English Suites",
+      "collectionId": "bwv-806-811-english-suites",
+      "packagePath": "catalog/packages/bwv-0806.json",
+      "contentHash": "0eabb45edd3f5e5a82191e9cbdbc9797a7f6693ead8f7cd6655d8371a5229b73",
+      "publishedAt": "2026-11-13T17:47:49Z",
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "sections": [
+        {
+          "id": "prelude",
+          "title": "Prélude",
+          "packagePath": "catalog/packages/bwv-0806__prelude.json",
+          "contentHash": "35a74e4ec42fa28e8594e8ba590ca1adb46328284ede86f476876826781d9b71",
+          "displayTitle": "BWV 806 — Suite No. 1 in A major — Prélude"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "packagePath": "catalog/packages/bwv-0806__allemande.json",
+          "contentHash": "be17e4880fa3d74b89edd7b7588a9e108ddcd3176e6d35667f45ad9b82419d8c",
+          "displayTitle": "BWV 806 — Suite No. 1 in A major — Allemande"
+        },
+        {
+          "id": "courantes-i-ii-doubles",
+          "title": "Courantes (I, II & Doubles)",
+          "packagePath": "catalog/packages/bwv-0806__courantes-i-ii-doubles.json",
+          "contentHash": "40906df4331d235c9b01d51e1fcf1540d24366c6209f34d24fb476ef0955e397",
+          "displayTitle": "BWV 806 — Suite No. 1 in A major — Courantes (I, II & Doubles)"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "packagePath": "catalog/packages/bwv-0806__sarabande.json",
+          "contentHash": "44b4457b5d074b1fb3338fcd753977da3b09e9cc9944db4b9bcaafac734f486f",
+          "displayTitle": "BWV 806 — Suite No. 1 in A major — Sarabande"
+        },
+        {
+          "id": "bourrees-i-ii",
+          "title": "Bourrées (I & II)",
+          "packagePath": "catalog/packages/bwv-0806__bourrees-i-ii.json",
+          "contentHash": "ab077e67c6a47682db29132fb293eb7e562344d35778a46c518dca7c3a0382c4",
+          "displayTitle": "BWV 806 — Suite No. 1 in A major — Bourrées (I & II)"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "packagePath": "catalog/packages/bwv-0806__gigue.json",
+          "contentHash": "ab6d3ea6230ecc23b3cb5393d0518b837e2386e7851f30e8d1aa841ab50fb413",
+          "displayTitle": "BWV 806 — Suite No. 1 in A major — Gigue"
+        }
+      ],
+      "sectionsStatus": "draft"
+    },
+    {
+      "id": "catalog:bwv-0807",
+      "entryId": "bwv-0807",
+      "bwv": "807",
+      "title": "Suite No. 2 in a minor",
+      "displayTitle": "BWV 807 — Suite No. 2 in a minor",
+      "collection": "BWV 806-811 English Suites",
+      "collectionId": "bwv-806-811-english-suites",
+      "packagePath": "catalog/packages/bwv-0807.json",
+      "contentHash": "e74c1e578a4b21e66ab9252a6fdd1e5c2da97d5e5fd1ffa08679b0c13d1c1791",
+      "publishedAt": "2026-11-13T17:47:51Z",
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "sections": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "packagePath": "catalog/packages/bwv-0807__section-1.json",
+          "contentHash": "23f098b932d3f748845e43b1a5e358d3461636ac4062c87f10e7c95eddd985ed",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 1"
+        },
+        {
+          "id": "section-2",
+          "title": "Section 2",
+          "packagePath": "catalog/packages/bwv-0807__section-2.json",
+          "contentHash": "8297707d1a21702e940c432e1adda14132b8750937fdb5eabe77361181004e85",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 2"
+        },
+        {
+          "id": "section-3",
+          "title": "Section 3",
+          "packagePath": "catalog/packages/bwv-0807__section-3.json",
+          "contentHash": "03c65e8a5fa31c9bdc00f35e19ab37dea0b4e26af0361a37ee2f7d7a0263699f",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 3"
+        },
+        {
+          "id": "section-4",
+          "title": "Section 4",
+          "packagePath": "catalog/packages/bwv-0807__section-4.json",
+          "contentHash": "096827bd41b6b7b9e321f17f627b9f8da0163b4dfb296abaf5b2982352038fbd",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 4"
+        },
+        {
+          "id": "section-5",
+          "title": "Section 5",
+          "packagePath": "catalog/packages/bwv-0807__section-5.json",
+          "contentHash": "0598b9d401f494b5a403e450fa32c29c6fcb3d484a8ec4fe8ed6400f6995929b",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 5"
+        },
+        {
+          "id": "section-6",
+          "title": "Section 6",
+          "packagePath": "catalog/packages/bwv-0807__section-6.json",
+          "contentHash": "c75eb6121c4f4d0536f8e785c41bf515e3b3f7cfa3556c340ef1413ce824e4e4",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 6"
+        },
+        {
+          "id": "section-7",
+          "title": "Section 7",
+          "packagePath": "catalog/packages/bwv-0807__section-7.json",
+          "contentHash": "e4e6d78e6adbd640043735a5cf8449e2d0a9dcab1cce83eb399f794d7312bc59",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 7"
+        },
+        {
+          "id": "section-8",
+          "title": "Section 8",
+          "packagePath": "catalog/packages/bwv-0807__section-8.json",
+          "contentHash": "7b9eddcc6de1353d15faec7dc0b9cdf5fcebd7a175b7e9064671176162f72b8b",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 8"
+        },
+        {
+          "id": "section-9",
+          "title": "Section 9",
+          "packagePath": "catalog/packages/bwv-0807__section-9.json",
+          "contentHash": "a31a75219030d695a5a5ee70dbf50e00233f61282a26ed95702c0d8988d64e84",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 9"
+        },
+        {
+          "id": "section-10",
+          "title": "Section 10",
+          "packagePath": "catalog/packages/bwv-0807__section-10.json",
+          "contentHash": "3ec7cb79c80e68e171fe05dba3ce35b00c23b513b535baaed038ca0631ea5496",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 10"
+        },
+        {
+          "id": "section-11",
+          "title": "Section 11",
+          "packagePath": "catalog/packages/bwv-0807__section-11.json",
+          "contentHash": "3c9ea3561dc9186c9bbf719524b05ff0e3455bcf52e5cfc0153e5e4138a5ec34",
+          "displayTitle": "BWV 807 — Suite No. 2 in a minor — Section 11"
+        }
+      ],
+      "sectionsStatus": "draft"
+    },
+    {
+      "id": "catalog:bwv-0808",
+      "entryId": "bwv-0808",
+      "bwv": "808",
+      "title": "Suite No. 3 in g minor",
+      "displayTitle": "BWV 808 — Suite No. 3 in g minor",
+      "collection": "BWV 806-811 English Suites",
+      "collectionId": "bwv-806-811-english-suites",
+      "packagePath": "catalog/packages/bwv-0808.json",
+      "contentHash": "6dd11ca94a3d9091e5b43bec647b697fd6720246d871c3553fbd9e2c3263e725",
+      "publishedAt": "2026-11-13T17:47:52Z",
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "sections": [
+        {
+          "id": "prelude",
+          "title": "Prélude",
+          "packagePath": "catalog/packages/bwv-0808__prelude.json",
+          "contentHash": "af705e6e569d9a7f413ef204d65417f75272008166f722d3baddfc255f25bbe4",
+          "displayTitle": "BWV 808 — Suite No. 3 in g minor — Prélude"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "packagePath": "catalog/packages/bwv-0808__allemande.json",
+          "contentHash": "40e508388d926e8748171a7df8965b531fc70116d9258786f66cc1341d05ff77",
+          "displayTitle": "BWV 808 — Suite No. 3 in g minor — Allemande"
+        },
+        {
+          "id": "courantes-i-ii-doubles",
+          "title": "Courantes (I, II & Doubles)",
+          "packagePath": "catalog/packages/bwv-0808__courantes-i-ii-doubles.json",
+          "contentHash": "3731dd5dc90eac4201b46e5a1766f2eb0f7d635d1b931a33cbcef9c942777ad6",
+          "displayTitle": "BWV 808 — Suite No. 3 in g minor — Courantes (I, II & Doubles)"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "packagePath": "catalog/packages/bwv-0808__sarabande.json",
+          "contentHash": "541f902e0867e3707a0cf64615ffafd0585755d9c35358a477cae23b18340afd",
+          "displayTitle": "BWV 808 — Suite No. 3 in g minor — Sarabande"
+        },
+        {
+          "id": "bourrees-i-ii",
+          "title": "Bourrées (I & II)",
+          "packagePath": "catalog/packages/bwv-0808__bourrees-i-ii.json",
+          "contentHash": "5eb127c969a400394c583534c521e7bdc68eb105866d0d4523dfbb9f8a812b15",
+          "displayTitle": "BWV 808 — Suite No. 3 in g minor — Bourrées (I & II)"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "packagePath": "catalog/packages/bwv-0808__gigue.json",
+          "contentHash": "8691158c049c7a3e5cc4c1260e5a7b076cee92d51d263ba959e251a848305df1",
+          "displayTitle": "BWV 808 — Suite No. 3 in g minor — Gigue"
+        }
+      ],
+      "sectionsStatus": "draft"
+    },
+    {
+      "id": "catalog:bwv-0809",
+      "entryId": "bwv-0809",
+      "bwv": "809",
+      "title": "Suite No. 4 in F major",
+      "displayTitle": "BWV 809 — Suite No. 4 in F major",
+      "collection": "BWV 806-811 English Suites",
+      "collectionId": "bwv-806-811-english-suites",
+      "packagePath": "catalog/packages/bwv-0809.json",
+      "contentHash": "bcc437d416fca0aa3f4c13431c41faad1da8ef47588f0a866eda6f55722b055e",
+      "publishedAt": "2026-11-13T17:47:52Z",
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de)."
+    },
+    {
+      "id": "catalog:bwv-0810",
+      "entryId": "bwv-0810",
+      "bwv": "810",
+      "title": "Suite No. 5 in e minor",
+      "displayTitle": "BWV 810 — Suite No. 5 in e minor",
+      "collection": "BWV 806-811 English Suites",
+      "collectionId": "bwv-806-811-english-suites",
+      "packagePath": "catalog/packages/bwv-0810.json",
+      "contentHash": "1c26244032d904054cab053e336bae7235bd3d1aa0909b8ac4fdef00394aed70",
+      "publishedAt": "2026-11-13T17:47:57Z",
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "sections": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "packagePath": "catalog/packages/bwv-0810__section-1.json",
+          "contentHash": "b2a00d8e91625411339808be087975abee56721400e6a9fb56081883ee9b5e96",
+          "displayTitle": "BWV 810 — Suite No. 5 in e minor — Section 1"
+        },
+        {
+          "id": "section-2",
+          "title": "Section 2",
+          "packagePath": "catalog/packages/bwv-0810__section-2.json",
+          "contentHash": "73a2214b9a40e9509615e493e68d9975c707264a16a90434e414ab7feff73dc5",
+          "displayTitle": "BWV 810 — Suite No. 5 in e minor — Section 2"
+        },
+        {
+          "id": "section-3",
+          "title": "Section 3",
+          "packagePath": "catalog/packages/bwv-0810__section-3.json",
+          "contentHash": "05b037dbef8de610c72d16dbd91a5741c2bb70f85eb0c5d66200a203d6aa0e66",
+          "displayTitle": "BWV 810 — Suite No. 5 in e minor — Section 3"
+        }
+      ],
+      "sectionsStatus": "draft"
+    },
+    {
+      "id": "catalog:bwv-0811",
+      "entryId": "bwv-0811",
+      "bwv": "811",
+      "title": "Suite No. 6 in d minor",
+      "displayTitle": "BWV 811 — Suite No. 6 in d minor",
+      "collection": "BWV 806-811 English Suites",
+      "collectionId": "bwv-806-811-english-suites",
+      "packagePath": "catalog/packages/bwv-0811.json",
+      "contentHash": "c6208615d774104942669657c4469fff22edff65c9f2b47c8777ce4c7af3edf7",
+      "publishedAt": "2026-11-13T17:47:57Z",
       "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de)."
     }
   ]
