@@ -223,8 +223,13 @@ def import_midi_project(
     settings: NotationSettings | None = None,
     history_store: Path | None = None,
     allow_duplicate: bool = False,
+    catalog: dict | None = None,
 ) -> Path:
-    """Create a Library project from a MIDI file and return its folder."""
+    """Create a Library project from a MIDI file and return its folder.
+
+    ``catalog`` is optional provenance for curated Bach catalog imports. Manual
+    uploads omit it and behave exactly as before.
+    """
 
     midi_path = Path(midi_path).expanduser().resolve()
     transcription, timing = parse_midi(midi_path)
@@ -300,6 +305,14 @@ def import_midi_project(
     }
     if youtube_url:
         manifest["youtube_url"] = youtube_url.strip()
+    if catalog:
+        cleaned = {
+            key: value
+            for key, value in dict(catalog).items()
+            if value not in (None, "")
+        }
+        if cleaned:
+            manifest["catalog"] = cleaned
     write_project_manifest(project, manifest)
 
     tempo_info = {

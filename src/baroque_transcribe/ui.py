@@ -1,17 +1,14 @@
-"""Local pages for transcribing a recording and reviewing the result.
+"""Local pages for reviewing fragments, browsing the Bach catalog, and importing.
 
-Run with ``baroque-transcribe ui``. Transcription still happens on this machine.
+Run with ``baroque-transcribe ui``. Work still happens on this machine.
 
-Two pages:
+Primary pages:
 
-* ``/`` is the home page. It has the controls that start a transcription and
-  a grid of the videos and recordings that already have one. A card opens
-  that transcription's own page, the video with the score following it,
-  which ``playback`` serves.
-* ``/project?project=<folder>`` is the "Edit & files" page for one
-  transcription: the audio and plots, the note table, the harmony labels,
-  and the files. The note table writes ``notes.json`` and rebuilds the MIDI
-  and MusicXML from it.
+* ``/`` is the fragment workspace (default). Practice excerpts are front and center.
+* ``/catalog`` is the searchable Bach keyboard MIDI catalog.
+* ``/projects`` is the transcription/MIDI project grid.
+* ``/transcribe`` is manual YouTube, file, upload, and MIDI import.
+* ``/project?project=<folder>`` is Edit & files for one project.
 
 Links between these pages are plain anchors written with ``st.html``.
 ``st.image(link=...)``, Markdown links, and ``st.link_button`` all open a
@@ -53,7 +50,7 @@ from baroque_transcribe.library import (
 # ``notation`` (music21), ``pipeline`` (model/diagnostics stack), and ``pandas``
 # are imported inside the handlers that use them. At the top they added
 # seconds to every first page load, including the home-page thumbnail grid.
-from baroque_transcribe import fragment_ui
+from baroque_transcribe import catalog_ui, fragment_ui
 from baroque_transcribe.jobs import get_job, list_jobs, start_transcription
 from baroque_transcribe.playback import (
     SyncError,
@@ -138,6 +135,12 @@ _STYLE = """
   .bt-frag-meta { color: var(--bt-muted); font-size: 0.86rem; margin: 0.15rem 0 0.35rem; line-height: 1.4; }
   .bt-brand .bt-tag a { color: var(--bt-accent-ink); text-decoration: none; font-weight: 500; }
   .bt-brand .bt-tag a:hover { text-decoration: underline; }
+  .bt-brand .bt-nav { display: flex; gap: 0.85rem; flex-wrap: wrap; margin-left: auto; }
+  .bt-brand .bt-nav a {
+    color: var(--bt-accent-ink); text-decoration: none; font-weight: 500; font-size: 0.92rem;
+  }
+  .bt-brand .bt-nav a:hover { text-decoration: underline; }
+  .bt-brand .bt-nav a.bt-current { color: var(--bt-ink); text-decoration: underline; }
   .bt-section .bt-count a { color: var(--bt-accent-ink); text-decoration: none; }
   .bt-section .bt-count a:hover { text-decoration: underline; }
 </style>
@@ -157,18 +160,28 @@ def run() -> None:
     _remember_browser_host()
     shared_playback_server(_home_url())
     fragment_ui.prepare_index()
-    home = st.Page(_home_page, title="Library", url_path="", default=True)
+    home = st.Page(_home_page, title="Fragments", url_path="", default=True)
+    catalog = st.Page(catalog_ui.catalog_page, title="Bach catalog", url_path="catalog")
+    projects = st.Page(_projects_page, title="Projects", url_path="projects")
+    transcribe = st.Page(_transcribe_page, title="Transcribe", url_path="transcribe")
     project = st.Page(_project_page, title="Project", url_path="project")
-    fragments = st.Page(fragment_ui.fragments_page, title="Fragments", url_path="fragments")
+    fragments = st.Page(fragment_ui.fragments_page, title="Fragment library", url_path="fragments")
     extract = st.Page(fragment_ui.extract_page, title="Extract fragment", url_path="extract")
     fragment = st.Page(fragment_ui.fragment_page, title="Fragment", url_path="fragment")
     _PAGES["home"] = home
+    _PAGES["catalog"] = catalog
+    _PAGES["projects"] = projects
+    _PAGES["transcribe"] = transcribe
     _PAGES["project"] = project
     _PAGES["fragments"] = fragments
     _PAGES["extract"] = extract
     _PAGES["fragment"] = fragment
     fragment_ui.bind_pages(_PAGES)
-    navigation = st.navigation([home, project, fragments, extract, fragment], position="hidden")
+    catalog_ui.bind_pages(_PAGES)
+    navigation = st.navigation(
+        [home, catalog, projects, transcribe, project, fragments, extract, fragment],
+        position="hidden",
+    )
     _open_launch_project()
     navigation.run()
 
@@ -219,52 +232,110 @@ def _open_launch_project() -> None:
 
 
 def _home_page() -> None:
+    """Fragment-first workspace with shortcuts into the Bach catalog."""
+
     import streamlit as st
 
-    _brand()
+    from baroque_transcribe.fragment_index import fragment_count
+    from baroque_transcribe.fragment_ui import _index_buttons, _library_toolbar, _show_fragment_cards
+
+    _brand(current="home")
+    _flash()
+    catalog_filter = st.session_state.pop("catalog_fragment_filter", None)
+    if catalog_filter:
+        st.session_state["frag-search"] = str(catalog_filter)
+
+    count = fragment_count()
+    st.html(
+        '<div class="bt-section bt-section-tight"><h2>Fragment library</h2>'
+        f'<span class="bt-count">{count} fragment{"" if count == 1 else "s"}'
+        ' · <a href="/catalog">Bach catalog</a>'
+        ' · <a href="/projects">Projects</a>'
+        ' · <a href="/transcribe">Transcribe / import</a></span></div>'
+        '<p class="bt-lede">Saved passages for practice regimens. Open a catalog work or project, '
+        "select measures, and extract fragments here.</p>"
+    )
+    if count == 0:
+        st.html(
+            '<div class="bt-empty">No fragments yet. '
+            '<a href="/catalog">Browse the Bach catalog</a> or '
+            '<a href="/transcribe">transcribe / import</a>, then use Select passage.</div>'
+        )
+        _index_buttons()
+        return
+    rows = _library_toolbar()
+    if not rows:
+        st.info("Nothing matches those filters.")
+        _index_buttons()
+        return
+    _show_fragment_cards(rows)
+    _index_buttons()
+
+
+def _transcribe_page() -> None:
+    import streamlit as st
+
+    _brand(crumb="Transcribe / import", current="transcribe")
     message = st.session_state.pop("transcription_message", None)
     if message:
         st.success(message)
     _flash()
-
     st.html(
-        '<div class="bt-section"><h2>Transcribe a recording</h2></div>'
-        '<p class="bt-lede">Solo piano from YouTube or a file on this computer. The raw MIDI keeps the timing '
-        "of the performance. The MusicXML score is a separate rhythmic reading for MuseScore.</p>"
+        '<div class="bt-section"><h2>Transcribe or import</h2></div>'
+        '<p class="bt-lede">Solo piano from YouTube or a file on this computer, or import a MIDI file as a '
+        "Library project. The raw MIDI keeps the timing of the performance. The MusicXML score is a "
+        "separate rhythmic reading for MuseScore.</p>"
     )
     with st.container(border=True):
         _transcribe_fragment()()
     _jobs_board()()
+    st.caption('Finished projects appear under [Projects](/projects). Fragments live on the [home page](/).')
 
-    # Card metadata only: titles, counts, and the cached thumbnail JPEG
-    # (fetched from YouTube once per video, then read from disk).
-    # The notes, audio, and score are read when a transcription is opened.
+
+def _projects_page() -> None:
+    import streamlit as st
+
+    _brand(crumb="Projects", current="projects")
+    _flash()
     cards = _with_local_thumbnails(library_cards(for_grid=True))
     count = sum(1 for card in cards for run in card.runs if run.available)
     heading, filter_col = st.columns([3, 2], vertical_alignment="bottom")
     with heading:
         st.html(
-            '<div class="bt-section"><h2>Library</h2>'
+            '<div class="bt-section"><h2>Projects</h2>'
             f'<span class="bt-count">{count} transcription{"" if count == 1 else "s"} on this computer'
-            ' · <a href="/fragments">Fragments</a></span></div>'
+            ' · <a href="/">Fragments</a>'
+            ' · <a href="/catalog">Bach catalog</a></span></div>'
         )
     with filter_col:
         kind = st.segmented_control(
             "Show",
-            options=["All", "YouTube", "MIDI files"],
+            options=["All", "YouTube", "MIDI files", "Catalog"],
             default="All",
             key="library_source_filter",
             label_visibility="collapsed",
         )
+    text = st.text_input(
+        "Search projects",
+        placeholder="Search title or folder…",
+        key="projects-search",
+        label_visibility="collapsed",
+    )
     kind = kind or "All"
-    visible = [card for card in cards if _card_matches_library_filter(card, kind)]
+    visible = [
+        card
+        for card in cards
+        if _card_matches_library_filter(card, kind) and _card_matches_text(card, text)
+    ]
     if not cards:
-        st.html('<div class="bt-empty">Nothing has been transcribed yet. The first result will appear here.</div>')
+        st.html(
+            '<div class="bt-empty">Nothing has been transcribed yet. '
+            '<a href="/transcribe">Transcribe or import</a>, or open a work from the '
+            '<a href="/catalog">Bach catalog</a>.</div>'
+        )
     elif not visible:
-        st.html(f'<div class="bt-empty">No {escape(kind.lower())} in the library yet.</div>')
+        st.html('<div class="bt-empty">No projects match those filters.</div>')
     else:
-        # Same document as the Library heading. An iframe only receives a
-        # height after its own measurement message, so the grid stayed blank.
         _show_cards(visible)
 
 
@@ -317,8 +388,39 @@ def _card_matches_library_filter(card: Card, kind: str) -> bool:
     if kind == "YouTube":
         return bool(card.video_id)
     if kind == "MIDI files":
-        return _card_is_midi(card)
+        return _card_is_midi(card) and not _card_is_catalog(card)
+    if kind == "Catalog":
+        return _card_is_catalog(card)
     return True
+
+
+def _card_is_catalog(card: Card) -> bool:
+    for run in card.runs:
+        if not run.available:
+            continue
+        try:
+            manifest = load_project_manifest(run.folder)
+        except Exception:
+            continue
+        catalog = manifest.get("catalog") if isinstance(manifest.get("catalog"), dict) else {}
+        if catalog.get("entry_id"):
+            return True
+    return False
+
+
+def _card_matches_text(card: Card, text: str) -> bool:
+    words = [word.lower() for word in str(text or "").split() if word.strip()]
+    if not words:
+        return True
+    blob = " ".join(
+        [
+            card.title,
+            card.key,
+            *(run.name for run in card.runs),
+            *(run.title for run in card.runs),
+        ]
+    ).lower()
+    return all(word in blob for word in words)
 
 
 def _show_cards(cards: list[Card]) -> None:
@@ -784,12 +886,13 @@ def _project_page() -> None:
     if project is None:
         _brand(crumb="Project")
         st.warning("That transcription is not on this computer, or the address is incomplete.")
-        st.page_link(_PAGES["home"], label="Back to the library", icon=":material/arrow_back:")
+        st.page_link(_PAGES["home"], label="Back to fragments", icon=":material/arrow_back:")
+        st.page_link(_PAGES["projects"], label="Back to projects", icon=":material/arrow_back:")
         return
     st.query_params["project"] = project_param(project)
     run = read_run(project)
     if run is None:
-        st.switch_page(_PAGES["home"])
+        st.switch_page(_PAGES["projects"])
         return
     card = card_for(project)
     title = run.title or (card.title if card else "") or project.name
@@ -1329,28 +1432,46 @@ def _files_tab(project: Path, run: Run, card: Card | None, manifest: dict) -> No
 # ------------------------------------------------------------------------- shared
 
 
-def _brand(crumb: str | None = None, *, crumb_href: str | None = None, leaf: str | None = None) -> None:
-    """The wordmark, and under it the tag line or the trail back to the library.
+def _brand(
+    crumb: str | None = None,
+    *,
+    crumb_href: str | None = None,
+    leaf: str | None = None,
+    current: str | None = None,
+) -> None:
+    """The wordmark, trail, and primary navigation.
 
-    ``crumb`` is the place after Library. ``crumb_href``, already escaped,
+    ``crumb`` is the place after Fragments. ``crumb_href``, already escaped,
     makes it a link, and ``leaf`` is one more step after it.
     """
 
     import streamlit as st
 
+    links = [
+        ("home", "/", "Fragments"),
+        ("catalog", "/catalog", "Bach catalog"),
+        ("projects", "/projects", "Projects"),
+        ("transcribe", "/transcribe", "Transcribe"),
+    ]
+    nav = "".join(
+        f'<a href="{href}" class="{"bt-current" if current == key else ""}">{label}</a>'
+        for key, href, label in links
+    )
     if crumb:
         place = escape(crumb)
         if crumb_href:
             place = f'<a href="{crumb_href}">{place}</a>'
         if leaf:
             place += f" &nbsp;/&nbsp; {escape(leaf)}"
-        trail = f'<span class="bt-crumb"><a href="/">Library</a> &nbsp;/&nbsp; {place}</span>'
+        trail = f'<span class="bt-crumb"><a href="/">Fragments</a> &nbsp;/&nbsp; {place}</span>'
     else:
         trail = (
-            '<span class="bt-tag">Solo piano recordings into MIDI and a score, on this computer. '
-            '<a href="/fragments">Fragment library</a></span>'
+            '<span class="bt-tag">Fragment practice workspace · Bach catalog · local transcription</span>'
         )
-    st.html(f'<div class="bt-brand"><a class="bt-wordmark" href="/">Piano transcription</a>{trail}</div>')
+    st.html(
+        f'<div class="bt-brand"><a class="bt-wordmark" href="/">Piano transcription</a>'
+        f"{trail}<span class=\"bt-nav\">{nav}</span></div>"
+    )
 
 
 def _flash() -> None:
@@ -1484,9 +1605,14 @@ def _render_jobs_board() -> None:
 
 
 def _open_playback(project: Path) -> None:
-    """Open the score on this PC's browser, or hand a remote browser a link."""
+    """Open the score page in the user's browser.
+
+    On this PC, open a new tab. On a phone or another computer on the LAN,
+    navigate this tab to the score — do not ask for a second click.
+    """
 
     import streamlit as st
+    import streamlit.components.v1 as components
 
     url = detail_url(project)
     if _browser_is_on_this_pc():
@@ -1495,8 +1621,13 @@ def _open_playback(project: Path) -> None:
         except Exception:
             st.switch_page(_PAGES["project"])
         return
-    st.link_button("Open the score", url)
-    st.caption("This link opens the score on the server. It does not copy the project onto this computer.")
+    # Streamlit runs inside an iframe; top-level navigation reaches the score.
+    components.html(
+        "<script>window.top.location.href = "
+        + json.dumps(url)
+        + ";</script>",
+        height=0,
+    )
 
 
 def _blank(value: object) -> bool:

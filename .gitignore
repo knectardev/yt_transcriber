@@ -26,6 +26,10 @@ data/parses/events/.tmp-*/
 !data/fragments/**/*.mid
 !data/fragments/**/*.musicxml
 data/fragments/.tmp-*/
+# Bach catalog: committed metadata under data/catalog/; local MIDI mirror is not.
+catalog/
+!data/catalog/
+!data/catalog/**/*.json
 # Machine-local fragment index and generated fragment pages.
 .local/
 .cache/

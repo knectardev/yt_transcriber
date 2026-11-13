@@ -9,7 +9,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
-from baroque_transcribe.defaults import FRAGMENTS_DIR, SOURCE_WAV, WORKING_WAV
+from baroque_transcribe.defaults import CATALOG_MIDI_DIR, FRAGMENTS_DIR, SOURCE_WAV, WORKING_WAV
 from baroque_transcribe.project_manifest import load_project_manifest, revision_block
 from baroque_transcribe.storage_io import sha256_file, temporary_path, tree_size
 
@@ -20,6 +20,7 @@ class StorageReport:
     recovery_copies: int
     parse_events: int
     fragments: int
+    catalog_midi: int
     rebuildable_caches: int
 
     def to_dict(self) -> dict:
@@ -32,6 +33,7 @@ def storage_report(root: Path) -> StorageReport:
     recovery = transcriptions / ".recovery"
     events = root / "data" / "parses" / "events"
     fragments = root / "data" / FRAGMENTS_DIR
+    catalog_midi = root / CATALOG_MIDI_DIR
     active_size = 0
     if transcriptions.is_dir():
         for path in transcriptions.iterdir():
@@ -43,6 +45,7 @@ def storage_report(root: Path) -> StorageReport:
         recovery_copies=tree_size(recovery),
         parse_events=tree_size(events),
         fragments=tree_size(fragments),
+        catalog_midi=tree_size(catalog_midi),
         rebuildable_caches=cache_size,
     )
 

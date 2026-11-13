@@ -76,8 +76,12 @@ All of this stays where it already is:
 - Projects, audio, MIDI, and MusicXML: `transcriptions\`
 - Parse history: `data\parses`
 - Fragments: `data\fragments`
+- Bach catalog metadata: `data\catalog\` (committed JSON)
+- Local Bach MIDI mirror: `catalog\midi\` (downloaded on this PC, not git)
 - Search index and generated pages: `.local\`
 - Model checkpoint: `%USERPROFILE%\.cache\baroque_transcribe\`
+
+Catalog sync and open-on-demand downloads always run on this PC. Remote browsers only trigger them; they do not store MIDI locally. **Open score** on the catalog page navigates that remote browser to the playback URL in the same tab (it does not ask for a second click). An overnight `catalog sync` can keep running while the UI stays up.
 
 A transcription job writes a `.transcribe-incomplete` marker in its new folder. The library hides that folder until the job finishes. If the job fails, that folder is deleted. If the process is killed, the marked folder is left in place and is not merged into another project. Restarting the app does not resume the job.
 

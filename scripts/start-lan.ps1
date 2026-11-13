@@ -41,6 +41,8 @@ if (-not $env:BAROQUE_PLAYBACK_PORT) {
     $env:BAROQUE_PLAYBACK_PORT = "8766"
 }
 $env:PYTHONUNBUFFERED = "1"
+# Agent/test shells sometimes leave this set; the UI must use real repo paths.
+Remove-Item Env:PYTEST_CURRENT_TEST -ErrorAction SilentlyContinue
 
 Write-Host "Logging to $Log"
 Write-Host "Stop the server with Ctrl+C in this window."

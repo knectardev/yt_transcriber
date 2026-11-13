@@ -73,6 +73,23 @@ FRAGMENT_GRID_JSON = "grid.json"
 FRAGMENT_HARMONY_JSON = "harmony.json"
 FRAGMENT_PERFORMANCE_MID = "performance.mid"
 
+# Bach MIDI catalog. The checked-in JSON under data/catalog is authoritative
+# metadata. Downloaded MIDI bytes live under catalog/midi/ (gitignored).
+CATALOG_DIR = "catalog"
+CATALOG_DATA_DIR = "data/catalog"
+CATALOG_MANIFEST = "bach-keyboard.json"
+CATALOG_MIDI_DIR = "catalog/midi"
+CATALOG_LOG_DIR = ".local/catalog_logs"
+CATALOG_SYNC_USER_AGENT = (
+    "baroque-transcribe-catalog-sync/0.1 "
+    "(local personal noncommercial use; +https://github.com/knectardev/yt_transcriber)"
+)
+CATALOG_DELAY_MIN_SECONDS = 30.0
+CATALOG_DELAY_MAX_SECONDS = 200.0
+CATALOG_MAX_ATTEMPTS = 5
+CATALOG_MAX_REQUESTS_PER_HOUR = 120
+CATALOG_DOWNLOAD_TIMEOUT_SECONDS = 60.0
+
 CHECKPOINT_FILENAME = "note_F1=0.9677_pedal_F1=0.9186.pth"
 CHECKPOINT_URL = (
     "https://zenodo.org/records/4034264/files/"

@@ -165,6 +165,9 @@ def public_project_state(manifest: dict) -> dict:
         },
         "sync_offset_seconds": manifest.get("sync_offset_seconds", 0.0),
     }
+    catalog = manifest.get("catalog")
+    if isinstance(catalog, dict) and catalog:
+        state["catalog"] = _portable_value(catalog)
     return state
 
 

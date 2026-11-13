@@ -243,6 +243,88 @@ def _build_parser() -> argparse.ArgumentParser:
     reindex.add_argument("--rebuild", action="store_true", help="Delete the index file and build it again from the manifests.")
     _add_library_arguments(reindex)
 
+    catalog = sub.add_parser(
+        "catalog",
+        help="Browse, sync, or open the Bach keyboard MIDI catalog.",
+    )
+    catalog_sub = catalog.add_subparsers(dest="catalog_command", required=True)
+    catalog_list = catalog_sub.add_parser("list", help="List catalog entries with optional filters.")
+    catalog_list.add_argument("--text", default="", help="Words that must appear in title, BWV, or collection.")
+    catalog_list.add_argument("--collection", default="", help="Collection id, such as bwv-772-786-inventions.")
+    catalog_list.add_argument("--bwv", default="", help="BWV number, such as 870 or 870a.")
+    catalog_list.add_argument("--key", default="", help="Key filter substring, such as 'C major'.")
+    catalog_list.add_argument(
+        "--variants",
+        default="include",
+        choices=["include", "only", "exclude"],
+        help="Whether to include variant/arrangement rows. Default: include.",
+    )
+    catalog_list.add_argument(
+        "--status",
+        default="all",
+        help="all, missing, downloaded, imported, or 'hash mismatch'.",
+    )
+    catalog_list.add_argument(
+        "--sort",
+        default="bwv",
+        choices=["bwv", "title", "collection"],
+    )
+    catalog_list.add_argument(
+        "--manifest",
+        type=Path,
+        default=None,
+        help="Catalog JSON. Default: data/catalog/bach-keyboard.json.",
+    )
+
+    catalog_show = catalog_sub.add_parser("show", help="Show one catalog entry and its local status.")
+    catalog_show.add_argument("entry_id", help="Stable catalog id, such as bwv-0870.")
+    catalog_show.add_argument("--manifest", type=Path, default=None)
+
+    catalog_sync = catalog_sub.add_parser(
+        "sync",
+        help="Download missing MIDI files into the local catalog/midi mirror.",
+    )
+    catalog_sync.add_argument("--all", action="store_true", help="Sync every missing entry.")
+    catalog_sync.add_argument("--entry", action="append", default=[], help="Sync one entry id. Repeatable.")
+    catalog_sync.add_argument(
+        "--overnight",
+        action="store_true",
+        help="Use the polite 30-200s random delay between requests.",
+    )
+    catalog_sync.add_argument("--delay-min", type=float, default=None, help="Minimum delay seconds.")
+    catalog_sync.add_argument("--delay-max", type=float, default=None, help="Maximum delay seconds.")
+    catalog_sync.add_argument(
+        "--keep-awake",
+        action="store_true",
+        help="Ask Windows not to sleep while this sync runs; cleared on exit.",
+    )
+    catalog_sync.add_argument("--force", action="store_true", help="Redownload even when a local file matches.")
+    catalog_sync.add_argument(
+        "--confirm",
+        action="store_true",
+        help="Required for bulk --all sync.",
+    )
+    catalog_sync.add_argument("--manifest", type=Path, default=None)
+
+    catalog_open = catalog_sub.add_parser(
+        "open",
+        help="Download if needed and import/open the entry as a Library project.",
+    )
+    catalog_open.add_argument("entry_id", help="Stable catalog id.")
+    catalog_open.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        default=Path("transcriptions/catalog"),
+        help="Project output folder stem. Default: transcriptions/catalog.",
+    )
+    catalog_open.add_argument("--manifest", type=Path, default=None)
+    catalog_open.add_argument(
+        "--allow-duplicate",
+        action="store_true",
+        help="Create another project even if this exact MIDI import was already published.",
+    )
+
     ui = sub.add_parser("ui", help="Open the local review window.")
     ui.add_argument("--port", type=int, default=DEFAULT_UI_PORT)
     ui.add_argument(
@@ -356,6 +438,155 @@ def _print_index_report(report, *, summary: bool = True) -> None:
     for problem in report.problems:
         note = " Its entry was removed from the index." if problem.was_indexed else ""
         print(f"warning: {problem.folder}: {problem.message}{note}", file=sys.stderr)
+
+
+def _catalog(args: argparse.Namespace) -> int:
+    from baroque_transcribe.catalog import (
+        CatalogError,
+        entry_statuses,
+        get_entry,
+        load_catalog,
+        search_catalog,
+    )
+    from baroque_transcribe.catalog_open import open_catalog_entry
+    from baroque_transcribe.catalog_sync import (
+        CatalogSyncError,
+        SyncSettings,
+        setup_sync_logger,
+        sync_entries,
+        sync_missing,
+    )
+    from baroque_transcribe.defaults import (
+        CATALOG_DELAY_MAX_SECONDS,
+        CATALOG_DELAY_MIN_SECONDS,
+    )
+    from baroque_transcribe.midi_import import MidiImportError
+
+    try:
+        if args.catalog_command == "list":
+            catalog = load_catalog(path=args.manifest)
+            rows = search_catalog(
+                catalog,
+                text=args.text,
+                collection_id=args.collection,
+                bwv=args.bwv,
+                key=args.key,
+                variants=args.variants,
+                status=args.status,
+                sort=args.sort,
+            )
+            for row in rows:
+                entry = row.entry
+                print(
+                    f"{entry.id}  BWV {entry.bwv}  {entry.title}  "
+                    f"[{row.status_label}]  {entry.collection}"
+                )
+            print(f"{len(rows)} entr{'y' if len(rows) == 1 else 'ies'}.")
+            return 0
+        if args.catalog_command == "show":
+            catalog = load_catalog(path=args.manifest)
+            entry = get_entry(args.entry_id, path=args.manifest)
+            status = next(
+                row for row in entry_statuses(catalog) if row.entry.id == entry.id
+            )
+            print(entry.display_title)
+            print(f"id: {entry.id}")
+            print(f"collection: {entry.collection}")
+            print(f"status: {status.status_label}")
+            print(f"midi_url: {entry.midi_url}")
+            if status.local_path:
+                print(f"local: {status.local_path}")
+            if status.imported_projects:
+                print(f"projects: {', '.join(status.imported_projects)}")
+            if entry.sha256:
+                print(f"sha256: {entry.sha256}")
+            return 0
+        if args.catalog_command == "sync":
+            catalog = load_catalog(path=args.manifest)
+            delay_min = (
+                CATALOG_DELAY_MIN_SECONDS
+                if args.delay_min is None
+                else float(args.delay_min)
+            )
+            delay_max = (
+                CATALOG_DELAY_MAX_SECONDS
+                if args.delay_max is None
+                else float(args.delay_max)
+            )
+            if args.overnight and args.delay_min is None and args.delay_max is None:
+                delay_min = CATALOG_DELAY_MIN_SECONDS
+                delay_max = CATALOG_DELAY_MAX_SECONDS
+            settings = SyncSettings(
+                delay_min=delay_min,
+                delay_max=delay_max,
+                overnight=bool(args.overnight),
+                keep_awake=bool(args.keep_awake or args.overnight),
+                force=bool(args.force),
+            )
+            if args.entry:
+                entries = [get_entry(entry_id, path=args.manifest) for entry_id in args.entry]
+                print(
+                    f"Syncing {len(entries)} catalog entr{'y' if len(entries) == 1 else 'ies'} "
+                    f"with delays {settings.delay_min:g}-{settings.delay_max:g}s"
+                    f"{' and keep-awake' if settings.keep_awake else ''}."
+                )
+                logger = setup_sync_logger()
+                report = sync_entries(
+                    entries,
+                    settings=settings,
+                    allowed_hosts=catalog.source.allowed_hosts,
+                    logger=logger,
+                    polite_gaps=bool(args.overnight) or settings.delay_max > 0,
+                )
+            elif args.all:
+                if not args.confirm:
+                    missing = [
+                        row.entry.id
+                        for row in entry_statuses(catalog)
+                        if args.force or not row.local or row.hash_ok is False
+                    ]
+                    print(
+                        f"Would sync {len(missing)} missing/mismatched files "
+                        f"with {settings.delay_min:g}-{settings.delay_max:g}s delays"
+                        f"{' and keep-awake' if settings.keep_awake else ''}."
+                    )
+                    print("Re-run with --confirm to start.")
+                    return 2
+                print(
+                    f"Starting bulk catalog sync "
+                    f"({settings.delay_min:g}-{settings.delay_max:g}s delays"
+                    f"{', keep-awake' if settings.keep_awake else ''})."
+                )
+                logger = setup_sync_logger()
+
+                def progress(index: int, total: int, result) -> None:
+                    print(f"[{index}/{total}] {result.entry_id}: {result.action}"
+                          + (f" ({result.error})" if result.error else ""))
+
+                report = sync_missing(
+                    catalog,
+                    settings=settings,
+                    logger=logger,
+                    on_progress=progress,
+                )
+            else:
+                print("Give --all or one or more --entry ids.", file=sys.stderr)
+                return 2
+            print(report.summary())
+            return 0 if report.ok else 1
+        if args.catalog_command == "open":
+            project = open_catalog_entry(
+                args.entry_id,
+                output_dir=args.output,
+                manifest_path=args.manifest,
+                allow_duplicate=bool(args.allow_duplicate),
+            )
+            print(f"Opened catalog entry {args.entry_id} as {project}")
+            return 0
+    except (CatalogError, CatalogSyncError, MidiImportError, OSError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    return 2
 
 
 def _add_notation_arguments(parser: argparse.ArgumentParser) -> None:
@@ -657,6 +888,7 @@ def _storage(args) -> int:
         print(f"Recovery copies (durable): {_format_bytes(report.recovery_copies)}")
         print(f"Committed parse events: {_format_bytes(report.parse_events)}")
         print(f"Committed fragments: {_format_bytes(report.fragments)}")
+        print(f"Local catalog MIDI: {_format_bytes(report.catalog_midi)}")
         print(f"Rebuildable caches: {_format_bytes(report.rebuildable_caches)}")
         return 0
     if args.storage_command == "recoveries":
@@ -785,6 +1017,9 @@ def _launch_ui(port: int, project: Path | None, address: str) -> int:
     if bind not in {"127.0.0.1", "0.0.0.0"}:
         print("error: --address must be 127.0.0.1 or 0.0.0.0", file=sys.stderr)
         return 1
+    # Drop leftover pytest markers from the parent shell so fragment/catalog
+    # paths resolve to the real repo instead of raising FragmentError.
+    os.environ.pop("PYTEST_CURRENT_TEST", None)
     if project is not None:
         os.environ["BAROQUE_UI_PROJECT"] = str(project)
     os.environ["BAROQUE_UI_ADDRESS"] = bind
@@ -878,6 +1113,8 @@ def main(argv: list[str] | None = None) -> int:
         return _launch_ui(args.port, args.project, args.address)
     if args.command == "fragments":
         return _fragments(args)
+    if args.command == "catalog":
+        return _catalog(args)
 
     from baroque_transcribe.analysis import AnalysisError
     from baroque_transcribe.audio import AudioError

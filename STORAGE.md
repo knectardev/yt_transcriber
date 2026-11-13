@@ -8,7 +8,7 @@ The rest of this document is the map of the tree, the JSON contracts, the SQLite
 
 ## Design rule
 
-There are five classes of storage. Mixing them up is what makes the tree look like “stray files.”
+There are seven classes of storage. Mixing them up is what makes the tree look like “stray files.”
 
 | Class | Where | Owned by | Survives deleting `.local/` | Travels with `git pull` |
 | --- | --- | --- | --- | --- |
@@ -16,11 +16,13 @@ There are five classes of storage. Mixing them up is what makes the tree look li
 | Recovery copy | `transcriptions/.recovery/<name>/<recovery-id>/` | the user | yes | no |
 | Published run | `data/parses/events/<id>/` | git | yes | yes |
 | Fragment | `data/fragments/<uuid>/` | git | yes | yes |
+| Catalog metadata | `data/catalog/*.json` | git | yes | yes |
+| Local catalog MIDI | `catalog/midi/<entry-id>/source.mid` | this machine | yes | no |
 | Machine cache | `.local/`, `data/thumbnails/`, the model checkpoint | this process / this machine | no (that is the point) | no |
 
-A **working project** is the folder you edit, requantize, and listen to. A **recovery copy** is a verified, permanent copy made before an existing project is updated from history. A **published run** is an immutable snapshot of one command (`transcribe`, `quantize`, `analyze`, …) copied into parse history so another machine can restore it. A **fragment** is a self-contained excerpt of printed measures; it does not need the parent project to open. A **cache** is anything derived that this computer can rebuild.
+A **working project** is the folder you edit, requantize, and listen to. A **recovery copy** is a verified, permanent copy made before an existing project is updated from history. A **published run** is an immutable snapshot of one command (`transcribe`, `quantize`, `analyze`, `import`, …) copied into parse history so another machine can restore it. A **fragment** is a self-contained excerpt of printed measures; it does not need the parent project to open. **Catalog metadata** is the curated Bach keyboard list (titles, BWV, source URLs, pinned hashes). **Local catalog MIDI** is the downloaded mirror of those files and is never committed. A **cache** is anything derived that this computer can rebuild.
 
-SQLite sits only in the last class, and only for fragments.
+SQLite sits only in the machine-cache class, and only for fragments.
 
 There is no SQLite (or any other database) for transcriptions, parse history, notes, harmony, MIDI, audio, or the home-page library. Those are JSON, MIDI, MusicXML, and WAV on disk. The home page builds its cards by reading `data/parses/events/*/event.json` and the folders under `transcriptions/` (`library.py`).
 
@@ -49,12 +51,15 @@ Paths are relative to the clone root (the directory that contains `pyproject.tom
   data/
     parses/events/<event-id>/ committed snapshots of each run
     fragments/<uuid>/         committed fragment folders  ← the fragment library
+    catalog/                  committed Bach catalog metadata (JSON only)
     thumbnails/               ignored JPEG cache of YouTube stills
+  catalog/midi/<entry-id>/    ignored local MIDI mirror (downloaded, not git)
   transcriptions/<name>/      ignored working projects
   transcriptions/.recovery/   ignored durable update recovery copies
   .local/
     library.sqlite            ignored fragment search index
     fragment_pages/           ignored generated HTML for fragments
+    catalog_logs/             ignored overnight sync logs
   .venv/                      ignored
 ```
 
@@ -69,8 +74,9 @@ Outside the clone:
 
 - `!data/parses/**/*.mid` and `!data/parses/**/*.musicxml`
 - `!data/fragments/**/*.mid` and `!data/fragments/**/*.musicxml`
+- `catalog/` ignored; `data/catalog/**/*.json` re-included for committed metadata
 
-Staging folders `data/fragments/.tmp-*/` and `data/parses/events/.tmp-*/` are ignored. `.local/` is ignored in full. Recovery trees are ignored because all of `transcriptions/` is local, but they are durable user data, not cache data.
+Staging folders `data/fragments/.tmp-*/` and `data/parses/events/.tmp-*/` are ignored. `.local/` is ignored in full. Recovery trees are ignored because all of `transcriptions/` is local, but they are durable user data, not cache data. The local Bach MIDI mirror under `catalog/midi/` is durable on this machine but not published through git (third-party noncommercial terms).
 
 ## 1. Working project — `transcriptions/<name>/`
 
@@ -263,7 +269,7 @@ V = F + (E + t0) + sync.offset_seconds
 
 ### `.local/library.sqlite`
 
-The only database. Module: `src/baroque_transcribe/fragment_index.py`. Schema version: `PRAGMA user_version = 1` (`INDEX_SCHEMA_VERSION`). Gitignored. Not shared between machines.
+The only database. Module: `src/baroque_transcribe/fragment_index.py`. Schema version: `PRAGMA user_version = 2` (`INDEX_SCHEMA_VERSION`). Gitignored. Not shared between machines. A version mismatch deletes and rebuilds the file from fragment folders.
 
 **Invariant:** every column on a fragment row is derived from that fragment’s `fragment.json`. Nothing is stored here that is not stored there, except:
 
@@ -293,6 +299,8 @@ CREATE TABLE fragments (
     video_id TEXT NOT NULL,
     parent_project TEXT NOT NULL,
     parent_event_id TEXT NOT NULL,
+    catalog_entry_id TEXT NOT NULL,      -- optional Bach catalog id
+    catalog_collection TEXT NOT NULL,
     video_start REAL NOT NULL,           -- time.source_video.start_seconds
     video_end REAL NOT NULL,
     working_start REAL NOT NULL,         -- time.working_audio.start_seconds
@@ -464,6 +472,9 @@ Git synchronization moves published event/fragment files; it does not back up un
 | `fragment.json`, `grid.json`, extraction | `src/baroque_transcribe/fragments.py` |
 | SQLite index | `src/baroque_transcribe/fragment_index.py` (`_SCHEMA`, `_manifest_row`) |
 | Generated fragment pages | `src/baroque_transcribe/fragment_pages.py` |
+| Bach catalog metadata / open | `src/baroque_transcribe/catalog.py`, `catalog_open.py` |
+| Polite catalog MIDI sync | `src/baroque_transcribe/catalog_sync.py` |
+| Catalog curator refresh | `scripts/refresh_bach_catalog.py` |
 | Filenames | `src/baroque_transcribe/defaults.py` |
 | Git ignore / re-include rules | `.gitignore` |
 

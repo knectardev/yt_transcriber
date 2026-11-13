@@ -47,7 +47,7 @@ from typing import Iterator
 from baroque_transcribe.defaults import FRAGMENT_JSON, LIBRARY_INDEX
 from baroque_transcribe.fragments import FragmentError, fragments_root, local_root, validate_manifest
 
-INDEX_SCHEMA_VERSION = 1
+INDEX_SCHEMA_VERSION = 2
 # The library page reconciles at most this often while it is being redrawn.
 RECONCILE_INTERVAL_SECONDS = 10.0
 
@@ -67,6 +67,8 @@ CREATE TABLE fragments (
     video_id TEXT NOT NULL,
     parent_project TEXT NOT NULL,
     parent_event_id TEXT NOT NULL,
+    catalog_entry_id TEXT NOT NULL,
+    catalog_collection TEXT NOT NULL,
     video_start REAL NOT NULL,
     video_end REAL NOT NULL,
     working_start REAL NOT NULL,
@@ -127,6 +129,8 @@ _COLUMNS = (
     "video_id",
     "parent_project",
     "parent_event_id",
+    "catalog_entry_id",
+    "catalog_collection",
     "video_start",
     "video_end",
     "working_start",
@@ -217,6 +221,8 @@ class IndexedFragment:
     source_url: str
     video_id: str
     parent_project: str
+    catalog_entry_id: str
+    catalog_collection: str
     video_start: float
     video_end: float
     duration: float
@@ -406,6 +412,16 @@ def _manifest_row(manifest: dict, rel_dir: str, digest: str) -> dict:
         "video_id": _text(source.get("video_id")),
         "parent_project": _text(parent.get("project")),
         "parent_event_id": _text(parent.get("event_id")),
+        "catalog_entry_id": _text(
+            (manifest.get("catalog") or {}).get("entry_id")
+            if isinstance(manifest.get("catalog"), dict)
+            else ""
+        ),
+        "catalog_collection": _text(
+            (manifest.get("catalog") or {}).get("collection")
+            if isinstance(manifest.get("catalog"), dict)
+            else ""
+        ),
         "video_start": _real(time_block["source_video"]["start_seconds"]),
         "video_end": _real(time_block["source_video"]["end_seconds"]),
         "working_start": _real(time_block["working_audio"]["start_seconds"]),
@@ -779,6 +795,8 @@ def _fragment(row: sqlite3.Row, tags: list[str]) -> IndexedFragment:
         source_url=row["source_url"],
         video_id=row["video_id"],
         parent_project=row["parent_project"],
+        catalog_entry_id=row["catalog_entry_id"] if "catalog_entry_id" in row.keys() else "",
+        catalog_collection=row["catalog_collection"] if "catalog_collection" in row.keys() else "",
         video_start=float(row["video_start"]),
         video_end=float(row["video_end"]),
         duration=float(row["duration"]),
@@ -808,6 +826,7 @@ def search_fragments(
     key_mode: str = "",
     progression: str = "",
     source: str = "",
+    catalog_entry_id: str = "",
     sort: str = "modified",
 ) -> list[IndexedFragment]:
     """Fragments that match every filter given. An empty filter matches everything.
@@ -818,7 +837,7 @@ def search_fragments(
     of chord labels that must appear next to each other, in order, in the
     Roman numerals or in the chord symbols; it is case-sensitive, because
     ``V`` and ``v`` are different chords. ``source`` is a video id or a
-    parent project name.
+    parent project name. ``catalog_entry_id`` matches curated Bach catalog provenance.
     """
 
     if sort not in SORTS:
@@ -830,10 +849,11 @@ def search_fragments(
         where.append(
             "(f.title LIKE ? ESCAPE '\\' OR f.description LIKE ? ESCAPE '\\' OR f.practice_notes LIKE ? ESCAPE '\\' "
             "OR f.composer LIKE ? ESCAPE '\\' OR f.performer LIKE ? ESCAPE '\\' OR f.source_title LIKE ? ESCAPE '\\' "
+            "OR f.catalog_entry_id LIKE ? ESCAPE '\\' OR f.catalog_collection LIKE ? ESCAPE '\\' "
             "OR EXISTS (SELECT 1 FROM fragment_tags ft JOIN tags t ON t.id = ft.tag_id "
             "WHERE ft.fragment_id = f.id AND t.name LIKE ? ESCAPE '\\'))"
         )
-        values.extend([pattern] * 7)
+        values.extend([pattern] * 9)
     for tag in _clean_tags(list(tags)):
         where.append(
             "EXISTS (SELECT 1 FROM fragment_tags ft JOIN tags t ON t.id = ft.tag_id "
@@ -854,6 +874,9 @@ def search_fragments(
     if source:
         where.append("(f.video_id = ? OR f.parent_project = ?)")
         values.extend([source, source])
+    if catalog_entry_id:
+        where.append("f.catalog_entry_id = ?")
+        values.append(str(catalog_entry_id))
     query = "SELECT f.* FROM fragments f"
     if where:
         query += " WHERE " + " AND ".join(where)

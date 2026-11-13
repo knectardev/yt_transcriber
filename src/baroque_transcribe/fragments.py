@@ -1051,6 +1051,59 @@ def _describe_parent_source(manifest: dict) -> dict:
     )
 
 
+def catalog_from_parent(manifest: dict) -> dict:
+    """Optional catalog provenance copied from a parent project manifest."""
+
+    catalog = manifest.get("catalog") if isinstance(manifest.get("catalog"), dict) else {}
+    if not catalog:
+        return {}
+    cleaned = {
+        key: value
+        for key, value in {
+            "entry_id": str(catalog.get("entry_id") or "").strip(),
+            "bwv": str(catalog.get("bwv") or "").strip(),
+            "collection_id": str(catalog.get("collection_id") or "").strip(),
+            "collection": str(catalog.get("collection") or "").strip(),
+            "source_page": str(catalog.get("source_page") or "").strip(),
+            "attribution": str(catalog.get("attribution") or "").strip(),
+        }.items()
+        if value
+    }
+    return cleaned
+
+
+def catalog_extract_defaults(project: Path, plan: FragmentPlan | None = None) -> dict:
+    """Prefill extract-form fields from a catalog-backed parent project."""
+
+    from baroque_transcribe.project_manifest import load_project_manifest
+
+    manifest = load_project_manifest(project)
+    catalog = catalog_from_parent(manifest)
+    if not catalog:
+        return {}
+    bwv = catalog.get("bwv") or ""
+    measures = ""
+    if plan is not None:
+        measures = (
+            f"mm. {plan.measure_start}–{plan.measure_end}"
+            if plan.measure_start != plan.measure_end
+            else f"m. {plan.measure_start}"
+        )
+    title_bits = [f"BWV {bwv}" if bwv else "", str(manifest.get("title") or "").strip(), measures]
+    title = " — ".join(bit for bit in title_bits if bit)
+    tags = []
+    if bwv:
+        tags.append(f"bwv-{bwv.lower()}")
+    if catalog.get("collection_id"):
+        tags.append(str(catalog["collection_id"]))
+    return {
+        "title": title,
+        "composer": "Johann Sebastian Bach",
+        "tags": tags,
+        "catalog": catalog,
+    }
+
+
 def build_manifest(
     plan: FragmentPlan,
     *,
@@ -1070,7 +1123,8 @@ def build_manifest(
     provenance = dict(parent_provenance or {})
     if event_id and not provenance.get("event_id"):
         provenance["event_id"] = event_id
-    return {
+    catalog = catalog_from_parent(plan.parent_manifest)
+    payload = {
         "schema_version": FRAGMENT_SCHEMA_VERSION,
         "id": fragment_id,
         "title": " ".join(str(title).split()),
@@ -1147,6 +1201,9 @@ def build_manifest(
         "created_at": stamp,
         "modified_at": stamp,
     }
+    if catalog:
+        payload["catalog"] = catalog
+    return payload
 
 
 def grid_payload(plan: FragmentPlan) -> dict:

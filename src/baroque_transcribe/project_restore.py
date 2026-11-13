@@ -893,6 +893,9 @@ def _restored_manifest(selection: EventSelection) -> dict:
             manifest["youtube_url"] = str(source["url"])
         if kind in {"file", "midi"} and source.get("youtube_url"):
             manifest["youtube_url"] = str(source["youtube_url"])
+        catalog = state.get("catalog")
+        if isinstance(catalog, dict) and catalog:
+            manifest["catalog"] = dict(catalog)
     notes = _read_object(
         _contained_child(selection.score_folder, NOTES_JSON, "Artifact name")
     )

@@ -138,7 +138,7 @@ def fragments_page() -> None:
 
     from baroque_transcribe.ui import _brand, _flash
 
-    _brand(crumb="Fragments")
+    _brand(crumb="Fragments", current="home")
     _flash()
     report = reconcile_if_due()
     if report is not None and report.changed:
@@ -521,16 +521,30 @@ def extract_page() -> None:
         )
 
     composer, performer = last_credits(project)
+    from baroque_transcribe.fragments import catalog_extract_defaults
+
+    catalog_defaults = catalog_extract_defaults(project, plan)
+    if catalog_defaults.get("composer"):
+        composer = composer or str(catalog_defaults["composer"])
+    default_title = str(catalog_defaults.get("title") or "") or (
+        f"Measures {plan.measure_start}–{plan.measure_end}"
+        if plan.measure_start != plan.measure_end
+        else f"Measure {plan.measure_start}"
+    )
+    default_tags = ", ".join(catalog_defaults.get("tags") or ())
     title = st.text_input(
         "Title",
-        value=f"Measures {plan.measure_start}–{plan.measure_end}"
-        if plan.measure_start != plan.measure_end
-        else f"Measure {plan.measure_start}",
+        value=default_title,
         key=f"extract-title-{project.name}",
     )
     description = st.text_area("Description", key=f"extract-description-{project.name}")
     practice = st.text_area("Practice notes", key=f"extract-practice-{project.name}")
-    tags = st.text_input("Tags", placeholder="sequence, cadence", key=f"extract-tags-{project.name}")
+    tags = st.text_input(
+        "Tags",
+        value=default_tags,
+        placeholder="sequence, cadence",
+        key=f"extract-tags-{project.name}",
+    )
     c1, c2 = st.columns(2)
     composer = c1.text_input("Composer", value=composer, key=f"extract-composer-{project.name}")
     performer = c2.text_input("Performer", value=performer, key=f"extract-performer-{project.name}")

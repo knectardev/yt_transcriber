@@ -19,7 +19,7 @@ Where each object lives on disk, what Git tracks, and why the only SQLite file i
 
 | Module | Role |
 | --- | --- |
-| `src/baroque_transcribe/cli.py` | Commands: `prepare`, `transcribe`, `quantize`, `analyze`, `diagnostics`, `doctor`, `ui`, `history`, `fragments`, `storage` |
+| `src/baroque_transcribe/cli.py` | Commands: `prepare`, `transcribe`, `quantize`, `analyze`, `diagnostics`, `doctor`, `ui`, `history`, `fragments`, `catalog`, `storage` |
 | `audio.py` | Local WAV, MP3, or FLAC, or a YouTube URL. Writes `source.wav` and a trimmed, mono, 16 kHz, peak-normalized `working.wav`. Does not modify the original file. |
 | `checkpoint.py` | Downloads the Kong et al. checkpoint with Python, so Windows does not need `wget`. Accepts both the old pickle checkpoint and newer zip checkpoints. |
 | `transcribe.py` | ByteDance piano model by default. Basic Pitch ONNX as a baseline. CUDA when PyTorch can see a GPU, otherwise CPU. |
@@ -32,7 +32,8 @@ Where each object lives on disk, what Git tracks, and why the only SQLite file i
 | `compare.py` | Side-by-side variants under `project/comparison/` without touching the saved score. |
 | `metrics.py` | Rest/tie/voice/on-beat metrics for comparison reports. |
 | `diagnostics.py` | Waveform, spectrogram, piano roll, a tone rendering, and a mix of that rendering with the working audio. |
-| `ui.py` | Local Streamlit site. Home page: transcribe controls plus a library grid of transcribed videos, whose cards link to the transcription's page on the playback server. Edit & files page (`/project?project=<folder>`): audio and plots, the note table, the harmony labels, the files, and a Fragments tab. Fragment library (`/fragments`), extract form (`/extract`), fragment details (`/fragment?id=`). Library cards can Preview a fragment inline (score + tone WAV from notes). Links are `st.html` anchors, because `st.image(link=)`, Markdown links, and `st.link_button` always open a new tab. |
+| `ui.py` | Local Streamlit site. Home (`/`): fragment workspace. Bach catalog (`/catalog`), projects grid (`/projects`), transcribe/import (`/transcribe`). Edit & files (`/project?project=<folder>`). Legacy `/fragments` still works. Extract (`/extract`) and fragment details (`/fragment?id=`). Links are `st.html` anchors, because `st.image(link=)`, Markdown links, and `st.link_button` always open a new tab. |
+| `catalog.py` / `catalog_sync.py` / `catalog_open.py` / `catalog_ui.py` | Bach keyboard catalog metadata, polite overnight MIDI sync (`--keep-awake`), materialize-as-project, and Streamlit catalog page. |
 | `library.py` | Builds the library cards by merging the parse history with the project folders on disk, resolves the `project` address parameter to a folder, and lists the facts shown in a transcription's header (`run_facts`). |
 | `playback.py` | YouTube id parsing, plus a localhost server for each transcription's page (`/p/<token>/`, the video with the score following it) and its score-only page, and for each saved fragment (`/f/<token>/`). Passage selection, loop, and `?w=` / `?sel=` on the playback template. A project or fragment with no video is redirected to its score. |
 | `fragments.py` | `plan_fragment` / `extract_fragment`: grid membership, playback window, clipping, sliced `Quantization`, clocks, harmony slice, metadata and sync edits. Does not write the parent. |
@@ -153,7 +154,7 @@ python -m pip install -r requirements-ui.txt
 baroque-transcribe ui
 ```
 
-That opens http://127.0.0.1:8765 on the PC where the command is running. The home page starts transcriptions and lists what has been transcribed; clicking a thumbnail opens that transcription's page, the video with the score, in the same tab. Edit & files on that page opens the project's tools. **Fragment library** lists saved passages. `--project <folder>` opens a project's Edit & files page directly. `baroque-transcribe` exists only after `.venv\Scripts\activate`. In PowerShell or Command Prompt that is the activation line above. In Git Bash it is `source .venv/Scripts/activate`.
+That opens http://127.0.0.1:8765 on the PC where the command is running. The home page is the fragment workspace; **Bach catalog**, **Projects**, and **Transcribe** are primary destinations. Opening a catalog work or project card reaches the playback score page in one click (new tab on this PC; same-tab navigation from a LAN browser). Edit & files opens the project's tools. `--project <folder>` opens a project's Edit & files page directly. Overnight catalog download: `baroque-transcribe catalog sync --all --overnight --keep-awake --confirm` — safe to leave running while the UI stays up; git commit/push does not touch `catalog/midi/`. UI launch clears a leftover `PYTEST_CURRENT_TEST` from the parent shell so fragment paths resolve to the real repo. `baroque-transcribe` exists only after `.venv\Scripts\activate`. In PowerShell or Command Prompt that is the activation line above. In Git Bash it is `source .venv/Scripts/activate`.
 
 Optional Basic Pitch baseline, because its TensorFlow pin does not support Python 3.12:
 

@@ -1,5 +1,31 @@
 CURSOR:
-Do not do anything on this list until approved 
+Do not do anything on this list until approved
 
 
 Add midi catalog 
+https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/
+BWV 772-786 Inventions
+BWV 787-801 Sinfonias
+BWV 802-805 Four Duets
+BWV 806-811 English Suites
+BWV 812-817 French Suites
+BWV 818-824 Miscellaneous Suites
+BWV 825-831 Partitas
+BWV 832-845 Suites and Suite Movements
+BWV 846-869 The Well-Tempered Clavier Book I
+BWV 870-893 The Well-Tempered Clavier Book II
+BWV 894-902 Preludes and Fugues/Fughettas
+BWV 903-909 Fantasias and Fugues/Fughettas
+BWV 910-923 Toccatas, Fantasias and Preludes
+BWV 924-932 Little Preludes (Clavierbüchlein for W.F. Bach)
+BWV 933-938 Six Little Preludes
+BWV 939-943 Five Little Preludes
+
+DONE (implemented):
+- data/catalog/bach-keyboard.json (194 entries, metadata only)
+- catalog sync with 30–200s stochastic delays + --keep-awake
+- fragment-first home, /catalog, /projects, /transcribe
+- catalog open → same MIDI project / fragment path as manual upload
+
+Operator next step (optional overnight):
+  baroque-transcribe catalog sync --all --overnight --keep-awake --confirm
