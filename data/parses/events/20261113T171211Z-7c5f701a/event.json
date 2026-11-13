@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 29.8516,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171211Z-7c5f701a",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121211",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 29.85156
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "940",
+      "collection": "BWV 939-943 Five Little Preludes",
+      "collection_id": "bwv-939-943-five-little-preludes",
+      "entry_id": "bwv-0940",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/16-Kleine_Praeludien_II/BWV_0940.mid",
+      "pinned_sha256": "a1777d296cf73fd9f2f9ea116724abb4ad95dec8301974849eb0b168956b8341",
+      "source_filename": "BWV_0940.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/five-little-preludes/"
+    },
+    "import_settings_sha256": "1dd6840ff0907495c7cd504db28d8cdb23b32c5135acfd527917a28ab783593d",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "a1777d296cf73fd9f2f9ea116724abb4ad95dec8301974849eb0b168956b8341"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 940 — Prelude in d minor"
+  },
+  "recorded_at": "2026-11-13T17:12:11Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171211Z-7c5f701a",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "8b3c92d9c98a33c67867ec38d8b708b751c8cd7ec19625fb953f2a81a5cb9f22",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "5ec3933817c9b46c6c5be1482ad4d6eb3da7d8f5df9f3bbc44a1996ec6ec5519",
+        "raw.mid": "27b8524d4d0a80d8da05af2f8fc4d613a8a5f77f5026cd0002cb90ec27a089b3",
+        "score.musicxml": "ea5c55b380bfe73f8e4f459f1c9c7509dfd665b3b2fd28b871793589e6769c9f",
+        "source.mid": "a1777d296cf73fd9f2f9ea116724abb4ad95dec8301974849eb0b168956b8341"
+      },
+      "files": {
+        "notes.json": "da7e91af0d1da0141ff7eb7430e9bcb6ff5617ced1ae940e1e9bf580ca3e5192",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "5ec3933817c9b46c6c5be1482ad4d6eb3da7d8f5df9f3bbc44a1996ec6ec5519",
+        "raw.mid": "27b8524d4d0a80d8da05af2f8fc4d613a8a5f77f5026cd0002cb90ec27a089b3",
+        "score.musicxml": "c5a04d250e3dbfddd37e126959450a3957609a62b55a440407e05446ef992306",
+        "source.mid": "a1777d296cf73fd9f2f9ea116724abb4ad95dec8301974849eb0b168956b8341"
+      },
+      "project_state_sha256": "eefc297990157b022c5188bfc0538039a7105e6c157cb976a9ff4917b14dca89",
+      "sha256": "e4edcf44ed722b90c4ff42d4b440fe4f8062d08f58d004d35f4bf8108b1f290c"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "a1777d296cf73fd9f2f9ea116724abb4ad95dec8301974849eb0b168956b8341",
+    "title": "BWV 940 — Prelude in d minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

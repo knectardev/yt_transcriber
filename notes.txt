@@ -1,0 +1,242 @@
+# Cursor Task: Prepare YouTube Transcription App for LAN Hosting
+
+## Objective
+
+Convert the existing locally running YouTube/MIDI transcription application into a **LAN-accessible, self-hosted web application**, with this Windows desktop PC serving as the authoritative application server.
+
+Other devices on the local network—including Windows/Mac laptops, iPhones, and iPads—should be able to access the application through a browser, while all processing, downloads, storage, and project management remain centralized on this PC.
+
+**This is a deployment and configuration task, not an application rewrite.**
+
+Start in **Plan mode**. Inspect the existing architecture and propose the smallest safe set of changes before implementing anything.
+
+## 1. Audit the existing application
+
+Identify and document:
+
+- Frontend framework, development server, and build system.
+- Backend framework and API server.
+- Current ports, host bindings, and startup commands.
+- Python environment and transcription dependencies.
+- YouTube download and media processing pipeline.
+- MIDI/MusicXML upload, parsing, storage, and retrieval.
+- Project database and filesystem layout.
+- Audio/video playback and notation-rendering mechanisms.
+- Background job execution and persistence.
+- Any hardcoded `localhost`, `127.0.0.1`, absolute filesystem paths, or browser-local storage dependencies.
+
+Determine whether the application is already suitable for LAN deployment with only configuration changes.
+
+Do not modify application code until the audit is complete.
+
+## 2. Establish the PC as the authoritative server
+
+The intended architecture is:
+
+**Windows PC**
+- Hosts frontend and backend.
+- Runs all Python transcription processing.
+- Performs YouTube downloads.
+- Stores all MIDI, MusicXML, audio, project data, and generated fragments.
+- Maintains the authoritative Git repository and application environment.
+
+**Remote browser clients**
+- Access the application over HTTP.
+- Submit YouTube URLs and upload MIDI files.
+- Browse and manage the shared project library.
+- Display notation, playback, and fragment-selection interfaces.
+- Never require local Python dependencies or synchronized application storage.
+
+Ensure that requests initiated from a remote browser execute server-side operations on the PC.
+
+Do not introduce network file shares or client-side filesystem synchronization.
+
+## 3. Enable LAN access
+
+Determine the PC's current LAN IPv4 address and identify its active network interface.
+
+Configure the application to listen on an appropriate LAN-accessible interface rather than only loopback.
+
+Prefer a single browser-accessible origin, with backend API requests routed through that origin using a reverse proxy or equivalent existing framework configuration.
+
+Avoid hardcoded IP addresses or hostnames in application source code.
+
+Use environment variables or configuration files where appropriate.
+
+Verify that:
+
+- The application works locally on the PC.
+- The application is reachable using the PC's LAN IP.
+- API requests function when the frontend is opened from another device.
+- WebSocket connections, if used, work remotely.
+- Browser-generated asset URLs and media URLs resolve correctly.
+- YouTube embeds and MIDI/audio playback continue functioning.
+
+Check CORS, origin validation, cookies, and session handling where relevant. Prefer same-origin routing rather than permissive CORS.
+
+Do not disable security protections simply to make LAN access work.
+
+## 4. Windows Firewall
+
+Inspect existing Windows Firewall rules and identify the minimum inbound access required.
+
+If changes are necessary:
+
+- Restrict rules to the Private network profile.
+- Prefer limiting remote addresses to the local subnet.
+- Open only the required application port.
+- Do not enable unrestricted inbound access.
+- Do not modify router port forwarding or expose the application to the public internet.
+
+Present any required administrator-level changes for explicit approval before executing them.
+
+## 5. Centralize storage without restructuring it unnecessarily
+
+Audit existing storage paths and identify any dependencies on the machine or browser initiating a request.
+
+Confirm that all persistent project data resides on the PC, including:
+
+- Uploaded MIDI files.
+- Downloaded YouTube audio.
+- Transcription outputs.
+- Generated MusicXML.
+- Fragment selections and exports.
+- Project metadata and databases.
+
+Preserve existing project identifiers, immutable histories, and file relationships.
+
+**Do not migrate, delete, consolidate, or deduplicate existing project files as part of this task.**
+
+If storage changes are necessary for LAN operation, propose them separately and explain the compatibility implications.
+
+## 6. Background processing
+
+Verify that transcription jobs continue executing on the PC if the initiating browser disconnects or closes.
+
+If the existing architecture does not support this reliably, identify the smallest change needed.
+
+Do not introduce Redis, Celery, Docker, or another major infrastructure dependency unless there is a demonstrated requirement.
+
+Ensure simultaneous browser clients cannot corrupt project data or accidentally trigger conflicting writes.
+
+## 7. Browser compatibility
+
+Evaluate the application for use from:
+
+- Windows Chrome
+- macOS browsers
+- iPhone Safari
+- iPad Safari
+
+Identify features that depend on secure contexts, including Web MIDI, microphone access, or other restricted browser APIs.
+
+Do not assume plain HTTP over the LAN supports every browser capability.
+
+Document which features will work immediately and which may require local HTTPS or platform-specific accommodations.
+
+Avoid introducing HTTPS infrastructure in the initial implementation unless essential for basic application functionality.
+
+## 8. Server startup and reliability
+
+Determine the simplest reliable method for starting the application on Windows.
+
+Prefer a single documented startup command or script.
+
+Evaluate whether automatic startup using Windows Task Scheduler would be appropriate.
+
+Do not install background services, scheduled tasks, or system-wide dependencies without approval.
+
+Ensure application logs and processing errors remain accessible on the host PC.
+
+## 9. Prepare for future local DNS
+
+Do not configure the router or DNS yet.
+
+Instead:
+
+- Record the PC's current hostname.
+- Record its active LAN IPv4 address.
+- Identify the network interface and MAC address needed for DHCP reservation.
+- Identify the application port.
+- Confirm whether a hostname-based configuration is supported.
+- Document any requirements for using a future hostname such as `transcriber.home.arpa`.
+
+Do not change the PC's IP configuration, router settings, DNS resolver, or hosts file.
+
+The goal is to prepare the application so that introducing a stable hostname later requires little or no application code modification.
+
+## 10. Verification and deliverables
+
+Create a concise LAN deployment guide containing:
+
+1. Architecture summary.
+2. Commands required to start and stop the server.
+3. Local and LAN URLs.
+4. Required firewall configuration.
+5. Current LAN IP and network adapter details.
+6. Location of persistent project data.
+7. Browser compatibility limitations.
+8. Remaining steps for DHCP reservation and local DNS.
+9. Rollback instructions.
+
+Test the following workflows wherever possible:
+
+- Open application from the PC.
+- Open application from another LAN device.
+- Submit a YouTube URL.
+- Confirm downloads occur on the PC.
+- Start transcription and verify output storage.
+- Upload a MIDI file from a remote browser.
+- Open an existing project.
+- Play synchronized notation and audio.
+- Create and retrieve a fragment.
+- Close and reopen a client without losing project state.
+
+If remote devices are unavailable for automated testing, provide a short manual test procedure rather than claiming those tests passed.
+
+## Constraints
+
+- Preserve all existing functionality.
+- Preserve existing project data.
+- Preserve the existing Git repository.
+- Do not perform broad refactoring.
+- Do not introduce cloud infrastructure.
+- Do not create competing storage locations.
+- Do not expose the server to the public internet.
+- Do not modify router configuration.
+- Do not install or enable persistent system services without approval.
+- Do not make destructive filesystem or database changes.
+- Do not assume that LAN access requires a new application architecture.
+
+## Execution strategy
+
+**Phase 1 — Audit and plan**
+
+Inspect the repository and local environment. Produce a short implementation plan identifying necessary changes, risks, and verification steps.
+
+Distinguish clearly between:
+- Required changes.
+- Optional improvements.
+- Existing functionality that needs no modification.
+
+Stop and request approval before implementation.
+
+**Phase 2 — Minimal LAN deployment**
+
+After approval, implement only the changes needed to make the application accessible over the local network.
+
+Test existing functionality and document results.
+
+**Phase 3 — DNS preparation**
+
+Produce the network configuration details needed for a subsequent manual DHCP reservation and local DNS setup.
+
+Stop there. Do not configure DNS or router settings.
+
+## Success criterion
+
+I can sit at my laptop, open the transcription application using the Windows PC's LAN address, paste a YouTube URL or upload a MIDI file, and interact with the resulting project.
+
+All downloads, processing, storage, and project management occur on the desktop PC.
+
+No client-side application installation, Python environment, file synchronization, or duplicate project repository is required.

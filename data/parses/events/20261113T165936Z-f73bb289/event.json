@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 107.901,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165936Z-f73bb289",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115935",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 107.90104
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "847a",
+      "collection": "BWV 846-869 The Well-Tempered Clavier Book I",
+      "collection_id": "bwv-846-869-wtc-i",
+      "entry_id": "bwv-0847a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/09-Wohltemperiertes_Klavier_I/BWV_0847a.mid",
+      "pinned_sha256": "966b2d7c6c4a171fbc50d7ed3041cdae6577af0875fb1b38cde1bdf4e5f48c53",
+      "source_filename": "BWV_0847a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-i/"
+    },
+    "import_settings_sha256": "a1b888a649d10a3c82314b4f3470020cdbd756da3c3072077457a53b572e16c6",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "966b2d7c6c4a171fbc50d7ed3041cdae6577af0875fb1b38cde1bdf4e5f48c53"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 60.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 847a — Praeludium No. 2a"
+  },
+  "recorded_at": "2026-11-13T16:59:36Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165936Z-f73bb289",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "57e6bbb5211c360cc88f25023383b4796eff579d8d69b7dec0d2a3bbe31645e8",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "6536ac00a028a56a8f6767c764d2a228861093c240bf08324a48614f19641b22",
+        "raw.mid": "6d254fa332ba7193bab7e2f4276864f6030232e942c8a9b3f6338e7fc99b6f50",
+        "score.musicxml": "b18479ddb5dd8f8805c0d3dd349fcd0d7959fe055f8a6f40996a61b6edecca50",
+        "source.mid": "966b2d7c6c4a171fbc50d7ed3041cdae6577af0875fb1b38cde1bdf4e5f48c53"
+      },
+      "files": {
+        "notes.json": "4ed634cc393b4954c6306ff5c63b947747a4904517fe2e660924ba26d844b3ed",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "6536ac00a028a56a8f6767c764d2a228861093c240bf08324a48614f19641b22",
+        "raw.mid": "6d254fa332ba7193bab7e2f4276864f6030232e942c8a9b3f6338e7fc99b6f50",
+        "score.musicxml": "64615a52ec2079c2f6ecbaf55eaf5e9e44b20052fad3bf979e884a584dc04894",
+        "source.mid": "966b2d7c6c4a171fbc50d7ed3041cdae6577af0875fb1b38cde1bdf4e5f48c53"
+      },
+      "project_state_sha256": "dd56a736704e33adf36b174f16cc50ae9e86af71d15f58c80aff4a56feea3101",
+      "sha256": "e8e6e079e488719f00c2d92600172a7dddb517c401029a28e4d10778554094d9"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "966b2d7c6c4a171fbc50d7ed3041cdae6577af0875fb1b38cde1bdf4e5f48c53",
+    "title": "BWV 847a — Praeludium No. 2a"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

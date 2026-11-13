@@ -1,0 +1,203 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 129.5703,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171109Z-5548117a",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121106",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 129.57031
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "921",
+      "collection": "BWV 910-923 Toccatas, Fantasias and Preludes",
+      "collection_id": "bwv-910-923-toccatas-fantasias-and-preludes",
+      "entry_id": "bwv-0921",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/13-Toccaten_Fantasien_Praeludien/BWV_0921.mid",
+      "pinned_sha256": "aa4921a6b2689020925757be2069a6da452b4fbb0378cb9251c0fdd8b012812d",
+      "source_filename": "BWV_0921.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/toccatas-fantasias-and-preludes/"
+    },
+    "import_settings_sha256": "526a38f05f62193ecead67a3eb20502b6f1daedddd6e04a90a0398c14ada2a06",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "aa4921a6b2689020925757be2069a6da452b4fbb0378cb9251c0fdd8b012812d"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 16.8
+        },
+        {
+          "denominator": 8,
+          "numerator": 4,
+          "time": 51.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 101.4
+        },
+        {
+          "denominator": 16,
+          "numerator": 24,
+          "time": 120.60000000000001
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 127.80000000000001
+        }
+      ]
+    },
+    "title": "BWV 921 — Prelude (Fantasia) in c minor"
+  },
+  "recorded_at": "2026-11-13T17:11:09Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171109Z-5548117a",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "66ca8945b163e2defffe84bc5113af89276f779e90a893d844f52d97ef4e87d8",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "b829c6c668363f515978235eb348e0e01d870cdb1761894d7549de989fdf9c71",
+        "raw.mid": "752bdfd4e9dafbf0f5c2a41a2b9a1af02e74c9adca84f30bf9e726f57e7b5e11",
+        "score.musicxml": "72938be58b40a83d2b266818ef22bbd6633f6ac30fc0466a408310fad2064228",
+        "source.mid": "aa4921a6b2689020925757be2069a6da452b4fbb0378cb9251c0fdd8b012812d"
+      },
+      "files": {
+        "notes.json": "74b7c1b2d713c30a9ac80f1a8b8d895618356d603bfc424acaccd1aaa2ba7fb5",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "b829c6c668363f515978235eb348e0e01d870cdb1761894d7549de989fdf9c71",
+        "raw.mid": "752bdfd4e9dafbf0f5c2a41a2b9a1af02e74c9adca84f30bf9e726f57e7b5e11",
+        "score.musicxml": "8250b7efdcd66909806613a85a0d5378cf23478aa91c205b5cad43c55b261fc3",
+        "source.mid": "aa4921a6b2689020925757be2069a6da452b4fbb0378cb9251c0fdd8b012812d"
+      },
+      "project_state_sha256": "b727fa33ae26904d2bba7a37a71fab52e93e75e3c5f32bb48b84b551f765613a",
+      "sha256": "1d4a4e413a271531cc6d2eee0bdefcd895076a44f2be85292ae2d09f7204d2e8"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "aa4921a6b2689020925757be2069a6da452b4fbb0378cb9251c0fdd8b012812d",
+    "title": "BWV 921 — Prelude (Fantasia) in c minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

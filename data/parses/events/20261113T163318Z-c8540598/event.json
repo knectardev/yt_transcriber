@@ -1,0 +1,253 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1538.2545,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T163318Z-c8540598",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-113250",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1538.25451
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "816",
+      "collection": "BWV 812-817 French Suites",
+      "collection_id": "bwv-812-817-french-suites",
+      "entry_id": "bwv-0816",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/05-Franzoesische_Suiten/BWV_0816.mid",
+      "pinned_sha256": "699fdb318320cd241b0ad76516471a4d8dc73f85742295e5d9df6d5b7b9fc398",
+      "source_filename": "BWV_0816.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/french-suites/"
+    },
+    "import_settings_sha256": "a471975f6496ffaec6b8b4f8ef3f57ddbbb131de25ec2bf3bb70e641170c36fc",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "699fdb318320cd241b0ad76516471a4d8dc73f85742295e5d9df6d5b7b9fc398"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 74.000074000074,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 74.000074000074,
+          "time": 0.0
+        },
+        {
+          "bpm": 104.00001386666852,
+          "time": 155.67552
+        },
+        {
+          "bpm": 69.00001725000432,
+          "time": 266.44473600000003
+        },
+        {
+          "bpm": 150.0,
+          "time": 475.14033600000005
+        },
+        {
+          "bpm": 74.000074000074,
+          "time": 487.94033600000006
+        },
+        {
+          "bpm": 104.00001386666852,
+          "time": 643.6158560000001
+        },
+        {
+          "bpm": 69.00001725000432,
+          "time": 754.3850720000002
+        },
+        {
+          "bpm": 150.0,
+          "time": 963.0806720000002
+        },
+        {
+          "bpm": 192.0,
+          "time": 1027.080672
+        },
+        {
+          "bpm": 80.0,
+          "time": 1102.080672
+        },
+        {
+          "bpm": 69.00001725000432,
+          "time": 1246.080672
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 155.67552
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 475.14033600000005
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 487.94033600000006
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 643.6158560000001
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 963.0806720000002
+        },
+        {
+          "denominator": 4,
+          "numerator": 6,
+          "time": 1102.080672
+        },
+        {
+          "denominator": 16,
+          "numerator": 12,
+          "time": 1246.080672
+        }
+      ]
+    },
+    "title": "BWV 816 — Suite No. 5 in G major"
+  },
+  "recorded_at": "2026-11-13T16:33:18Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T163318Z-c8540598",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "bd6f86505e950b9f71b443bc74a30c4786a3d03978512fa2419f1904fe4f54f5",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "1d0084d469cfbc8ce1e84a08768d0dfada368a0cdb0e54c14892c6cb2eb637d5",
+        "raw.mid": "f76a3e47a055a2544c06522c439b482f02a1e03f118fecfd0700ffc4dcbc2a16",
+        "score.musicxml": "3bec6578253d4f85634c8b0d7dca5de2dfa30cbc714957767711026d9a290ec8",
+        "source.mid": "699fdb318320cd241b0ad76516471a4d8dc73f85742295e5d9df6d5b7b9fc398"
+      },
+      "files": {
+        "notes.json": "6c9b633c85cead0b56ec720a0ac9109b50e1646345f90e9cc347170c36d47e51",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "1d0084d469cfbc8ce1e84a08768d0dfada368a0cdb0e54c14892c6cb2eb637d5",
+        "raw.mid": "f76a3e47a055a2544c06522c439b482f02a1e03f118fecfd0700ffc4dcbc2a16",
+        "score.musicxml": "6d826bddba7458ebd5cac0ccd578ad316f56eaedb393d9fbd8a1efc5524bee2b",
+        "source.mid": "699fdb318320cd241b0ad76516471a4d8dc73f85742295e5d9df6d5b7b9fc398"
+      },
+      "project_state_sha256": "fedd6f16a4e5e02c513a967e4dedf32900f29f01d636cce25bd8228b1151af47",
+      "sha256": "52c3a0cac5fe20598a5a97d8e54375719e36e940a0fe6d6ca9569da4732224c1"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "699fdb318320cd241b0ad76516471a4d8dc73f85742295e5d9df6d5b7b9fc398",
+    "title": "BWV 816 — Suite No. 5 in G major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

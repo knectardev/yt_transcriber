@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "model": "midi-import",
+  "control": 64,
+  "description": "Sustain pedal down/up times in seconds, relative to working.wav. The same events are also stored as MIDI CC 64 inside raw.mid.",
+  "pedals": []
+}

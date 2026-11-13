@@ -1,0 +1,304 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1746.0423,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T164049Z-cd514c85",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-113803",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1746.04229
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "818a",
+      "collection": "BWV 818-824 Miscellaneous Suites",
+      "collection_id": "bwv-818-824-miscellaneous-suites",
+      "entry_id": "bwv-0818a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/06-Diverse_Suiten/BWV_0818a.mid",
+      "pinned_sha256": "6f1c84e52d3a336b3ada700e7fed044aa89a44e77dfce9ba8dee11722f5a626d",
+      "source_filename": "BWV_0818a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/miscellaneous-suites/"
+    },
+    "import_settings_sha256": "373e242612faf20f7d8b94a7bf114a5e970d56c3d6049feccd2155ec7aedee6c",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "6f1c84e52d3a336b3ada700e7fed044aa89a44e77dfce9ba8dee11722f5a626d"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 112.00005973336519,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 112.00005973336519,
+          "time": 0.0
+        },
+        {
+          "bpm": 80.0,
+          "time": 124.28564800000002
+        },
+        {
+          "bpm": 132.000132000132,
+          "time": 256.28564800000004
+        },
+        {
+          "bpm": 66.000066000066,
+          "time": 343.55828800000006
+        },
+        {
+          "bpm": 80.0,
+          "time": 430.8309280000001
+        },
+        {
+          "bpm": 132.000132000132,
+          "time": 562.8309280000001
+        },
+        {
+          "bpm": 66.000066000066,
+          "time": 650.1035680000001
+        },
+        {
+          "bpm": 80.0,
+          "time": 737.3762080000001
+        },
+        {
+          "bpm": 132.000132000132,
+          "time": 923.1887080000001
+        },
+        {
+          "bpm": 66.000066000066,
+          "time": 1010.4613480000002
+        },
+        {
+          "bpm": 80.0,
+          "time": 1097.7339880000002
+        },
+        {
+          "bpm": 132.000132000132,
+          "time": 1229.7339880000002
+        },
+        {
+          "bpm": 66.000066000066,
+          "time": 1317.006628
+        },
+        {
+          "bpm": 80.0,
+          "time": 1404.279268
+        },
+        {
+          "bpm": 60.0,
+          "time": 1458.091768
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 256.28564800000004
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 343.55828800000006
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 430.8309280000001
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 562.8309280000001
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 650.1035680000001
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 737.3762080000001
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 791.1887080000001
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 923.1887080000001
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 1010.4613480000002
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 1097.7339880000002
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 1229.7339880000002
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 1317.006628
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 1404.279268
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 1458.091768
+        }
+      ]
+    },
+    "title": "BWV 818a — Suite in a minor (early version)"
+  },
+  "recorded_at": "2026-11-13T16:40:49Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T164049Z-cd514c85",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "a63fe47fa6635ad3401eee0ba1338306bc0889f4850c3736053439a4d906e182",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "8671c4e06ec2f6284d3eaadb766623065d5e8d80f590c31e39f0db47d4a1b442",
+        "raw.mid": "fee8a23cdb6b29bb6090502794584bb1008d5e66a1e66fa7e698754f1e70be08",
+        "score.musicxml": "afbccd6c2f2e337b7f1e24bf6d4e0f8801e9d5f7226212dd022ebebcea55b7ae",
+        "source.mid": "6f1c84e52d3a336b3ada700e7fed044aa89a44e77dfce9ba8dee11722f5a626d"
+      },
+      "files": {
+        "notes.json": "ba4fb7c6a41c57bba8d44efdaaaa6b5b93c30f5e7db5bad35b655f438d673237",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "8671c4e06ec2f6284d3eaadb766623065d5e8d80f590c31e39f0db47d4a1b442",
+        "raw.mid": "fee8a23cdb6b29bb6090502794584bb1008d5e66a1e66fa7e698754f1e70be08",
+        "score.musicxml": "cb98f98fdffb9a7bfc40912665cea66026e44213093b4316d0e49fea4e913243",
+        "source.mid": "6f1c84e52d3a336b3ada700e7fed044aa89a44e77dfce9ba8dee11722f5a626d"
+      },
+      "project_state_sha256": "799a15bf15d562e0df45fae7274f37fb2d26b876d8b248d64517700e3714157c",
+      "sha256": "e1150e869507a59c7e5b78faa469d0d85da49f3c46c548cf5ea50ecda7041dec"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "6f1c84e52d3a336b3ada700e7fed044aa89a44e77dfce9ba8dee11722f5a626d",
+    "title": "BWV 818a — Suite in a minor (early version)"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

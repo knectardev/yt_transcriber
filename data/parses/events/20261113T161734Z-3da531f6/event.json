@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 86.3417,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161734Z-3da531f6",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083503",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 86.34167
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "797",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0797",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0797.mid",
+      "pinned_sha256": "e96fc88586183876c6216fd200c23cfa0af510f8e14d7824037d6cc9baafbcc0",
+      "source_filename": "BWV_0797.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "3b9c35dc40d33acaeb861d389021c1d6b3eefa38891468d5e44159ee3767dfeb",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "e96fc88586183876c6216fd200c23cfa0af510f8e14d7824037d6cc9baafbcc0"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 75.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 75.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 797 — Sinfonia No. 11"
+  },
+  "recorded_at": "2026-11-13T16:17:34Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133504Z-658cb98d",
+    "parent_event_id": "20261113T133504Z-658cb98d",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "9abe708164ae2127ca8aa5f933e14a31779c8136f1d6582b6028faf0bd7dabc2",
+        "notes.json": "e0757dc03ca5c2316b0e1b5c2ebb5c2e3cc7a32cc885ab5656fa0f88743684d7",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "13edd7936abd2a9cf177b6342e2d1bf53262ef1fc228ea45502d1988bd553520",
+        "raw.mid": "8a4eeadf739b9278809b8d5a745f87f0acf742d6da9a5d2586f831a7514f7892",
+        "score.musicxml": "e6cb192a7221b1f8f2c2f87d87a4d7375b1d449c50a090d9786684c595aecb11",
+        "source.mid": "e96fc88586183876c6216fd200c23cfa0af510f8e14d7824037d6cc9baafbcc0"
+      },
+      "files": {
+        "annotations.json": "f08e89f839c5998e534a83d963de3439c1dd770b80e7760db3fb6a0fc46bb4db",
+        "notes.json": "724fef9cdd31079b7cb8fd9c7be62f21f67e167627becb794d8025907bd7496d",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "13edd7936abd2a9cf177b6342e2d1bf53262ef1fc228ea45502d1988bd553520",
+        "raw.mid": "8a4eeadf739b9278809b8d5a745f87f0acf742d6da9a5d2586f831a7514f7892",
+        "score.musicxml": "15c4b4e3e22075eec4dcf7c9caa3bd4a87b5685f4950fb2d07d014cc7325a995",
+        "source.mid": "e96fc88586183876c6216fd200c23cfa0af510f8e14d7824037d6cc9baafbcc0"
+      },
+      "project_state_sha256": "a28369cccadb9954f0cc0c9ff9eb49c09ad10c95da4ac84678f457f4cbb9208a",
+      "sha256": "a6ac8342a900b0c0f42e25e7a70fc86a6dc7508f6805d30fdb231764bf7053c7"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "e96fc88586183876c6216fd200c23cfa0af510f8e14d7824037d6cc9baafbcc0",
+    "title": "BWV 797 — Sinfonia No. 11"
+  },
+  "status": "ok",
+  "version": 2
+}

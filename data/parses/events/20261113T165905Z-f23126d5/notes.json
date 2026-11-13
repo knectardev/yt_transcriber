@@ -1,0 +1,4184 @@
+{
+  "version": 1,
+  "model": "midi-import",
+  "source": "source.mid",
+  "notes": [
+    {
+      "pitch": 67,
+      "onset": 0.83333,
+      "offset": 0.99219,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 1.0,
+      "offset": 1.95052,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 1.0,
+      "offset": 1.47569,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 1.0,
+      "offset": 1.47569,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 1.0,
+      "offset": 1.47569,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 1.5,
+      "offset": 1.65885,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 1.66667,
+      "offset": 1.82552,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 1.83333,
+      "offset": 1.99219,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 2.0,
+      "offset": 3.47569,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 2.0,
+      "offset": 2.15885,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 2.16666,
+      "offset": 2.32552,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 2.33333,
+      "offset": 2.49219,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 2.5,
+      "offset": 2.65885,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 2.66666,
+      "offset": 2.82552,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 2.83333,
+      "offset": 2.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 3.0,
+      "offset": 3.15885,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 3.16666,
+      "offset": 3.32552,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 3.33333,
+      "offset": 3.80902,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 3.5,
+      "offset": 3.65885,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 3.66666,
+      "offset": 3.82552,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 3.83333,
+      "offset": 3.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 3.83333,
+      "offset": 3.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 4.0,
+      "offset": 4.95052,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 4.0,
+      "offset": 4.47569,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 4.16666,
+      "offset": 4.32552,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 4.33333,
+      "offset": 5.15885,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 4.5,
+      "offset": 4.65885,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 4.66666,
+      "offset": 4.82552,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 4.83333,
+      "offset": 4.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 5.0,
+      "offset": 5.95051,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 5.0,
+      "offset": 5.47569,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 5.16666,
+      "offset": 5.32552,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 5.33333,
+      "offset": 6.15885,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 5.49999,
+      "offset": 5.65885,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 5.66666,
+      "offset": 5.82552,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 5.83333,
+      "offset": 5.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 5.99999,
+      "offset": 6.95051,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 5.99999,
+      "offset": 6.47569,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 6.16666,
+      "offset": 6.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 63,
+      "onset": 6.33333,
+      "offset": 6.96701,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 6.49999,
+      "offset": 6.65885,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 6.66666,
+      "offset": 6.82551,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 6.83333,
+      "offset": 6.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 6.99999,
+      "offset": 8.63367,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 6.99999,
+      "offset": 7.15885,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 7.16666,
+      "offset": 7.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 7.33333,
+      "offset": 7.49218,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 7.49999,
+      "offset": 7.65885,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 7.66666,
+      "offset": 7.82551,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 7.83333,
+      "offset": 7.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 58,
+      "onset": 7.99999,
+      "offset": 8.15885,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 8.16666,
+      "offset": 8.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 8.33333,
+      "offset": 8.49218,
+      "velocity": 100
+    },
+    {
+      "pitch": 58,
+      "onset": 8.49999,
+      "offset": 8.65885,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 8.66666,
+      "offset": 8.9835,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 8.66666,
+      "offset": 8.82551,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 8.83332,
+      "offset": 8.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 49,
+      "onset": 8.99999,
+      "offset": 9.31683,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 8.99999,
+      "offset": 9.15885,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 9.16666,
+      "offset": 9.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 9.33332,
+      "offset": 9.65016,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 9.33332,
+      "offset": 9.49218,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 9.49999,
+      "offset": 9.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 9.66666,
+      "offset": 9.9835,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 9.66666,
+      "offset": 9.82551,
+      "velocity": 100
+    },
+    {
+      "pitch": 56,
+      "onset": 9.83332,
+      "offset": 9.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 45,
+      "onset": 9.99999,
+      "offset": 10.95051,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 9.99999,
+      "offset": 10.47568,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 9.99999,
+      "offset": 10.15884,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 10.16666,
+      "offset": 10.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 10.33332,
+      "offset": 10.49218,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 10.49999,
+      "offset": 10.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 10.49999,
+      "offset": 10.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 10.66666,
+      "offset": 10.82551,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 10.66666,
+      "offset": 11.15884,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 10.83332,
+      "offset": 10.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 45,
+      "onset": 10.99999,
+      "offset": 11.95051,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 10.99999,
+      "offset": 11.63367,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 11.16666,
+      "offset": 11.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 11.33332,
+      "offset": 11.49218,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 11.49999,
+      "offset": 11.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 11.66666,
+      "offset": 12.15884,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 11.83332,
+      "offset": 11.99218,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 11.99999,
+      "offset": 12.95051,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 11.99999,
+      "offset": 12.63367,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 12.16665,
+      "offset": 12.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 12.33332,
+      "offset": 12.49218,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 12.49999,
+      "offset": 12.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 12.66665,
+      "offset": 13.15884,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 12.83332,
+      "offset": 12.99217,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 12.99999,
+      "offset": 14.31683,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 12.99999,
+      "offset": 13.49999,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 13.16665,
+      "offset": 13.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 13.33332,
+      "offset": 13.49217,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 13.49999,
+      "offset": 13.95051,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 13.66665,
+      "offset": 13.82551,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 13.83332,
+      "offset": 13.99217,
+      "velocity": 100
+    },
+    {
+      "pitch": 65,
+      "onset": 13.99999,
+      "offset": 14.15884,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 14.16665,
+      "offset": 14.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 58,
+      "onset": 14.33332,
+      "offset": 14.967,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 14.33332,
+      "offset": 14.49217,
+      "velocity": 100
+    },
+    {
+      "pitch": 70,
+      "onset": 14.49999,
+      "offset": 14.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 14.66665,
+      "offset": 14.82551,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 14.83332,
+      "offset": 14.99217,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 14.99999,
+      "offset": 15.31682,
+      "velocity": 100
+    },
+    {
+      "pitch": 63,
+      "onset": 14.99999,
+      "offset": 15.15884,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 15.16665,
+      "offset": 15.32551,
+      "velocity": 100
+    },
+    {
+      "pitch": 56,
+      "onset": 15.33332,
+      "offset": 15.967,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 15.33332,
+      "offset": 15.49217,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 15.49998,
+      "offset": 15.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 15.66665,
+      "offset": 15.82551,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 15.83332,
+      "offset": 15.99217,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 15.99998,
+      "offset": 16.31682,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 15.99998,
+      "offset": 16.15884,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 16.16665,
+      "offset": 16.3255,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 16.33332,
+      "offset": 16.967,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 16.33332,
+      "offset": 16.49217,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 16.49998,
+      "offset": 16.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 16.66665,
+      "offset": 16.8255,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 16.83332,
+      "offset": 16.99217,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 16.99998,
+      "offset": 17.31682,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 16.99998,
+      "offset": 17.15884,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 17.16665,
+      "offset": 17.3255,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 17.33332,
+      "offset": 17.65016,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 17.33332,
+      "offset": 17.49217,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 17.49998,
+      "offset": 17.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 17.66665,
+      "offset": 17.98349,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 17.66665,
+      "offset": 17.8255,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 17.83332,
+      "offset": 17.99217,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 17.99998,
+      "offset": 18.31682,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 17.99998,
+      "offset": 18.15884,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 18.16665,
+      "offset": 18.3255,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 18.33331,
+      "offset": 18.65015,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 18.33331,
+      "offset": 18.49217,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 18.49998,
+      "offset": 18.65884,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 18.66665,
+      "offset": 18.98349,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 18.66665,
+      "offset": 18.8255,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 18.83331,
+      "offset": 18.99217,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 18.99998,
+      "offset": 19.9505,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 19.16665,
+      "offset": 19.96699,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 19.33331,
+      "offset": 19.96699,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 19.49998,
+      "offset": 20.63366,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 19.66665,
+      "offset": 20.63366,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 19.83331,
+      "offset": 20.63366,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 19.99998,
+      "offset": 20.63366,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 19.99998,
+      "offset": 20.63366,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 19.99998,
+      "offset": 20.63366,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 19.99998,
+      "offset": 20.63366,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 20.83331,
+      "offset": 20.99217,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 20.99998,
+      "offset": 21.9505,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 20.99998,
+      "offset": 21.47567,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 20.99998,
+      "offset": 21.47567,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 20.99998,
+      "offset": 21.47567,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 21.49998,
+      "offset": 21.65883,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 21.66664,
+      "offset": 21.8255,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 21.83331,
+      "offset": 21.99217,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 21.99998,
+      "offset": 23.47567,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 21.99998,
+      "offset": 22.15883,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 22.16664,
+      "offset": 22.3255,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 22.33331,
+      "offset": 22.49217,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 22.49998,
+      "offset": 22.65883,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 22.66664,
+      "offset": 22.8255,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 22.83331,
+      "offset": 22.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 22.99998,
+      "offset": 23.15883,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 23.16664,
+      "offset": 23.3255,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 23.33331,
+      "offset": 23.809,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 23.49998,
+      "offset": 23.65883,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 23.66664,
+      "offset": 23.8255,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 23.83331,
+      "offset": 23.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 23.83331,
+      "offset": 23.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 23.99998,
+      "offset": 24.9505,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 23.99998,
+      "offset": 24.47567,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 24.16664,
+      "offset": 24.3255,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 24.33331,
+      "offset": 25.15883,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 24.49998,
+      "offset": 24.65883,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 24.66664,
+      "offset": 24.8255,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 24.83331,
+      "offset": 24.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 24.99997,
+      "offset": 25.95049,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 24.99997,
+      "offset": 25.47567,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 25.16664,
+      "offset": 25.3255,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 25.33331,
+      "offset": 26.15883,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 25.49997,
+      "offset": 25.65883,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 25.66664,
+      "offset": 25.8255,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 25.83331,
+      "offset": 25.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 25.99997,
+      "offset": 26.95049,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 25.99997,
+      "offset": 26.47567,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 26.16664,
+      "offset": 26.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 63,
+      "onset": 26.33331,
+      "offset": 26.96699,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 26.49997,
+      "offset": 26.65883,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 26.66664,
+      "offset": 26.82549,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 26.83331,
+      "offset": 26.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 26.99997,
+      "offset": 28.63365,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 26.99997,
+      "offset": 27.15883,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 27.16664,
+      "offset": 27.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 27.33331,
+      "offset": 27.49216,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 27.49997,
+      "offset": 27.65883,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 27.66664,
+      "offset": 27.82549,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 27.83331,
+      "offset": 27.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 58,
+      "onset": 27.99997,
+      "offset": 28.15883,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 28.16664,
+      "offset": 28.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 28.3333,
+      "offset": 28.49216,
+      "velocity": 100
+    },
+    {
+      "pitch": 58,
+      "onset": 28.49997,
+      "offset": 28.65883,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 28.66664,
+      "offset": 28.98348,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 28.66664,
+      "offset": 28.82549,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 28.8333,
+      "offset": 28.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 49,
+      "onset": 28.99997,
+      "offset": 29.31681,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 28.99997,
+      "offset": 29.15883,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 29.16664,
+      "offset": 29.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 29.3333,
+      "offset": 29.65014,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 29.3333,
+      "offset": 29.49216,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 29.49997,
+      "offset": 29.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 29.66664,
+      "offset": 29.98348,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 29.66664,
+      "offset": 29.82549,
+      "velocity": 100
+    },
+    {
+      "pitch": 56,
+      "onset": 29.8333,
+      "offset": 29.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 45,
+      "onset": 29.99997,
+      "offset": 30.95049,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 29.99997,
+      "offset": 30.47566,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 29.99997,
+      "offset": 30.15882,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 30.16664,
+      "offset": 30.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 30.3333,
+      "offset": 30.49216,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 30.49997,
+      "offset": 30.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 30.49997,
+      "offset": 30.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 30.66664,
+      "offset": 30.82549,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 30.66664,
+      "offset": 31.15882,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 30.8333,
+      "offset": 30.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 45,
+      "onset": 30.99997,
+      "offset": 31.95049,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 30.99997,
+      "offset": 31.63365,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 31.16664,
+      "offset": 31.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 31.3333,
+      "offset": 31.49216,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 31.49997,
+      "offset": 31.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 31.66663,
+      "offset": 32.15882,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 31.8333,
+      "offset": 31.99216,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 31.99997,
+      "offset": 32.95049,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 31.99997,
+      "offset": 32.63365,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 32.16663,
+      "offset": 32.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 32.3333,
+      "offset": 32.49216,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 32.49997,
+      "offset": 32.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 32.66663,
+      "offset": 33.15882,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 32.8333,
+      "offset": 32.99215,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 32.99997,
+      "offset": 34.31681,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 32.99997,
+      "offset": 33.49997,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 33.16663,
+      "offset": 33.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 33.3333,
+      "offset": 33.49215,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 33.49997,
+      "offset": 33.95049,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 33.66663,
+      "offset": 33.82549,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 33.8333,
+      "offset": 33.99215,
+      "velocity": 100
+    },
+    {
+      "pitch": 65,
+      "onset": 33.99997,
+      "offset": 34.15882,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 34.16663,
+      "offset": 34.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 58,
+      "onset": 34.3333,
+      "offset": 34.96698,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 34.3333,
+      "offset": 34.49215,
+      "velocity": 100
+    },
+    {
+      "pitch": 70,
+      "onset": 34.49997,
+      "offset": 34.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 34.66663,
+      "offset": 34.82549,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 34.8333,
+      "offset": 34.99215,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 34.99997,
+      "offset": 35.3168,
+      "velocity": 100
+    },
+    {
+      "pitch": 63,
+      "onset": 34.99997,
+      "offset": 35.15882,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 35.16663,
+      "offset": 35.32549,
+      "velocity": 100
+    },
+    {
+      "pitch": 56,
+      "onset": 35.3333,
+      "offset": 35.96698,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 35.3333,
+      "offset": 35.49215,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 35.49996,
+      "offset": 35.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 35.66663,
+      "offset": 35.82549,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 35.8333,
+      "offset": 35.99215,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 35.99996,
+      "offset": 36.3168,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 35.99996,
+      "offset": 36.15882,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 36.16663,
+      "offset": 36.32548,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 36.3333,
+      "offset": 36.96698,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 36.3333,
+      "offset": 36.49215,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 36.49996,
+      "offset": 36.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 36.66663,
+      "offset": 36.82548,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 36.8333,
+      "offset": 36.99215,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 36.99996,
+      "offset": 37.3168,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 36.99996,
+      "offset": 37.15882,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 37.16663,
+      "offset": 37.32548,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 37.3333,
+      "offset": 37.65014,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 37.3333,
+      "offset": 37.49215,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 37.49996,
+      "offset": 37.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 37.66663,
+      "offset": 37.98347,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 37.66663,
+      "offset": 37.82548,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 37.8333,
+      "offset": 37.99215,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 37.99996,
+      "offset": 38.3168,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 37.99996,
+      "offset": 38.15882,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 38.16663,
+      "offset": 38.32548,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 38.33329,
+      "offset": 38.65013,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 38.33329,
+      "offset": 38.49215,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 38.49996,
+      "offset": 38.65882,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 38.66663,
+      "offset": 38.98347,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 38.66663,
+      "offset": 38.82548,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 38.83329,
+      "offset": 38.99215,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 38.99996,
+      "offset": 39.95048,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 39.16663,
+      "offset": 39.96697,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 39.33329,
+      "offset": 39.96697,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 39.49996,
+      "offset": 40.63364,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 39.66663,
+      "offset": 40.63364,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 39.83329,
+      "offset": 40.63364,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 39.99996,
+      "offset": 40.63364,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 39.99996,
+      "offset": 40.63364,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 39.99996,
+      "offset": 40.63364,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 39.99996,
+      "offset": 40.63364,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 40.83329,
+      "offset": 40.99215,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 40.99996,
+      "offset": 41.95048,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 40.99996,
+      "offset": 41.95048,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 40.99996,
+      "offset": 41.47565,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 40.99996,
+      "offset": 41.47565,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 40.99996,
+      "offset": 41.47565,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 41.49996,
+      "offset": 41.65881,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 41.66663,
+      "offset": 41.82548,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 41.83329,
+      "offset": 41.99215,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 41.99996,
+      "offset": 42.3168,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 41.99996,
+      "offset": 42.15881,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 42.16662,
+      "offset": 42.32548,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 42.33329,
+      "offset": 42.96697,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 42.33329,
+      "offset": 42.49215,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 42.49996,
+      "offset": 42.65881,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 42.66662,
+      "offset": 42.82548,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 42.83329,
+      "offset": 42.99214,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 42.99996,
+      "offset": 43.95048,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 42.99996,
+      "offset": 43.3168,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 43.16662,
+      "offset": 43.33329,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 43.33329,
+      "offset": 43.96697,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 43.33329,
+      "offset": 43.96697,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 43.49996,
+      "offset": 44.3168,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 43.66662,
+      "offset": 44.3168,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 43.83329,
+      "offset": 44.3168,
+      "velocity": 100
+    },
+    {
+      "pitch": 53,
+      "onset": 43.99996,
+      "offset": 44.95048,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 44.16662,
+      "offset": 44.96697,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 44.33329,
+      "offset": 44.96697,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 44.49996,
+      "offset": 44.65881,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 44.66662,
+      "offset": 44.82548,
+      "velocity": 100
+    },
+    {
+      "pitch": 79,
+      "onset": 44.83329,
+      "offset": 44.99214,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 44.99995,
+      "offset": 45.63363,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 44.99995,
+      "offset": 45.15881,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 45.16662,
+      "offset": 45.32548,
+      "velocity": 100
+    },
+    {
+      "pitch": 79,
+      "onset": 45.33329,
+      "offset": 45.49214,
+      "velocity": 100
+    },
+    {
+      "pitch": 70,
+      "onset": 45.49995,
+      "offset": 45.65881,
+      "velocity": 100
+    },
+    {
+      "pitch": 53,
+      "onset": 45.66662,
+      "offset": 45.98346,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 45.66662,
+      "offset": 45.82548,
+      "velocity": 100
+    },
+    {
+      "pitch": 77,
+      "onset": 45.83329,
+      "offset": 45.99214,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 45.99995,
+      "offset": 46.63363,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 45.99995,
+      "offset": 46.15881,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 46.16662,
+      "offset": 46.32547,
+      "velocity": 100
+    },
+    {
+      "pitch": 77,
+      "onset": 46.33329,
+      "offset": 46.49214,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 46.49995,
+      "offset": 46.65881,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 46.66662,
+      "offset": 46.98346,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 46.66662,
+      "offset": 46.82547,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 46.83329,
+      "offset": 46.99214,
+      "velocity": 100
+    },
+    {
+      "pitch": 53,
+      "onset": 46.99995,
+      "offset": 47.31679,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 46.99995,
+      "offset": 47.15881,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 47.16662,
+      "offset": 47.32547,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 47.33329,
+      "offset": 47.65013,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 47.33329,
+      "offset": 47.49214,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 47.49995,
+      "offset": 47.65881,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 47.66662,
+      "offset": 47.98346,
+      "velocity": 100
+    },
+    {
+      "pitch": 65,
+      "onset": 47.66662,
+      "offset": 47.82547,
+      "velocity": 100
+    },
+    {
+      "pitch": 70,
+      "onset": 47.83329,
+      "offset": 47.99214,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 47.99995,
+      "offset": 48.31679,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 47.99995,
+      "offset": 48.15881,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 48.16662,
+      "offset": 48.32547,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 48.33329,
+      "offset": 48.65012,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 48.33329,
+      "offset": 48.49214,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 48.49995,
+      "offset": 48.65881,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 48.66662,
+      "offset": 48.98346,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 48.66662,
+      "offset": 48.82547,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 48.83328,
+      "offset": 48.99214,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 48.99995,
+      "offset": 49.31679,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 48.99995,
+      "offset": 49.15881,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 49.16662,
+      "offset": 49.32547,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 49.33328,
+      "offset": 49.65012,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 49.33328,
+      "offset": 49.49214,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 49.49995,
+      "offset": 49.6588,
+      "velocity": 100
+    },
+    {
+      "pitch": 40,
+      "onset": 49.66662,
+      "offset": 49.98346,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 49.66662,
+      "offset": 49.82547,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 49.83328,
+      "offset": 49.99214,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 49.99995,
+      "offset": 50.95047,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 49.99995,
+      "offset": 50.47564,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 50.16662,
+      "offset": 50.96696,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 50.33328,
+      "offset": 50.96696,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 50.49995,
+      "offset": 51.47564,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 50.66662,
+      "offset": 51.47564,
+      "velocity": 100
+    },
+    {
+      "pitch": 81,
+      "onset": 50.83328,
+      "offset": 51.47564,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 50.99995,
+      "offset": 51.95047,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 51.16662,
+      "offset": 51.96696,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 51.33328,
+      "offset": 51.96696,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 51.49995,
+      "offset": 51.6588,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 51.66662,
+      "offset": 51.82547,
+      "velocity": 100
+    },
+    {
+      "pitch": 81,
+      "onset": 51.83328,
+      "offset": 51.99214,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 51.99995,
+      "offset": 52.63363,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 51.99995,
+      "offset": 52.1588,
+      "velocity": 100
+    },
+    {
+      "pitch": 78,
+      "onset": 52.16661,
+      "offset": 52.32547,
+      "velocity": 100
+    },
+    {
+      "pitch": 81,
+      "onset": 52.33328,
+      "offset": 52.49214,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 52.49995,
+      "offset": 52.6588,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 52.66661,
+      "offset": 52.98345,
+      "velocity": 100
+    },
+    {
+      "pitch": 79,
+      "onset": 52.66661,
+      "offset": 52.82547,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 52.83328,
+      "offset": 52.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 52.99995,
+      "offset": 53.63363,
+      "velocity": 100
+    },
+    {
+      "pitch": 78,
+      "onset": 52.99995,
+      "offset": 53.1588,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 53.16661,
+      "offset": 53.32547,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 53.33328,
+      "offset": 53.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 53.49995,
+      "offset": 53.6588,
+      "velocity": 100
+    },
+    {
+      "pitch": 49,
+      "onset": 53.66661,
+      "offset": 53.98345,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 53.66661,
+      "offset": 53.82547,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 53.83328,
+      "offset": 53.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 53.99995,
+      "offset": 54.63363,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 53.99995,
+      "offset": 54.1588,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 54.16661,
+      "offset": 54.32547,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 54.33328,
+      "offset": 54.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 54.49995,
+      "offset": 54.6588,
+      "velocity": 100
+    },
+    {
+      "pitch": 51,
+      "onset": 54.66661,
+      "offset": 54.98345,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 54.66661,
+      "offset": 54.82547,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 54.83328,
+      "offset": 54.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 54.99995,
+      "offset": 55.63362,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 54.99995,
+      "offset": 55.1588,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 55.16661,
+      "offset": 55.32547,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 55.33328,
+      "offset": 55.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 55.49994,
+      "offset": 55.6588,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 55.66661,
+      "offset": 55.98345,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 55.66661,
+      "offset": 55.82547,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 55.83328,
+      "offset": 55.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 55.99994,
+      "offset": 57.31678,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 55.99994,
+      "offset": 56.1588,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 56.16661,
+      "offset": 56.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 65,
+      "onset": 56.33328,
+      "offset": 56.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 56.49994,
+      "offset": 56.6588,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 56.66661,
+      "offset": 56.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 56.83328,
+      "offset": 56.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 63,
+      "onset": 56.99994,
+      "offset": 57.1588,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 57.16661,
+      "offset": 57.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 57.33328,
+      "offset": 57.96696,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 57.33328,
+      "offset": 57.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 57.49994,
+      "offset": 57.6588,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 57.66661,
+      "offset": 57.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 57.83328,
+      "offset": 57.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 57.99994,
+      "offset": 58.31678,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 57.99994,
+      "offset": 58.1588,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 58.16661,
+      "offset": 58.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 53,
+      "onset": 58.33328,
+      "offset": 58.96695,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 58.33328,
+      "offset": 58.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 58.49994,
+      "offset": 58.6588,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 58.66661,
+      "offset": 58.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 58.83327,
+      "offset": 58.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 58.99994,
+      "offset": 60.31678,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 58.99994,
+      "offset": 59.1588,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 59.16661,
+      "offset": 59.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 59.33327,
+      "offset": 59.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 59.49994,
+      "offset": 59.65879,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 59.66661,
+      "offset": 59.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 59.83327,
+      "offset": 59.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 58,
+      "onset": 59.99994,
+      "offset": 60.15879,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 60.16661,
+      "offset": 60.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 51,
+      "onset": 60.33327,
+      "offset": 60.96695,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 60.33327,
+      "offset": 60.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 63,
+      "onset": 60.49994,
+      "offset": 60.65879,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 60.66661,
+      "offset": 60.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 60.83327,
+      "offset": 60.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 60.99994,
+      "offset": 61.31678,
+      "velocity": 100
+    },
+    {
+      "pitch": 56,
+      "onset": 60.99994,
+      "offset": 61.15879,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 61.16661,
+      "offset": 61.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 49,
+      "onset": 61.33327,
+      "offset": 61.96695,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 61.33327,
+      "offset": 61.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 61.49994,
+      "offset": 61.65879,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 61.66661,
+      "offset": 61.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 61.83327,
+      "offset": 61.99213,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 61.99994,
+      "offset": 62.31678,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 61.99994,
+      "offset": 62.15879,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 62.1666,
+      "offset": 62.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 62.33327,
+      "offset": 62.96695,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 62.33327,
+      "offset": 62.49213,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 62.49994,
+      "offset": 62.65879,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 62.6666,
+      "offset": 62.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 62.83327,
+      "offset": 62.99212,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 62.99994,
+      "offset": 63.31678,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 62.99994,
+      "offset": 63.15879,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 63.1666,
+      "offset": 63.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 63.33327,
+      "offset": 63.65011,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 63.33327,
+      "offset": 63.49212,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 63.49994,
+      "offset": 63.65879,
+      "velocity": 100
+    },
+    {
+      "pitch": 45,
+      "onset": 63.6666,
+      "offset": 63.98344,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 63.6666,
+      "offset": 63.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 63.83327,
+      "offset": 63.99212,
+      "velocity": 100
+    },
+    {
+      "pitch": 43,
+      "onset": 63.99994,
+      "offset": 64.31678,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 63.99994,
+      "offset": 64.15879,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 64.1666,
+      "offset": 64.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 64.33327,
+      "offset": 64.65011,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 64.33327,
+      "offset": 64.49212,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 64.49994,
+      "offset": 64.65879,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 64.6666,
+      "offset": 64.98344,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 64.6666,
+      "offset": 64.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 64.83327,
+      "offset": 64.99212,
+      "velocity": 100
+    },
+    {
+      "pitch": 43,
+      "onset": 64.99994,
+      "offset": 66.63361,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 64.99994,
+      "offset": 65.47563,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 65.1666,
+      "offset": 65.32546,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 65.33327,
+      "offset": 65.96695,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 65.49993,
+      "offset": 65.65879,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 65.6666,
+      "offset": 65.82546,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 65.83327,
+      "offset": 65.99212,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 65.99993,
+      "offset": 66.63361,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 65.99993,
+      "offset": 66.63361,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 65.99993,
+      "offset": 66.63361,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 65.99993,
+      "offset": 66.63361,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 66.83327,
+      "offset": 66.99212,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 66.99993,
+      "offset": 67.95045,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 66.99993,
+      "offset": 67.95045,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 66.99993,
+      "offset": 67.47563,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 66.99993,
+      "offset": 67.47563,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 66.99993,
+      "offset": 67.47563,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 67.49993,
+      "offset": 67.65879,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 67.6666,
+      "offset": 67.82545,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 67.83327,
+      "offset": 67.99212,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 67.99993,
+      "offset": 68.31677,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 67.99993,
+      "offset": 68.15879,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 68.1666,
+      "offset": 68.32545,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 68.33326,
+      "offset": 68.96694,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 68.33326,
+      "offset": 68.49212,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 68.49993,
+      "offset": 68.65879,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 68.6666,
+      "offset": 68.82545,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 68.83326,
+      "offset": 68.99212,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 68.99993,
+      "offset": 69.95045,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 68.99993,
+      "offset": 69.31677,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 69.1666,
+      "offset": 69.33326,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 69.33326,
+      "offset": 69.96694,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 69.33326,
+      "offset": 69.96694,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 69.49993,
+      "offset": 70.31677,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 69.6666,
+      "offset": 70.31677,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 69.83326,
+      "offset": 70.31677,
+      "velocity": 100
+    },
+    {
+      "pitch": 53,
+      "onset": 69.99993,
+      "offset": 70.95045,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 70.1666,
+      "offset": 70.96694,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 70.33326,
+      "offset": 70.96694,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 70.49993,
+      "offset": 70.65878,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 70.6666,
+      "offset": 70.82545,
+      "velocity": 100
+    },
+    {
+      "pitch": 79,
+      "onset": 70.83326,
+      "offset": 70.99212,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 70.99993,
+      "offset": 71.63361,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 70.99993,
+      "offset": 71.15878,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 71.1666,
+      "offset": 71.32545,
+      "velocity": 100
+    },
+    {
+      "pitch": 79,
+      "onset": 71.33326,
+      "offset": 71.49212,
+      "velocity": 100
+    },
+    {
+      "pitch": 70,
+      "onset": 71.49993,
+      "offset": 71.65878,
+      "velocity": 100
+    },
+    {
+      "pitch": 53,
+      "onset": 71.6666,
+      "offset": 71.98343,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 71.6666,
+      "offset": 71.82545,
+      "velocity": 100
+    },
+    {
+      "pitch": 77,
+      "onset": 71.83326,
+      "offset": 71.99212,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 71.99993,
+      "offset": 72.63361,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 71.99993,
+      "offset": 72.15878,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 72.16659,
+      "offset": 72.32545,
+      "velocity": 100
+    },
+    {
+      "pitch": 77,
+      "onset": 72.33326,
+      "offset": 72.49212,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 72.49993,
+      "offset": 72.65878,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 72.66659,
+      "offset": 72.98343,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 72.66659,
+      "offset": 72.82545,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 72.83326,
+      "offset": 72.99211,
+      "velocity": 100
+    },
+    {
+      "pitch": 53,
+      "onset": 72.99993,
+      "offset": 73.31677,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 72.99993,
+      "offset": 73.15878,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 73.16659,
+      "offset": 73.32545,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 73.33326,
+      "offset": 73.6501,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 73.33326,
+      "offset": 73.49211,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 73.49993,
+      "offset": 73.65878,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 73.66659,
+      "offset": 73.98343,
+      "velocity": 100
+    },
+    {
+      "pitch": 65,
+      "onset": 73.66659,
+      "offset": 73.82545,
+      "velocity": 100
+    },
+    {
+      "pitch": 70,
+      "onset": 73.83326,
+      "offset": 73.99211,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 73.99993,
+      "offset": 74.31677,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 73.99993,
+      "offset": 74.15878,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 74.16659,
+      "offset": 74.32545,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 74.33326,
+      "offset": 74.6501,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 74.33326,
+      "offset": 74.49211,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 74.49993,
+      "offset": 74.65878,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 74.66659,
+      "offset": 74.98343,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 74.66659,
+      "offset": 74.82545,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 74.83326,
+      "offset": 74.99211,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 74.99993,
+      "offset": 75.31676,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 74.99993,
+      "offset": 75.15878,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 75.16659,
+      "offset": 75.32545,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 75.33326,
+      "offset": 75.6501,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 75.33326,
+      "offset": 75.49211,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 75.49992,
+      "offset": 75.65878,
+      "velocity": 100
+    },
+    {
+      "pitch": 40,
+      "onset": 75.66659,
+      "offset": 75.98343,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 75.66659,
+      "offset": 75.82545,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 75.83326,
+      "offset": 75.99211,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 75.99992,
+      "offset": 76.95044,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 75.99992,
+      "offset": 76.47562,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 76.16659,
+      "offset": 76.96694,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 76.33326,
+      "offset": 76.96694,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 76.49992,
+      "offset": 77.47562,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 76.66659,
+      "offset": 77.47562,
+      "velocity": 100
+    },
+    {
+      "pitch": 81,
+      "onset": 76.83326,
+      "offset": 77.47562,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 76.99992,
+      "offset": 77.95044,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 77.16659,
+      "offset": 77.96694,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 77.33326,
+      "offset": 77.96694,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 77.49992,
+      "offset": 77.65878,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 77.66659,
+      "offset": 77.82544,
+      "velocity": 100
+    },
+    {
+      "pitch": 81,
+      "onset": 77.83326,
+      "offset": 77.99211,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 77.99992,
+      "offset": 78.6336,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 77.99992,
+      "offset": 78.15878,
+      "velocity": 100
+    },
+    {
+      "pitch": 78,
+      "onset": 78.16659,
+      "offset": 78.32544,
+      "velocity": 100
+    },
+    {
+      "pitch": 81,
+      "onset": 78.33325,
+      "offset": 78.49211,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 78.49992,
+      "offset": 78.65878,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 78.66659,
+      "offset": 78.98343,
+      "velocity": 100
+    },
+    {
+      "pitch": 79,
+      "onset": 78.66659,
+      "offset": 78.82544,
+      "velocity": 100
+    },
+    {
+      "pitch": 73,
+      "onset": 78.83325,
+      "offset": 78.99211,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 78.99992,
+      "offset": 79.6336,
+      "velocity": 100
+    },
+    {
+      "pitch": 78,
+      "onset": 78.99992,
+      "offset": 79.15878,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 79.16659,
+      "offset": 79.32544,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 79.33325,
+      "offset": 79.49211,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 79.49992,
+      "offset": 79.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 49,
+      "onset": 79.66659,
+      "offset": 79.98343,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 79.66659,
+      "offset": 79.82544,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 79.83325,
+      "offset": 79.99211,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 79.99992,
+      "offset": 80.6336,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 79.99992,
+      "offset": 80.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 80.16659,
+      "offset": 80.32544,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 80.33325,
+      "offset": 80.49211,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 80.49992,
+      "offset": 80.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 51,
+      "onset": 80.66659,
+      "offset": 80.98343,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 80.66659,
+      "offset": 80.82544,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 80.83325,
+      "offset": 80.99211,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 80.99992,
+      "offset": 81.6336,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 80.99992,
+      "offset": 81.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 81.16659,
+      "offset": 81.32544,
+      "velocity": 100
+    },
+    {
+      "pitch": 76,
+      "onset": 81.33325,
+      "offset": 81.49211,
+      "velocity": 100
+    },
+    {
+      "pitch": 74,
+      "onset": 81.49992,
+      "offset": 81.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 81.66658,
+      "offset": 81.98342,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 81.66658,
+      "offset": 81.82544,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 81.83325,
+      "offset": 81.99211,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 81.99992,
+      "offset": 83.31676,
+      "velocity": 100
+    },
+    {
+      "pitch": 72,
+      "onset": 81.99992,
+      "offset": 82.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 82.16658,
+      "offset": 82.32544,
+      "velocity": 100
+    },
+    {
+      "pitch": 65,
+      "onset": 82.33325,
+      "offset": 82.49211,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 82.49992,
+      "offset": 82.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 82.66658,
+      "offset": 82.82544,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 82.83325,
+      "offset": 82.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 63,
+      "onset": 82.99992,
+      "offset": 83.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 83.16658,
+      "offset": 83.32544,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 83.33325,
+      "offset": 83.96693,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 83.33325,
+      "offset": 83.4921,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 83.49992,
+      "offset": 83.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 83.66658,
+      "offset": 83.82544,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 83.83325,
+      "offset": 83.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 83.99992,
+      "offset": 84.31676,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 83.99992,
+      "offset": 84.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 84.16658,
+      "offset": 84.32544,
+      "velocity": 100
+    },
+    {
+      "pitch": 53,
+      "onset": 84.33325,
+      "offset": 84.96693,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 84.33325,
+      "offset": 84.4921,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 84.49992,
+      "offset": 84.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 71,
+      "onset": 84.66658,
+      "offset": 84.82544,
+      "velocity": 100
+    },
+    {
+      "pitch": 69,
+      "onset": 84.83325,
+      "offset": 84.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 52,
+      "onset": 84.99992,
+      "offset": 86.31675,
+      "velocity": 100
+    },
+    {
+      "pitch": 68,
+      "onset": 84.99992,
+      "offset": 85.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 85.16658,
+      "offset": 85.32544,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 85.33325,
+      "offset": 85.4921,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 85.49991,
+      "offset": 85.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 85.66658,
+      "offset": 85.82544,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 85.83325,
+      "offset": 85.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 58,
+      "onset": 85.99991,
+      "offset": 86.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 86.16658,
+      "offset": 86.32543,
+      "velocity": 100
+    },
+    {
+      "pitch": 51,
+      "onset": 86.33325,
+      "offset": 86.96693,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 86.33325,
+      "offset": 86.4921,
+      "velocity": 100
+    },
+    {
+      "pitch": 63,
+      "onset": 86.49991,
+      "offset": 86.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 86.66658,
+      "offset": 86.82543,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 86.83325,
+      "offset": 86.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 86.99991,
+      "offset": 87.31675,
+      "velocity": 100
+    },
+    {
+      "pitch": 56,
+      "onset": 86.99991,
+      "offset": 87.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 87.16658,
+      "offset": 87.32543,
+      "velocity": 100
+    },
+    {
+      "pitch": 49,
+      "onset": 87.33325,
+      "offset": 87.96693,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 87.33325,
+      "offset": 87.4921,
+      "velocity": 100
+    },
+    {
+      "pitch": 61,
+      "onset": 87.49991,
+      "offset": 87.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 87.66658,
+      "offset": 87.82543,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 87.83325,
+      "offset": 87.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 87.99991,
+      "offset": 88.31675,
+      "velocity": 100
+    },
+    {
+      "pitch": 54,
+      "onset": 87.99991,
+      "offset": 88.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 88.16658,
+      "offset": 88.32543,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 88.33325,
+      "offset": 88.96692,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 88.33325,
+      "offset": 88.4921,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 88.49991,
+      "offset": 88.65877,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 88.66658,
+      "offset": 88.82543,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 88.83324,
+      "offset": 88.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 48,
+      "onset": 88.99991,
+      "offset": 89.31675,
+      "velocity": 100
+    },
+    {
+      "pitch": 64,
+      "onset": 88.99991,
+      "offset": 89.15877,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 89.16658,
+      "offset": 89.32543,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 89.33324,
+      "offset": 89.65008,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 89.33324,
+      "offset": 89.4921,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 89.49991,
+      "offset": 89.65876,
+      "velocity": 100
+    },
+    {
+      "pitch": 45,
+      "onset": 89.66658,
+      "offset": 89.98342,
+      "velocity": 100
+    },
+    {
+      "pitch": 60,
+      "onset": 89.66658,
+      "offset": 89.82543,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 89.83324,
+      "offset": 89.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 43,
+      "onset": 89.99991,
+      "offset": 90.31675,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 89.99991,
+      "offset": 90.15876,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 90.16658,
+      "offset": 90.32543,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 90.33324,
+      "offset": 90.65008,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 90.33324,
+      "offset": 90.4921,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 90.49991,
+      "offset": 90.65876,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 90.66658,
+      "offset": 90.98342,
+      "velocity": 100
+    },
+    {
+      "pitch": 57,
+      "onset": 90.66658,
+      "offset": 90.82543,
+      "velocity": 100
+    },
+    {
+      "pitch": 66,
+      "onset": 90.83324,
+      "offset": 90.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 43,
+      "onset": 90.99991,
+      "offset": 92.63359,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 90.99991,
+      "offset": 91.4756,
+      "velocity": 100
+    },
+    {
+      "pitch": 47,
+      "onset": 91.16658,
+      "offset": 91.32543,
+      "velocity": 100
+    },
+    {
+      "pitch": 50,
+      "onset": 91.33324,
+      "offset": 91.96692,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 91.49991,
+      "offset": 91.65876,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 91.66657,
+      "offset": 91.82543,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 91.83324,
+      "offset": 91.9921,
+      "velocity": 100
+    },
+    {
+      "pitch": 55,
+      "onset": 91.99991,
+      "offset": 92.63359,
+      "velocity": 100
+    },
+    {
+      "pitch": 59,
+      "onset": 91.99991,
+      "offset": 92.63359,
+      "velocity": 100
+    },
+    {
+      "pitch": 62,
+      "onset": 91.99991,
+      "offset": 92.63359,
+      "velocity": 100
+    },
+    {
+      "pitch": 67,
+      "onset": 91.99991,
+      "offset": 92.63359,
+      "velocity": 100
+    }
+  ],
+  "pedals": []
+}

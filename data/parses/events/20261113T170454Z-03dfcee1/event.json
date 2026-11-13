@@ -1,0 +1,183 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 415.5,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170454Z-03dfcee1",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120443",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 415.5
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "887",
+      "collection": "BWV 870-893 The Well-Tempered Clavier Book II",
+      "collection_id": "bwv-870-893-wtc-ii",
+      "entry_id": "bwv-0887",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/10-Wohltemperiertes_Klavier_II/BWV_0887.mid",
+      "pinned_sha256": "b2774f74aa0d8656fc18d5d6e4b9254bc99d1915e77cffc246f76edc6c5ae5eb",
+      "source_filename": "BWV_0887.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-ii/"
+    },
+    "import_settings_sha256": "45ebb70c6dece84ff4a15805e124c8d67751584c9fd8fc247d353c9a378c4eb5",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "b2774f74aa0d8656fc18d5d6e4b9254bc99d1915e77cffc246f76edc6c5ae5eb"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 1.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 201.0
+        }
+      ]
+    },
+    "title": "BWV 887 — Prelude and Fugue No. 18"
+  },
+  "recorded_at": "2026-11-13T17:04:54Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170454Z-03dfcee1",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "673d19a566a95b5179cb9587f32046720520aa8b01568a199fc12d4e541a59c3",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "26e2e6739df0acd265d96ed219b9e5eb55ada48538477eea22e233973d3c5e20",
+        "raw.mid": "ca6aca9ec1f5bb4d14c209b9b169bd72eeebb73ae18180044c47bab3dfe7cac2",
+        "score.musicxml": "00ec5e7d581063e372076299317ef32d16b64988f47163fbaa33adb34e38c89e",
+        "source.mid": "b2774f74aa0d8656fc18d5d6e4b9254bc99d1915e77cffc246f76edc6c5ae5eb"
+      },
+      "files": {
+        "notes.json": "69764b1626b5f044495154a2a2c52570b9f6476d5f1194c1c72812beb9e0a5a9",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "26e2e6739df0acd265d96ed219b9e5eb55ada48538477eea22e233973d3c5e20",
+        "raw.mid": "ca6aca9ec1f5bb4d14c209b9b169bd72eeebb73ae18180044c47bab3dfe7cac2",
+        "score.musicxml": "9b81e8503986c89d79532157e776c898e909afc623c60dc2d407e901a481d25d",
+        "source.mid": "b2774f74aa0d8656fc18d5d6e4b9254bc99d1915e77cffc246f76edc6c5ae5eb"
+      },
+      "project_state_sha256": "3bf6e0e6fec83598682c666b4d5dd10deb17eea0bfa07b1ff14b74d51f14d8ac",
+      "sha256": "25f04a448909951d0334ecac0aef82c6dfc4cc7ad15beeb78c3016b71d90092d"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "b2774f74aa0d8656fc18d5d6e4b9254bc99d1915e77cffc246f76edc6c5ae5eb",
+    "title": "BWV 887 — Prelude and Fugue No. 18"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 55.8021,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171129Z-bb2d8c29",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121129",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 55.80208
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "924a",
+      "collection": "BWV 924-932 Little Preludes (Clavierbüchlein for W.F. Bach)",
+      "collection_id": "bwv-924-932-little-preludes-wf",
+      "entry_id": "bwv-0924a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/14-Kleine_Praeludien_WFB/BWV_0924a.mid",
+      "pinned_sha256": "2c39714e8fc7e9b447e7871497b2ed5de00e739332ab6f0541460ba4e7fde9fb",
+      "source_filename": "BWV_0924a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/little-preludes-clavier-buechlein-for-w-f-bach/"
+    },
+    "import_settings_sha256": "a1b888a649d10a3c82314b4f3470020cdbd756da3c3072077457a53b572e16c6",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "2c39714e8fc7e9b447e7871497b2ed5de00e739332ab6f0541460ba4e7fde9fb"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 60.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 924a — Prelude in C major"
+  },
+  "recorded_at": "2026-11-13T17:11:29Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171129Z-bb2d8c29",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "64b47a6c3c6abca3c8cb60c0a8e6a941016eeeef538ecc580f6e2081c2d26278",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "e71962b41061448f03409da45d0b781a6deda14e5c13d2ddf1694324d7dacdc8",
+        "raw.mid": "ddd5a7b252522080801f378e525b2e3912d35811e3f1ce28041044c4ef32fc32",
+        "score.musicxml": "166ad10528a1da3ba49f86eb7b507d46b53139b54f850f512670b7bd4a578b28",
+        "source.mid": "2c39714e8fc7e9b447e7871497b2ed5de00e739332ab6f0541460ba4e7fde9fb"
+      },
+      "files": {
+        "notes.json": "69398491e189f5153b54c40d1f9bebe9fdc714b4393acab715602f2e16899bda",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "e71962b41061448f03409da45d0b781a6deda14e5c13d2ddf1694324d7dacdc8",
+        "raw.mid": "ddd5a7b252522080801f378e525b2e3912d35811e3f1ce28041044c4ef32fc32",
+        "score.musicxml": "99fbc6ff3a84437204e2c001b02e10513776b57fb8a50adb2c03ef1520de5720",
+        "source.mid": "2c39714e8fc7e9b447e7871497b2ed5de00e739332ab6f0541460ba4e7fde9fb"
+      },
+      "project_state_sha256": "046cf8df48f9b078dc972a5870563e2bfb3228d2c888b9cd2991dbf9c85ae4d3",
+      "sha256": "1537a6dc2fd3e99a932e3d3622f2543bb46e22f1e3e2d6c78aa7675d8a350752"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "2c39714e8fc7e9b447e7871497b2ed5de00e739332ab6f0541460ba4e7fde9fb",
+    "title": "BWV 924a — Prelude in C major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

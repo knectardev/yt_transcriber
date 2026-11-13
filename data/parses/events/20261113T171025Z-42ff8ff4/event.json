@@ -1,0 +1,229 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 534.4203,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171025Z-42ff8ff4",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121010",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 534.42031
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "915",
+      "collection": "BWV 910-923 Toccatas, Fantasias and Preludes",
+      "collection_id": "bwv-910-923-toccatas-fantasias-and-preludes",
+      "entry_id": "bwv-0915",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/13-Toccaten_Fantasien_Praeludien/BWV_0915.mid",
+      "pinned_sha256": "2eaebddac120b5bdb342ad54c90284069e764a803cf909975ea5f938770b9d52",
+      "source_filename": "BWV_0915.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/toccatas-fantasias-and-preludes/"
+    },
+    "import_settings_sha256": "dbe78e822787ef5151dc4b731027d143b494064686011850ca1892e30e844c31",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "2eaebddac120b5bdb342ad54c90284069e764a803cf909975ea5f938770b9d52"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        },
+        {
+          "bpm": 75.0,
+          "time": 14.4
+        },
+        {
+          "bpm": 99.99999999999999,
+          "time": 76.8
+        },
+        {
+          "bpm": 75.0,
+          "time": 196.8
+        },
+        {
+          "bpm": 99.99999999999999,
+          "time": 249.60000000000002
+        }
+      ],
+      "time_signature": "24/16",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 16,
+          "numerator": 24,
+          "time": 0.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 7.2
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 76.8
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 196.8
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 249.60000000000002
+        },
+        {
+          "denominator": 16,
+          "numerator": 23,
+          "time": 513.6
+        },
+        {
+          "denominator": 16,
+          "numerator": 24,
+          "time": 514.8
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 527.4000000000001
+        }
+      ]
+    },
+    "title": "BWV 915 — Toccata in g minor"
+  },
+  "recorded_at": "2026-11-13T17:10:25Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171025Z-42ff8ff4",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "911e875e1eb3a948c3bc37501e969d768ed40e4658e0a3504e379726b40d422a",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "e9c10d5344f0d96f826b47f37e601ef4583e3bdd971e669488be093dc4afc057",
+        "raw.mid": "5274f58a2b7fcff5100d5a0fd7eece90fe6cf8e87aa4eae258499bdeb02aacf1",
+        "score.musicxml": "8176437d2475e5f8fb074602fcbf3b1d636a01dabfdb862ce686e104abbb4526",
+        "source.mid": "2eaebddac120b5bdb342ad54c90284069e764a803cf909975ea5f938770b9d52"
+      },
+      "files": {
+        "notes.json": "fb5c9c9422c314af0ede37971858e72d6ad785ae50642130f5531205d768dd52",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "e9c10d5344f0d96f826b47f37e601ef4583e3bdd971e669488be093dc4afc057",
+        "raw.mid": "5274f58a2b7fcff5100d5a0fd7eece90fe6cf8e87aa4eae258499bdeb02aacf1",
+        "score.musicxml": "2f2bf6b833a53698447ead4a2297e03ee813c6b0bfd9ee0cee050dcaae0ad221",
+        "source.mid": "2eaebddac120b5bdb342ad54c90284069e764a803cf909975ea5f938770b9d52"
+      },
+      "project_state_sha256": "0ffb7159d2eaa6d035d4847b6fb8efdf7ceab7a80f6b5f1a7595360834cc71ba",
+      "sha256": "7ef2c0d1dfc4d40f134931901480377acd5303501bef63e3d9631b37e48507e4"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "2eaebddac120b5bdb342ad54c90284069e764a803cf909975ea5f938770b9d52",
+    "title": "BWV 915 — Toccata in g minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

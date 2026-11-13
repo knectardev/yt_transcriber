@@ -1,0 +1,217 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 677.1883,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T164144Z-c616ee95",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-114123",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 677.18828
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "820",
+      "collection": "BWV 818-824 Miscellaneous Suites",
+      "collection_id": "bwv-818-824-miscellaneous-suites",
+      "entry_id": "bwv-0820",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/06-Diverse_Suiten/BWV_0820.mid",
+      "pinned_sha256": "4b3aacd92d5804f39cec9b3b23cbc2dd2175d3317e38d0a5f62ae2c09eb1bb5d",
+      "source_filename": "BWV_0820.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/miscellaneous-suites/"
+    },
+    "import_settings_sha256": "526a38f05f62193ecead67a3eb20502b6f1daedddd6e04a90a0398c14ada2a06",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "4b3aacd92d5804f39cec9b3b23cbc2dd2175d3317e38d0a5f62ae2c09eb1bb5d"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        },
+        {
+          "bpm": 120.0,
+          "time": 289.2
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 60.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 144.6
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 204.60000000000002
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 289.2
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 401.2
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 527.2
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 623.2
+        }
+      ]
+    },
+    "title": "BWV 820 — Overture (Suite) in F major"
+  },
+  "recorded_at": "2026-11-13T16:41:44Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T164144Z-c616ee95",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "4807f3932ed4d7a0e6d290a63f7593fa733e3419d010afdcd7894c83baaa4b64",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "28fbdca677f173c2248c634b2561ef18d728e649d237b3adebd9260272b386ea",
+        "raw.mid": "169a49fd429f1c4cb8e5b8f3ad1993f06af264d2a23b3f10d88e76bcea3efe92",
+        "score.musicxml": "8c99755f52e6f61b31fa61e602f525b47bc81f86e4d307ddb8b7b0ef6e8f015b",
+        "source.mid": "4b3aacd92d5804f39cec9b3b23cbc2dd2175d3317e38d0a5f62ae2c09eb1bb5d"
+      },
+      "files": {
+        "notes.json": "241db34b7c1a4bbf8dda4ce13c1ace0d103d7c6edea18a981c4ff98e48ac19fe",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "28fbdca677f173c2248c634b2561ef18d728e649d237b3adebd9260272b386ea",
+        "raw.mid": "169a49fd429f1c4cb8e5b8f3ad1993f06af264d2a23b3f10d88e76bcea3efe92",
+        "score.musicxml": "ba1520b76f431361bbda2c2abd26fe162bd40530d60bdbb2587763c9b75cc29d",
+        "source.mid": "4b3aacd92d5804f39cec9b3b23cbc2dd2175d3317e38d0a5f62ae2c09eb1bb5d"
+      },
+      "project_state_sha256": "cc1c7bef6fa9cb505ece85e2aedabd810b88de51474faa64dabf773f5ac405a2",
+      "sha256": "772e363289fff8c9d34d9565268122f405c255fe7331534b433901aad738b4b7"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "4b3aacd92d5804f39cec9b3b23cbc2dd2175d3317e38d0a5f62ae2c09eb1bb5d",
+    "title": "BWV 820 — Overture (Suite) in F major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

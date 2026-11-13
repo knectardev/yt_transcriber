@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 20.4948,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171147Z-a2b22f3b",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121147",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 20.49479
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "932",
+      "collection": "BWV 924-932 Little Preludes (Clavierbüchlein for W.F. Bach)",
+      "collection_id": "bwv-924-932-little-preludes-wf",
+      "entry_id": "bwv-0932",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/14-Kleine_Praeludien_WFB/BWV_0932.mid",
+      "pinned_sha256": "02847997c75c7343aa8c91606b9dd7841f15a1785b543dbef483717d0b7bea59",
+      "source_filename": "BWV_0932.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/little-preludes-clavier-buechlein-for-w-f-bach/"
+    },
+    "import_settings_sha256": "45ebb70c6dece84ff4a15805e124c8d67751584c9fd8fc247d353c9a378c4eb5",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "02847997c75c7343aa8c91606b9dd7841f15a1785b543dbef483717d0b7bea59"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 932 — Prelude in e minor"
+  },
+  "recorded_at": "2026-11-13T17:11:47Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171147Z-a2b22f3b",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "198936053387101b19f9f41bb37f456f59fa30986567be92d5d6b8451621db36",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "1ca5a8a19373d81148a4a395534c4f561ec8badff07029fa08be20b457eed2e7",
+        "raw.mid": "5fac2fd57e4da639ffbdc5f9d70cd667ad4f151571e2408ce37f564a13c0dd26",
+        "score.musicxml": "2eeda0d4113245444e610143e73ae645aca1692dd4dcd2f7b9a2ac779eb44f85",
+        "source.mid": "02847997c75c7343aa8c91606b9dd7841f15a1785b543dbef483717d0b7bea59"
+      },
+      "files": {
+        "notes.json": "b4143e59d5ddbd703e6c700f1c2356753418d8342210a214b03f1a2e7a0d1d9c",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "1ca5a8a19373d81148a4a395534c4f561ec8badff07029fa08be20b457eed2e7",
+        "raw.mid": "5fac2fd57e4da639ffbdc5f9d70cd667ad4f151571e2408ce37f564a13c0dd26",
+        "score.musicxml": "c6e741f0d6e1caf0c916ece7cb55c7bf460b967cc6de862ba0d4fce2ed117237",
+        "source.mid": "02847997c75c7343aa8c91606b9dd7841f15a1785b543dbef483717d0b7bea59"
+      },
+      "project_state_sha256": "31abd0679f5060c68d6fe7d2b75a104fc1f5ed0d6efa25e5d65fe21a262909a4",
+      "sha256": "708dc1a822d78ae744357225c5aa88cdbd297bf6e0652a0c82e05d844baea151"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "02847997c75c7343aa8c91606b9dd7841f15a1785b543dbef483717d0b7bea59",
+    "title": "BWV 932 — Prelude in e minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

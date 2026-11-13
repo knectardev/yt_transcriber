@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 86.3703,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165907Z-835fd85c",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115906",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 86.37031
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "841",
+      "collection": "BWV 832-845 Suites and Suite Movements",
+      "collection_id": "bwv-832-845-suites-and-suite-movements",
+      "entry_id": "bwv-0841",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/08-Einzelwerke/BWV_0841.mid",
+      "pinned_sha256": "5e9ea187b0f2bc0f8b40c63214882e79c4652c3aab58c64c7901bdbbcbc3f3e1",
+      "source_filename": "BWV_0841.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/suites-and-suite-movements/"
+    },
+    "import_settings_sha256": "64950ef639c2c8088ae9a5f4c67e4ede65dff74de7361e7ff5426246c8e64574",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "5e9ea187b0f2bc0f8b40c63214882e79c4652c3aab58c64c7901bdbbcbc3f3e1"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 841 — Menuet in G major from Clavierbüchlein\nfor Wilhelm Friedemann Bach"
+  },
+  "recorded_at": "2026-11-13T16:59:07Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165907Z-835fd85c",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "59c5cd45d5b264c697307a96b73b45ac9e5c93b1802faf178ab5889cd9fd20cf",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "784c3cdf13766bb628d41e3e3b318057e485756ac8822c319ae5ad2872e1d74b",
+        "raw.mid": "41509711e9414a59dd15e20ab39808fa4390c39afc483daaaedcf202f4bc33d6",
+        "score.musicxml": "8ed31d14d08e8ec78e9d88757764693df35cfb57885ad685c8c460345e69c54e",
+        "source.mid": "5e9ea187b0f2bc0f8b40c63214882e79c4652c3aab58c64c7901bdbbcbc3f3e1"
+      },
+      "files": {
+        "notes.json": "bd646ac1bf502dfd7c8c02e345c1f96f76717ad861a5ee316b052545976fa5c3",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "784c3cdf13766bb628d41e3e3b318057e485756ac8822c319ae5ad2872e1d74b",
+        "raw.mid": "41509711e9414a59dd15e20ab39808fa4390c39afc483daaaedcf202f4bc33d6",
+        "score.musicxml": "d7175f113292991ae32eea52217ac543faee477238211b89eda5510ce7cf8d9c",
+        "source.mid": "5e9ea187b0f2bc0f8b40c63214882e79c4652c3aab58c64c7901bdbbcbc3f3e1"
+      },
+      "project_state_sha256": "5098b479ee7cf9c13c367b6bbbe302bd6a18127f7bdcf881fab666a4dfceb106",
+      "sha256": "144fa83731d7bf7ddc683828b7e2834e25e595ccb3ae9304de84a6ee41de850c"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "5e9ea187b0f2bc0f8b40c63214882e79c4652c3aab58c64c7901bdbbcbc3f3e1",
+    "title": "BWV 841 — Menuet in G major from Clavierbüchlein\nfor Wilhelm Friedemann Bach"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

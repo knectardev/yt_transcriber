@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 258.0216,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165922Z-dc101eb6",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115918",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 258.0216
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "845",
+      "collection": "BWV 832-845 Suites and Suite Movements",
+      "collection_id": "bwv-832-845-suites-and-suite-movements",
+      "entry_id": "bwv-0845",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/08-Einzelwerke/BWV_0845.mid",
+      "pinned_sha256": "321d8e2143bd2e6690355161a55cfd41c5da1003e3eb3a92e48367cfbbb569d4",
+      "source_filename": "BWV_0845.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/suites-and-suite-movements/"
+    },
+    "import_settings_sha256": "42b68d1626273cdacaec49ae487de9bed78d95d6ed47776b40c37876d169db61",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "321d8e2143bd2e6690355161a55cfd41c5da1003e3eb3a92e48367cfbbb569d4"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 138.00019320027047,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 138.00019320027047,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "12/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 12,
+          "time": 2.3913010000000003
+        }
+      ]
+    },
+    "title": "BWV 845 — Gigue in f minor"
+  },
+  "recorded_at": "2026-11-13T16:59:22Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165922Z-dc101eb6",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "f4af41eab908abf50872de483ea61541fa0bd288aba61b91c0005e725033953f",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "8bd642879a5e3efaee005c24f45df6315f8c6e5262a31691dbd82db2c35dc5ed",
+        "raw.mid": "05880fa468cef27ced64c4adfba311974bdfbed65d449efb8553eab239d1e3ad",
+        "score.musicxml": "d6a7e90ff30a3252eaaf675a098312ff04938085c1611870208002388f52ee7d",
+        "source.mid": "321d8e2143bd2e6690355161a55cfd41c5da1003e3eb3a92e48367cfbbb569d4"
+      },
+      "files": {
+        "notes.json": "8e8aa4099e2631f4ef51a31893ea403dfb5b913d63be0c4cb622e981ea574ee3",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "8bd642879a5e3efaee005c24f45df6315f8c6e5262a31691dbd82db2c35dc5ed",
+        "raw.mid": "05880fa468cef27ced64c4adfba311974bdfbed65d449efb8553eab239d1e3ad",
+        "score.musicxml": "269dfd75fcc7c7022c41aca104cab321dcfffc681e2ef40d1d64dd79a9c6fd4a",
+        "source.mid": "321d8e2143bd2e6690355161a55cfd41c5da1003e3eb3a92e48367cfbbb569d4"
+      },
+      "project_state_sha256": "6161f3cc7066653696c2c21bcad68f9a3970dfc84a1c906c1e96182d7ebca6d0",
+      "sha256": "5c6f6a31327e25c43502c6133f711516db96c754ca86abb82c211022c95505f7"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "321d8e2143bd2e6690355161a55cfd41c5da1003e3eb3a92e48367cfbbb569d4",
+    "title": "BWV 845 — Gigue in f minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

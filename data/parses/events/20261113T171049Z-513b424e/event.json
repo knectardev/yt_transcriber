@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 65.9669,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171049Z-513b424e",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121048",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 65.96695
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "919",
+      "collection": "BWV 910-923 Toccatas, Fantasias and Preludes",
+      "collection_id": "bwv-910-923-toccatas-fantasias-and-preludes",
+      "entry_id": "bwv-0919",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/13-Toccaten_Fantasien_Praeludien/BWV_0919.mid",
+      "pinned_sha256": "168b8ca53b7ddbb25aada05582120e6ab58ef6925e5631f8a276ed7fe75a88b7",
+      "source_filename": "BWV_0919.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/toccatas-fantasias-and-preludes/"
+    },
+    "import_settings_sha256": "0abc59efd2a264fcf1c11ea0597f19f83f673960a98073122590f74492b98f28",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "168b8ca53b7ddbb25aada05582120e6ab58ef6925e5631f8a276ed7fe75a88b7"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 919 — Fantasia in c minor"
+  },
+  "recorded_at": "2026-11-13T17:10:49Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171049Z-513b424e",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "13bd6826fc1936bb4cd4f2edf9c9908a47ca147c153db7b6c6f25924086e95dd",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "9c8d60a859e50eb266fca69e87130e090f4ed305e9dcc6286ad9f706c488d273",
+        "raw.mid": "b9415adeca538701041022383e2903e8afc6437fed5919a41096c4b0c26f66f4",
+        "score.musicxml": "f908b3d21ca7654e6c9d4482b6119ce180fc3326393f6eaa5d09da1fabcbf415",
+        "source.mid": "168b8ca53b7ddbb25aada05582120e6ab58ef6925e5631f8a276ed7fe75a88b7"
+      },
+      "files": {
+        "notes.json": "fef84f8ba49e5052af543bde8207c122359ba40df0c9262df9609435014fd43c",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "9c8d60a859e50eb266fca69e87130e090f4ed305e9dcc6286ad9f706c488d273",
+        "raw.mid": "b9415adeca538701041022383e2903e8afc6437fed5919a41096c4b0c26f66f4",
+        "score.musicxml": "e4b380276cb1f7daad8a76def0cc9f24edf278423a2a732b6fa2d2821ea5fabc",
+        "source.mid": "168b8ca53b7ddbb25aada05582120e6ab58ef6925e5631f8a276ed7fe75a88b7"
+      },
+      "project_state_sha256": "0d75768699a13e6412c8db32070728fe75944fc3dbbe2e756b825ddb97ad4c1d",
+      "sha256": "4624bcd0e1b37d7a5163c6ca5f7dca919c598533a06cddcf64651e7c5ace7ff6"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "168b8ca53b7ddbb25aada05582120e6ab58ef6925e5631f8a276ed7fe75a88b7",
+    "title": "BWV 919 — Fantasia in c minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

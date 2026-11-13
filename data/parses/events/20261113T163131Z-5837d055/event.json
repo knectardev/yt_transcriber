@@ -1,0 +1,213 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1131.6133,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T163131Z-5837d055",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-113010",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1131.61328
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "814",
+      "collection": "BWV 812-817 French Suites",
+      "collection_id": "bwv-812-817-french-suites",
+      "entry_id": "bwv-0814",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/05-Franzoesische_Suiten/BWV_0814.mid",
+      "pinned_sha256": "3715aaac53dbeb03344a4d35895e3c253ceb58fddbb97b1c70e7c6554a9557dc",
+      "source_filename": "BWV_0814.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/french-suites/"
+    },
+    "import_settings_sha256": "45ebb70c6dece84ff4a15805e124c8d67751584c9fd8fc247d353c9a378c4eb5",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "3715aaac53dbeb03344a4d35895e3c253ceb58fddbb97b1c70e7c6554a9557dc"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 1.625
+        },
+        {
+          "denominator": 4,
+          "numerator": 6,
+          "time": 97.625
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 265.625
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 415.625
+        },
+        {
+          "denominator": 4,
+          "numerator": 6,
+          "time": 511.625
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 679.625
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 901.625
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 1029.625
+        }
+      ]
+    },
+    "title": "BWV 814 — Suite No. 3 in b minor"
+  },
+  "recorded_at": "2026-11-13T16:31:31Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T163131Z-5837d055",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "1576afbb5ead8d186160a6e515b08ffbcf46f7d2705955ca3bb6660c77b6e7a4",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "cab847b97b3a43dc2cc5e06b8b271d76e84eff730870c64d13cb5492651ad897",
+        "raw.mid": "8d7b25264d877dddda4a1cd894f102e3c50222c4b60693405a9dce45513d7c5a",
+        "score.musicxml": "2023215b9d2bc8faa2e12eec8ec03249025dc387d196843a21f61bf1d6366c65",
+        "source.mid": "3715aaac53dbeb03344a4d35895e3c253ceb58fddbb97b1c70e7c6554a9557dc"
+      },
+      "files": {
+        "notes.json": "531aef4bf826eb37bc02ac02e593a72d2fa287f0a9a3da9741cccec93b0adfe4",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "cab847b97b3a43dc2cc5e06b8b271d76e84eff730870c64d13cb5492651ad897",
+        "raw.mid": "8d7b25264d877dddda4a1cd894f102e3c50222c4b60693405a9dce45513d7c5a",
+        "score.musicxml": "99b23b770dd86eee0a725a0b39aaab0dba19de246b1436261622424edf515034",
+        "source.mid": "3715aaac53dbeb03344a4d35895e3c253ceb58fddbb97b1c70e7c6554a9557dc"
+      },
+      "project_state_sha256": "280198e25673c44117edda82b983c56cafff3c93bfe152407251d748b87f8f57",
+      "sha256": "56bcb538f49d0c498b16b4a3693b0e79e1bc194e83da6f02a7a6335d63dc26e7"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "3715aaac53dbeb03344a4d35895e3c253ceb58fddbb97b1c70e7c6554a9557dc",
+    "title": "BWV 814 — Suite No. 3 in b minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

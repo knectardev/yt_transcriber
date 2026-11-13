@@ -1,0 +1,182 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 173.1683,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170620Z-1d1b864a",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120617",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 173.16835
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "895",
+      "collection": "BWV 894-902 Preludes and Fugues/Fughettas",
+      "collection_id": "bwv-894-902-preludes-and-fugues",
+      "entry_id": "bwv-0895",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/11-Praeludien_Fugen/BWV_0895.mid",
+      "pinned_sha256": "443f1405fc9a38cbb2c1bca1da1fa41c0fe56eacdc70a14d050c5dacbabddf04",
+      "source_filename": "BWV_0895.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/preludes-and-fugues/"
+    },
+    "import_settings_sha256": "70b2ead5d5f903eb85b8cfabf0000bda473451eb6f2cd4cbfe2883d3ea426408",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "443f1405fc9a38cbb2c1bca1da1fa41c0fe56eacdc70a14d050c5dacbabddf04"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 52.00000693333426,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 52.00000693333426,
+          "time": 0.0
+        },
+        {
+          "bpm": 72.0000288000115,
+          "time": 59.999992
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 895 — Prelude and Fugue in a minor"
+  },
+  "recorded_at": "2026-11-13T17:06:20Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170620Z-1d1b864a",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "2c43d9f4800382d4148c47ec57284759f893340552d41cc218ea680977c8bd52",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "02d670a5b29ab75fb757baf23328e5ae86166ae618b0f41b48ea4e52ca7fb7e7",
+        "raw.mid": "13922791681cc377f47d20f0957265f9b72b33eb78e9e0515946a01629306b14",
+        "score.musicxml": "2d0f9da10527386ab518852d9e571c1a5feca5673fc36e7d1266523ac58b19c1",
+        "source.mid": "443f1405fc9a38cbb2c1bca1da1fa41c0fe56eacdc70a14d050c5dacbabddf04"
+      },
+      "files": {
+        "notes.json": "ca3f4390e3d4926b288125a3080b922e70bd5e102b2d809f5c5b7f05b422f99f",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "02d670a5b29ab75fb757baf23328e5ae86166ae618b0f41b48ea4e52ca7fb7e7",
+        "raw.mid": "13922791681cc377f47d20f0957265f9b72b33eb78e9e0515946a01629306b14",
+        "score.musicxml": "f96a9069613beb793b07a14f3df674238d71c85a2e72142b39319344d0f33425",
+        "source.mid": "443f1405fc9a38cbb2c1bca1da1fa41c0fe56eacdc70a14d050c5dacbabddf04"
+      },
+      "project_state_sha256": "0200d63e122699c3a73e909abaffe41e90dbd15d5c3580d2fd6e99f13a787a75",
+      "sha256": "6eba48e66654d16600e0d1b6f669a77281cbe9606b258c44b2989f85cf4b8b95"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "443f1405fc9a38cbb2c1bca1da1fa41c0fe56eacdc70a14d050c5dacbabddf04",
+    "title": "BWV 895 — Prelude and Fugue in a minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 76.7703,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171150Z-8a5d3d42",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121149",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 76.77031
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "933",
+      "collection": "BWV 933-938 Six Little Preludes",
+      "collection_id": "bwv-933-938-six-little-preludes",
+      "entry_id": "bwv-0933",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/15-Kleine_Praeludien_I/BWV_0933.mid",
+      "pinned_sha256": "ae968570aeda1a93f182e145d06d70ff76fddf381c02c03ce61b2b658d22b3ed",
+      "source_filename": "BWV_0933.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/six-little-preludes/"
+    },
+    "import_settings_sha256": "526a38f05f62193ecead67a3eb20502b6f1daedddd6e04a90a0398c14ada2a06",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "ae968570aeda1a93f182e145d06d70ff76fddf381c02c03ce61b2b658d22b3ed"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 933 — Prelude in C major"
+  },
+  "recorded_at": "2026-11-13T17:11:50Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171150Z-8a5d3d42",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "bad05676066a3ed406d67a8f1d54d2d3aa3063b1c69a91b55bcb8bf5cdc5a55b",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "c67852746b11072556a6250a48b52314a39c7dc0ff95cdcfa7e9b9cbbee0bc54",
+        "raw.mid": "116432c563a2065e9667ea01e4b0150c660daf0029f9d6dc4aff5b39601b25b2",
+        "score.musicxml": "738f1da66b0b6f7cba5bde720c19ce225e30a62a33ca8c14f8f7ca29bdc0ff8d",
+        "source.mid": "ae968570aeda1a93f182e145d06d70ff76fddf381c02c03ce61b2b658d22b3ed"
+      },
+      "files": {
+        "notes.json": "0d0689402f073722ab26445bb3c67cd06401e15bc8b434ff2259085033600064",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "c67852746b11072556a6250a48b52314a39c7dc0ff95cdcfa7e9b9cbbee0bc54",
+        "raw.mid": "116432c563a2065e9667ea01e4b0150c660daf0029f9d6dc4aff5b39601b25b2",
+        "score.musicxml": "6c5a22248c74afe43dd44f61508f7982a3cbdd6230648a4f59da18ee41af8b74",
+        "source.mid": "ae968570aeda1a93f182e145d06d70ff76fddf381c02c03ce61b2b658d22b3ed"
+      },
+      "project_state_sha256": "43f5bded6315749644e84cb9863538cca27df74933754d6c530a6d6e48971acc",
+      "sha256": "7661bf16264aa963b1320fe3beb8cffdb9f95a3c2918e549784e8eba040b29fa"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "ae968570aeda1a93f182e145d06d70ff76fddf381c02c03ce61b2b658d22b3ed",
+    "title": "BWV 933 — Prelude in C major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

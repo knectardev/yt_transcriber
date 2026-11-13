@@ -1,0 +1,187 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 381.2005,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170130Z-66750fdf",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120120",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 381.20051
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "865",
+      "collection": "BWV 846-869 The Well-Tempered Clavier Book I",
+      "collection_id": "bwv-846-869-wtc-i",
+      "entry_id": "bwv-0865",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/09-Wohltemperiertes_Klavier_I/BWV_0865.mid",
+      "pinned_sha256": "5a89f31f524d493c8cef7cfe719af9b72f0e5bf02e1aa6f1e8b5d11ec5c6cf3b",
+      "source_filename": "BWV_0865.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-i/"
+    },
+    "import_settings_sha256": "6884430e63d465d5f794a1ef3606dfea306fb73cca91a6f76b77ce6abee8bcb5",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "5a89f31f524d493c8cef7cfe719af9b72f0e5bf02e1aa6f1e8b5d11ec5c6cf3b"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        },
+        {
+          "bpm": 70.00007000007,
+          "time": 82.999917
+        }
+      ],
+      "time_signature": "9/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 9,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 82.999917
+        }
+      ]
+    },
+    "title": "BWV 865 — Prelude and Fugue No. 20"
+  },
+  "recorded_at": "2026-11-13T17:01:30Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170130Z-66750fdf",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "ed88da27507bd62ca46f39b8f9d08e1aed5cce7589d76df86446ceb484c360ae",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "86bfbf0f3bf76b5bd1ddae3fb27779b3bbf1374424450ecb5a710a1d1ca7b700",
+        "raw.mid": "dce104f0b3b881f8cd531a6b4d2cebae6fd71324dbcd103df1302090a0a80dc9",
+        "score.musicxml": "afbf4c4d343788181c6f8faf7672290cdc4a3025ca060ecb5226b578c16dca4a",
+        "source.mid": "5a89f31f524d493c8cef7cfe719af9b72f0e5bf02e1aa6f1e8b5d11ec5c6cf3b"
+      },
+      "files": {
+        "notes.json": "c6de2736360db3a0ee13136e672268dfa91cbe326d47e899efbbc576fcfe8ac6",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "86bfbf0f3bf76b5bd1ddae3fb27779b3bbf1374424450ecb5a710a1d1ca7b700",
+        "raw.mid": "dce104f0b3b881f8cd531a6b4d2cebae6fd71324dbcd103df1302090a0a80dc9",
+        "score.musicxml": "867e8ae4e666521722f158df34182a2c00908febfdfecd5f26cb7201d93a44d5",
+        "source.mid": "5a89f31f524d493c8cef7cfe719af9b72f0e5bf02e1aa6f1e8b5d11ec5c6cf3b"
+      },
+      "project_state_sha256": "b71b3ac52dfa4266147fb942752aa04f6a60fb5b82e3dfe15809dedf0701c0a6",
+      "sha256": "3e0c3598b8d47096a6441eb41d0bb8191aa4ef8ebe821daa5613f463e1f15f78"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "5a89f31f524d493c8cef7cfe719af9b72f0e5bf02e1aa6f1e8b5d11ec5c6cf3b",
+    "title": "BWV 865 — Prelude and Fugue No. 20"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

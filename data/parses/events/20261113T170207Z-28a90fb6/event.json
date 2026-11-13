@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 101.8516,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170207Z-28a90fb6",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120206",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 101.85156
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "870b",
+      "collection": "BWV 870-893 The Well-Tempered Clavier Book II",
+      "collection_id": "bwv-870-893-wtc-ii",
+      "entry_id": "bwv-0870b",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/10-Wohltemperiertes_Klavier_II/BWV_0870b.mid",
+      "pinned_sha256": "ceaca1333f516e547028324d8a966d95a5368a0e5b599de03cc8ac8f801432ae",
+      "source_filename": "BWV_0870b.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-ii/"
+    },
+    "import_settings_sha256": "75fec3b112460b04bd524cfe542cc820ac274c84bd5021fbf7a3eb70c10c736b",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "ceaca1333f516e547028324d8a966d95a5368a0e5b599de03cc8ac8f801432ae"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 870b — Prelude No. 1b"
+  },
+  "recorded_at": "2026-11-13T17:02:07Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170207Z-28a90fb6",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "2dce52c8a67e0c94a74c59e506b21cb1aca96250eda77e43d23a5ec4d1110c4c",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "cb4d2a8a382d522fe3db528de43d989c355bc90750983babca83d334cdcb80a9",
+        "raw.mid": "cacaf45a56a1df2600cf846b7097c05e112ff540a2bdf03fbf51274e02b127d8",
+        "score.musicxml": "d538979c439d07b61fa5d55c29e3cb246194cd77c1b155d4cfebbaed4690ddaf",
+        "source.mid": "ceaca1333f516e547028324d8a966d95a5368a0e5b599de03cc8ac8f801432ae"
+      },
+      "files": {
+        "notes.json": "f4d09a9a499a817c5090211f171e34f3b3021ec2cede1a69039b17a3d557ae18",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "cb4d2a8a382d522fe3db528de43d989c355bc90750983babca83d334cdcb80a9",
+        "raw.mid": "cacaf45a56a1df2600cf846b7097c05e112ff540a2bdf03fbf51274e02b127d8",
+        "score.musicxml": "b267e2382934960fe18ba6431e2bb9ff31793fe7bf7dcc7dfb6b3c1f4024da13",
+        "source.mid": "ceaca1333f516e547028324d8a966d95a5368a0e5b599de03cc8ac8f801432ae"
+      },
+      "project_state_sha256": "d446cfd67e1c128c02234afce84de034225fda8eb137ee9201e0d5f2539863fa",
+      "sha256": "95bcaa1301a1ebb151655c9b2cd8eaf70c9c65d91561d3508a7af662971465ae"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "ceaca1333f516e547028324d8a966d95a5368a0e5b599de03cc8ac8f801432ae",
+    "title": "BWV 870b — Prelude No. 1b"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

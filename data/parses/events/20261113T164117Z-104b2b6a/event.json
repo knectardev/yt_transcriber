@@ -1,0 +1,214 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 705.5165,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T164117Z-104b2b6a",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-114054",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 705.51649
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "819",
+      "collection": "BWV 818-824 Miscellaneous Suites",
+      "collection_id": "bwv-818-824-miscellaneous-suites",
+      "entry_id": "bwv-0819",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/06-Diverse_Suiten/BWV_0819.mid",
+      "pinned_sha256": "6ece02ae292a5321aac4e54c385f8615297216263ea30bfdc58e442b7e8a8a91",
+      "source_filename": "BWV_0819.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/miscellaneous-suites/"
+    },
+    "import_settings_sha256": "d44635182dc494541e317dbb1c4f07013d780027f5fd2efe7312906e2c0de100",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "6ece02ae292a5321aac4e54c385f8615297216263ea30bfdc58e442b7e8a8a91"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 88.00002346667293,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 88.00002346667293,
+          "time": 0.0
+        },
+        {
+          "bpm": 132.000132000132,
+          "time": 144.37496149999998
+        },
+        {
+          "bpm": 60.0,
+          "time": 297.1020815
+        },
+        {
+          "bpm": 199.99999999999997,
+          "time": 489.1020815
+        },
+        {
+          "bpm": 126.00012600012602,
+          "time": 580.3020815
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 2.5568174999999997
+        },
+        {
+          "denominator": 4,
+          "numerator": 6,
+          "time": 144.37496149999998
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 297.1020815
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 489.1020815
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 580.3020815
+        }
+      ]
+    },
+    "title": "BWV 819 — Suite in E flat major"
+  },
+  "recorded_at": "2026-11-13T16:41:17Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T164117Z-104b2b6a",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "c3b7ed6fb2f4e2356c4187278988d7ae8d38d3acd7791547a91dbd077d404fbb",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "707f86766e9f2fc206937378eb5d0d3ed1f1323ebfcde2db009f085530855cb2",
+        "raw.mid": "a1a72dc529514a113363e79c1181d94e7b382110805b46673f5e7c79e6a2b172",
+        "score.musicxml": "6a619c9d8aaff803d16ad05f749c5bcd961dc743253e5bc90393350f8ed0facd",
+        "source.mid": "6ece02ae292a5321aac4e54c385f8615297216263ea30bfdc58e442b7e8a8a91"
+      },
+      "files": {
+        "notes.json": "9b65d708f2ff3abd70b34cf97068795b2a48381c1d8df657c5e0bf706c73bc91",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "707f86766e9f2fc206937378eb5d0d3ed1f1323ebfcde2db009f085530855cb2",
+        "raw.mid": "a1a72dc529514a113363e79c1181d94e7b382110805b46673f5e7c79e6a2b172",
+        "score.musicxml": "86308f76865cb5cb13bafd3ae3443c86f7e049ba8c00f2f52ff76b1bff34d467",
+        "source.mid": "6ece02ae292a5321aac4e54c385f8615297216263ea30bfdc58e442b7e8a8a91"
+      },
+      "project_state_sha256": "27ec28de7d984704805e43ed9c59e8b8f50ed362b91cf95e2eb5caedec1a9866",
+      "sha256": "e612531d42d7f91edff95e3f003e513a6132652bcd6628db75789530c35af110"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "6ece02ae292a5321aac4e54c385f8615297216263ea30bfdc58e442b7e8a8a91",
+    "title": "BWV 819 — Suite in E flat major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

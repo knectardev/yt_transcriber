@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "key": {
+    "tonic": "A",
+    "mode": "minor",
+    "source": "automatic",
+    "confidence": 0.9017
+  },
+  "grid": {
+    "bpm": 80.0,
+    "numerator": 3,
+    "denominator": 4,
+    "subdivision": 16,
+    "downbeat_seconds": 3e-05,
+    "steps_per_measure": 12,
+    "first_step": 0,
+    "grid_mode": "fixed"
+  },
+  "notes_fingerprint": "d882ffe997cdf737",
+  "chords": [
+    {
+      "measure": 1,
+      "beat": 0.0,
+      "measure_position": 0.0,
+      "start_step": 0,
+      "end_step": 4,
+      "root_pc": 11,
+      "root_name": "B",
+      "quality": "augmented",
+      "bass_pc": 11,
+      "bass_name": "B",
+      "roman": "II+",
+      "symbol": "Baug",
+      "inversion": 0,
+      "confidence": 0.5235,
+      "edited": false,
+      "edited_fields": []
+    },
+    {
+      "measure": 1,
+      "beat": 1.0,
+      "measure_position": 0.3333,
+      "start_step": 4,
+      "end_step": 12,
+      "root_pc": 4,
+      "root_name": "E",
+      "quality": "minorMajor7",
+      "bass_pc": 11,
+      "bass_name": "B",
+      "roman": "v4/3",
+      "symbol": "EmMaj7/B",
+      "inversion": 2,
+      "confidence": 0.78,
+      "edited": false,
+      "edited_fields": []
+    },
+    {
+      "measure": 2,
+      "beat": 0.0,
+      "measure_position": 0.0,
+      "start_step": 12,
+      "end_step": 24,
+      "root_pc": 4,
+      "root_name": "E",
+      "quality": "minor",
+      "bass_pc": 7,
+      "bass_name": "G",
+      "roman": "v6",
+      "symbol": "Em/G",
+      "inversion": 1,
+      "confidence": 0.7161,
+      "edited": false,
+      "edited_fields": []
+    }
+  ],
+  "sequences": [],
+  "provenance": {
+    "parent_project": "catalog-20261113-083516",
+    "parent_event_id": "20261113T171739Z-f5b905a5",
+    "parent_notes_fingerprint": "22b3349354598981",
+    "parent_analysis_sha256": "8eb40af40bfd20c3a926102217b904d965110278791c348971d5225bdde4e867",
+    "parent_measure_start": 439,
+    "parent_measure_end": 440,
+    "parent_step_start": 5256
+  }
+}

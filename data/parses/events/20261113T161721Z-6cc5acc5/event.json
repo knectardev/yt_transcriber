@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 66.6006,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161721Z-6cc5acc5",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083455",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 66.60063
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "789",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0789",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0789.mid",
+      "pinned_sha256": "bcc1ba95dbd2f415304d82f6a25e4584ed43f75da4dca968df65592c6db4cdf7",
+      "source_filename": "BWV_0789.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "c510c25914216321c6825677f60fd581fd488f2ccdb12ea33f62734e529d2628",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "bcc1ba95dbd2f415304d82f6a25e4584ed43f75da4dca968df65592c6db4cdf7"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 789 — Sinfonia No. 3"
+  },
+  "recorded_at": "2026-11-13T16:17:21Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133455Z-0c9c64c1",
+    "parent_event_id": "20261113T133455Z-0c9c64c1",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "aa15e35ba3e6149371f8f758212c4677e1e76b9e4d316d88a7238565ab222ebb",
+        "notes.json": "dca3161b457835aedc4434745f9312b10e6818926ad68658e09096ca8c0b5925",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "fba00d1aac25ce257999e2c0d8e65baece4222fd8feb9792939b05e85ab95176",
+        "raw.mid": "0d4f7c1ff7fd5634f99070ed43fb75f4cbb6fbe0b2c7f43135fe0c920d23b737",
+        "score.musicxml": "42e11643fcabc7e71c5f657a4a404387a2c7ba9a6e2818914244b0c8e224ac63",
+        "source.mid": "bcc1ba95dbd2f415304d82f6a25e4584ed43f75da4dca968df65592c6db4cdf7"
+      },
+      "files": {
+        "annotations.json": "ca12d29859804d83fd0519cf5495d1e3d2c779cf1887a913881d19f83e246313",
+        "notes.json": "05d4f27429d38f931e4e98892d7a034d1db810f704499bccc5cb4fc7710bd21f",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "fba00d1aac25ce257999e2c0d8e65baece4222fd8feb9792939b05e85ab95176",
+        "raw.mid": "0d4f7c1ff7fd5634f99070ed43fb75f4cbb6fbe0b2c7f43135fe0c920d23b737",
+        "score.musicxml": "1bade615bbf006e121d7d26598be0df586a8fb7a205a7b4ff379a145cf5cd5ae",
+        "source.mid": "bcc1ba95dbd2f415304d82f6a25e4584ed43f75da4dca968df65592c6db4cdf7"
+      },
+      "project_state_sha256": "96667b176b8a1e260042b988f59fc031454cc0cb9550bfcc3e3cda092b324620",
+      "sha256": "0d90741bc505b99e864ef7f0aed663aab53ca15abf61f60dd610209875b37442"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "bcc1ba95dbd2f415304d82f6a25e4584ed43f75da4dca968df65592c6db4cdf7",
+    "title": "BWV 789 — Sinfonia No. 3"
+  },
+  "status": "ok",
+  "version": 2
+}

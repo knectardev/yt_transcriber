@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 109.4271,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161744Z-72edc589",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083509",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 109.42708
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "802",
+      "collection": "BWV 802-805 Four Duets",
+      "collection_id": "bwv-802-805-four-duets",
+      "entry_id": "bwv-0802",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/03-Duette/BWV_0802.mid",
+      "pinned_sha256": "6b311d327726cf9f9907248db00b2aafdae7137f2e57db91f98930a4e5b45f72",
+      "source_filename": "BWV_0802.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/duets/"
+    },
+    "import_settings_sha256": "904e0dad099aa2c7a962aabcbbb178fe5cfd35948e7021fc2b20b629a9a7daea",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "6b311d327726cf9f9907248db00b2aafdae7137f2e57db91f98930a4e5b45f72"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 60.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 802 — Duet No. 1 in e minor"
+  },
+  "recorded_at": "2026-11-13T16:17:44Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133510Z-ff6eb17c",
+    "parent_event_id": "20261113T133510Z-ff6eb17c",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "a129a10cb4d242634ea0a9ddbb9aa9ac51f6c2960f7c0555fe582736164fb4b1",
+        "notes.json": "1c43dbf120811800fe65fd31e26b8fee046670c489441b3bc6ec1836997e52c8",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "02f2b41d2b2be9044ce310eab224acd1072ddc8992798844d1bb8d5368490235",
+        "raw.mid": "e890ca102bcae586f1595cd8ceee0b42410263eaae17f5f96893b9c989a67316",
+        "score.musicxml": "d6ef85aedadd39e0e592e28ca21978482d31519c7c43511481ab3c9bcddb9c29",
+        "source.mid": "6b311d327726cf9f9907248db00b2aafdae7137f2e57db91f98930a4e5b45f72"
+      },
+      "files": {
+        "annotations.json": "aafca3a84f663508d69c17c8532f2ed2c388178828656e5dff2b549cc9a3fbda",
+        "notes.json": "f51d60b4f50c80e44af49d48c95f66dde3f0d941ca2aa7b861214eb443d409af",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "02f2b41d2b2be9044ce310eab224acd1072ddc8992798844d1bb8d5368490235",
+        "raw.mid": "e890ca102bcae586f1595cd8ceee0b42410263eaae17f5f96893b9c989a67316",
+        "score.musicxml": "a6b983ad8b1bab1deb5e4bb87c7da193db4c201928d095ebbf19220430b3a35b",
+        "source.mid": "6b311d327726cf9f9907248db00b2aafdae7137f2e57db91f98930a4e5b45f72"
+      },
+      "project_state_sha256": "6f3a170eb4f2f9a48978a7e3ac1367fa919f1217f78e43d9ab7fcf4167b13f47",
+      "sha256": "e0ff6f1bda0f1b5d61eab6bb958da3ca6f6dc03e9761d7e2cfd94b89ec5f986f"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "6b311d327726cf9f9907248db00b2aafdae7137f2e57db91f98930a4e5b45f72",
+    "title": "BWV 802 — Duet No. 1 in e minor"
+  },
+  "status": "ok",
+  "version": 2
+}

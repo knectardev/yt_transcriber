@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 154.6509,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161747Z-b62e75fc",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083510",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 154.65089
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "803",
+      "collection": "BWV 802-805 Four Duets",
+      "collection_id": "bwv-802-805-four-duets",
+      "entry_id": "bwv-0803",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/03-Duette/BWV_0803.mid",
+      "pinned_sha256": "a45ddf3f1c4337c6199718a0dd231f8f0efd27e1f7b4b6c39e2945bf53938210",
+      "source_filename": "BWV_0803.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/duets/"
+    },
+    "import_settings_sha256": "8aebb12ed93a6f1eb5df7f675710ccaaa6e2cc0f512c26ce1a49d0fb21b6b28a",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "a45ddf3f1c4337c6199718a0dd231f8f0efd27e1f7b4b6c39e2945bf53938210"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "2/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 2,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 803 — Duet No. 2 in F major"
+  },
+  "recorded_at": "2026-11-13T16:17:47Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133511Z-f7f69890",
+    "parent_event_id": "20261113T133511Z-f7f69890",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "989fa4b87da9282da27f4066912066775360199e8c77864bb475b922fd66762d",
+        "notes.json": "c999b98bd359d4ad15ba8af5228e06a6f291675eb00231f0854a0beedd89233e",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "314e1ad4fd83473341186d8ec5c524a01b021a1b05effe8afd90ef0f8309c41c",
+        "raw.mid": "e97a01285b44dd22a2cd971d17aabd115ad8bf4f7eb7cd74c2dbd8e1a8b8cc99",
+        "score.musicxml": "ee5aa713d95dac9a37b270e6854e44600909867ba86322196a1214967f5e9b5d",
+        "source.mid": "a45ddf3f1c4337c6199718a0dd231f8f0efd27e1f7b4b6c39e2945bf53938210"
+      },
+      "files": {
+        "annotations.json": "1fb6fa0404faf429837545ffdb154c3c05001a6ebd9817ecf8dfddd8fe79dbe5",
+        "notes.json": "0a537b8fcdff1ccda42abf9b09ecc9e39372e51c61bc1af7f7d73910b65a948c",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "314e1ad4fd83473341186d8ec5c524a01b021a1b05effe8afd90ef0f8309c41c",
+        "raw.mid": "e97a01285b44dd22a2cd971d17aabd115ad8bf4f7eb7cd74c2dbd8e1a8b8cc99",
+        "score.musicxml": "8f8e46ddf553d4053b3206a0f32d04c12eff6b7202ddb481a558512e85a81eef",
+        "source.mid": "a45ddf3f1c4337c6199718a0dd231f8f0efd27e1f7b4b6c39e2945bf53938210"
+      },
+      "project_state_sha256": "658d3e395b3ed85c39791faad5c4834796745c7987007fd21aa8891badda033e",
+      "sha256": "94c729ec26fce5df7ab50731f567784c46e1c222b4ea61765aa4e7f7b601374d"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "a45ddf3f1c4337c6199718a0dd231f8f0efd27e1f7b4b6c39e2945bf53938210",
+    "title": "BWV 803 — Duet No. 2 in F major"
+  },
+  "status": "ok",
+  "version": 2
+}

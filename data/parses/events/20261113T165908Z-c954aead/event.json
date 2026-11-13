@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 47.9258,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165908Z-c954aead",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115907",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 47.92578
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "842",
+      "collection": "BWV 832-845 Suites and Suite Movements",
+      "collection_id": "bwv-832-845-suites-and-suite-movements",
+      "entry_id": "bwv-0842",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/08-Einzelwerke/BWV_0842.mid",
+      "pinned_sha256": "a6ec5bfb578a2d7f9fba41d12ebed321d2afd724e487cd4e40b2e07d88705129",
+      "source_filename": "BWV_0842.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/suites-and-suite-movements/"
+    },
+    "import_settings_sha256": "d0aacd8891e5bdc0a691e238882be9235658b70cd07c69d9b8e212766c7e860a",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "a6ec5bfb578a2d7f9fba41d12ebed321d2afd724e487cd4e40b2e07d88705129"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 842 — Menuet in g minor from Clavierbüchlein\nfor Wilhelm Friedemann Bach"
+  },
+  "recorded_at": "2026-11-13T16:59:08Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165908Z-c954aead",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "b5dc9b3d3ca76506a11457c60a0309d4167621de58496a1f5eefe13ef7002991",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "f48bde3f5346e253411f037628be5243342f730456210c63ceff9b8a4f7f0243",
+        "raw.mid": "91866bb5ddee98cd08587bdc06e0fbabde896ac766baea93ea15074021e702ec",
+        "score.musicxml": "8b61b4248024ebd0046f450494f79bc2ae53423df8b013f491bb77b45975b04a",
+        "source.mid": "a6ec5bfb578a2d7f9fba41d12ebed321d2afd724e487cd4e40b2e07d88705129"
+      },
+      "files": {
+        "notes.json": "14f3d932dc9e68d662721a3ac5c070ea6d4f123a7992e579fabc1a089137253d",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "f48bde3f5346e253411f037628be5243342f730456210c63ceff9b8a4f7f0243",
+        "raw.mid": "91866bb5ddee98cd08587bdc06e0fbabde896ac766baea93ea15074021e702ec",
+        "score.musicxml": "db92bc77579e27863970daa042dbd5273654f86752c3a32517048ceb87078f71",
+        "source.mid": "a6ec5bfb578a2d7f9fba41d12ebed321d2afd724e487cd4e40b2e07d88705129"
+      },
+      "project_state_sha256": "043c1920230566e58c3879c52380c65a7f447627d49e6367a1743964e1238731",
+      "sha256": "223c0cfa78489465e1463806938725dbc40c0b774cdc55f579810b8276f797ee"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "a6ec5bfb578a2d7f9fba41d12ebed321d2afd724e487cd4e40b2e07d88705129",
+    "title": "BWV 842 — Menuet in g minor from Clavierbüchlein\nfor Wilhelm Friedemann Bach"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

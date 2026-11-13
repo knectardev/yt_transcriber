@@ -1,0 +1,211 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 543.879,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T164307Z-e2a1efae",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-114254",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 543.87902
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "824",
+      "collection": "BWV 818-824 Miscellaneous Suites",
+      "collection_id": "bwv-818-824-miscellaneous-suites",
+      "entry_id": "bwv-0824",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/06-Diverse_Suiten/BWV_0824.mid",
+      "pinned_sha256": "7f11f07bfed7932c597a5e7b6d5500b680419ea0de7064a8b9a9468d36b8c288",
+      "source_filename": "BWV_0824.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/miscellaneous-suites/"
+    },
+    "import_settings_sha256": "526a38f05f62193ecead67a3eb20502b6f1daedddd6e04a90a0398c14ada2a06",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "7f11f07bfed7932c597a5e7b6d5500b680419ea0de7064a8b9a9468d36b8c288"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        },
+        {
+          "bpm": 120.0,
+          "time": 154.8
+        },
+        {
+          "bpm": 140.00014000014,
+          "time": 322.8
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 1.2000000000000002
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 154.8
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 322.8
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 333.085704
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 369.085668
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 379.371372
+        }
+      ]
+    },
+    "title": "BWV 824 — Suite in A major (fragment)"
+  },
+  "recorded_at": "2026-11-13T16:43:07Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T164307Z-e2a1efae",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "af6d0546c1b99a00ad8d31c715d888b7f08ba90f5d15402ac65e51185efd8fc2",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "c7f98db443625589fa2a57d9739e8dd1d54059619dc9c54a2407669a89df07ea",
+        "raw.mid": "368c4a3fb020b23f54bd0337e84c94dd1e81a4d9927134152d1b99fb6c241343",
+        "score.musicxml": "547e2638f897e6470132bcb389b735c959e57d968928c4ec00f79e84562da5cc",
+        "source.mid": "7f11f07bfed7932c597a5e7b6d5500b680419ea0de7064a8b9a9468d36b8c288"
+      },
+      "files": {
+        "notes.json": "3809201a25c7e42d1bca559dc2dc001752cda53cb70394e18d94d824c86112ea",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "c7f98db443625589fa2a57d9739e8dd1d54059619dc9c54a2407669a89df07ea",
+        "raw.mid": "368c4a3fb020b23f54bd0337e84c94dd1e81a4d9927134152d1b99fb6c241343",
+        "score.musicxml": "410ed7fa09c48c2f568cffa72f80d25916eae89659a1321b502bc85a4ff5946b",
+        "source.mid": "7f11f07bfed7932c597a5e7b6d5500b680419ea0de7064a8b9a9468d36b8c288"
+      },
+      "project_state_sha256": "21d6b7151f4651baf7f95cd2ffde16d0cde4cefdb8a8e98d13e3a9d2eb2c609e",
+      "sha256": "5bdc4e2659f5977e8d92925339f8cf60f8caefa16490956bbd21ced4581891ef"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "7f11f07bfed7932c597a5e7b6d5500b680419ea0de7064a8b9a9468d36b8c288",
+    "title": "BWV 824 — Suite in A major (fragment)"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

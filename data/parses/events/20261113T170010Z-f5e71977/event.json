@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 59.8021,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170010Z-f5e71977",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120009",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 59.80208
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "851a",
+      "collection": "BWV 846-869 The Well-Tempered Clavier Book I",
+      "collection_id": "bwv-846-869-wtc-i",
+      "entry_id": "bwv-0851a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/09-Wohltemperiertes_Klavier_I/BWV_0851a.mid",
+      "pinned_sha256": "54b39a0f1d003a60c36b20b76b05bbb5d92ee27c6b7947cdbc6e8d7a7ee50e5d",
+      "source_filename": "BWV_0851a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-i/"
+    },
+    "import_settings_sha256": "a1b888a649d10a3c82314b4f3470020cdbd756da3c3072077457a53b572e16c6",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "54b39a0f1d003a60c36b20b76b05bbb5d92ee27c6b7947cdbc6e8d7a7ee50e5d"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 60.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 851a — Prelude No. 6a"
+  },
+  "recorded_at": "2026-11-13T17:00:10Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170010Z-f5e71977",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "2c83962ac4821eca145176839738a7ac3c216a88443b0f622396abc4e1b03553",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "41f9600f05e2a6e8469eae8e95ae9ab9369b5728815cbb94d656e6dc52bfc809",
+        "raw.mid": "c30e55f0a856439167fd6ac71c6916c2ddb1ff7f7f008fe160c37818b9f16495",
+        "score.musicxml": "ab9af4dc582c223196fbdcdf809e2f3d93611a309721c848d1093c219a28187e",
+        "source.mid": "54b39a0f1d003a60c36b20b76b05bbb5d92ee27c6b7947cdbc6e8d7a7ee50e5d"
+      },
+      "files": {
+        "notes.json": "ffe5c756630414c2a68030c8c5074c96aad8884f91af2fa4422825a41bf08964",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "41f9600f05e2a6e8469eae8e95ae9ab9369b5728815cbb94d656e6dc52bfc809",
+        "raw.mid": "c30e55f0a856439167fd6ac71c6916c2ddb1ff7f7f008fe160c37818b9f16495",
+        "score.musicxml": "7a82227190cd4ac12bf245c0dd2e3670611ccaf5ac43c4c945519ae0f8260725",
+        "source.mid": "54b39a0f1d003a60c36b20b76b05bbb5d92ee27c6b7947cdbc6e8d7a7ee50e5d"
+      },
+      "project_state_sha256": "2cb989055900e6d7eb31f5568662bb9c93bca6ea7a322f4b079d3bd9e4aa336c",
+      "sha256": "02336d464f4df0bcd2fec4ff5488bd572e5a833eb4041bd5ba74ee88ec6ee271"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "54b39a0f1d003a60c36b20b76b05bbb5d92ee27c6b7947cdbc6e8d7a7ee50e5d",
+    "title": "BWV 851a — Prelude No. 6a"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

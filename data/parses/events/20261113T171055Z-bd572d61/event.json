@@ -1,0 +1,214 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 330.4759,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171055Z-bd572d61",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121050",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 330.47592
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "920",
+      "collection": "BWV 910-923 Toccatas, Fantasias and Preludes",
+      "collection_id": "bwv-910-923-toccatas-fantasias-and-preludes",
+      "entry_id": "bwv-0920",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/13-Toccaten_Fantasien_Praeludien/BWV_0920.mid",
+      "pinned_sha256": "583955e7b323558b95b3d847c81948c72f8f65748d15d1a034dda5fc66374c9d",
+      "source_filename": "BWV_0920.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/toccatas-fantasias-and-preludes/"
+    },
+    "import_settings_sha256": "1cb2cf7a3a4b76b5c3f95ab4aa75e40cbfadfad7e6c8db64e2cf42c7f64de062",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "583955e7b323558b95b3d847c81948c72f8f65748d15d1a034dda5fc66374c9d"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 84.00008400008399,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 84.00008400008399,
+          "time": 0.0
+        },
+        {
+          "bpm": 72.0000288000115,
+          "time": 42.8571
+        },
+        {
+          "bpm": 126.00012600012602,
+          "time": 209.52370000000002
+        },
+        {
+          "bpm": 108.000108000108,
+          "time": 258.09508
+        },
+        {
+          "bpm": 168.0004032009677,
+          "time": 304.7617
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 32,
+          "numerator": 16,
+          "time": 42.8571
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 139.523728
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 209.52370000000002
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 258.09508
+        }
+      ]
+    },
+    "title": "BWV 920 — Fantasia in g minor"
+  },
+  "recorded_at": "2026-11-13T17:10:55Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171055Z-bd572d61",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "138e597fb2d41cef5d2b519e0199bb17cae87dffd6b584cfb044b3abc4f2efbb",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "31dc29fffa763c7a68f57448f34afc14e72b06508ce67b571d788c958ed99754",
+        "raw.mid": "4dea58b82b21d1ff4f055a6791bee4a9359d001d84e7b8e4725c700bac5dc701",
+        "score.musicxml": "da098a22473b76afbf6c9f4198d2387ebab4c75b4e12b8225b0415bc06733f02",
+        "source.mid": "583955e7b323558b95b3d847c81948c72f8f65748d15d1a034dda5fc66374c9d"
+      },
+      "files": {
+        "notes.json": "4127afbc959abe9b11f6ec2bed0ea48e8927a2c11b31f5716f6926062782ebb7",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "31dc29fffa763c7a68f57448f34afc14e72b06508ce67b571d788c958ed99754",
+        "raw.mid": "4dea58b82b21d1ff4f055a6791bee4a9359d001d84e7b8e4725c700bac5dc701",
+        "score.musicxml": "e0d081ceafdd67d2b2c34529188a6e8b16df5a9352b766e6162aabea82e71d7e",
+        "source.mid": "583955e7b323558b95b3d847c81948c72f8f65748d15d1a034dda5fc66374c9d"
+      },
+      "project_state_sha256": "6efb120bfb65a48a5704d3364ad890c3e19b3fb280b5f2b8852a8323200d568f",
+      "sha256": "ecd88b5fe2557adedfd86d7a4e7b97cf854fd0e25bbec9423da0aed07be9ee15"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "583955e7b323558b95b3d847c81948c72f8f65748d15d1a034dda5fc66374c9d",
+    "title": "BWV 920 — Fantasia in g minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

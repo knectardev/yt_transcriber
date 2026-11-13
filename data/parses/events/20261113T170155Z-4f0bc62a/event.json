@@ -1,0 +1,182 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 678.2633,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170155Z-4f0bc62a",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120144",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 678.26334
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "869",
+      "collection": "BWV 846-869 The Well-Tempered Clavier Book I",
+      "collection_id": "bwv-846-869-wtc-i",
+      "entry_id": "bwv-0869",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/09-Wohltemperiertes_Klavier_I/BWV_0869.mid",
+      "pinned_sha256": "f6dd459dea1b70e3861231999b0476b038ea3fc67547786a20b2fc26f42af252",
+      "source_filename": "BWV_0869.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-i/"
+    },
+    "import_settings_sha256": "1dd6840ff0907495c7cd504db28d8cdb23b32c5135acfd527917a28ab783593d",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "f6dd459dea1b70e3861231999b0476b038ea3fc67547786a20b2fc26f42af252"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 46.00002913335179,
+          "time": 282.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 869 — Prelude and Fugue No. 24"
+  },
+  "recorded_at": "2026-11-13T17:01:55Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170155Z-4f0bc62a",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "d623500013e3306b70f835ec168ff1a47bcfa44667714eda608a346aa773481c",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "18ac7b300915ad75d951eba908494d01eee43888438af610f0b254104fe9d43f",
+        "raw.mid": "08bdf5c7af6095da65f87a9848db5036c4491ca0110fdfb6d7ff9c8096ccbb30",
+        "score.musicxml": "7edfbecca705d909155155929e9244f96b1b308aaf876d98cc7e3aed74322ec2",
+        "source.mid": "f6dd459dea1b70e3861231999b0476b038ea3fc67547786a20b2fc26f42af252"
+      },
+      "files": {
+        "notes.json": "8e186a3913e0d5db73252a8aedd43a7965ad03f74f6b0ae316d69f176acf700a",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "18ac7b300915ad75d951eba908494d01eee43888438af610f0b254104fe9d43f",
+        "raw.mid": "08bdf5c7af6095da65f87a9848db5036c4491ca0110fdfb6d7ff9c8096ccbb30",
+        "score.musicxml": "f9d7f4097090a3baebc04e16984f38a6a40ae3049f97250e98ad433c201aa9b1",
+        "source.mid": "f6dd459dea1b70e3861231999b0476b038ea3fc67547786a20b2fc26f42af252"
+      },
+      "project_state_sha256": "03cc52b72310adbe35d986a27cc91e175197b45e51a500ff0f5bf57ae1e206ac",
+      "sha256": "696c4356a1f6e7081b14199f28f8ce3289888948b46520970a85ec4af2d2ac6b"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "f6dd459dea1b70e3861231999b0476b038ea3fc67547786a20b2fc26f42af252",
+    "title": "BWV 869 — Prelude and Fugue No. 24"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

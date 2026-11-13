@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 117.8182,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161650Z-65b5080a",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261112-194233",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 117.81817
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "773",
+      "collection": "BWV 772-786 Inventions",
+      "collection_id": "bwv-772-786-inventions",
+      "entry_id": "bwv-0773",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/01-Inventionen/BWV_0773.mid",
+      "pinned_sha256": "cb16f2ae77201da12f8c7f3ba2af97e381387e58854ea38d572d062014b9f061",
+      "source_filename": "BWV_0773.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/inventions/"
+    },
+    "import_settings_sha256": "cfd5773c022f5cb8bf0679c7985eaed68a5332ec151fac318902e4ea053ccd8a",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "cb16f2ae77201da12f8c7f3ba2af97e381387e58854ea38d572d062014b9f061"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 55.000004583333705,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 55.000004583333705,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "8/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 8,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 773 — Invention No. 2"
+  },
+  "recorded_at": "2026-11-13T16:16:50Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T004234Z-07404f85",
+    "parent_event_id": "20261113T004234Z-07404f85",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "29b5738e58086d74576a0bc3d71bdd0a8bbf993f0bdac33de6009baa7bc9db61",
+        "notes.json": "2acf8c55bf1df43bdc8d7d35a73fcf29b45e308024baa9b9eca32808f909eca3",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "68182096b7c90f7343c35139cac5e64d0a9e508efabd1439f3184d6987a646f1",
+        "raw.mid": "f10396568cb7846e6935f3b843654da5066e98064bf5fb7eb9c437a439933861",
+        "score.musicxml": "c0e350d3c897dbc94000ad6eed191841e4930b7b4b4b35d98d75b4cd83f15c70",
+        "source.mid": "cb16f2ae77201da12f8c7f3ba2af97e381387e58854ea38d572d062014b9f061"
+      },
+      "files": {
+        "annotations.json": "f1e323b0224efe55e633ce43ee52b0e531c98518c5e3c57d6971a285f237481c",
+        "notes.json": "9f905a9fa3873125990d8c74b4efafd6d0990b9956ed2b47e62ae2d748aad560",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "68182096b7c90f7343c35139cac5e64d0a9e508efabd1439f3184d6987a646f1",
+        "raw.mid": "f10396568cb7846e6935f3b843654da5066e98064bf5fb7eb9c437a439933861",
+        "score.musicxml": "06b93ca482e64e111b5adf434d36e4952205fa4e78b2f2a1ca4205ab909e73c9",
+        "source.mid": "cb16f2ae77201da12f8c7f3ba2af97e381387e58854ea38d572d062014b9f061"
+      },
+      "project_state_sha256": "6f719243970836ed6f99190f22fe99ff23e9f7ca117c1fdaa19278e4eb2f8315",
+      "sha256": "6bfffb2b968e3deca2e2849761f58262f5f83d72862efb18468b0d105fe16d95"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "cb16f2ae77201da12f8c7f3ba2af97e381387e58854ea38d572d062014b9f061",
+    "title": "BWV 773 — Invention No. 2"
+  },
+  "status": "ok",
+  "version": 2
+}

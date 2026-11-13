@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 316.6699,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171116Z-1a08bdda",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121110",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 316.66992
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "922",
+      "collection": "BWV 910-923 Toccatas, Fantasias and Preludes",
+      "collection_id": "bwv-910-923-toccatas-fantasias-and-preludes",
+      "entry_id": "bwv-0922",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/13-Toccaten_Fantasien_Praeludien/BWV_0922.mid",
+      "pinned_sha256": "35d113964eee3702e931ae68ec0112b8802d5bed7c5f71187768921fef4c40f4",
+      "source_filename": "BWV_0922.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/toccatas-fantasias-and-preludes/"
+    },
+    "import_settings_sha256": "1dd6840ff0907495c7cd504db28d8cdb23b32c5135acfd527917a28ab783593d",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "35d113964eee3702e931ae68ec0112b8802d5bed7c5f71187768921fef4c40f4"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 922 — Prelude (Fantasia) in a minor"
+  },
+  "recorded_at": "2026-11-13T17:11:16Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171116Z-1a08bdda",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "7331f31aa991e8ee8fb13cc9ecc6a60f7c21094d5de47cda828b6f76a00256c5",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "d0a813c030ad70a65fb522f3a8335bbb3a96f83b7ecf3b9e850975a60582f3e7",
+        "raw.mid": "63e63eefcee65d72759f56d4a48bfc463cac00cc8444648b9afc7c19e7abe24f",
+        "score.musicxml": "8931e9b2c241ad373b1664d10614a5d085bb2177e18445b30a5dd054bd668c5d",
+        "source.mid": "35d113964eee3702e931ae68ec0112b8802d5bed7c5f71187768921fef4c40f4"
+      },
+      "files": {
+        "notes.json": "49e30e31337ce09422388539e1e62824eed11e522c82ac23517ce7fe395a9ee3",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "d0a813c030ad70a65fb522f3a8335bbb3a96f83b7ecf3b9e850975a60582f3e7",
+        "raw.mid": "63e63eefcee65d72759f56d4a48bfc463cac00cc8444648b9afc7c19e7abe24f",
+        "score.musicxml": "4c3c56df3c88c2aaef54b8dfc42abdd15044573858902701bf100c8418620643",
+        "source.mid": "35d113964eee3702e931ae68ec0112b8802d5bed7c5f71187768921fef4c40f4"
+      },
+      "project_state_sha256": "e162194935a6815fa09428df1befeb82b504220c82fcab32505f9a8c4d3a5676",
+      "sha256": "1f3fd0d3eb573ed9a4cdd7a773a4b3243d41c2fd7ab8287ad164bd885454cc05"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "35d113964eee3702e931ae68ec0112b8802d5bed7c5f71187768921fef4c40f4",
+    "title": "BWV 922 — Prelude (Fantasia) in a minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

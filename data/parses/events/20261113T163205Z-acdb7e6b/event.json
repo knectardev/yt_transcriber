@@ -1,0 +1,227 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 863.4126,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T163205Z-acdb7e6b",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-113135",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 863.41261
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "815",
+      "collection": "BWV 812-817 French Suites",
+      "collection_id": "bwv-812-817-french-suites",
+      "entry_id": "bwv-0815",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/05-Franzoesische_Suiten/BWV_0815.mid",
+      "pinned_sha256": "3d8ae864264ddf060446c9fde4944312b4d77074f497c43decf373411d28d6a5",
+      "source_filename": "BWV_0815.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/french-suites/"
+    },
+    "import_settings_sha256": "d163c518617dc6acfe6d9f5aa59f218f29035f8011c8321185637ce5d34907e8",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "3d8ae864264ddf060446c9fde4944312b4d77074f497c43decf373411d28d6a5"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 66.000066000066,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 66.000066000066,
+          "time": 0.0
+        },
+        {
+          "bpm": 112.00005973336519,
+          "time": 148.86348750000002
+        },
+        {
+          "bpm": 74.000074000074,
+          "time": 264.5777115
+        },
+        {
+          "bpm": 160.0,
+          "time": 381.3343515
+        },
+        {
+          "bpm": 104.00001386666852,
+          "time": 447.3343515
+        },
+        {
+          "bpm": 69.00001725000432,
+          "time": 502.71895950000004
+        },
+        {
+          "bpm": 104.00001386666852,
+          "time": 655.7623995
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 3.4090875
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 148.86348750000002
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 381.3343515
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 447.3343515
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 502.71895950000004
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 655.7623995
+        }
+      ]
+    },
+    "title": "BWV 815 — Suite No. 4 in E flat major"
+  },
+  "recorded_at": "2026-11-13T16:32:05Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T163205Z-acdb7e6b",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "e84be27761a3177a74036a5d0c003e9c249c70d0399a691c188c5b6971c64eb8",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "6326e648dd5de27521b83d3bb57f5a68e52275358e6141341b50c0bc9ca8c2ab",
+        "raw.mid": "9fb6c17e5998ed0a852ceeb608bc257c74b3f913ba9499b9676abccd0f7cb389",
+        "score.musicxml": "e0602388ac316507d88b45cff6dd51efa04a44da30d8bc9a3dcdd782ed3e3cad",
+        "source.mid": "3d8ae864264ddf060446c9fde4944312b4d77074f497c43decf373411d28d6a5"
+      },
+      "files": {
+        "notes.json": "cfbd12aed2f85f9176d41836dc4362f45ba1b030c74a1641abed999151f1aa83",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "6326e648dd5de27521b83d3bb57f5a68e52275358e6141341b50c0bc9ca8c2ab",
+        "raw.mid": "9fb6c17e5998ed0a852ceeb608bc257c74b3f913ba9499b9676abccd0f7cb389",
+        "score.musicxml": "012fe812345e224de104cba5bf9976136f6af14588065c95c8495f3b713e85e4",
+        "source.mid": "3d8ae864264ddf060446c9fde4944312b4d77074f497c43decf373411d28d6a5"
+      },
+      "project_state_sha256": "bfebfe104d4c1b1116774814161b815338d6bdd739a1eabe96c0cd5b74cfa4e5",
+      "sha256": "f09a0ccdfd40e41245f1c7985d8afda5a9cd0ffe5b604235fdcdca7171c66174"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "3d8ae864264ddf060446c9fde4944312b4d77074f497c43decf373411d28d6a5",
+    "title": "BWV 815 — Suite No. 4 in E flat major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

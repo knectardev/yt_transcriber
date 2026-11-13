@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 171.182,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165850Z-647aaf3f",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115849",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 171.18196
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "835",
+      "collection": "BWV 832-845 Suites and Suite Movements",
+      "collection_id": "bwv-832-845-suites-and-suite-movements",
+      "entry_id": "bwv-0835",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/08-Einzelwerke/BWV_0835.mid",
+      "pinned_sha256": "b9c46abce8c175465a470950a2d3eafbe0925eea9139103132406587309022f0",
+      "source_filename": "BWV_0835.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/suites-and-suite-movements/"
+    },
+    "import_settings_sha256": "13924f638e8fe98fadf672539336732c4a7f3f523663510d196961a6ae8a7161",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "b9c46abce8c175465a470950a2d3eafbe0925eea9139103132406587309022f0"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 46.00002913335179,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 46.00002913335179,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 4.23912775
+        }
+      ]
+    },
+    "title": "BWV 835 — Allemande in a minor"
+  },
+  "recorded_at": "2026-11-13T16:58:50Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165850Z-647aaf3f",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "9a1f6c032d2b62919c6a7073959405888cf596f9ac03cffff11515f6a441d663",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "7f46219b8391ac1293955e530fd1ee2d101fa8243754a3901be0573c117fa782",
+        "raw.mid": "ea8b943f48636cf1ae421d411883d0a127d5a365d2b86e0648adce7931853d69",
+        "score.musicxml": "675c29528c2eeb4e9b586e05892d60a0cd73f2e55da089f2dca899097eb1d035",
+        "source.mid": "b9c46abce8c175465a470950a2d3eafbe0925eea9139103132406587309022f0"
+      },
+      "files": {
+        "notes.json": "156e2fe3e38d67e27750c6b1f3b00965e7784baa4097390978a138ae120406b6",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "7f46219b8391ac1293955e530fd1ee2d101fa8243754a3901be0573c117fa782",
+        "raw.mid": "ea8b943f48636cf1ae421d411883d0a127d5a365d2b86e0648adce7931853d69",
+        "score.musicxml": "f8b7d5f9d7fce82c190e6f09cbf869268267258106e17728c70cad1860032f64",
+        "source.mid": "b9c46abce8c175465a470950a2d3eafbe0925eea9139103132406587309022f0"
+      },
+      "project_state_sha256": "1a7159b6933acd61d7a5d39a161ea478a0603fe8ca6d99cdbcf83942fdd4d363",
+      "sha256": "6f6747acca7db1690853513edff64a42cfcfff60d162d0fd4421b3dae6116095"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "b9c46abce8c175465a470950a2d3eafbe0925eea9139103132406587309022f0",
+    "title": "BWV 835 — Allemande in a minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

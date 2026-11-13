@@ -1,0 +1,257 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 2352.2875,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165531Z-15cc4ed0",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115446",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 2352.2875
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "831",
+      "collection": "BWV 825-831 Partitas",
+      "collection_id": "bwv-825-831-partitas",
+      "entry_id": "bwv-0831",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/07-Partiten/BWV_0831.mid",
+      "pinned_sha256": "4547477ba326a2442611dcf43ad2c9d7d29472f4cda7d686f960e16cc149b5aa",
+      "source_filename": "BWV_0831.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/partitas/"
+    },
+    "import_settings_sha256": "f55b2b670455a90ad3d14de078a955551dbe98933d6c075c443e36c6b7dfa0bd",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "4547477ba326a2442611dcf43ad2c9d7d29472f4cda7d686f960e16cc149b5aa"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 60.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 120.0,
+          "time": 1056.0
+        },
+        {
+          "bpm": 99.99999999999999,
+          "time": 1199.0
+        },
+        {
+          "bpm": 75.0,
+          "time": 1410.2
+        },
+        {
+          "bpm": 60.0,
+          "time": 1544.6000000000001
+        },
+        {
+          "bpm": 120.0,
+          "time": 1712.1000000000001
+        },
+        {
+          "bpm": 80.0,
+          "time": 1920.1000000000001
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 0.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 156.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 528.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 604.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 976.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 1056.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 1199.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 1410.2
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 1544.6000000000001
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 1712.1000000000001
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 1920.1000000000001
+        },
+        {
+          "denominator": 4,
+          "numerator": 2,
+          "time": 2136.4750000000004
+        }
+      ]
+    },
+    "title": "BWV 831 — Partita in b minor (French Overture)"
+  },
+  "recorded_at": "2026-11-13T16:55:31Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165531Z-15cc4ed0",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "853d7f57901a0b85d03adae966a22eebf9bef42f9febe2ee029f5269927b59e9",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "b1785575826d88d7111ee008dc3617b0213aed1b0e4f62ee2cd744f7e7e90eb2",
+        "raw.mid": "8863756c89bc25e586991bc29578829eab16f9f82ab2da8019ac543faabc48a1",
+        "score.musicxml": "c91d3ff230e62a5aa9e0e3c8e78a5a8a3176ca1220e30a149f63d0d84529e02c",
+        "source.mid": "4547477ba326a2442611dcf43ad2c9d7d29472f4cda7d686f960e16cc149b5aa"
+      },
+      "files": {
+        "notes.json": "74e15744a8c4689518d940eab14baacdef286af2fab213627d0b69b39e12a14a",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "b1785575826d88d7111ee008dc3617b0213aed1b0e4f62ee2cd744f7e7e90eb2",
+        "raw.mid": "8863756c89bc25e586991bc29578829eab16f9f82ab2da8019ac543faabc48a1",
+        "score.musicxml": "3d81e72fbd7de946d05d88e5501dfa024c191b5827b518595b3c2b44aba0cfa2",
+        "source.mid": "4547477ba326a2442611dcf43ad2c9d7d29472f4cda7d686f960e16cc149b5aa"
+      },
+      "project_state_sha256": "21e79c719d1fe713f9457ba016336cc20393e1bff65dec88ec02c419762de0a4",
+      "sha256": "1c07a434b59e4a210e72ab01bf301bdff662fdf3673376ba567a177934e7b036"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "4547477ba326a2442611dcf43ad2c9d7d29472f4cda7d686f960e16cc149b5aa",
+    "title": "BWV 831 — Partita in b minor (French Overture)"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

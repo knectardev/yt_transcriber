@@ -1,0 +1,198 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 259.4629,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170222Z-41f3b202",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120218",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 259.46289
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "872a",
+      "collection": "BWV 870-893 The Well-Tempered Clavier Book II",
+      "collection_id": "bwv-870-893-wtc-ii",
+      "entry_id": "bwv-0872a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/10-Wohltemperiertes_Klavier_II/BWV_0872a.mid",
+      "pinned_sha256": "af837b0030a01b89c86f5c436587f05e519ddfaacabcabebd44d1f5c1432b1c9",
+      "source_filename": "BWV_0872a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-ii/"
+    },
+    "import_settings_sha256": "1dd6840ff0907495c7cd504db28d8cdb23b32c5135acfd527917a28ab783593d",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "af837b0030a01b89c86f5c436587f05e519ddfaacabcabebd44d1f5c1432b1c9"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 72.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 101.25
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 173.25
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 202.5
+        }
+      ]
+    },
+    "title": "BWV 872a — Prelude und Fughetta No. 3a"
+  },
+  "recorded_at": "2026-11-13T17:02:22Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170222Z-41f3b202",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "338531336e17b590f562fe6cf181eabb32762c81661db99ea4514a6e3f0748ef",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "825db0931d9d4744e817319e7053bb816fd9e5ab0ea740cdf7302e6497d535a4",
+        "raw.mid": "c0c6682ef7efe06e35b0f1495b2eaf374ef7f0a36c0061c0b1c8dcaea0ed7439",
+        "score.musicxml": "8b9d8f4427c220e57d6ffc0ed7b62178e82f700475b6569d076806b06e83ae5e",
+        "source.mid": "af837b0030a01b89c86f5c436587f05e519ddfaacabcabebd44d1f5c1432b1c9"
+      },
+      "files": {
+        "notes.json": "19d0f4f238031b782e59e5317016e436b8d74070df2ce057fa70d8015a5a3c7e",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "825db0931d9d4744e817319e7053bb816fd9e5ab0ea740cdf7302e6497d535a4",
+        "raw.mid": "c0c6682ef7efe06e35b0f1495b2eaf374ef7f0a36c0061c0b1c8dcaea0ed7439",
+        "score.musicxml": "7527febe8312869b4a1196d682f246d0afb1d8acdf8dd4869299efd3dc7d4f60",
+        "source.mid": "af837b0030a01b89c86f5c436587f05e519ddfaacabcabebd44d1f5c1432b1c9"
+      },
+      "project_state_sha256": "300044b4d6449c12579567b557a7fcf7677b3c434856099c168032cee5793cf8",
+      "sha256": "815e7b088e120410cec59d18643acb0dadf36c67a56dbd6f982d4c0365548b69"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "af837b0030a01b89c86f5c436587f05e519ddfaacabcabebd44d1f5c1432b1c9",
+    "title": "BWV 872a — Prelude und Fughetta No. 3a"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

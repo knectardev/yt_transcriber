@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 86.1016,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161741Z-7dab18aa",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083507",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 86.10156
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "801",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0801",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0801.mid",
+      "pinned_sha256": "5d12087fa95114b22cb787c0c94bc0ed83fb1732d61cfb341634ab86e3ca5e3b",
+      "source_filename": "BWV_0801.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "1578e5fc6545bb9c849782abfcb1e519443f9b79661f801c8a967327a17f7117",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "5d12087fa95114b22cb787c0c94bc0ed83fb1732d61cfb341634ab86e3ca5e3b"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 60.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "9/16",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 16,
+          "numerator": 9,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 801 — Sinfonia No. 15"
+  },
+  "recorded_at": "2026-11-13T16:17:41Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133508Z-e929aedc",
+    "parent_event_id": "20261113T133508Z-e929aedc",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "7598f3ee4c69d351ea6bb5fc118c733c0f206b5324c23b9515f03c154d74da8c",
+        "notes.json": "018a4f08c6e5b3d5485cc6b178f349d62186c2c6eac18de406192b45636aeba1",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "902b8b5ace2ef40d13431bbc85b10bad8afdb50319d4eb3d34431468c41b6813",
+        "raw.mid": "9b168308a809e8d38525e7ee6468e67748325fccd6fe24285add70be7cc1c6f2",
+        "score.musicxml": "126cfdab38eaa2baf386565e54ced1e9dd70bd964b6cbfb21dc55525b437bc11",
+        "source.mid": "5d12087fa95114b22cb787c0c94bc0ed83fb1732d61cfb341634ab86e3ca5e3b"
+      },
+      "files": {
+        "annotations.json": "7287f21e367d9bbe81dbdf16ce2d9f9b8981f7180de2dc56f48b9cc8911e7bfd",
+        "notes.json": "565d5127e0fb8d0610d42d38325ad33741431671c4dc216dae8f7f389c1e5e03",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "902b8b5ace2ef40d13431bbc85b10bad8afdb50319d4eb3d34431468c41b6813",
+        "raw.mid": "9b168308a809e8d38525e7ee6468e67748325fccd6fe24285add70be7cc1c6f2",
+        "score.musicxml": "cd669893f0dd3078169b35118e66c8d136e69b1e0e72817384340e4e8e0cb230",
+        "source.mid": "5d12087fa95114b22cb787c0c94bc0ed83fb1732d61cfb341634ab86e3ca5e3b"
+      },
+      "project_state_sha256": "3e911b1ff526f4fa3ff912cc55701a90966c39f42466034677b5556432c75894",
+      "sha256": "3d39efda881c43f4873e7a0629dd9016a400792d26b237ffb5fa6a7e5ed6cb35"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "5d12087fa95114b22cb787c0c94bc0ed83fb1732d61cfb341634ab86e3ca5e3b",
+    "title": "BWV 801 — Sinfonia No. 15"
+  },
+  "status": "ok",
+  "version": 2
+}

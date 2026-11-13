@@ -1,0 +1,109 @@
+{
+  "schema_version": 2,
+  "id": "357c2f2a-fe3e-405e-a2c1-fa02f6ef2eac",
+  "title": "BWV 807 — BWV 807 — Suite No. 2 in a minor — mm. 439–440",
+  "description": "",
+  "practice_notes": "",
+  "tags": [
+    "bwv-807",
+    "bwv-806-811-english-suites"
+  ],
+  "composer": "Johann Sebastian Bach",
+  "performer": "",
+  "source": {
+    "kind": "midi",
+    "name": "source.mid",
+    "extension": ".mid",
+    "title": "BWV 807 — Suite No. 2 in a minor",
+    "sha256": "afc5346df606f74fb53b5267a05f131bed4c02ed91218a0fcc6d3abb08f498b7"
+  },
+  "parent": {
+    "project": "catalog-20261113-083516",
+    "event_id": "20261113T171739Z-f5b905a5",
+    "lineage_id": "20261113T171739Z-f5b905a5",
+    "base_event_id": "20261113T171739Z-f5b905a5",
+    "base_snapshot_sha256": "62554f61257a0e5d225e7a264ad176d0843864f992d907fef35ec2a561074dee",
+    "snapshot_sha256": "62554f61257a0e5d225e7a264ad176d0843864f992d907fef35ec2a561074dee",
+    "revision_state": "synchronized",
+    "notes_fingerprint": "22b3349354598981",
+    "analysis_sha256": "8eb40af40bfd20c3a926102217b904d965110278791c348971d5225bdde4e867",
+    "measure_start": 439,
+    "measure_end": 440,
+    "step_start": 5256,
+    "step_end": 5280
+  },
+  "time": {
+    "working_audio": {
+      "start_seconds": 985.49997,
+      "end_seconds": 989.99997
+    },
+    "source_video": {
+      "start_seconds": 985.49997,
+      "end_seconds": 989.99997,
+      "excerpt_start_seconds": 0.0
+    },
+    "duration_seconds": 4.5
+  },
+  "sync": {
+    "offset_seconds": 0.0,
+    "parent_offset_at_extraction": 0.0
+  },
+  "music": {
+    "analyzed_key": {
+      "tonic": "A",
+      "mode": "minor",
+      "source": "automatic",
+      "confidence": 0.9017
+    },
+    "written_key_signature": {
+      "tonic": "A",
+      "mode": "minor"
+    },
+    "time_signature": "3/4",
+    "bpm": 80.0,
+    "subdivision": 16,
+    "staff_split": 60,
+    "measures": 2,
+    "parent_grid_mode": "fixed",
+    "notation_style": "readable"
+  },
+  "harmony": {
+    "roman": [
+      "II+",
+      "v4/3",
+      "v6"
+    ],
+    "symbols": [
+      "Baug",
+      "EmMaj7/B",
+      "Em/G"
+    ]
+  },
+  "boundary": {
+    "notes": 34,
+    "owned": 34,
+    "carried_in": 0,
+    "cut_off": 0,
+    "unprinted_overlaps": 0,
+    "pedal_down_at_start": false
+  },
+  "artifacts": {
+    "notes": "notes.json",
+    "grid": "grid.json",
+    "performance_midi": "performance.mid",
+    "quantized_midi": "quantized.mid",
+    "musicxml": "score.musicxml",
+    "harmony": "harmony.json"
+  },
+  "warnings": [],
+  "created_at": "2026-11-13T17:47:15Z",
+  "modified_at": "2026-11-13T17:47:15Z",
+  "catalog": {
+    "entry_id": "bwv-0807",
+    "bwv": "807",
+    "collection_id": "bwv-806-811-english-suites",
+    "collection": "BWV 806-811 English Suites",
+    "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/english-suites/",
+    "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de)."
+  }
+}

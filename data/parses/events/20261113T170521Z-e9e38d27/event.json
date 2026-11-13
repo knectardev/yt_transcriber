@@ -1,0 +1,187 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 495.3348,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170521Z-e9e38d27",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120506",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 495.33478
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "890",
+      "collection": "BWV 870-893 The Well-Tempered Clavier Book II",
+      "collection_id": "bwv-870-893-wtc-ii",
+      "entry_id": "bwv-0890",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/10-Wohltemperiertes_Klavier_II/BWV_0890.mid",
+      "pinned_sha256": "03a8a64d1918d5c4e0a23bc55e4670e38e651de8e712983588c94559154253c5",
+      "source_filename": "BWV_0890.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-ii/"
+    },
+    "import_settings_sha256": "e668245a8d2e71ebb5838ee93d8355753c7c7f6d9adcb950df015a794534428c",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "03a8a64d1918d5c4e0a23bc55e4670e38e651de8e712983588c94559154253c5"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 88.00002346667293,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 88.00002346667293,
+          "time": 0.0
+        },
+        {
+          "bpm": 120.0,
+          "time": 355.908996
+        }
+      ],
+      "time_signature": "12/16",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 16,
+          "numerator": 12,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 355.908996
+        }
+      ]
+    },
+    "title": "BWV 890 — Prelude and Fugue No. 21"
+  },
+  "recorded_at": "2026-11-13T17:05:21Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170521Z-e9e38d27",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "f33a6b7f0d8f0fe5067bec88aa28f15ac030611a7dea07f8ac18241284d3a23e",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "a25aabcc2d541baf7c8fb6fb93fc83fd39d9599781f2e6a0240a4d5fea7e35c8",
+        "raw.mid": "834675a7a11f381eef300551e095e8dfa77ec0bc991baf41a7eb6bfc99fce697",
+        "score.musicxml": "03edf27401ceb977b7ce8b852e4130e68d8fdeed5db050cf35e340047b2c1304",
+        "source.mid": "03a8a64d1918d5c4e0a23bc55e4670e38e651de8e712983588c94559154253c5"
+      },
+      "files": {
+        "notes.json": "4c1fd89e680de3c52d18d69271fbd3b4e86ac0a23ed5fe49c70f6034f33a3455",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "a25aabcc2d541baf7c8fb6fb93fc83fd39d9599781f2e6a0240a4d5fea7e35c8",
+        "raw.mid": "834675a7a11f381eef300551e095e8dfa77ec0bc991baf41a7eb6bfc99fce697",
+        "score.musicxml": "8c42a9db82444af6f0d933f20f1e4386e55cbea15ddf3f1c16ff1dcd5145f441",
+        "source.mid": "03a8a64d1918d5c4e0a23bc55e4670e38e651de8e712983588c94559154253c5"
+      },
+      "project_state_sha256": "1a0337edeba96d7c9dada3bf3493b9fd325fc346a8781087c711a44d8e687f8c",
+      "sha256": "f99342c4c7d89aeb780f7e40638ea4ae6a2a146d9b0ef464b565ddcd79d48015"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "03a8a64d1918d5c4e0a23bc55e4670e38e651de8e712983588c94559154253c5",
+    "title": "BWV 890 — Prelude and Fugue No. 21"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

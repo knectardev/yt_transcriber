@@ -1,0 +1,225 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1896.9375,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165002Z-a1c783b9",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-114658",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1896.9375
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "828",
+      "collection": "BWV 825-831 Partitas",
+      "collection_id": "bwv-825-831-partitas",
+      "entry_id": "bwv-0828",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/07-Partiten/BWV_0828.mid",
+      "pinned_sha256": "ca68eb60b995992272ca3d6109a0b2c0e50657c283cd4ef3a2163120b8e10ee1",
+      "source_filename": "BWV_0828.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/partitas/"
+    },
+    "import_settings_sha256": "b164604ab96caa4ea4b0e051dcd767062d4daf24c93b5a421ebff0afc38b43ba",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "ca68eb60b995992272ca3d6109a0b2c0e50657c283cd4ef3a2163120b8e10ee1"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 0.0
+        },
+        {
+          "denominator": 32,
+          "numerator": 33,
+          "time": 48.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 54.09375
+        },
+        {
+          "denominator": 32,
+          "numerator": 33,
+          "time": 102.09375
+        },
+        {
+          "denominator": 8,
+          "numerator": 9,
+          "time": 105.1875
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 425.4375
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 761.4375
+        },
+        {
+          "denominator": 4,
+          "numerator": 2,
+          "time": 1119.9375
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 1275.9375
+        },
+        {
+          "denominator": 16,
+          "numerator": 9,
+          "time": 1572.9375
+        }
+      ]
+    },
+    "title": "BWV 828 — Partita No. 4 in D major"
+  },
+  "recorded_at": "2026-11-13T16:50:02Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T164735Z-6677750b",
+    "parent_event_id": "20261113T164735Z-6677750b",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "8a38da03f6fa59c2d60a25bbeb80db84fbd10b6b11ae8a38b6e5c8b8622fc700",
+        "notes.json": "9d1a4fb3ee76c444e7d90e67531787a9acb595d2a31f9dfa89325015acf2d144",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "456c09dae50db9925c8d572cdf697233b6407001602316e14b63fa197237a4ee",
+        "raw.mid": "aa0dbd73ce062ed0b5df0d884a685c6e15258adffa8082587e7f9ed799ebd4e0",
+        "score.musicxml": "ff5d44a34ca947dac3923c800800f3a75f1a48119666f43cd29c5dd2096785ac",
+        "source.mid": "ca68eb60b995992272ca3d6109a0b2c0e50657c283cd4ef3a2163120b8e10ee1"
+      },
+      "files": {
+        "annotations.json": "de3392ab3527cf778f4dda267a6b79022bf63972231125285b2d99f88adf5bab",
+        "notes.json": "081c8b4f09c6f2dc3061ca71e001b9be822d2451b70ea7a4e07aa1891d4bef10",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "456c09dae50db9925c8d572cdf697233b6407001602316e14b63fa197237a4ee",
+        "raw.mid": "aa0dbd73ce062ed0b5df0d884a685c6e15258adffa8082587e7f9ed799ebd4e0",
+        "score.musicxml": "f21a03958cabf99aa7e65a8156553460861f566bdf636ea24cb3ef338507b02c",
+        "source.mid": "ca68eb60b995992272ca3d6109a0b2c0e50657c283cd4ef3a2163120b8e10ee1"
+      },
+      "project_state_sha256": "2f1957b0e311543e5353f4c456ae2bd775e631d8f5cb2f379503c4589aa729a1",
+      "sha256": "a51668f35f52f3a67f9b8771e08297b5e70e0c76ea6cecdd70fe8a69a23fd176"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "ca68eb60b995992272ca3d6109a0b2c0e50657c283cd4ef3a2163120b8e10ee1",
+    "title": "BWV 828 — Partita No. 4 in D major"
+  },
+  "status": "ok",
+  "version": 2
+}

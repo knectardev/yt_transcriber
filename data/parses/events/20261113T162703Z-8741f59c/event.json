@@ -1,0 +1,206 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1003.0791,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T162703Z-8741f59c",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-112513",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1003.07908
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "810",
+      "collection": "BWV 806-811 English Suites",
+      "collection_id": "bwv-806-811-english-suites",
+      "entry_id": "bwv-0810",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/04-Englische_Suiten/BWV_0810.mid",
+      "pinned_sha256": "16acd228adc5ab8b872983145c123d39d374e6d5fce36bc5e3e61f94d23424de",
+      "source_filename": "BWV_0810.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/english-suites/"
+    },
+    "import_settings_sha256": "a63dd7ca642409030cb37bfe3737fbf0b9df29bfafee606549fc623321d829b3",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "16acd228adc5ab8b872983145c123d39d374e6d5fce36bc5e3e61f94d23424de"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 66.000066000066,
+          "time": 714.0
+        },
+        {
+          "bpm": 120.0,
+          "time": 823.0908
+        }
+      ],
+      "time_signature": "6/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 234.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 474.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 642.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 714.0
+        }
+      ]
+    },
+    "title": "BWV 810 — Suite No. 5 in e minor"
+  },
+  "recorded_at": "2026-11-13T16:27:03Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T162703Z-8741f59c",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "0ccae3e29fba070879efdf74ebbe95c64a17de568cc76679bc01ddd0d8d00e2f",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "fdfb80521e980880d81a47fdb69a768d37ede09b396269263603f83b0f046264",
+        "raw.mid": "8413aa3087f6314f233d896815c72a66546e0275660f8e223d6e92eb9a2866c5",
+        "score.musicxml": "5e198b58431cc0677112188cfec77afbd8d852a7c04439e98ae437c2e294bcdd",
+        "source.mid": "16acd228adc5ab8b872983145c123d39d374e6d5fce36bc5e3e61f94d23424de"
+      },
+      "files": {
+        "notes.json": "dc830280d35ad74253c7283a2596c9b3a49877a586b9374df23351f0aa32a9f2",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "fdfb80521e980880d81a47fdb69a768d37ede09b396269263603f83b0f046264",
+        "raw.mid": "8413aa3087f6314f233d896815c72a66546e0275660f8e223d6e92eb9a2866c5",
+        "score.musicxml": "3ba77fae9bcdf694ea65254ca6de70797807f1007f764138f8593a13175f8e24",
+        "source.mid": "16acd228adc5ab8b872983145c123d39d374e6d5fce36bc5e3e61f94d23424de"
+      },
+      "project_state_sha256": "2bba28b31debe70f6e93cdb84255fef41210146ffeb8662f3ccaa7ac09fd9bde",
+      "sha256": "5932472dd13bca239dff7cf34897651cade001e5f69bf937cc928fcfc109c3a3"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "16acd228adc5ab8b872983145c123d39d374e6d5fce36bc5e3e61f94d23424de",
+    "title": "BWV 810 — Suite No. 5 in e minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

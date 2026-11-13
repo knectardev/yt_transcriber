@@ -1,0 +1,198 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1008.2253,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T162510Z-eacb8d56",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-112420",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1008.22526
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "809",
+      "collection": "BWV 806-811 English Suites",
+      "collection_id": "bwv-806-811-english-suites",
+      "entry_id": "bwv-0809",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/04-Englische_Suiten/BWV_0809.mid",
+      "pinned_sha256": "3591deafcc566e68d0232f3d762e3431698cfc839d07040e132591f08b0b3de0",
+      "source_filename": "BWV_0809.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/english-suites/"
+    },
+    "import_settings_sha256": "1633ee6985651c96a78bb31f3ceb0d243b1d4171f2b3e821b151d58f25a3afd2",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "3591deafcc566e68d0232f3d762e3431698cfc839d07040e132591f08b0b3de0"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 216.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 312.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 432.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 12,
+          "time": 696.0
+        }
+      ]
+    },
+    "title": "BWV 809 — Suite No. 4 in F major"
+  },
+  "recorded_at": "2026-11-13T16:25:10Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T162510Z-eacb8d56",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "1c9535926db1c5704448720c2c5df89ca375921c8cbbef2fb1c770090608b7f2",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "6af671e4e68da2f8e5e552f4f533d20e5a994d6ec078e1f2862a27ff932b6953",
+        "raw.mid": "42e24f7882f12da400fa0c82e5e8bbc4fefe19ba819a4c045587610e623115c9",
+        "score.musicxml": "34cc60c7dcf15df86d7216f163c5513f5dcbf3f573b9c16dba3a39efd8989614",
+        "source.mid": "3591deafcc566e68d0232f3d762e3431698cfc839d07040e132591f08b0b3de0"
+      },
+      "files": {
+        "notes.json": "0ef76d2b7e9cd0697211f829e4b9f6109d19e0aefb519898dbcc8b6d0384051e",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "6af671e4e68da2f8e5e552f4f533d20e5a994d6ec078e1f2862a27ff932b6953",
+        "raw.mid": "42e24f7882f12da400fa0c82e5e8bbc4fefe19ba819a4c045587610e623115c9",
+        "score.musicxml": "c45e3ad9395a246aa96e30f65a7830890e5c49da6af365e2f0bc123068c25b44",
+        "source.mid": "3591deafcc566e68d0232f3d762e3431698cfc839d07040e132591f08b0b3de0"
+      },
+      "project_state_sha256": "b7cfaa18cab63295b6c794282a0d740c0f4e177403c7eaa7a25215fdc0215481",
+      "sha256": "16555cfcbedef8abb36f0e4ce3380681e75357fb1e9f4c7d8fb107ec2da5b3d0"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "3591deafcc566e68d0232f3d762e3431698cfc839d07040e132591f08b0b3de0",
+    "title": "BWV 809 — Suite No. 4 in F major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

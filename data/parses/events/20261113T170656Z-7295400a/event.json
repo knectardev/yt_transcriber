@@ -1,0 +1,187 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 433.3331,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170656Z-7295400a",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120648",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 433.33312
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "902",
+      "collection": "BWV 894-902 Preludes and Fugues/Fughettas",
+      "collection_id": "bwv-894-902-preludes-and-fugues",
+      "entry_id": "bwv-0902",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/11-Praeludien_Fugen/BWV_0902.mid",
+      "pinned_sha256": "d888253adfe17d948c0cbc47da9f0137d8db77d052187d738b77b90bd7a548bc",
+      "source_filename": "BWV_0902.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/preludes-and-fugues/"
+    },
+    "import_settings_sha256": "1f69eadd29688b05f528496c2d2569365301438fa102cc4546a267c41e04fbab",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "d888253adfe17d948c0cbc47da9f0137d8db77d052187d738b77b90bd7a548bc"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 72.0000288000115,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 72.0000288000115,
+          "time": 0.0
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 373.3331840000001
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 373.3331840000001
+        }
+      ]
+    },
+    "title": "BWV 902 — Prelude and Fughetta in G major"
+  },
+  "recorded_at": "2026-11-13T17:06:56Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170656Z-7295400a",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "492b541d8b90d014a38b9a1c50d4b7932019ab878660582e647703683997ef94",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "0d02edbc8af749ccf1ef3441df7d62d62a71881cf036c03f679f148e683cd64d",
+        "raw.mid": "a748bd69bf4560a937761c3117ad207f90e60e8ddbb8a90a666190c2d6a817ad",
+        "score.musicxml": "2ebefcf1de159bf9c7e0cb12cf3a7fb0482ad61f907d00206e84c73dea50238a",
+        "source.mid": "d888253adfe17d948c0cbc47da9f0137d8db77d052187d738b77b90bd7a548bc"
+      },
+      "files": {
+        "notes.json": "f356b96113a49769a778cddf3fbb600eb18c33b5ba4fb5bb4e94fe81b7ead235",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "0d02edbc8af749ccf1ef3441df7d62d62a71881cf036c03f679f148e683cd64d",
+        "raw.mid": "a748bd69bf4560a937761c3117ad207f90e60e8ddbb8a90a666190c2d6a817ad",
+        "score.musicxml": "682376c84ec0f29a7af0d3983297ed29b2a6a132faed250fadbbda869cdfc093",
+        "source.mid": "d888253adfe17d948c0cbc47da9f0137d8db77d052187d738b77b90bd7a548bc"
+      },
+      "project_state_sha256": "24d6ab88a7bc028cb9fa6b7acfc4da21c938e2aa5bd6abb38f32a3ef298599d8",
+      "sha256": "c9c12a27442e532e4feb023592f999bc24f175ec5531d3a597724f02ef612824"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "d888253adfe17d948c0cbc47da9f0137d8db77d052187d738b77b90bd7a548bc",
+    "title": "BWV 902 — Prelude and Fughetta in G major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

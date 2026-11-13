@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 427.901,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170017Z-1aadb61b",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120011",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 427.90104
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "852",
+      "collection": "BWV 846-869 The Well-Tempered Clavier Book I",
+      "collection_id": "bwv-846-869-wtc-i",
+      "entry_id": "bwv-0852",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/09-Wohltemperiertes_Klavier_I/BWV_0852.mid",
+      "pinned_sha256": "1dd767f7c7d19771f48021354189bc2c4126ee7435ac1e62d8794bb61a5a46d4",
+      "source_filename": "BWV_0852.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-i/"
+    },
+    "import_settings_sha256": "a1b888a649d10a3c82314b4f3470020cdbd756da3c3072077457a53b572e16c6",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "1dd767f7c7d19771f48021354189bc2c4126ee7435ac1e62d8794bb61a5a46d4"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 60.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 852 — Prelude and Fugue No. 7"
+  },
+  "recorded_at": "2026-11-13T17:00:17Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170017Z-1aadb61b",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "0597d1569aeea427c94f2a20b6ae7b47557b2b25d8617600cf75779951bc8421",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "d217b38a53c65f9c99bc6dbf863ee49a9272a3fce45a784fe2bb39934dfa0359",
+        "raw.mid": "55af9d083f8bce8244d935d11a2e8fb188d43628ea37758d09540d3a5f67b80b",
+        "score.musicxml": "0c60d6a906bd18183411061701740cc4a23a6494391b09c34bcd63d153a35731",
+        "source.mid": "1dd767f7c7d19771f48021354189bc2c4126ee7435ac1e62d8794bb61a5a46d4"
+      },
+      "files": {
+        "notes.json": "a078784625f86fb56b71340d08cea5c9133272f88850d26b0c8fe6a171917c42",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "d217b38a53c65f9c99bc6dbf863ee49a9272a3fce45a784fe2bb39934dfa0359",
+        "raw.mid": "55af9d083f8bce8244d935d11a2e8fb188d43628ea37758d09540d3a5f67b80b",
+        "score.musicxml": "44e8ca221b7e364922546153dcc1f3b12e275be103eab629701b8b0a6a193194",
+        "source.mid": "1dd767f7c7d19771f48021354189bc2c4126ee7435ac1e62d8794bb61a5a46d4"
+      },
+      "project_state_sha256": "8f1922e6f2d6a75b2edbce1a5cfb58aedbc7da82a3ffacbdb438afce97b866f2",
+      "sha256": "120caa7c967dbacd017fa1a93291b8c287b514b5ce4557d02c6576286101c0a9"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "1dd767f7c7d19771f48021354189bc2c4126ee7435ac1e62d8794bb61a5a46d4",
+    "title": "BWV 852 — Prelude and Fugue No. 7"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

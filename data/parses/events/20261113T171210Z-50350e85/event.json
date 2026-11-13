@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 31.901,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171210Z-50350e85",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121209",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 31.90104
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "939",
+      "collection": "BWV 939-943 Five Little Preludes",
+      "collection_id": "bwv-939-943-five-little-preludes",
+      "entry_id": "bwv-0939",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/16-Kleine_Praeludien_II/BWV_0939.mid",
+      "pinned_sha256": "7b311d3d593a82448a30f26d0363ce03389ffe415acbf245503a1c334f230e0d",
+      "source_filename": "BWV_0939.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/five-little-preludes/"
+    },
+    "import_settings_sha256": "45ebb70c6dece84ff4a15805e124c8d67751584c9fd8fc247d353c9a378c4eb5",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "7b311d3d593a82448a30f26d0363ce03389ffe415acbf245503a1c334f230e0d"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 939 — Prelude in C major"
+  },
+  "recorded_at": "2026-11-13T17:12:10Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171210Z-50350e85",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "8345e598a41fcb4225ac23e09dba111d669341417d856bbb5b45951c10f6de40",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "4523207e3392a45bd841363d9dc348619a7362750a0ff79e5fc673b56efd5932",
+        "raw.mid": "5066f9628b35368e095dd0e1cd6c2aa16614bd22cbb8d0ac590b1eef4aeb9242",
+        "score.musicxml": "223c9bbd4b674d0ad9c4f2bbbc5d863087bd6c9f47b8a7cc7101ca3dd51c5b9f",
+        "source.mid": "7b311d3d593a82448a30f26d0363ce03389ffe415acbf245503a1c334f230e0d"
+      },
+      "files": {
+        "notes.json": "4a6193d7ca0ab5c6e234f051ac236e7469eee9f4ed697c8ea8ab33f623094398",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "4523207e3392a45bd841363d9dc348619a7362750a0ff79e5fc673b56efd5932",
+        "raw.mid": "5066f9628b35368e095dd0e1cd6c2aa16614bd22cbb8d0ac590b1eef4aeb9242",
+        "score.musicxml": "fe990babc10e2d63ed2b9bc4739e1dde1693fbfb339d763134e2960acdabc684",
+        "source.mid": "7b311d3d593a82448a30f26d0363ce03389ffe415acbf245503a1c334f230e0d"
+      },
+      "project_state_sha256": "9d480d2c63aa3b3cd9e5e6bbd2f865552b3dffd2f4e5ccd2f51f212450e0d620",
+      "sha256": "dc8b4ab0bbcbc0c41ccfc8bc45ff2a6b3478e4d3a6fcbf9398723e2cf4e4d18c"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "7b311d3d593a82448a30f26d0363ce03389ffe415acbf245503a1c334f230e0d",
+    "title": "BWV 939 — Prelude in C major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

@@ -1,0 +1,225 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1136.8566,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165224Z-e123a121",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115006",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1136.85659
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "829",
+      "collection": "BWV 825-831 Partitas",
+      "collection_id": "bwv-825-831-partitas",
+      "entry_id": "bwv-0829",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/07-Partiten/BWV_0829.mid",
+      "pinned_sha256": "ca9cbeaffaa7f62ffc077143690983bfd67ce969d8d0711d6209dd8edf4df9a5",
+      "source_filename": "BWV_0829.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/partitas/"
+    },
+    "import_settings_sha256": "dc8b01d45ea8700c2e8829f5d95777021985d6bd541f5e14f23e5e92af758002",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "ca9cbeaffaa7f62ffc077143690983bfd67ce969d8d0711d6209dd8edf4df9a5"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 120.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 60.0,
+          "time": 142.5
+        },
+        {
+          "bpm": 120.0,
+          "time": 367.0
+        },
+        {
+          "bpm": 70.00007000007,
+          "time": 463.0
+        },
+        {
+          "bpm": 160.0,
+          "time": 667.856938
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 784.856938
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 142.5
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 367.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 463.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 784.856938
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 880.856842
+        }
+      ]
+    },
+    "title": "BWV 829 — Partita No. 5 in G major"
+  },
+  "recorded_at": "2026-11-13T16:52:24Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165029Z-0f0b2ca2",
+    "parent_event_id": "20261113T165029Z-0f0b2ca2",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "cffae5044afba7a43517b48e842d1b1efa6f87f876929176163fb42ae33875b4",
+        "notes.json": "6e84c1f14936b151c7dd22fdb9e9084a46ef59fc627bdbe0a25104d8703879b8",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "aca6f6f20e7dfe065d16e224f104a4178d740c06925e9bfc4187065a3ef47ac2",
+        "raw.mid": "5443fbf3d7052ab214e08ab5e8ad2ad2a4a65b987a8c020a86ffe676da03b0b1",
+        "score.musicxml": "73a34d5245be08b56b5cf417454aad7ace4d74b5dfa8fe1f5fbae36a151744bc",
+        "source.mid": "ca9cbeaffaa7f62ffc077143690983bfd67ce969d8d0711d6209dd8edf4df9a5"
+      },
+      "files": {
+        "annotations.json": "eed48e42bc47d9f86f5341afe40e66d67f6faa9a59bd2a446e370240507ebfe6",
+        "notes.json": "32be2b96a4c1eef692954f112f1057c1a8f40960c22c764a9e75895c958e25e4",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "aca6f6f20e7dfe065d16e224f104a4178d740c06925e9bfc4187065a3ef47ac2",
+        "raw.mid": "5443fbf3d7052ab214e08ab5e8ad2ad2a4a65b987a8c020a86ffe676da03b0b1",
+        "score.musicxml": "34225c8f78e0e4f459e7381e2f454097ac884e6af4211d47c302e07b6b39ba74",
+        "source.mid": "ca9cbeaffaa7f62ffc077143690983bfd67ce969d8d0711d6209dd8edf4df9a5"
+      },
+      "project_state_sha256": "ecaba930fc56fe2b603071fac82324a32388f9f86c4297a1096c8628b833d9e5",
+      "sha256": "5bb27cc3149e93db2077169f27f638ee911cc2eee3f31ef26c440df650720e31"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "ca9cbeaffaa7f62ffc077143690983bfd67ce969d8d0711d6209dd8edf4df9a5",
+    "title": "BWV 829 — Partita No. 5 in G major"
+  },
+  "status": "ok",
+  "version": 2
+}

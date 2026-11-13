@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 75.9999,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161723Z-e45bff3f",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083457",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 75.99992
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "791",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0791",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0791.mid",
+      "pinned_sha256": "a61a4c74c0add8e0c71c9099e1ff7fed24927c34b79a3f4ec1fe658a886872de",
+      "source_filename": "BWV_0791.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "aef0594d2abbebd8db45985344ecc25eaa32a3eea6a753c61c09f4cd81ffc49f",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "a61a4c74c0add8e0c71c9099e1ff7fed24927c34b79a3f4ec1fe658a886872de"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 791 — Sinfonia No. 5"
+  },
+  "recorded_at": "2026-11-13T16:17:23Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133457Z-f43f1c55",
+    "parent_event_id": "20261113T133457Z-f43f1c55",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "3879f43823ca78d23dde95b7b09b2db89f48a7f7c361c2080d276a5b8112d040",
+        "notes.json": "af54600df21e833647746d7deab01977f45668e2d5cd7992c92c3ed4aaa62b1f",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "97c803187edc127ae0833333aa2c45fd70bcbfe95b8556abf69130af4516c0fa",
+        "raw.mid": "ab8eab9aa9176eea4de1c033c8dc61b605fbe206682c86b5290d15ede1088a5e",
+        "score.musicxml": "c86254fda0443d907215f2f8bfd4fe3098e494eb533df09c461b15fe5a51e508",
+        "source.mid": "a61a4c74c0add8e0c71c9099e1ff7fed24927c34b79a3f4ec1fe658a886872de"
+      },
+      "files": {
+        "annotations.json": "d54740a6af50f5cfe77ff3dff452c2291870dbc4773d8f39714a5df1cf932ffe",
+        "notes.json": "09ff09907dff8b96f55340cc85f57406dce8b63cb3f1a6ba270f71e34f170147",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "97c803187edc127ae0833333aa2c45fd70bcbfe95b8556abf69130af4516c0fa",
+        "raw.mid": "ab8eab9aa9176eea4de1c033c8dc61b605fbe206682c86b5290d15ede1088a5e",
+        "score.musicxml": "d965737e648587716ccabbf6c355532f8d5528227318c4638e41a4b3ef7a20a0",
+        "source.mid": "a61a4c74c0add8e0c71c9099e1ff7fed24927c34b79a3f4ec1fe658a886872de"
+      },
+      "project_state_sha256": "9a9713fb7eeaaf2cca0b91347777c79b5f40b95f58a0362a967e0d941b77f7ce",
+      "sha256": "a0345daf6b1b146544f0c412c439da413d7b4a765aee953a05a0747a0e195093"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "a61a4c74c0add8e0c71c9099e1ff7fed24927c34b79a3f4ec1fe658a886872de",
+    "title": "BWV 791 — Sinfonia No. 5"
+  },
+  "status": "ok",
+  "version": 2
+}

@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 92.6336,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165905Z-f23126d5",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115902",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 92.63359
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "840",
+      "collection": "BWV 832-845 Suites and Suite Movements",
+      "collection_id": "bwv-832-845-suites-and-suite-movements",
+      "entry_id": "bwv-0840",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/08-Einzelwerke/BWV_0840.mid",
+      "pinned_sha256": "57726d99c68bf2d4131e989c175c0045d09be83973e4290d00745bdb9d7edb59",
+      "source_filename": "BWV_0840.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/suites-and-suite-movements/"
+    },
+    "import_settings_sha256": "dbf728abb8b872c0f8f1aa1b8b1956bad4fee06cc2f4acc2207081abedf99f0e",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "57726d99c68bf2d4131e989c175c0045d09be83973e4290d00745bdb9d7edb59"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 180.00018000018,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 180.00018000018,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.666666
+        }
+      ]
+    },
+    "title": "BWV 840 — Courante from the Notebook of the Zeumerin"
+  },
+  "recorded_at": "2026-11-13T16:59:05Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165905Z-f23126d5",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "79c6341421434c183abbf6c6023bab53000826468963a9d1c63a5de1114f32ce",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "ae175cef03461f7a6e9395db982ae177bfe4f8deb83cd7f85fb62ddf61024377",
+        "raw.mid": "46f16f33d2f1f87d68b0b5f43c3ec5ae82ea0862f7d1c74f83402de69bcc9ed4",
+        "score.musicxml": "a05ed0008211c31835b30d5d9d09a224678778ebc5cf27e4d4594fc3bc418aa1",
+        "source.mid": "57726d99c68bf2d4131e989c175c0045d09be83973e4290d00745bdb9d7edb59"
+      },
+      "files": {
+        "notes.json": "d552d268b261c273295d6e47f70b24aa854645ee084efa4bc6605c4c2dd13686",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "ae175cef03461f7a6e9395db982ae177bfe4f8deb83cd7f85fb62ddf61024377",
+        "raw.mid": "46f16f33d2f1f87d68b0b5f43c3ec5ae82ea0862f7d1c74f83402de69bcc9ed4",
+        "score.musicxml": "902c88e509b41427a9fd3231fd8eef225eaff9bea6da0dcb797a997e3edf8c58",
+        "source.mid": "57726d99c68bf2d4131e989c175c0045d09be83973e4290d00745bdb9d7edb59"
+      },
+      "project_state_sha256": "2f5c90a3ee1f7692d1399be33bc8c86b5af7ca3c91e76afb6f5efcc5b793ac2d",
+      "sha256": "fa034cc8c7071d49dc388284aad24ec2017abfdc16b19945acd9ba941308a371"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "57726d99c68bf2d4131e989c175c0045d09be83973e4290d00745bdb9d7edb59",
+    "title": "BWV 840 — Courante from the Notebook of the Zeumerin"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

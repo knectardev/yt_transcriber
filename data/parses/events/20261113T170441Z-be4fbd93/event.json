@@ -1,0 +1,187 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 318.0672,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170441Z-be4fbd93",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120433",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 318.06723
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "886",
+      "collection": "BWV 870-893 The Well-Tempered Clavier Book II",
+      "collection_id": "bwv-870-893-wtc-ii",
+      "entry_id": "bwv-0886",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/10-Wohltemperiertes_Klavier_II/BWV_0886.mid",
+      "pinned_sha256": "c08b329f5eef39f5ac9ecdf219257d754964bf3269e04b36b6944e8f94f921bb",
+      "source_filename": "BWV_0886.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-ii/"
+    },
+    "import_settings_sha256": "8b10bf831f1e522b7ada5cbb9596b47bdb063a425d33fbdb32c1b8abab956311",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "c08b329f5eef39f5ac9ecdf219257d754964bf3269e04b36b6944e8f94f921bb"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 75.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 75.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 184.8
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 184.8
+        }
+      ]
+    },
+    "title": "BWV 886 — Prelude and Fugue No. 17"
+  },
+  "recorded_at": "2026-11-13T17:04:41Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170441Z-be4fbd93",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "1c4a5958d45e473f91d1437685c5e1346dc84d0c30624bdda2d941fca1b39fe4",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "398d85ada10f3ac0fdb011320e92468324f21329155d8b4edfd1ad96e15aa9a0",
+        "raw.mid": "b96c7002cba4be349f3db2d75409a1283f364336c85521e09c343dc7cd45e98f",
+        "score.musicxml": "23a93f38d81314f4ecc5fb738c8163ef25d964827d82b4cb504e6f67ed01b841",
+        "source.mid": "c08b329f5eef39f5ac9ecdf219257d754964bf3269e04b36b6944e8f94f921bb"
+      },
+      "files": {
+        "notes.json": "1ccb94637232d3a677d2088d3df87d61a2c5cca927ecfd48030949bac3b6f5c7",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "398d85ada10f3ac0fdb011320e92468324f21329155d8b4edfd1ad96e15aa9a0",
+        "raw.mid": "b96c7002cba4be349f3db2d75409a1283f364336c85521e09c343dc7cd45e98f",
+        "score.musicxml": "373d278d8f1dc561c3ba38a57e4cef13fc25c23f31a1bccaf2dacc3c8706e420",
+        "source.mid": "c08b329f5eef39f5ac9ecdf219257d754964bf3269e04b36b6944e8f94f921bb"
+      },
+      "project_state_sha256": "e7cc8da7424c0a68c40f75b70527529f96c3027d47653c913faecf5d47318768",
+      "sha256": "cf4f531782053e1354a229936894a7e25990f3dd601c765d9cfc76dea4ea7b7a"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "c08b329f5eef39f5ac9ecdf219257d754964bf3269e04b36b6944e8f94f921bb",
+    "title": "BWV 886 — Prelude and Fugue No. 17"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

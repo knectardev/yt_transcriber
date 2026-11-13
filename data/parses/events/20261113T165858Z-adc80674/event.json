@@ -1,0 +1,187 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 266.9869,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165858Z-adc80674",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115855",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 266.98689
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "838",
+      "collection": "BWV 832-845 Suites and Suite Movements",
+      "collection_id": "bwv-832-845-suites-and-suite-movements",
+      "entry_id": "bwv-0838",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/08-Einzelwerke/BWV_0838.mid",
+      "pinned_sha256": "835d6a278986d90079df5870d0dd65a32a833532b4a32f68fcefd2b9f7bf9cd9",
+      "source_filename": "BWV_0838.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/suites-and-suite-movements/"
+    },
+    "import_settings_sha256": "f26adc21683528acb06b9c81087ca2f0d556e3c9e1a0c1abdfbd7881bcf11e0a",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "835d6a278986d90079df5870d0dd65a32a833532b4a32f68fcefd2b9f7bf9cd9"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 49.99999999999999,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 49.99999999999999,
+          "time": 0.0
+        },
+        {
+          "bpm": 108.000108000108,
+          "time": 177.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 4.2
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 177.0
+        }
+      ]
+    },
+    "title": "BWV 838 — Allemande and Courante in A major"
+  },
+  "recorded_at": "2026-11-13T16:58:58Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165858Z-adc80674",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "1f180cd4f61325482e8845847eeb7c8183e733961017edf887cfc778ce5e85c2",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "5a254d5e579cf2aaad15e9bddfdd2636e4a933e6cd2d03a520676f07a75656c3",
+        "raw.mid": "fd77143f53123e22bc469f3817452e5aad36c792828915a6a080d3199829d830",
+        "score.musicxml": "19f0fa014e8f24f9eb351abc124481e0e86527d457abee409185d2ab5ff9b8a7",
+        "source.mid": "835d6a278986d90079df5870d0dd65a32a833532b4a32f68fcefd2b9f7bf9cd9"
+      },
+      "files": {
+        "notes.json": "0e5d7f67e9450dc26ce3bb99681272d20c285c826995b1348fad949e2c8fed99",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "5a254d5e579cf2aaad15e9bddfdd2636e4a933e6cd2d03a520676f07a75656c3",
+        "raw.mid": "fd77143f53123e22bc469f3817452e5aad36c792828915a6a080d3199829d830",
+        "score.musicxml": "d36650dea216fa7944615efb58341d0b2db4375f0d90dde3b27a70382d008f04",
+        "source.mid": "835d6a278986d90079df5870d0dd65a32a833532b4a32f68fcefd2b9f7bf9cd9"
+      },
+      "project_state_sha256": "82bbf9979075726eadc098476e02759491e73b41225b94938b64ca4eab8762e9",
+      "sha256": "237f8efe1276461f07f6e1d5da6365fb871d660592a6722c63c640792356bea2"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "835d6a278986d90079df5870d0dd65a32a833532b4a32f68fcefd2b9f7bf9cd9",
+    "title": "BWV 838 — Allemande and Courante in A major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

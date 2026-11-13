@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 53.9629,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171131Z-d0972149",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121130",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 53.96289
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "925",
+      "collection": "BWV 924-932 Little Preludes (Clavierbüchlein for W.F. Bach)",
+      "collection_id": "bwv-924-932-little-preludes-wf",
+      "entry_id": "bwv-0925",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/14-Kleine_Praeludien_WFB/BWV_0925.mid",
+      "pinned_sha256": "4f5d3bfc7e16fc52fa592fcb15d3f1cdbd677352d72e1510a294eb69cfe72e46",
+      "source_filename": "BWV_0925.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/little-preludes-clavier-buechlein-for-w-f-bach/"
+    },
+    "import_settings_sha256": "1dd6840ff0907495c7cd504db28d8cdb23b32c5135acfd527917a28ab783593d",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "4f5d3bfc7e16fc52fa592fcb15d3f1cdbd677352d72e1510a294eb69cfe72e46"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 925 — Prelude in D major"
+  },
+  "recorded_at": "2026-11-13T17:11:31Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171131Z-d0972149",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "fa7088e975244868cd396ac086e2601bf9550802244a79483279666e16c25e89",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "220be7a8f3a21e453c4eea2544b2d0c3ed317ab9c5702d784d6cb15fad9d90e0",
+        "raw.mid": "28abbcc40919632db11cd9438b6c0be0c4d514ac79248510d393752333564ea5",
+        "score.musicxml": "4ab380b659707a29053a756e961cd10d589e6f42169aa4e336b6830e5824fccf",
+        "source.mid": "4f5d3bfc7e16fc52fa592fcb15d3f1cdbd677352d72e1510a294eb69cfe72e46"
+      },
+      "files": {
+        "notes.json": "1d453380854d32c6fa0bef5ef845ab69789a41fbea8901e605920e1d47a571d6",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "220be7a8f3a21e453c4eea2544b2d0c3ed317ab9c5702d784d6cb15fad9d90e0",
+        "raw.mid": "28abbcc40919632db11cd9438b6c0be0c4d514ac79248510d393752333564ea5",
+        "score.musicxml": "db1fc01b0dffb4ffd9ab0c861aa9fdb2ab5ff557727ead400b39250bc99b0b36",
+        "source.mid": "4f5d3bfc7e16fc52fa592fcb15d3f1cdbd677352d72e1510a294eb69cfe72e46"
+      },
+      "project_state_sha256": "d6cff981a3ee1e54c514c0a884f49b6acd38f9b6853e6fba583055531d0ed8c7",
+      "sha256": "f81831f09e296727e57a1b02fcf32f990f9583d4d59bb32c403f5baa3bce8136"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "4f5d3bfc7e16fc52fa592fcb15d3f1cdbd677352d72e1510a294eb69cfe72e46",
+    "title": "BWV 925 — Prelude in D major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

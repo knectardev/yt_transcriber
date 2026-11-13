@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 86.3859,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171157Z-5b740f7d",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121155",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 86.38594
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "935",
+      "collection": "BWV 933-938 Six Little Preludes",
+      "collection_id": "bwv-933-938-six-little-preludes",
+      "entry_id": "bwv-0935",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/15-Kleine_Praeludien_I/BWV_0935.mid",
+      "pinned_sha256": "b7969bcb7d3c4c1cc71515c847214d915158d2e85978b324201551ecf5d56f3c",
+      "source_filename": "BWV_0935.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/six-little-preludes/"
+    },
+    "import_settings_sha256": "58ad85359dc3aa16eca070ef21b1fa6c0843810f4c1e36a8af4556f9fdc74091",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "b7969bcb7d3c4c1cc71515c847214d915158d2e85978b324201551ecf5d56f3c"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 935 — Prelude in d minor"
+  },
+  "recorded_at": "2026-11-13T17:11:57Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171157Z-5b740f7d",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "fddaacf7fd1fe8b9b2c39926b1624086684a6d6b999d98b6260035dc7ce77cd2",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "524a36bcb07d9c0f9ae25147a7b9d9a4d5dcc87c8743f9332973cc9edc415c55",
+        "raw.mid": "c50c7ca6a98285fb4b28d3856a4fb90f14561a0eda1f51876c7ec08921f23265",
+        "score.musicxml": "d79564705c9d71d5674348b22c4162fc52760de73682644009dd6285dfb2fbd2",
+        "source.mid": "b7969bcb7d3c4c1cc71515c847214d915158d2e85978b324201551ecf5d56f3c"
+      },
+      "files": {
+        "notes.json": "7aa5b0a5a752ec90804be5b24707eb4610a56c46bcf85eb6f415873b63ed3bcf",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "524a36bcb07d9c0f9ae25147a7b9d9a4d5dcc87c8743f9332973cc9edc415c55",
+        "raw.mid": "c50c7ca6a98285fb4b28d3856a4fb90f14561a0eda1f51876c7ec08921f23265",
+        "score.musicxml": "bf856ee9a4f543e4859ed72db2d081bbb81fea892e2ff9b0be1e9422323c9bbe",
+        "source.mid": "b7969bcb7d3c4c1cc71515c847214d915158d2e85978b324201551ecf5d56f3c"
+      },
+      "project_state_sha256": "b4eca1845608663c487fcb512746bff07ef78c98ba12239f324401110771816f",
+      "sha256": "4cef2f8052880c5a148321e3f44a652558e9f6dcf6731982ff7dd44679a927c5"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "b7969bcb7d3c4c1cc71515c847214d915158d2e85978b324201551ecf5d56f3c",
+    "title": "BWV 935 — Prelude in d minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

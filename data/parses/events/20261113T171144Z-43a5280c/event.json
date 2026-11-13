@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 104.325,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171144Z-43a5280c",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121143",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 104.325
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "930",
+      "collection": "BWV 924-932 Little Preludes (Clavierbüchlein for W.F. Bach)",
+      "collection_id": "bwv-924-932-little-preludes-wf",
+      "entry_id": "bwv-0930",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/14-Kleine_Praeludien_WFB/BWV_0930.mid",
+      "pinned_sha256": "615c0644b5355d1edc635bdeea1ebf65b08c34e5c8d1628e3ad38088dfb9d407",
+      "source_filename": "BWV_0930.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/little-preludes-clavier-buechlein-for-w-f-bach/"
+    },
+    "import_settings_sha256": "64950ef639c2c8088ae9a5f4c67e4ede65dff74de7361e7ff5426246c8e64574",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "615c0644b5355d1edc635bdeea1ebf65b08c34e5c8d1628e3ad38088dfb9d407"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 930 — Prelude in g minor"
+  },
+  "recorded_at": "2026-11-13T17:11:44Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171144Z-43a5280c",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "01ee3935cb0b9dde2f8a4f1cffbaa69036ef917a40c230f039c9befc434dd872",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "1872ceba18773db19484757f2012981aa3ae4cc1ac286e8800e4d0893bfbe240",
+        "raw.mid": "6c45c47c6a2c2aa8c98c20bca85e873850078d4e9195a88b3e83669becde95d9",
+        "score.musicxml": "4ffa09397cd42ff8a103cad443499c1dbe12524cd28cfacfc3dcd30609b92a6f",
+        "source.mid": "615c0644b5355d1edc635bdeea1ebf65b08c34e5c8d1628e3ad38088dfb9d407"
+      },
+      "files": {
+        "notes.json": "9487938f7dcbeea737e90e9af3be4de927720bbac9b837209a1dd874101793f8",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "1872ceba18773db19484757f2012981aa3ae4cc1ac286e8800e4d0893bfbe240",
+        "raw.mid": "6c45c47c6a2c2aa8c98c20bca85e873850078d4e9195a88b3e83669becde95d9",
+        "score.musicxml": "80e0f74be9f6d18a79f83107a8139a15ef9c42d4e32c67c4d69b692827109329",
+        "source.mid": "615c0644b5355d1edc635bdeea1ebf65b08c34e5c8d1628e3ad38088dfb9d407"
+      },
+      "project_state_sha256": "f637f2c65aa489142b968dcb21fc314b0ab87c8c38d5c0522f38f0f4d71bab7c",
+      "sha256": "00517a8cb0fb81585abd9c37c81842de4aeb3d019635fab834b74740302b66a8"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "615c0644b5355d1edc635bdeea1ebf65b08c34e5c8d1628e3ad38088dfb9d407",
+    "title": "BWV 930 — Prelude in g minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

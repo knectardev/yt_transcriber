@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 289.9008,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171047Z-f738789b",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121043",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 289.90075
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "918",
+      "collection": "BWV 910-923 Toccatas, Fantasias and Preludes",
+      "collection_id": "bwv-910-923-toccatas-fantasias-and-preludes",
+      "entry_id": "bwv-0918",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/13-Toccaten_Fantasien_Praeludien/BWV_0918.mid",
+      "pinned_sha256": "fefeddf3168b498c05f5133d1ba1cd92dd96843d8e020c2f875da22c61d00e30",
+      "source_filename": "BWV_0918.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/toccatas-fantasias-and-preludes/"
+    },
+    "import_settings_sha256": "a564744f44fcc9291b62752b1d39131bfc5eaa4f0a7b5cefc4adcf9f4f2b0a6c",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "fefeddf3168b498c05f5133d1ba1cd92dd96843d8e020c2f875da22c61d00e30"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.333333
+        }
+      ]
+    },
+    "title": "BWV 918 — Fantasia on a Rondo in c minor"
+  },
+  "recorded_at": "2026-11-13T17:10:47Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171047Z-f738789b",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "b99cac9095d817983e6fdc49343f0a3c47a55fb32b2f78065290530393ea2edc",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "c7b20e45de3f55061181aa98aa49d075ddfd5521645ee662352a2f89ef5ec371",
+        "raw.mid": "4c966c461a4b3c10d0f3ae49c603d8651aa0c523bd710510832d6e01c1e1e5fb",
+        "score.musicxml": "7beb98310837351a50b94e8344cd4869b0c9801274ad7baf2e0e7d5db9ad529d",
+        "source.mid": "fefeddf3168b498c05f5133d1ba1cd92dd96843d8e020c2f875da22c61d00e30"
+      },
+      "files": {
+        "notes.json": "0c04c2c56e663d7972b5cbee5cbb36c8cf4c2851253ac507e75f9e07f0866442",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "c7b20e45de3f55061181aa98aa49d075ddfd5521645ee662352a2f89ef5ec371",
+        "raw.mid": "4c966c461a4b3c10d0f3ae49c603d8651aa0c523bd710510832d6e01c1e1e5fb",
+        "score.musicxml": "5ce8bb01bdcbd7e1f130520563511a4e7c62cb7bd35993258506e91100d9a255",
+        "source.mid": "fefeddf3168b498c05f5133d1ba1cd92dd96843d8e020c2f875da22c61d00e30"
+      },
+      "project_state_sha256": "7374fdfbf3d065c06426261d4e88c4210ffef2f0593eeda7ccbec4421bf8c797",
+      "sha256": "7d38d74d4ee788032a6bcd75c1c9224a91b2cf4e974b7a465336714faf2b066a"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "fefeddf3168b498c05f5133d1ba1cd92dd96843d8e020c2f875da22c61d00e30",
+    "title": "BWV 918 — Fantasia on a Rondo in c minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

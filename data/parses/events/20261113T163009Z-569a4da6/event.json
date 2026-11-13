@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 71.9753,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T163009Z-569a4da6",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-113008",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 71.97526
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "813a",
+      "collection": "BWV 812-817 French Suites",
+      "collection_id": "bwv-812-817-french-suites",
+      "entry_id": "bwv-0813a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/05-Franzoesische_Suiten/BWV_0813a.mid",
+      "pinned_sha256": "4437588f95c97773c7e4274232ae5923190cce9f5c973a691699fb78de542fde",
+      "source_filename": "BWV_0813a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/french-suites/"
+    },
+    "import_settings_sha256": "d0aacd8891e5bdc0a691e238882be9235658b70cd07c69d9b8e212766c7e860a",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "4437588f95c97773c7e4274232ae5923190cce9f5c973a691699fb78de542fde"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 813a — Alternate Minuet"
+  },
+  "recorded_at": "2026-11-13T16:30:09Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T163009Z-569a4da6",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "b792d28c0f1decea0011c3fbf1785caacecee12747b1da3fb7bff2ed0ab31019",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "7eddafed86e34df3416c614b74eeda0d21c31652cc32035a8d4b3b2a53fbd50a",
+        "raw.mid": "6948dc2635e90a5413b7c3a347c0ab948ef55c31170c3532beefb27da99e35df",
+        "score.musicxml": "1fd981069bdb76e734a5bc0cbab4a0b51d1bc928dcceae2ba071f0008dfad779",
+        "source.mid": "4437588f95c97773c7e4274232ae5923190cce9f5c973a691699fb78de542fde"
+      },
+      "files": {
+        "notes.json": "2dade7f3aa8924d8ae51b7fc5b5e5d7f9b7a142006fa57466fbc55ce8a5cfc46",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "7eddafed86e34df3416c614b74eeda0d21c31652cc32035a8d4b3b2a53fbd50a",
+        "raw.mid": "6948dc2635e90a5413b7c3a347c0ab948ef55c31170c3532beefb27da99e35df",
+        "score.musicxml": "ba2046a53d92b6d8b3a7c45fb50d559736bb67fd83fa9138d0316584b43a180e",
+        "source.mid": "4437588f95c97773c7e4274232ae5923190cce9f5c973a691699fb78de542fde"
+      },
+      "project_state_sha256": "bf0bfb5b6c7cc720d7f8c2d6e8865c34f342a382963131357aa75de4e7fb6acb",
+      "sha256": "bfd92a46e4bb3889db64dcf60c2f1048cacb66dc8f881c3c7ea8341cc8248cbf"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "4437588f95c97773c7e4274232ae5923190cce9f5c973a691699fb78de542fde",
+    "title": "BWV 813a — Alternate Minuet"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

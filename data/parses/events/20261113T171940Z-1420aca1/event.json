@@ -1,0 +1,225 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 958.9878,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171940Z-1420aca1",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-111810",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 958.98782
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "808",
+      "collection": "BWV 806-811 English Suites",
+      "collection_id": "bwv-806-811-english-suites",
+      "entry_id": "bwv-0808",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/04-Englische_Suiten/BWV_0808.mid",
+      "pinned_sha256": "80388a36881dc5831a409ec9eccccab04b7aa13acbcd679863993aec2911c57c",
+      "source_filename": "BWV_0808.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/english-suites/"
+    },
+    "import_settings_sha256": "82489d19e67a9a93ce67a00ef681b0e065289ea7617e33da27123db00ba0d9fd",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "80388a36881dc5831a409ec9eccccab04b7aa13acbcd679863993aec2911c57c"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 114.0001710002565,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 114.0001710002565,
+          "time": 0.0
+        },
+        {
+          "bpm": 92.00012880018032,
+          "time": 168.1576425
+        },
+        {
+          "bpm": 168.0004032009677,
+          "time": 293.3748585
+        },
+        {
+          "bpm": 66.000066000066,
+          "time": 430.51738650000004
+        },
+        {
+          "bpm": 199.99999999999997,
+          "time": 692.3353065000001
+        },
+        {
+          "bpm": 216.0006048016934,
+          "time": 812.3353065000001
+        }
+      ],
+      "time_signature": "3/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 168.1576425
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 293.3748585
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 430.51738650000004
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 692.3353065000001
+        },
+        {
+          "denominator": 8,
+          "numerator": 12,
+          "time": 812.3353065000001
+        }
+      ]
+    },
+    "title": "BWV 808 — Suite No. 3 in g minor"
+  },
+  "recorded_at": "2026-11-13T17:19:40Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171940Z-1420aca1",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "2c143d722e275dfa74f791b26925083c6ed201be1a5b625ecd5ef963d8f2b60e",
+        "notes.json": "f774f299d245820133797e683bc5c21347f77f6ed8e4d9d1d1d0aacdb5dc9b85",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "e3ea3568770052bcd344e2c6449fda5a97c7a64260e3e4f66d09953734a82ef7",
+        "raw.mid": "9d9f1630ab6935352e2f188c5b6814d6b86dcc5805ba9fcea9b6f055e9ae8583",
+        "score.musicxml": "030fbd0dc642fba04a81eaf80425d91c984ae62690b88c85262d219e47465384",
+        "source.mid": "80388a36881dc5831a409ec9eccccab04b7aa13acbcd679863993aec2911c57c"
+      },
+      "files": {
+        "annotations.json": "f941999b8c53b4db6a763bc385d22aa137944ebbebaf6062a9e91619293bed99",
+        "notes.json": "b028d94e82db0601267791fd7c7697df57e01354d0e72a6414d9bcc8ee58e5fb",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "e3ea3568770052bcd344e2c6449fda5a97c7a64260e3e4f66d09953734a82ef7",
+        "raw.mid": "9d9f1630ab6935352e2f188c5b6814d6b86dcc5805ba9fcea9b6f055e9ae8583",
+        "score.musicxml": "190e29eb3bd5ff18908a2c74475d0bca19485fe6b4a9017288e63a6726585956",
+        "source.mid": "80388a36881dc5831a409ec9eccccab04b7aa13acbcd679863993aec2911c57c"
+      },
+      "project_state_sha256": "1b44572a0f4dc1ad5e8dab5153f05a6182e15121893dee75f1ec00b88b35f674",
+      "sha256": "452158bc118500d5edf1635b4e54673e6a48830e49871ce2df5e69bec90a7c74"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "80388a36881dc5831a409ec9eccccab04b7aa13acbcd679863993aec2911c57c",
+    "title": "BWV 808 — Suite No. 3 in g minor"
+  },
+  "status": "ok",
+  "version": 2
+}

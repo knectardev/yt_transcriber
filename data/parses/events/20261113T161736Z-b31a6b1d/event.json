@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 106.2008,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161736Z-b31a6b1d",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083504",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 106.20079
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "798",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0798",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0798.mid",
+      "pinned_sha256": "58910ab0c50338fca0b668c15bcd7f4947858f8c4dcc34fc331bd879e50ea7e0",
+      "source_filename": "BWV_0798.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "c77afb69494dc6ccfea7c04301e7e3ca27dd99fcefa008cf47d97cf9b182755d",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "58910ab0c50338fca0b668c15bcd7f4947858f8c4dcc34fc331bd879e50ea7e0"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 70.00007000007,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 70.00007000007,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 798 — Sinfonia No. 12"
+  },
+  "recorded_at": "2026-11-13T16:17:36Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133505Z-38b30ede",
+    "parent_event_id": "20261113T133505Z-38b30ede",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "b0375ac5800df00cc3946d9c033b1f46bbf0fc667ed12749970a0b6efe8e8aea",
+        "notes.json": "48ed7dbc7c2dd4e5e8821d1c838e12811926abbf8a5bc390dbc0884ba2f18405",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "d6204aba3c04aa5c7dcbbd16676f979f2c1838c3a24ebec76aa145b599786e28",
+        "raw.mid": "238bad747031bd28a78f8aed193c43a6fe18d4d52dea3e577ffaf3ed925560c9",
+        "score.musicxml": "d14e7f0e9337f1138f6d5b8307cadf416d88d58948dad9ebc59f4345e925068c",
+        "source.mid": "58910ab0c50338fca0b668c15bcd7f4947858f8c4dcc34fc331bd879e50ea7e0"
+      },
+      "files": {
+        "annotations.json": "41c04f385b24dce965f590f3b2111a48d2e6380b560c2a15a217939c3109f61a",
+        "notes.json": "d4dec07b971dd6f21ecdf480a5eac6fb82e5a039d8f19141a314e2b4312229a0",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "d6204aba3c04aa5c7dcbbd16676f979f2c1838c3a24ebec76aa145b599786e28",
+        "raw.mid": "238bad747031bd28a78f8aed193c43a6fe18d4d52dea3e577ffaf3ed925560c9",
+        "score.musicxml": "0a79d2ddd76d500d31083ea671d6043e7b12c8a7dca40309c7e2cf91673a3e5f",
+        "source.mid": "58910ab0c50338fca0b668c15bcd7f4947858f8c4dcc34fc331bd879e50ea7e0"
+      },
+      "project_state_sha256": "a96ce6255209ba7e5593c8d796357c398c8e4bc49b35dee1c90b2c4724e4536d",
+      "sha256": "623cf4c037be13b37b82839d7c90d4e7ac3271199133d02cf65eea5b4fc0a7d5"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "58910ab0c50338fca0b668c15bcd7f4947858f8c4dcc34fc331bd879e50ea7e0",
+    "title": "BWV 798 — Sinfonia No. 12"
+  },
+  "status": "ok",
+  "version": 2
+}

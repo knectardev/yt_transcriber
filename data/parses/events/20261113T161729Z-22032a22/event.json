@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 61.2673,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161729Z-22032a22",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083500",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 61.2673
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "794",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0794",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0794.mid",
+      "pinned_sha256": "da2964e2b66ffef6e6cf5b7844eef69ac78ad4cf60bd31be787f74b250ae463a",
+      "source_filename": "BWV_0794.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "c510c25914216321c6825677f60fd581fd488f2ccdb12ea33f62734e529d2628",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "da2964e2b66ffef6e6cf5b7844eef69ac78ad4cf60bd31be787f74b250ae463a"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 794 — Sinfonia No. 8"
+  },
+  "recorded_at": "2026-11-13T16:17:29Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133500Z-7e9dcf47",
+    "parent_event_id": "20261113T133500Z-7e9dcf47",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "f58ba4a9b1f5dfbc13dc0011ac3e8269d03c42341a9b0ea7b21d31c9476fb35e",
+        "notes.json": "346b0a675c24de455f738774cfca69e004db5fafe8c58c0fccac645360394106",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "1e850b22af7a733b6b622d8decaa736d7b35bccff14b8906955424dff1ccaca3",
+        "raw.mid": "f67f31ef0165265f54bb6f409749d3e3397f8265c8e4679aea5e5106466b55eb",
+        "score.musicxml": "be402b0580ef958daab2db57c413d79bccd349c0834cb25758b0b38672705c72",
+        "source.mid": "da2964e2b66ffef6e6cf5b7844eef69ac78ad4cf60bd31be787f74b250ae463a"
+      },
+      "files": {
+        "annotations.json": "3db0947951bcb45920cd2f151e7fac2113a8957809b701d18d732559b9daa781",
+        "notes.json": "488104120012c9a61e203f25d97625d537a4467397e2b6bd3d94e2d34ff04292",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "1e850b22af7a733b6b622d8decaa736d7b35bccff14b8906955424dff1ccaca3",
+        "raw.mid": "f67f31ef0165265f54bb6f409749d3e3397f8265c8e4679aea5e5106466b55eb",
+        "score.musicxml": "3a92259b54d7ce40bcde561e15324b29161ea035a878f3201b09ec921ef1c26a",
+        "source.mid": "da2964e2b66ffef6e6cf5b7844eef69ac78ad4cf60bd31be787f74b250ae463a"
+      },
+      "project_state_sha256": "f748737f7c0d35e5234eb4f5fe528ee46a517963f196d526e235f6b44b9eb666",
+      "sha256": "4ff90a365f26898494fee48583e7b09f04f1f38bc387e61191df8a705fafdd82"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "da2964e2b66ffef6e6cf5b7844eef69ac78ad4cf60bd31be787f74b250ae463a",
+    "title": "BWV 794 — Sinfonia No. 8"
+  },
+  "status": "ok",
+  "version": 2
+}

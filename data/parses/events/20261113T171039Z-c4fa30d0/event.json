@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 163.9998,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171039Z-c4fa30d0",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121038",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 163.99984
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "917",
+      "collection": "BWV 910-923 Toccatas, Fantasias and Preludes",
+      "collection_id": "bwv-910-923-toccatas-fantasias-and-preludes",
+      "entry_id": "bwv-0917",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/13-Toccaten_Fantasien_Praeludien/BWV_0917.mid",
+      "pinned_sha256": "79363ddd2b15739e99663bb61c0e10b38efe07023e8b6641f5ecf3b73490d2ac",
+      "source_filename": "BWV_0917.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/toccatas-fantasias-and-preludes/"
+    },
+    "import_settings_sha256": "fdca9bb9d34401f04b65cb038f56d93cda75cc4b14a080cc3010d98b579b6bbd",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "79363ddd2b15739e99663bb61c0e10b38efe07023e8b6641f5ecf3b73490d2ac"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 1.333332
+        }
+      ]
+    },
+    "title": "BWV 917 — Fantasie in g minor"
+  },
+  "recorded_at": "2026-11-13T17:10:39Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171039Z-c4fa30d0",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "2189a2aa3f5c7c75d22f04f7826026656b65ace4ed259f38def6ae039221a64b",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "e12ad12d57df2c62f940202136287e3383d6827131634a11e11d58fc73a66caf",
+        "raw.mid": "a07a2f7e18aafc411598a2e26fb11815dee6152bcf807541cdf2574a11b9f6ff",
+        "score.musicxml": "0ac424fa9153edc79c5c23f28c1ae45b9096e0b45f26c9ef7e4a7dfe19ae0934",
+        "source.mid": "79363ddd2b15739e99663bb61c0e10b38efe07023e8b6641f5ecf3b73490d2ac"
+      },
+      "files": {
+        "notes.json": "c2a89497a4c938bf834f08d09c692468b6e0c8eafade028e1e14d47c48595344",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "e12ad12d57df2c62f940202136287e3383d6827131634a11e11d58fc73a66caf",
+        "raw.mid": "a07a2f7e18aafc411598a2e26fb11815dee6152bcf807541cdf2574a11b9f6ff",
+        "score.musicxml": "6931ce5b0e890a9c77a4ae7caf40a0f6cf9788f4612b488496d1f73b3cfb20f1",
+        "source.mid": "79363ddd2b15739e99663bb61c0e10b38efe07023e8b6641f5ecf3b73490d2ac"
+      },
+      "project_state_sha256": "edef5878d37c20ee6b9c60c3dafd46f649218952828bb6b1f7525af5c8e48a36",
+      "sha256": "cfe9fc165b101a147d714200ee9fdd74542732affdf9f6ea68ee1533bc9e9ea6"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "79363ddd2b15739e99663bb61c0e10b38efe07023e8b6641f5ecf3b73490d2ac",
+    "title": "BWV 917 — Fantasie in g minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 72.0,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171138Z-14717dd8",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121136",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 72.0
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "928",
+      "collection": "BWV 924-932 Little Preludes (Clavierbüchlein for W.F. Bach)",
+      "collection_id": "bwv-924-932-little-preludes-wf",
+      "entry_id": "bwv-0928",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/14-Kleine_Praeludien_WFB/BWV_0928.mid",
+      "pinned_sha256": "aec8490e9ede3f9bd89d1f70d4fb7b77a46ff538dc797baea9c30ba4b323f440",
+      "source_filename": "BWV_0928.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/little-preludes-clavier-buechlein-for-w-f-bach/"
+    },
+    "import_settings_sha256": "b3d7b509759fdf40ca2f8815375f51df40c0099ac637a550e092ea77f2ef6492",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "aec8490e9ede3f9bd89d1f70d4fb7b77a46ff538dc797baea9c30ba4b323f440"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 928 — Prelude in F major"
+  },
+  "recorded_at": "2026-11-13T17:11:38Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171138Z-14717dd8",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "79724dc8943b57fd1b716aa39df7945b7aeafbce6946e10d9b1ebe85674c10e6",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "b3e3f2746fdc76f3e8797c426854821978a331b28a72d61c6dee29c7374363cd",
+        "raw.mid": "bbac85f3a486db9300311d9d1e097c4251f7f4ae78e3f4e08a66e6c96da2a8d2",
+        "score.musicxml": "fff1186456b23effed195def5be129ecbe99383f1060af375e6d17849701edab",
+        "source.mid": "aec8490e9ede3f9bd89d1f70d4fb7b77a46ff538dc797baea9c30ba4b323f440"
+      },
+      "files": {
+        "notes.json": "a3d84dee5a0e27da17bb614170edfb4cf1e6658432b485bd444570bf65331c69",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "b3e3f2746fdc76f3e8797c426854821978a331b28a72d61c6dee29c7374363cd",
+        "raw.mid": "bbac85f3a486db9300311d9d1e097c4251f7f4ae78e3f4e08a66e6c96da2a8d2",
+        "score.musicxml": "8c56a5d9638b1411bad94fac82b1f95656eb1c6122538f8b087c148b99273712",
+        "source.mid": "aec8490e9ede3f9bd89d1f70d4fb7b77a46ff538dc797baea9c30ba4b323f440"
+      },
+      "project_state_sha256": "1072ddcd30e3169fadb73266bcf155436d148279188e6e6493d25016be9e8b37",
+      "sha256": "6fbb0d27c307768c47a3f7f29644b0e8c7dfb4e5162a553c479a0b936f04a440"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "aec8490e9ede3f9bd89d1f70d4fb7b77a46ff538dc797baea9c30ba4b323f440",
+    "title": "BWV 928 — Prelude in F major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

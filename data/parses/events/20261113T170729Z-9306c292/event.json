@@ -1,0 +1,188 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 459.6,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170729Z-9306c292",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120718",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 459.6
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "904",
+      "collection": "BWV 903-909 Fantasias and Fugues/Fughettas",
+      "collection_id": "bwv-903-909-fantasias-and-fugues",
+      "entry_id": "bwv-0904",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/12-Fantasien_Fugen/BWV_0904.mid",
+      "pinned_sha256": "be8cbc38d8dca494985b1649ad34738d76089a2a84c8137554b46ac59bc536fa",
+      "source_filename": "BWV_0904.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/fantasias-and-fugues/"
+    },
+    "import_settings_sha256": "0427d74ce6b184fd77ccb20a2d5c1f246484f88ba44316ffeadc2a258aa0e432",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "be8cbc38d8dca494985b1649ad34738d76089a2a84c8137554b46ac59bc536fa"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 1.2000000000000002
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 267.6
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 373.20000000000005
+        }
+      ]
+    },
+    "title": "BWV 904 — Fantasia and Fugue in a minor"
+  },
+  "recorded_at": "2026-11-13T17:07:29Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170729Z-9306c292",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "e346645500105a0eed9da08ae67de1da84a267d9ef0aefbc7dba229a80e309f9",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "8ac499428ecf1b03368a1f90172086b844bac5a6dd8f7aa67da3e22809901644",
+        "raw.mid": "312ca9919ce39818f96a9e23161fcd1b728a6de1ccb8ee827adce9fb98a53dd3",
+        "score.musicxml": "d201c44e16bdf41e05aacf54807aee5617818c367e0f8ae56debdf4edeff0b0a",
+        "source.mid": "be8cbc38d8dca494985b1649ad34738d76089a2a84c8137554b46ac59bc536fa"
+      },
+      "files": {
+        "notes.json": "269478851b4908312d8168ea275ba0c81030faa19b9195096e3164bddf868f07",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "8ac499428ecf1b03368a1f90172086b844bac5a6dd8f7aa67da3e22809901644",
+        "raw.mid": "312ca9919ce39818f96a9e23161fcd1b728a6de1ccb8ee827adce9fb98a53dd3",
+        "score.musicxml": "8063478cc4cfbda7f81e87362bd3e7ba842487e0a5586733757bb03799e97ae7",
+        "source.mid": "be8cbc38d8dca494985b1649ad34738d76089a2a84c8137554b46ac59bc536fa"
+      },
+      "project_state_sha256": "c8f6d23cca2d86f29d627461ca76d0e23698b9062c06c44d2438d07df937559f",
+      "sha256": "3cc1cbdee8492f68537a36d26c99e22f7eca746d63eba06d6bd6832faf6b3262"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "be8cbc38d8dca494985b1649ad34738d76089a2a84c8137554b46ac59bc536fa",
+    "title": "BWV 904 — Fantasia and Fugue in a minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

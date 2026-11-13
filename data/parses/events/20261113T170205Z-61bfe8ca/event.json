@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 152.9629,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170205Z-61bfe8ca",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120202",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 152.96289
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "870a",
+      "collection": "BWV 870-893 The Well-Tempered Clavier Book II",
+      "collection_id": "bwv-870-893-wtc-ii",
+      "entry_id": "bwv-0870a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/10-Wohltemperiertes_Klavier_II/BWV_0870a.mid",
+      "pinned_sha256": "4e47f4278f71e7c202d9d201da51b4c0c76e7d2007b53f19b297583c3ae7989f",
+      "source_filename": "BWV_0870a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-ii/"
+    },
+    "import_settings_sha256": "75fec3b112460b04bd524cfe542cc820ac274c84bd5021fbf7a3eb70c10c736b",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "4e47f4278f71e7c202d9d201da51b4c0c76e7d2007b53f19b297583c3ae7989f"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 870a — Prelude and Fughetta No. 1a"
+  },
+  "recorded_at": "2026-11-13T17:02:05Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170205Z-61bfe8ca",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "ef7e1a96eee78326c84f31fba611ca4a178c8e2b8e215a72bead8d15f5645aad",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "d3d0b4918c630428e24eb80bf89fe4ce46eb7fec525e158e0afe29945c4d2d34",
+        "raw.mid": "4dcacd2f74b85211d04382612770c68bd6b332007dec09ca62f2d1baf7bb3716",
+        "score.musicxml": "902f0024956c1314f3eea7566a91bf70ece8ab4910e72c0a73ddd272304b6d22",
+        "source.mid": "4e47f4278f71e7c202d9d201da51b4c0c76e7d2007b53f19b297583c3ae7989f"
+      },
+      "files": {
+        "notes.json": "838f56ec10f1cfff191dec128354774bb2bf57e21bde4ba6c55ab157e5a2f360",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "d3d0b4918c630428e24eb80bf89fe4ce46eb7fec525e158e0afe29945c4d2d34",
+        "raw.mid": "4dcacd2f74b85211d04382612770c68bd6b332007dec09ca62f2d1baf7bb3716",
+        "score.musicxml": "f89b053c4a414779e90183b98e92801b26641bcc2612e90a277211f659a12cd5",
+        "source.mid": "4e47f4278f71e7c202d9d201da51b4c0c76e7d2007b53f19b297583c3ae7989f"
+      },
+      "project_state_sha256": "1a1fdca288576ffe9cbe33788870b1e0e76b108a015535c0eff8d3da3d121817",
+      "sha256": "ae4f1bf3f63f1d4a1584894def7776978a766b42af85cdced7f3539108dd07a6"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "4e47f4278f71e7c202d9d201da51b4c0c76e7d2007b53f19b297583c3ae7989f",
+    "title": "BWV 870a — Prelude and Fughetta No. 1a"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

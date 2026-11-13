@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 147.0,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171119Z-76b0728a",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121118",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 147.0
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "923",
+      "collection": "BWV 910-923 Toccatas, Fantasias and Preludes",
+      "collection_id": "bwv-910-923-toccatas-fantasias-and-preludes",
+      "entry_id": "bwv-0923",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/13-Toccaten_Fantasien_Praeludien/BWV_0923.mid",
+      "pinned_sha256": "0ed48e5d0ea330e1b514265f770dbe41af518da25d3da7051c808b6f2c8ef29d",
+      "source_filename": "BWV_0923.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/toccatas-fantasias-and-preludes/"
+    },
+    "import_settings_sha256": "b3d7b509759fdf40ca2f8815375f51df40c0099ac637a550e092ea77f2ef6492",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "0ed48e5d0ea330e1b514265f770dbe41af518da25d3da7051c808b6f2c8ef29d"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 923 — Prelude in b minor"
+  },
+  "recorded_at": "2026-11-13T17:11:19Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171119Z-76b0728a",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "8401b02604fe1c1705bf07ec885f310476df3ea1e47de3719cbb6d9c2ce1f66b",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "b77c720507fcfcc7357f49aea8d43ed614abfec1c4bff91be199d7f5284b7641",
+        "raw.mid": "9ea0bf154e8d83da2fa4a6009fe211106cf6246228b016fea611cb5c068745b3",
+        "score.musicxml": "db32cc916d5a93ea0d97eaac5b5af7587e42be325497bcab02b5a5e4009fd204",
+        "source.mid": "0ed48e5d0ea330e1b514265f770dbe41af518da25d3da7051c808b6f2c8ef29d"
+      },
+      "files": {
+        "notes.json": "533d5dfc5392e0f2f0a00fb6e97a79355714bca463a77fb48ff2d6aea37e32ea",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "b77c720507fcfcc7357f49aea8d43ed614abfec1c4bff91be199d7f5284b7641",
+        "raw.mid": "9ea0bf154e8d83da2fa4a6009fe211106cf6246228b016fea611cb5c068745b3",
+        "score.musicxml": "e22407a99e42f72ac3616a747e9261fdef85f2d2ec7f9a2e1f3666eaef92a346",
+        "source.mid": "0ed48e5d0ea330e1b514265f770dbe41af518da25d3da7051c808b6f2c8ef29d"
+      },
+      "project_state_sha256": "cce034e45e7552858d84591e73b37e044ea4496635c114cd15df7ce732e6910b",
+      "sha256": "4e5a621811801a2b397ff59d3082cab243cf1461fff6132830d60d596327be3e"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "0ed48e5d0ea330e1b514265f770dbe41af518da25d3da7051c808b6f2c8ef29d",
+    "title": "BWV 923 — Prelude in b minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

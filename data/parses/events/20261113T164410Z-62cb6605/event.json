@@ -1,0 +1,202 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1252.166,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T164410Z-62cb6605",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-114309",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1252.16597
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "825",
+      "collection": "BWV 825-831 Partitas",
+      "collection_id": "bwv-825-831-partitas",
+      "entry_id": "bwv-0825",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/07-Partiten/BWV_0825.mid",
+      "pinned_sha256": "2be25ea921c12d22db52e6f78808f6f52eb7af3529ca03212b1b1cb832259c90",
+      "source_filename": "BWV_0825.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/partitas/"
+    },
+    "import_settings_sha256": "174c86df45c81bd1ed9f3ad767db96147ed7ad964a9ba8ccb52619acbc2e1e5c",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "2be25ea921c12d22db52e6f78808f6f52eb7af3529ca03212b1b1cb832259c90"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 60.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 389.5
+        },
+        {
+          "bpm": 60.0,
+          "time": 628.166428
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 796.166428
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 2.5
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 389.5
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 996.166228
+        }
+      ]
+    },
+    "title": "BWV 825 — Partita No. 1 in B flat major"
+  },
+  "recorded_at": "2026-11-13T16:44:10Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T164325Z-b15d301d",
+    "parent_event_id": "20261113T164325Z-b15d301d",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "0f54dc2c2798d00151494555d7d751f55ea989a62cbc6ee2e487d0c7cccb02cb",
+        "notes.json": "2689151c74ed2fa4af31fb48cc981a830f530dcced9ee8be847a0fb0592ff8b3",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "81b7e7e095dae77258d9bd867ae866beccc6aeb05b9c76823098edaf3f683002",
+        "raw.mid": "e632b7b439cadb2541733681ff671c0498eb71ec2ca80a2c5ab3f82647c6697a",
+        "score.musicxml": "57256412ae922541e8ad4d56182ac66408f5bf894e42be6e4bc281c277cb9246",
+        "source.mid": "2be25ea921c12d22db52e6f78808f6f52eb7af3529ca03212b1b1cb832259c90"
+      },
+      "files": {
+        "annotations.json": "c555489107a8d6f81584e4949c18740b2f00b1a2e7aa70b45a6a6447200b9a74",
+        "notes.json": "216bee54a88d52188517a5ba02be16d85743e8eb14a2807fe6cb75750853c6a7",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "81b7e7e095dae77258d9bd867ae866beccc6aeb05b9c76823098edaf3f683002",
+        "raw.mid": "e632b7b439cadb2541733681ff671c0498eb71ec2ca80a2c5ab3f82647c6697a",
+        "score.musicxml": "b553e0d661acade3da47f43d7b3ec825be5e06de3b8ad8f0f8cf42e353b8d8a2",
+        "source.mid": "2be25ea921c12d22db52e6f78808f6f52eb7af3529ca03212b1b1cb832259c90"
+      },
+      "project_state_sha256": "134698756c42747dda5dd23a67a20626a1a2c20258c6d6adc56e5569772c8c98",
+      "sha256": "34b1164b1ae6e01c2852d28f3b1bb03148292bad4f899422793e0dc1d5c75df3"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "2be25ea921c12d22db52e6f78808f6f52eb7af3529ca03212b1b1cb832259c90",
+    "title": "BWV 825 — Partita No. 1 in B flat major"
+  },
+  "status": "ok",
+  "version": 2
+}

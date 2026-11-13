@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 100.2,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165917Z-58160a70",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115915",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 100.2
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "844a",
+      "collection": "BWV 832-845 Suites and Suite Movements",
+      "collection_id": "bwv-832-845-suites-and-suite-movements",
+      "entry_id": "bwv-0844a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/08-Einzelwerke/BWV_0844a.mid",
+      "pinned_sha256": "0e488b7b1666ac3605ce9e480d05d1290e4e6309965a0d0898094d2b04d60f0c",
+      "source_filename": "BWV_0844a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/suites-and-suite-movements/"
+    },
+    "import_settings_sha256": "7eef8410f0a8239a2dc5cbbff9e1076048adc32793e5df222262a377cd5b20f4",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "0e488b7b1666ac3605ce9e480d05d1290e4e6309965a0d0898094d2b04d60f0c"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "2/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 2,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 844a — Scherzo in e minor"
+  },
+  "recorded_at": "2026-11-13T16:59:17Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165917Z-58160a70",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "11dd27515dd017ea4c726e9305aceee42343c388eae1e425aec8652718fe6720",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "ffffbfda7d2af46c3ba9d4fd7ee2c05105a6743a47caa6c07d36d7d780f7f8da",
+        "raw.mid": "18582de9948c399f3e7267c97119a0db46ecd89ca36d659b94ae50c143e136d4",
+        "score.musicxml": "f409197270c6bd32d222b6b3d6675609444d8cd744053fad427ac150bd8ee191",
+        "source.mid": "0e488b7b1666ac3605ce9e480d05d1290e4e6309965a0d0898094d2b04d60f0c"
+      },
+      "files": {
+        "notes.json": "6009727bfed77e4ed17ba91b9766612e50ed3652c8469d2455d5a20ede78fb1a",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "ffffbfda7d2af46c3ba9d4fd7ee2c05105a6743a47caa6c07d36d7d780f7f8da",
+        "raw.mid": "18582de9948c399f3e7267c97119a0db46ecd89ca36d659b94ae50c143e136d4",
+        "score.musicxml": "d35d95da6299394db5aa24cad049f1ffc1dfe2cbe339e79c6e3cdfb6a984db49",
+        "source.mid": "0e488b7b1666ac3605ce9e480d05d1290e4e6309965a0d0898094d2b04d60f0c"
+      },
+      "project_state_sha256": "ae205d21aa0d1b1a6e637c649dc922b88eeb78fbbf69f292fb0c23c7aab85c53",
+      "sha256": "b30827d337015320fa3bc2abb531ec03c80fa2e746bc7defa434f894f751d926"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "0e488b7b1666ac3605ce9e480d05d1290e4e6309965a0d0898094d2b04d60f0c",
+    "title": "BWV 844a — Scherzo in e minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

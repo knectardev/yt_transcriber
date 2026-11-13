@@ -1,0 +1,195 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 570.394,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170931Z-8324cea0",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120924",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 570.39402
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "913",
+      "collection": "BWV 910-923 Toccatas, Fantasias and Preludes",
+      "collection_id": "bwv-910-923-toccatas-fantasias-and-preludes",
+      "entry_id": "bwv-0913",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/13-Toccaten_Fantasien_Praeludien/BWV_0913.mid",
+      "pinned_sha256": "eae5f2393cb953469fdc7fbe84d12c16b6eb96391c3f1e7b049284a82d805510",
+      "source_filename": "BWV_0913.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/toccatas-fantasias-and-preludes/"
+    },
+    "import_settings_sha256": "e78bbed54bdcfab662cbda5f71ae13d55738780729bb00d79175bf1097527680",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "eae5f2393cb953469fdc7fbe84d12c16b6eb96391c3f1e7b049284a82d805510"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 95.00014250021376,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 95.00014250021376,
+          "time": 0.0
+        },
+        {
+          "bpm": 130.00013000013,
+          "time": 80.841984
+        },
+        {
+          "bpm": 75.0,
+          "time": 243.30335999999997
+        },
+        {
+          "bpm": 110.00011000011,
+          "time": 323.30336
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 323.30336
+        }
+      ]
+    },
+    "title": "BWV 913 — Toccata in d minor"
+  },
+  "recorded_at": "2026-11-13T17:09:31Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170931Z-8324cea0",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "495e18e4186cac44b5eecf41a650d2e4bde1e86931e235f5235bb5138f53dda7",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "3a985da9b6c251fea21c5765d683a95586b6e9f6c63ca6a5fde8d82702153d3d",
+        "raw.mid": "6c91d346d67055b406fa9b6417f54f4833bff06aa1851de99582911a47f5e41b",
+        "score.musicxml": "c28052ca4795e1854494b8dd567072c9a9decf605f9d76e8ed15d20db056a6c9",
+        "source.mid": "eae5f2393cb953469fdc7fbe84d12c16b6eb96391c3f1e7b049284a82d805510"
+      },
+      "files": {
+        "notes.json": "e7e65d96d4c49bf0f4fe2dffa2b51a9b1d57c558a4486bd98671eba6b2de0baf",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "3a985da9b6c251fea21c5765d683a95586b6e9f6c63ca6a5fde8d82702153d3d",
+        "raw.mid": "6c91d346d67055b406fa9b6417f54f4833bff06aa1851de99582911a47f5e41b",
+        "score.musicxml": "dd0fb7706ed151a941fb95294039aafbda4711311f0ccfc7e61f874afc676ca6",
+        "source.mid": "eae5f2393cb953469fdc7fbe84d12c16b6eb96391c3f1e7b049284a82d805510"
+      },
+      "project_state_sha256": "9c36d86f3d6727d59ccacf4c17d83b4d4f2876470bf3590a7ed9bea026bf949b",
+      "sha256": "257a718856052c7ebe528ea24a88f2b2ed85bd191f1da5ba07111d5cdf8dfd29"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "eae5f2393cb953469fdc7fbe84d12c16b6eb96391c3f1e7b049284a82d805510",
+    "title": "BWV 913 — Toccata in d minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

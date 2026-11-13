@@ -1,0 +1,180 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 96.0,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T161656Z-b26c2355",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083444",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 96.0
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "776",
+      "collection": "BWV 772-786 Inventions",
+      "collection_id": "bwv-772-786-inventions",
+      "entry_id": "bwv-0776",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/01-Inventionen/BWV_0776.mid",
+      "pinned_sha256": "f31c853ac58e9ae740d480162d5404ce4dcdf5aa4e5a3e8c26376222bd750b16",
+      "source_filename": "BWV_0776.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/inventions/"
+    },
+    "import_settings_sha256": "13f96772419c03566578c62862e332a4b9de2426644634ed3e7e74a526b275c3",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "f31c853ac58e9ae740d480162d5404ce4dcdf5aa4e5a3e8c26376222bd750b16"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "8/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 8,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 776 — Invention No. 5"
+  },
+  "recorded_at": "2026-11-13T16:16:56Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133445Z-2448220f",
+    "parent_event_id": "20261113T133445Z-2448220f",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "d326bf143263f69e58f91a853442dfe538a939615976fb59d975157b51293c6e",
+        "notes.json": "3d306ad3f6b5afc96bb07e1d579ae236fd6beeb87c966127edcfaedbe3c03833",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "258aa52e2b049da81385ce9fe475ee047c358ce92cdbda663ad85183aa85eaa9",
+        "raw.mid": "5625a06319dd577abceab9e0cbb6d02cbd58d3ad57a0afa5664950287e5e6cdd",
+        "score.musicxml": "fcb2276158b0d95bc3a039bba8aa56e45d42926f0337ce8a0609f7e549a4ce58",
+        "source.mid": "f31c853ac58e9ae740d480162d5404ce4dcdf5aa4e5a3e8c26376222bd750b16"
+      },
+      "files": {
+        "annotations.json": "8e9505a71396030482ddf6dd6a401ff5f4879ffb104173c05b307bbee53259ad",
+        "notes.json": "0103b52a693753d9945121f4c3fb71232ceb6b058551e96e4d87b7bddbef6653",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "258aa52e2b049da81385ce9fe475ee047c358ce92cdbda663ad85183aa85eaa9",
+        "raw.mid": "5625a06319dd577abceab9e0cbb6d02cbd58d3ad57a0afa5664950287e5e6cdd",
+        "score.musicxml": "546fe5bfde3d3567789e969fbabf4cc8bb93ebb2a7467d0d0406c6684e677486",
+        "source.mid": "f31c853ac58e9ae740d480162d5404ce4dcdf5aa4e5a3e8c26376222bd750b16"
+      },
+      "project_state_sha256": "e1070efd3f49e8053e136958d4d6ec628954aa9f57c2ba08753dba597e77428d",
+      "sha256": "42d72763b65bb6d22ce8af3de4c4159406f97c85959893748ee8dfcb6ca19a6a"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "f31c853ac58e9ae740d480162d5404ce4dcdf5aa4e5a3e8c26376222bd750b16",
+    "title": "BWV 776 — Invention No. 5"
+  },
+  "status": "ok",
+  "version": 2
+}

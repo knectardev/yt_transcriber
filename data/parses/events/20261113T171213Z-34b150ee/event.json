@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 32.9753,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171213Z-34b150ee",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121212",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 32.97526
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "941",
+      "collection": "BWV 939-943 Five Little Preludes",
+      "collection_id": "bwv-939-943-five-little-preludes",
+      "entry_id": "bwv-0941",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/16-Kleine_Praeludien_II/BWV_0941.mid",
+      "pinned_sha256": "bfc2ba2c7019df3236581910df30add413e9ed56756954d24f5430a631ca916e",
+      "source_filename": "BWV_0941.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/five-little-preludes/"
+    },
+    "import_settings_sha256": "d0aacd8891e5bdc0a691e238882be9235658b70cd07c69d9b8e212766c7e860a",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "bfc2ba2c7019df3236581910df30add413e9ed56756954d24f5430a631ca916e"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 941 — Prelude in e minor"
+  },
+  "recorded_at": "2026-11-13T17:12:13Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171213Z-34b150ee",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "d551022d16b8bad68140c50525771f12b684bda5f24ede98ebf622677b6b52fb",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "da6edb520b1fdee694766062f8d2500e1b002ede44153b6adce17f07fb1fe028",
+        "raw.mid": "98491aa3e3280e07e7d5857ea1bc30e78f51904e32000a32b7960d2a1125e984",
+        "score.musicxml": "95c46384350610acd6b64110de3f492b21b18a4e3c4d3f2701418b91066a135a",
+        "source.mid": "bfc2ba2c7019df3236581910df30add413e9ed56756954d24f5430a631ca916e"
+      },
+      "files": {
+        "notes.json": "ed2dca12fe78be7bbb659f1ec829b733cc1aa9f273b087b4a5d48a2d5d7f72cc",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "da6edb520b1fdee694766062f8d2500e1b002ede44153b6adce17f07fb1fe028",
+        "raw.mid": "98491aa3e3280e07e7d5857ea1bc30e78f51904e32000a32b7960d2a1125e984",
+        "score.musicxml": "a0e46ee78ae324e374b8a3bb4e8826864d39822d3a950dc54dc0a06b2d2dc2af",
+        "source.mid": "bfc2ba2c7019df3236581910df30add413e9ed56756954d24f5430a631ca916e"
+      },
+      "project_state_sha256": "9d09e3f62d8173ba7d3abc3e5f1ee8c3e78d377af18664786bf63a094beb7e59",
+      "sha256": "d12eaa4d0ac525eeac009291d9e3e1cf350a2dbff2a5c039bf82b1592d16bc01"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "bfc2ba2c7019df3236581910df30add413e9ed56756954d24f5430a631ca916e",
+    "title": "BWV 941 — Prelude in e minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

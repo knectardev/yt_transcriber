@@ -1,0 +1,204 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 516.1417,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165836Z-098d8155",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115816",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 516.14172
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "833",
+      "collection": "BWV 832-845 Suites and Suite Movements",
+      "collection_id": "bwv-832-845-suites-and-suite-movements",
+      "entry_id": "bwv-0833",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/08-Einzelwerke/BWV_0833.mid",
+      "pinned_sha256": "09fc8b5e9f804fa2a438eb49e6d5734247c878d418710f6e1bb2fb3afa252b21",
+      "source_filename": "BWV_0833.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/suites-and-suite-movements/"
+    },
+    "import_settings_sha256": "e7b23c68a29b6eb63d5bc96d6c7b272f399ecd48afd6304aacb2a1aa0895f2f3",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "09fc8b5e9f804fa2a438eb49e6d5734247c878d418710f6e1bb2fb3afa252b21"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 99.0
+        },
+        {
+          "bpm": 120.0,
+          "time": 205.66656
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 325.66656
+        },
+        {
+          "bpm": 120.0,
+          "time": 421.666464
+        }
+      ],
+      "time_signature": "3/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 99.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 205.66656
+        }
+      ]
+    },
+    "title": "BWV 833 — Prelude e Partita del Tuono Terzo"
+  },
+  "recorded_at": "2026-11-13T16:58:36Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165836Z-098d8155",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "42be7c5edc57fc76bc615e76719e72ff7c0cb7cd402ad5b3a9ac921b426e1c9c",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "dff235b853520d9588cbc6b49161c8c08220e0338d51f49c3b05db89dbeeb489",
+        "raw.mid": "c31634b85deaae4008f9e86193d0f430e43872e947ea0f0ec5faa25342bd6ac4",
+        "score.musicxml": "2407872d9d30cb8bb280f68dd5f538ca89ea030c7bc0b236d0a0aef17ac6c3cc",
+        "source.mid": "09fc8b5e9f804fa2a438eb49e6d5734247c878d418710f6e1bb2fb3afa252b21"
+      },
+      "files": {
+        "notes.json": "8ba0261eb055f903fc79d1d4c8c9e1c2c0efec6570a8e94317e214746dbf256b",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "dff235b853520d9588cbc6b49161c8c08220e0338d51f49c3b05db89dbeeb489",
+        "raw.mid": "c31634b85deaae4008f9e86193d0f430e43872e947ea0f0ec5faa25342bd6ac4",
+        "score.musicxml": "cfb76400707ba7fe1613218ce39205fcc5da326961078288236eb6be230d0d2e",
+        "source.mid": "09fc8b5e9f804fa2a438eb49e6d5734247c878d418710f6e1bb2fb3afa252b21"
+      },
+      "project_state_sha256": "628d8a85bd4006e8fe4969c3c4362e889e6fb1d603917d326ba2a946a3428b00",
+      "sha256": "6c51ec5281c67c444977d01f9f155309271ef751fd6fd5a87cd9beb3a389eaac"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "09fc8b5e9f804fa2a438eb49e6d5734247c878d418710f6e1bb2fb3afa252b21",
+    "title": "BWV 833 — Prelude e Partita del Tuono Terzo"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

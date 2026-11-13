@@ -1,0 +1,251 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 906.8725,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T163532Z-fad0e932",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-113458",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 906.87251
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "817",
+      "collection": "BWV 812-817 French Suites",
+      "collection_id": "bwv-812-817-french-suites",
+      "entry_id": "bwv-0817",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/05-Franzoesische_Suiten/BWV_0817.mid",
+      "pinned_sha256": "277b9bb60e22018f67a1ff5ee65c884c30b72a7360b5f27e5dcf989bc2886226",
+      "source_filename": "BWV_0817.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/french-suites/"
+    },
+    "import_settings_sha256": "1dd6840ff0907495c7cd504db28d8cdb23b32c5135acfd527917a28ab783593d",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "277b9bb60e22018f67a1ff5ee65c884c30b72a7360b5f27e5dcf989bc2886226"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 126.00012600012602,
+          "time": 170.8125
+        },
+        {
+          "bpm": 60.0,
+          "time": 262.24098
+        },
+        {
+          "bpm": 144.00023040036865,
+          "time": 406.24098
+        },
+        {
+          "bpm": 96.0,
+          "time": 472.90754
+        },
+        {
+          "bpm": 192.0,
+          "time": 562.9075399999999
+        },
+        {
+          "bpm": 102.0000510000255,
+          "time": 667.9075399999999
+        },
+        {
+          "bpm": 112.00005973336519,
+          "time": 752.6133799999999
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 2.8125
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 170.8125
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 406.24098
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 472.90754
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 562.9075399999999
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 566.9700399999999
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 577.9075399999999
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 581.9700399999999
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 667.9075399999999
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 752.6133799999999
+        }
+      ]
+    },
+    "title": "BWV 817 — Suite No. 6 in E major"
+  },
+  "recorded_at": "2026-11-13T16:35:32Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T163532Z-fad0e932",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "fb2629b76e6e78ac8dd2e1fa44c35bbb45d4437432495f0a08dacc693f1a60ec",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "98671c03b5ce612450841b85474989247b30783051ece60c2ae95863a6dc3d00",
+        "raw.mid": "98dab5f56a1790e06e350888e5a027a113ddbfc4fb3b2d3ee43a9117d4cdf056",
+        "score.musicxml": "9d0f7bde24a59fd0a75eaa36ef0852ff60681a5f34ce433265820d20f8f4eadb",
+        "source.mid": "277b9bb60e22018f67a1ff5ee65c884c30b72a7360b5f27e5dcf989bc2886226"
+      },
+      "files": {
+        "notes.json": "0b985a44aa8b621caf76c07c5cc24220ff14755b517a11bd6d876ef58d352d71",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "98671c03b5ce612450841b85474989247b30783051ece60c2ae95863a6dc3d00",
+        "raw.mid": "98dab5f56a1790e06e350888e5a027a113ddbfc4fb3b2d3ee43a9117d4cdf056",
+        "score.musicxml": "c90bbd4a3a9abbb7ff5c003c24decf63f86893dcd0ecfc59722778b4fe05372b",
+        "source.mid": "277b9bb60e22018f67a1ff5ee65c884c30b72a7360b5f27e5dcf989bc2886226"
+      },
+      "project_state_sha256": "675fe2b4b62a208857dde83f099148c04b42d8ba716cbdedba9beacae070a245",
+      "sha256": "aac7212a417a0af510db7d32c0ddcd4e06fba36989efd1edbbc0d7f98d9045bb"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "277b9bb60e22018f67a1ff5ee65c884c30b72a7360b5f27e5dcf989bc2886226",
+    "title": "BWV 817 — Suite No. 6 in E major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

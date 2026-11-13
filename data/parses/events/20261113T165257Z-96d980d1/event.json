@@ -1,0 +1,277 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1681.6651,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165257Z-96d980d1",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115228",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1681.66512
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "830",
+      "collection": "BWV 825-831 Partitas",
+      "collection_id": "bwv-825-831-partitas",
+      "entry_id": "bwv-0830",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/07-Partiten/BWV_0830.mid",
+      "pinned_sha256": "f3ee51ca26518632def09a9db5d7d709f032e4b4f635bd51be6f738f1360eb5a",
+      "source_filename": "BWV_0830.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/partitas/"
+    },
+    "import_settings_sha256": "167858b0f70a12a119e7073aabac101fe3a255b53d6f66a6f9bda87ecace73d0",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "f3ee51ca26518632def09a9db5d7d709f032e4b4f635bd51be6f738f1360eb5a"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        },
+        {
+          "bpm": 75.0,
+          "time": 287.999712
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 415.999712
+        },
+        {
+          "bpm": 60.0,
+          "time": 888.999239
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 894.999239
+        },
+        {
+          "bpm": 60.0,
+          "time": 938.999195
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 944.999195
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 50.666616
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 282.666384
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 287.999712
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 415.999712
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 647.666147
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 808.3326529999999
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 956.3325169999999
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 962.999177
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 988.332485
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 994.999145
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 1026.999113
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 1066.999073
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 1080.332393
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 1120.332353
+        },
+        {
+          "denominator": 2,
+          "numerator": 4,
+          "time": 1126.999013
+        }
+      ]
+    },
+    "title": "BWV 830 — Partita No. 6 in e minor"
+  },
+  "recorded_at": "2026-11-13T16:52:57Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165257Z-96d980d1",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "23cc49da6a608bfbdf113c6f8bc0e7fd0d3b42a442f620d9e27d70ca5b8f56cf",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "110237befd2e0ebc871a0211e7e2b5c32a766ce57dca51e1af6a3af62d71379d",
+        "raw.mid": "79a42c1c698e6e5430c04ca6bc3934a5b80d3851b1234409fba80feda7ec3044",
+        "score.musicxml": "dd4932ccd7b970c8502f02c9733c45789eb5737906ee6fa496d9c656e59b5eca",
+        "source.mid": "f3ee51ca26518632def09a9db5d7d709f032e4b4f635bd51be6f738f1360eb5a"
+      },
+      "files": {
+        "notes.json": "e28037f6dfcd08d31de81a392711ab45530d43c8cc1c20aa8f349d483360dd5b",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "110237befd2e0ebc871a0211e7e2b5c32a766ce57dca51e1af6a3af62d71379d",
+        "raw.mid": "79a42c1c698e6e5430c04ca6bc3934a5b80d3851b1234409fba80feda7ec3044",
+        "score.musicxml": "f4d79ea33b55d27b65eab66a115440cf5bdecc9360af6c743a095f1d43f2c357",
+        "source.mid": "f3ee51ca26518632def09a9db5d7d709f032e4b4f635bd51be6f738f1360eb5a"
+      },
+      "project_state_sha256": "d7e53ceadad8e72da505edce29b9695b7357596fc1cd2d9118b06d73cc905893",
+      "sha256": "958f5e9a001c060b2a1b305f938fa0e75fe039abc9c8696ffc2429fc61b2f9f7"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "f3ee51ca26518632def09a9db5d7d709f032e4b4f635bd51be6f738f1360eb5a",
+    "title": "BWV 830 — Partita No. 6 in e minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

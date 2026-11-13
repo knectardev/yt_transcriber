@@ -1,0 +1,187 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 639.901,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170326Z-b75754fc",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120315",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 639.90104
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "878",
+      "collection": "BWV 870-893 The Well-Tempered Clavier Book II",
+      "collection_id": "bwv-870-893-wtc-ii",
+      "entry_id": "bwv-0878",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/10-Wohltemperiertes_Klavier_II/BWV_0878.mid",
+      "pinned_sha256": "130e077a7bccc3c1d512fb256af16861e10116e263fc42cc107dc10a1b059427",
+      "source_filename": "BWV_0878.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-ii/"
+    },
+    "import_settings_sha256": "f7303e44feed00ab8bea4497569b4cfe8bc97d71601522cf51ce1932b72f7829",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "130e077a7bccc3c1d512fb256af16861e10116e263fc42cc107dc10a1b059427"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 60.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 120.0,
+          "time": 468.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 4,
+          "time": 468.0
+        }
+      ]
+    },
+    "title": "BWV 878 — Prelude and Fugue No. 9"
+  },
+  "recorded_at": "2026-11-13T17:03:26Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170326Z-b75754fc",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "efdb36cb12a86d8643a51f3c4ba681fdba8841d3c0d55a75501d17bc2bd4d68a",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "3d40aff6c646bbf6dab63a3bc01198ba66f5d68da3679f04371910c14098b657",
+        "raw.mid": "45fe3149ce93a15c20d6f872768016c8cea688e9a92be872a697554d491a3281",
+        "score.musicxml": "e909dd4d0f39755321f6c65c33a6d90ff0283fde594106f3cafe796809d7a673",
+        "source.mid": "130e077a7bccc3c1d512fb256af16861e10116e263fc42cc107dc10a1b059427"
+      },
+      "files": {
+        "notes.json": "a4963a71fefe9660c9a16dafabdd523515358a4dc32492d4e1568fd6dc2bc3b9",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "3d40aff6c646bbf6dab63a3bc01198ba66f5d68da3679f04371910c14098b657",
+        "raw.mid": "45fe3149ce93a15c20d6f872768016c8cea688e9a92be872a697554d491a3281",
+        "score.musicxml": "1ebc611788504afc2cd54379f65555a1fecf4664cb44a7ec85575c0dd862ae8f",
+        "source.mid": "130e077a7bccc3c1d512fb256af16861e10116e263fc42cc107dc10a1b059427"
+      },
+      "project_state_sha256": "e98c3417f756efdb1ccbc436d7015e9f70732841ba00018b073080e60fb41897",
+      "sha256": "c47b25127e3bfa43e4bc4cf039c34a147722e129b81796d0bfba2e532d8a0c82"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "130e077a7bccc3c1d512fb256af16861e10116e263fc42cc107dc10a1b059427",
+    "title": "BWV 878 — Prelude and Fugue No. 9"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

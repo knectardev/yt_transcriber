@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 537.9505,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T165847Z-dab16f85",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-115838",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 537.95052
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "834",
+      "collection": "BWV 832-845 Suites and Suite Movements",
+      "collection_id": "bwv-832-845-suites-and-suite-movements",
+      "entry_id": "bwv-0834",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/08-Einzelwerke/BWV_0834.mid",
+      "pinned_sha256": "31afb1ab816ebede812841a6a9be417e7f61a4a24f402aa2f7faaf168499d868",
+      "source_filename": "BWV_0834.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/suites-and-suite-movements/"
+    },
+    "import_settings_sha256": "a1b888a649d10a3c82314b4f3470020cdbd756da3c3072077457a53b572e16c6",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "31afb1ab816ebede812841a6a9be417e7f61a4a24f402aa2f7faaf168499d868"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 60.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 3.5
+        }
+      ]
+    },
+    "title": "BWV 834 — Allemande in c minor"
+  },
+  "recorded_at": "2026-11-13T16:58:47Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T165847Z-dab16f85",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "81569db39fea216d78a129640f8162614a50112e62fff56f0b8dd6e887853510",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "f410de8db8b010a781936bf68f74599a6afcc9cd8f4009297d033ecfb633b4b7",
+        "raw.mid": "1cfac378e7ab6bc943469b867af92b2c6870e54c716408d2e561bfcec8545f9e",
+        "score.musicxml": "b7cae3cf93705d76904724015c06f58c64ae6f8a9bd09672c45bb56402bfe470",
+        "source.mid": "31afb1ab816ebede812841a6a9be417e7f61a4a24f402aa2f7faaf168499d868"
+      },
+      "files": {
+        "notes.json": "0f2339e860a798dfebe988dc1ff99eab0730c2ff53c937fdca69fef5cfabdb36",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "f410de8db8b010a781936bf68f74599a6afcc9cd8f4009297d033ecfb633b4b7",
+        "raw.mid": "1cfac378e7ab6bc943469b867af92b2c6870e54c716408d2e561bfcec8545f9e",
+        "score.musicxml": "9329a9f6c337b954f130dc90dcebbbe9e3cbc93a2af99467f6655bbcad73a361",
+        "source.mid": "31afb1ab816ebede812841a6a9be417e7f61a4a24f402aa2f7faaf168499d868"
+      },
+      "project_state_sha256": "b313cd63b326cac2d1d7368694865ac1687d9d17fd2399977fcd6dbec9c493f7",
+      "sha256": "4bbdcef16451a87f49c56879f93dba0a5c0b7b63140016abd3e77cc99e433071"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "31afb1ab816ebede812841a6a9be417e7f61a4a24f402aa2f7faaf168499d868",
+    "title": "BWV 834 — Allemande in c minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

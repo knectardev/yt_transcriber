@@ -1,0 +1,209 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 771.7357,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T162920Z-65d4d46f",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-112910",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 771.7357
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "812",
+      "collection": "BWV 812-817 French Suites",
+      "collection_id": "bwv-812-817-french-suites",
+      "entry_id": "bwv-0812",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/05-Franzoesische_Suiten/BWV_0812.mid",
+      "pinned_sha256": "5c16f4383ca8f640cc380920f346a73438455431c71cbca0751ef6750906f519",
+      "source_filename": "BWV_0812.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/french-suites/"
+    },
+    "import_settings_sha256": "174c86df45c81bd1ed9f3ad767db96147ed7ad964a9ba8ccb52619acbc2e1e5c",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "5c16f4383ca8f640cc380920f346a73438455431c71cbca0751ef6750906f519"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 60.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 152.00032426735845,
+          "time": 192.0
+        },
+        {
+          "bpm": 66.000066000066,
+          "time": 305.683968
+        },
+        {
+          "bpm": 112.00005973336519,
+          "time": 436.59292800000003
+        },
+        {
+          "bpm": 80.0,
+          "time": 603.7356960000001
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 192.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 305.683968
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 603.7356960000001
+        }
+      ]
+    },
+    "title": "BWV 812 — Suite No. 1 in d minor"
+  },
+  "recorded_at": "2026-11-13T16:29:20Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T162920Z-65d4d46f",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "5368fec49b14afe8daadfdc755a352396cb04698296cf6701d04fb58d8f57dc9",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "c8e55d10a5fe44d94844360bf7c72d72fb10a1bc3fb2bb5e9b5854956386beef",
+        "raw.mid": "0bdfa9a49c0153e212df6b1bcfa394cbb3652e51b47a24f6f1e419b233c5146e",
+        "score.musicxml": "9dfb377b3066d500f10953171c0b6e5e6c955c27466ae01f867b55e8d5e46a4b",
+        "source.mid": "5c16f4383ca8f640cc380920f346a73438455431c71cbca0751ef6750906f519"
+      },
+      "files": {
+        "notes.json": "bcff0d3964d0cc8872177d13538c1e5f8b603a96d39f77d1ab3e18ef6c97ca3d",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "c8e55d10a5fe44d94844360bf7c72d72fb10a1bc3fb2bb5e9b5854956386beef",
+        "raw.mid": "0bdfa9a49c0153e212df6b1bcfa394cbb3652e51b47a24f6f1e419b233c5146e",
+        "score.musicxml": "11eeb9e41cef54d2ebd6be68ce483d66fad5edc957e58d0569a2ed02c3a356aa",
+        "source.mid": "5c16f4383ca8f640cc380920f346a73438455431c71cbca0751ef6750906f519"
+      },
+      "project_state_sha256": "5637d82ffcdd9dd1b51d8cad32eb3d6f008eae84c51dbb69cf8c8a4f7aff9f6d",
+      "sha256": "dd90e4a80b6cb6e7e885a94b0059afe197d4733ee4dea4f07f65c2340e9350c1"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "5c16f4383ca8f640cc380920f346a73438455431c71cbca0751ef6750906f519",
+    "title": "BWV 812 — Suite No. 1 in d minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

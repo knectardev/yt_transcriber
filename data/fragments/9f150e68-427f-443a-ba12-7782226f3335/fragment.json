@@ -1,0 +1,115 @@
+{
+  "schema_version": 2,
+  "id": "9f150e68-427f-443a-ba12-7782226f3335",
+  "title": "ES No. 3 in G minor - THEME",
+  "description": "This is worth trying to play and cycle",
+  "practice_notes": "",
+  "tags": [
+    "bwv-808",
+    "bwv-806-811-english-suites"
+  ],
+  "composer": "Johann Sebastian Bach",
+  "performer": "",
+  "source": {
+    "kind": "midi",
+    "name": "source.mid",
+    "extension": ".mid",
+    "title": "BWV 808 — Suite No. 3 in g minor",
+    "sha256": "80388a36881dc5831a409ec9eccccab04b7aa13acbcd679863993aec2911c57c"
+  },
+  "parent": {
+    "project": "catalog-20261113-111810",
+    "event_id": "20261113T171940Z-1420aca1",
+    "lineage_id": "20261113T171940Z-1420aca1",
+    "base_event_id": "20261113T171940Z-1420aca1",
+    "base_snapshot_sha256": "452158bc118500d5edf1635b4e54673e6a48830e49871ce2df5e69bec90a7c74",
+    "snapshot_sha256": "452158bc118500d5edf1635b4e54673e6a48830e49871ce2df5e69bec90a7c74",
+    "revision_state": "synchronized",
+    "notes_fingerprint": "2bb2a4aaf4914132",
+    "analysis_sha256": "2d35cb6151ada8e8e37f80cd2e3febfbe2525e8ee3f86a072147100c0ba02971",
+    "measure_start": 2,
+    "measure_end": 7,
+    "step_start": 6,
+    "step_end": 42
+  },
+  "time": {
+    "working_audio": {
+      "start_seconds": 0.78947,
+      "end_seconds": 5.52631
+    },
+    "source_video": {
+      "start_seconds": 0.78947,
+      "end_seconds": 5.52631,
+      "excerpt_start_seconds": 0.0
+    },
+    "duration_seconds": 4.73684
+  },
+  "sync": {
+    "offset_seconds": 0.0,
+    "parent_offset_at_extraction": 0.0
+  },
+  "music": {
+    "analyzed_key": {
+      "tonic": "G",
+      "mode": "minor",
+      "source": "automatic",
+      "confidence": 0.9502
+    },
+    "written_key_signature": {
+      "tonic": "G",
+      "mode": "minor"
+    },
+    "time_signature": "3/8",
+    "bpm": 114.0001710002565,
+    "subdivision": 16,
+    "staff_split": 60,
+    "measures": 6,
+    "parent_grid_mode": "fixed",
+    "notation_style": "readable"
+  },
+  "harmony": {
+    "roman": [
+      "VI6/4",
+      "V6",
+      "i6/5",
+      "V6/5",
+      "i6/5",
+      "V7"
+    ],
+    "symbols": [
+      "Eb/Bb",
+      "D/F#",
+      "GmMaj7/Bb",
+      "D7/F#",
+      "GmMaj7/Bb",
+      "D7"
+    ]
+  },
+  "boundary": {
+    "notes": 70,
+    "owned": 70,
+    "carried_in": 0,
+    "cut_off": 0,
+    "unprinted_overlaps": 0,
+    "pedal_down_at_start": false
+  },
+  "artifacts": {
+    "notes": "notes.json",
+    "grid": "grid.json",
+    "performance_midi": "performance.mid",
+    "quantized_midi": "quantized.mid",
+    "musicxml": "score.musicxml",
+    "harmony": "harmony.json"
+  },
+  "warnings": [],
+  "created_at": "2026-11-13T17:31:23Z",
+  "modified_at": "2026-11-13T17:31:23Z",
+  "catalog": {
+    "entry_id": "bwv-0808",
+    "bwv": "808",
+    "collection_id": "bwv-806-811-english-suites",
+    "collection": "BWV 806-811 English Suites",
+    "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/english-suites/",
+    "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de)."
+  }
+}

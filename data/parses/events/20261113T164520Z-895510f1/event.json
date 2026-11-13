@@ -1,0 +1,230 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1319.7997,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T164520Z-895510f1",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-114413",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1319.79973
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "826",
+      "collection": "BWV 825-831 Partitas",
+      "collection_id": "bwv-825-831-partitas",
+      "entry_id": "bwv-0826",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/07-Partiten/BWV_0826.mid",
+      "pinned_sha256": "c29b15a166d246b3bd54e346671289e139139db157ed408e92986614c26578b6",
+      "source_filename": "BWV_0826.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/partitas/"
+    },
+    "import_settings_sha256": "f5a06383f6d303d0e2fd81c4524215f09f7cd524a7b2f4f1ef71dd1ff402a566",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "c29b15a166d246b3bd54e346671289e139139db157ed408e92986614c26578b6"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 49.99999999999999,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 49.99999999999999,
+          "time": 0.0
+        },
+        {
+          "bpm": 75.0,
+          "time": 362.40000000000003
+        },
+        {
+          "bpm": 120.0,
+          "time": 568.8000000000001
+        },
+        {
+          "bpm": 45.00001125000281,
+          "time": 711.8000000000001
+        },
+        {
+          "bpm": 90.00009000009,
+          "time": 903.7999520000001
+        },
+        {
+          "bpm": 120.0,
+          "time": 1127.799728
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 139.20000000000002
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 362.40000000000003
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 568.8000000000001
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 711.8000000000001
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 903.7999520000001
+        },
+        {
+          "denominator": 4,
+          "numerator": 2,
+          "time": 1127.799728
+        }
+      ]
+    },
+    "title": "BWV 826 — Partita No. 2 in c minor"
+  },
+  "recorded_at": "2026-11-13T16:45:20Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T164432Z-86f8a8c9",
+    "parent_event_id": "20261113T164432Z-86f8a8c9",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "b02d98767e98a28ccd50cefdabfd52bf3acc63eb4609f98094fd240c83cd02fe",
+        "notes.json": "fd7b9492331f36d9beed43391833bea1c11d597a50089b8622a047ec02f8c86e",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "0af61dd820017116e559b0e4985a1ca804e3a9a9af310bdd83d3c840a3f4df66",
+        "raw.mid": "e145c31ae0bc3ead6219aed26b64afc6e6ec8fd1da6bcdc279afe7294c1bba9d",
+        "score.musicxml": "3a9ee952c0c928cdf4e10cb880dacf4a1f44d7306d91080933844cc1f9435915",
+        "source.mid": "c29b15a166d246b3bd54e346671289e139139db157ed408e92986614c26578b6"
+      },
+      "files": {
+        "annotations.json": "efb16a39da496f49a684f6e5bbf8df7aa4a6cb14c939df267b7a7fbf77a4b2c0",
+        "notes.json": "0e08ae86f5d74311ed3c302f617b788617db1593f5d2e95f86951673cce55dfc",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "0af61dd820017116e559b0e4985a1ca804e3a9a9af310bdd83d3c840a3f4df66",
+        "raw.mid": "e145c31ae0bc3ead6219aed26b64afc6e6ec8fd1da6bcdc279afe7294c1bba9d",
+        "score.musicxml": "c78588dec181c6fc6d35af2814f763af5490ef51828614fbffaa72780a98c92f",
+        "source.mid": "c29b15a166d246b3bd54e346671289e139139db157ed408e92986614c26578b6"
+      },
+      "project_state_sha256": "74948cc34ea746165d0513b76813826d537e8f84a976043dd7781a1515f05f27",
+      "sha256": "8331360af0da71082c35334d6bf818f76d7300871aa7e241753db24255338a3a"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "c29b15a166d246b3bd54e346671289e139139db157ed408e92986614c26578b6",
+    "title": "BWV 826 — Partita No. 2 in c minor"
+  },
+  "status": "ok",
+  "version": 2
+}

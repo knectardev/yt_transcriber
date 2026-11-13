@@ -1,0 +1,183 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 296.9824,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170426Z-8d26ab40",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120420",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 296.98242
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "884",
+      "collection": "BWV 870-893 The Well-Tempered Clavier Book II",
+      "collection_id": "bwv-870-893-wtc-ii",
+      "entry_id": "bwv-0884",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/10-Wohltemperiertes_Klavier_II/BWV_0884.mid",
+      "pinned_sha256": "2251a02d240108ab8d568c066cfe05e852764b653933d53f91945e8f78b19512",
+      "source_filename": "BWV_0884.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-ii/"
+    },
+    "import_settings_sha256": "38ffd4b16681bbe1fd2c7dcc40aacedf836ff7bf3d487149f7bd6b6d3462801e",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "2251a02d240108ab8d568c066cfe05e852764b653933d53f91945e8f78b19512"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 216.0
+        }
+      ]
+    },
+    "title": "BWV 884 — Prelude and Fugue No. 15"
+  },
+  "recorded_at": "2026-11-13T17:04:26Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170426Z-8d26ab40",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "afea4f08969d24031a3235d6498652666665c5865a79fdd861ab2a7bca0e9440",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "5d4d257d2808c3a4f93f10e3c434d82085ebc22fe630767fbb8588b5baceca73",
+        "raw.mid": "e07cd9a759d2652d2f0fd0f6e49c43f2c3c40a60eaa107938f12e1f6a852a8dc",
+        "score.musicxml": "ac792a15ce1efcd713aa8c8769b6ebb988338885e5491531af02f69bca86bba3",
+        "source.mid": "2251a02d240108ab8d568c066cfe05e852764b653933d53f91945e8f78b19512"
+      },
+      "files": {
+        "notes.json": "96a332b2edca1e3a8f0beea0594fd2aefbd12821bc9c762d5cfa7dab4bb08b4f",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "5d4d257d2808c3a4f93f10e3c434d82085ebc22fe630767fbb8588b5baceca73",
+        "raw.mid": "e07cd9a759d2652d2f0fd0f6e49c43f2c3c40a60eaa107938f12e1f6a852a8dc",
+        "score.musicxml": "605942db50882927fbbb935d73aa49235612142db5b99702ee172bc876212ca5",
+        "source.mid": "2251a02d240108ab8d568c066cfe05e852764b653933d53f91945e8f78b19512"
+      },
+      "project_state_sha256": "23689e8e0f69898d9105859e434087eabe3146a4037cf33976e3002f67d02b5c",
+      "sha256": "d8bb0c0015db6ae4d7fbcd723052c17b07e28c04e1911f94c567a459a44c481e"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "2251a02d240108ab8d568c066cfe05e852764b653933d53f91945e8f78b19512",
+    "title": "BWV 884 — Prelude and Fugue No. 15"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

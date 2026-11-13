@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 92.1146,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170717Z-85877e70",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120716",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 92.11458
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "903a",
+      "collection": "BWV 903-909 Fantasias and Fugues/Fughettas",
+      "collection_id": "bwv-903-909-fantasias-and-fugues",
+      "entry_id": "bwv-0903a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/12-Fantasien_Fugen/BWV_0903a.mid",
+      "pinned_sha256": "b3c81c3fa9e8d2eed841980b64cb1bb507512881afa48eafc4d0f8e3239e7c99",
+      "source_filename": "BWV_0903a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/fantasias-and-fugues/"
+    },
+    "import_settings_sha256": "a1b888a649d10a3c82314b4f3470020cdbd756da3c3072077457a53b572e16c6",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "b3c81c3fa9e8d2eed841980b64cb1bb507512881afa48eafc4d0f8e3239e7c99"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 60.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 60.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 903a — Fantasia in d minor"
+  },
+  "recorded_at": "2026-11-13T17:07:17Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170717Z-85877e70",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "a1776202d35dd272df8c881f183b3342c7bd05b0b9ba4f9f6056c4107fd71b46",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "6bb577590a23481e31e719be60716c1063be54eead6df4936a4edb45e28c5577",
+        "raw.mid": "af375f1bf06c205231c7a3ec909313bd7d186643a8a4a8f12cda967161b71927",
+        "score.musicxml": "781cf6050767b73057f81671bc458b12e123b3783d09eb13447dbe1d91d7c32d",
+        "source.mid": "b3c81c3fa9e8d2eed841980b64cb1bb507512881afa48eafc4d0f8e3239e7c99"
+      },
+      "files": {
+        "notes.json": "d2bdc8c420d162a7b18ee310a889170c8341ce9563bb1304178ef6fff0e2aaca",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "6bb577590a23481e31e719be60716c1063be54eead6df4936a4edb45e28c5577",
+        "raw.mid": "af375f1bf06c205231c7a3ec909313bd7d186643a8a4a8f12cda967161b71927",
+        "score.musicxml": "31ca30482b7e87c548081a96c06083498e98bf49c32e12bfeb791a6137d94b72",
+        "source.mid": "b3c81c3fa9e8d2eed841980b64cb1bb507512881afa48eafc4d0f8e3239e7c99"
+      },
+      "project_state_sha256": "92270e675274c7036881ed05c61c3b41eb41f4002da8a7562fdf0c8b3bfcb548",
+      "sha256": "412e678411fa6170796a042060fdfd6bfcba18e1debeb39731e538525984e0f8"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "b3c81c3fa9e8d2eed841980b64cb1bb507512881afa48eafc4d0f8e3239e7c99",
+    "title": "BWV 903a — Fantasia in d minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

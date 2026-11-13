@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 86.3703,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171208Z-5a23c147",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121206",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 86.37031
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "938",
+      "collection": "BWV 933-938 Six Little Preludes",
+      "collection_id": "bwv-933-938-six-little-preludes",
+      "entry_id": "bwv-0938",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/15-Kleine_Praeludien_I/BWV_0938.mid",
+      "pinned_sha256": "a0187a70b2cab4572bb9556d63396b6ef531c183f9325322f6bed847182b1c52",
+      "source_filename": "BWV_0938.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/six-little-preludes/"
+    },
+    "import_settings_sha256": "58ad85359dc3aa16eca070ef21b1fa6c0843810f4c1e36a8af4556f9fdc74091",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "a0187a70b2cab4572bb9556d63396b6ef531c183f9325322f6bed847182b1c52"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 938 — Prelude in e minor"
+  },
+  "recorded_at": "2026-11-13T17:12:08Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171208Z-5a23c147",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "4e511d8cf727007412660486d7ef1a0fe35705b1c09ca2ef412cf97e8859fde5",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "8c64cf27504c46c592fad9909af859c50b28cb15f198983d1a1979a14f492635",
+        "raw.mid": "cf290153532e00a8d3cdea3c015a0c4e1f88f8977684cc945a821b1f54c312db",
+        "score.musicxml": "b69df04f124519b9f2f03c9d6017d8fcba7cda869d9d6f749d471eb1fa44d2eb",
+        "source.mid": "a0187a70b2cab4572bb9556d63396b6ef531c183f9325322f6bed847182b1c52"
+      },
+      "files": {
+        "notes.json": "1fa661deb49cabe977e84afdeb9802a4e494b14f03f81691d069c041997f25fd",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "8c64cf27504c46c592fad9909af859c50b28cb15f198983d1a1979a14f492635",
+        "raw.mid": "cf290153532e00a8d3cdea3c015a0c4e1f88f8977684cc945a821b1f54c312db",
+        "score.musicxml": "0c3e4d113d8a3997fa3d39f62340dde50e512bd2da1adc02aafd256853a3b2f9",
+        "source.mid": "a0187a70b2cab4572bb9556d63396b6ef531c183f9325322f6bed847182b1c52"
+      },
+      "project_state_sha256": "3b7e6c17c5e951118bc81080aef44781568a8de73cf9e8d6587191159981d557",
+      "sha256": "1a893d322e92ceee8dac2dac784aa1da11a0ee31cc42438081f011b768a4be57"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "a0187a70b2cab4572bb9556d63396b6ef531c183f9325322f6bed847182b1c52",
+    "title": "BWV 938 — Prelude in e minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

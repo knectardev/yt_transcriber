@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 59.3109,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170659Z-be09c7ce",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120658",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 59.31094
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "902a",
+      "collection": "BWV 894-902 Preludes and Fugues/Fughettas",
+      "collection_id": "bwv-894-902-preludes-and-fugues",
+      "entry_id": "bwv-0902a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/11-Praeludien_Fugen/BWV_0902a.mid",
+      "pinned_sha256": "bd7105854637bfaeba4235af281e83b316a6293934117043822b58bff811b545",
+      "source_filename": "BWV_0902a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/preludes-and-fugues/"
+    },
+    "import_settings_sha256": "64950ef639c2c8088ae9a5f4c67e4ede65dff74de7361e7ff5426246c8e64574",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "bd7105854637bfaeba4235af281e83b316a6293934117043822b58bff811b545"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 902a — Other Prelude in G major"
+  },
+  "recorded_at": "2026-11-13T17:06:59Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170659Z-be09c7ce",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "a995514aa3337849ddd1bb7306f9cb89df7276120cbb0661d5c6812c0c39c5bd",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "652a2b1a1fcbe7019b7f7f037fed7354bf177cdb866a469ddc4cbacbe5b4eb79",
+        "raw.mid": "625216462bba29e8818de5edacb61ba1d1a65d3fdaef82be5ccf269e49933bf0",
+        "score.musicxml": "5d3c717df7373e6bcced85fdb8d262a2749791efe019116a37542a0ac1959c8e",
+        "source.mid": "bd7105854637bfaeba4235af281e83b316a6293934117043822b58bff811b545"
+      },
+      "files": {
+        "notes.json": "a324e82bfde92aeac508c541560de47d583f8d90292058d9b8016695160174d4",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "652a2b1a1fcbe7019b7f7f037fed7354bf177cdb866a469ddc4cbacbe5b4eb79",
+        "raw.mid": "625216462bba29e8818de5edacb61ba1d1a65d3fdaef82be5ccf269e49933bf0",
+        "score.musicxml": "67ee4aa45424d860f7ee6f60f8d5d24db6ce03f44173b343f23758c3cd427a75",
+        "source.mid": "bd7105854637bfaeba4235af281e83b316a6293934117043822b58bff811b545"
+      },
+      "project_state_sha256": "157ff547609fc0d37850aaee663391884767d89485b909de8dd1ad20fe8a8f96",
+      "sha256": "e949f50f2c846920d94212ff96dbcfd681325c58c67f7aa10d6fbc16ec74965d"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "bd7105854637bfaeba4235af281e83b316a6293934117043822b58bff811b545",
+    "title": "BWV 902a — Other Prelude in G major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

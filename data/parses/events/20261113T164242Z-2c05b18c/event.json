@@ -1,0 +1,240 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 897.4863,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T164242Z-2c05b18c",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-114205",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 897.48633
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "822",
+      "collection": "BWV 818-824 Miscellaneous Suites",
+      "collection_id": "bwv-818-824-miscellaneous-suites",
+      "entry_id": "bwv-0822",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/06-Diverse_Suiten/BWV_0822.mid",
+      "pinned_sha256": "47e8be924722b2b8183352169c81aaa5e46616f5ae062fbf9cd3884bc5cbf54f",
+      "source_filename": "BWV_0822.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/miscellaneous-suites/"
+    },
+    "import_settings_sha256": "1633ee6985651c96a78bb31f3ceb0d243b1d4171f2b3e821b151d58f25a3afd2",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "47e8be924722b2b8183352169c81aaa5e46616f5ae062fbf9cd3884bc5cbf54f"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 60.0,
+          "time": 282.0
+        },
+        {
+          "bpm": 120.0,
+          "time": 418.0
+        },
+        {
+          "bpm": 80.0,
+          "time": 771.5
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 0.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 64.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 154.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 172.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 262.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 280.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 282.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 418.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 2,
+          "time": 498.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 554.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 771.5
+        }
+      ]
+    },
+    "title": "BWV 822 — Overture in g minor"
+  },
+  "recorded_at": "2026-11-13T16:42:42Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T164242Z-2c05b18c",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "7d7d89cfb9a0dc73455daf7fa2658278e024b5ec9cff35ee224ae6a9165e175e",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "5615440709514183646b9e8b8804386b6f52a67ecfe0111858421ec259666eb2",
+        "raw.mid": "65c93d67a2c86930caef0ef1142005a6180d4433ef9975d7b75e11d62f916eb6",
+        "score.musicxml": "a6d0c6a1a832df80a7dc982a090ed8a3cecf554fa94f4cebbff1bcfbc2929e84",
+        "source.mid": "47e8be924722b2b8183352169c81aaa5e46616f5ae062fbf9cd3884bc5cbf54f"
+      },
+      "files": {
+        "notes.json": "3d1c62938bbf1b94b1735f1e21fe949c61274edfb3849eb79e85bd9fba216a6c",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "5615440709514183646b9e8b8804386b6f52a67ecfe0111858421ec259666eb2",
+        "raw.mid": "65c93d67a2c86930caef0ef1142005a6180d4433ef9975d7b75e11d62f916eb6",
+        "score.musicxml": "19df0541f60687ba4322011e935627d6334ac6a1d5fa8ee16b7d0ec4ebe68539",
+        "source.mid": "47e8be924722b2b8183352169c81aaa5e46616f5ae062fbf9cd3884bc5cbf54f"
+      },
+      "project_state_sha256": "4bc34c76422dc89668bbc806d710303f1454cddfffadc56d067b905c9997b288",
+      "sha256": "312564eb5b39ce66a9bb7841eb6534fd0b9a527b07cbd42dc2e72e81bcdc6f33"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "47e8be924722b2b8183352169c81aaa5e46616f5ae062fbf9cd3884bc5cbf54f",
+    "title": "BWV 822 — Overture in g minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

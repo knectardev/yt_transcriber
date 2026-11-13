@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 37.9753,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171215Z-86519133",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121214",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 37.97526
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "942",
+      "collection": "BWV 939-943 Five Little Preludes",
+      "collection_id": "bwv-939-943-five-little-preludes",
+      "entry_id": "bwv-0942",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/16-Kleine_Praeludien_II/BWV_0942.mid",
+      "pinned_sha256": "af7bc4e2657bed02c6cf5d7c0d6f21b97927940e3cafe55ef8832a640a6a05a0",
+      "source_filename": "BWV_0942.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/five-little-preludes/"
+    },
+    "import_settings_sha256": "f2cca350b3b9bfbf5e57d90a6b71ffae525b23e621edb1096404259ccc5848ce",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "af7bc4e2657bed02c6cf5d7c0d6f21b97927940e3cafe55ef8832a640a6a05a0"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "9/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 9,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 942 — Prelude in a minor"
+  },
+  "recorded_at": "2026-11-13T17:12:15Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171215Z-86519133",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "87ddf5a12be9b7274c9d8065e69eba0766f703d87126c9aaef79aa92f1de1148",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "85624956a7af49b64e883f7fdcab1ab6762ed3999b0b82e8a94386f85c40d7e0",
+        "raw.mid": "70ade31d680f4d446f7e5ee9793c194f37efcaee97376f676e4a209019f754e9",
+        "score.musicxml": "be102331ccd76f817dfab7e57b521ec54e3c7244d3cc3783cd6787ce01cfa9f6",
+        "source.mid": "af7bc4e2657bed02c6cf5d7c0d6f21b97927940e3cafe55ef8832a640a6a05a0"
+      },
+      "files": {
+        "notes.json": "f25e17d59c8d1f35f273ab016e3be7df5cf1dc9277e890e6426f41fc2bcfefeb",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "85624956a7af49b64e883f7fdcab1ab6762ed3999b0b82e8a94386f85c40d7e0",
+        "raw.mid": "70ade31d680f4d446f7e5ee9793c194f37efcaee97376f676e4a209019f754e9",
+        "score.musicxml": "41475b054f156a935285df23cee06beaed083b1dfb4c4112e6fa53a181bfc589",
+        "source.mid": "af7bc4e2657bed02c6cf5d7c0d6f21b97927940e3cafe55ef8832a640a6a05a0"
+      },
+      "project_state_sha256": "b382c25f34888f93a0ea8f54bbacd0a15ebd0d48fb4ffafd9fd271859b5b4e1a",
+      "sha256": "115cbe369c0e75622387e2bd854303e07269cfea733c1bad92bca0d2c8876cc8"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "af7bc4e2657bed02c6cf5d7c0d6f21b97927940e3cafe55ef8832a640a6a05a0",
+    "title": "BWV 942 — Prelude in a minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

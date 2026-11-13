@@ -1,0 +1,225 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 1303.2527,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T162351Z-10bc0200",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-073315",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 1303.25268
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "806",
+      "collection": "BWV 806-811 English Suites",
+      "collection_id": "bwv-806-811-english-suites",
+      "entry_id": "bwv-0806",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/04-Englische_Suiten/BWV_0806.mid",
+      "pinned_sha256": "4918eb827cd1a419fde7432357368abdf5a6141b860a5385ab8ed4dcfba28b4f",
+      "source_filename": "BWV_0806.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/english-suites/"
+    },
+    "import_settings_sha256": "644fd61c8fcafee8c45655931b3a7bb8fa32d992b2bc477b2d8a6c50b7e05509",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "4918eb827cd1a419fde7432357368abdf5a6141b860a5385ab8ed4dcfba28b4f"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 144.00023040036865,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 144.00023040036865,
+          "time": 0.0
+        },
+        {
+          "bpm": 72.0000288000115,
+          "time": 92.49985199999999
+        },
+        {
+          "bpm": 144.00023040036865,
+          "time": 305.8331
+        },
+        {
+          "bpm": 60.0,
+          "time": 765.832364
+        },
+        {
+          "bpm": 199.99999999999997,
+          "time": 957.832364
+        },
+        {
+          "bpm": 99.99999999999999,
+          "time": 1159.282364
+        }
+      ],
+      "time_signature": "12/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 12,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 92.49985199999999
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 305.8331
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 765.832364
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 957.832364
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 1159.282364
+        }
+      ]
+    },
+    "title": "BWV 806 — Suite No. 1 in A major"
+  },
+  "recorded_at": "2026-11-13T16:23:51Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T123341Z-d9e32029",
+    "parent_event_id": "20261113T123341Z-d9e32029",
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "c153df92b29853f351a9330ff56dbdbc88ed394902f211a577b75b5b36f39a6b",
+        "notes.json": "577fe4608f0976f9092303b23f8037b37164029d3c480287abfa71daf3a1c77e",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "5d492925460c8437d164511766563349cfc95e77a32c9121bd01f2749c3ef093",
+        "raw.mid": "f832a70aa228c5fe244f90b2bc2b3bb942cc8212f05d5706ba32c6f8e280652f",
+        "score.musicxml": "c9a50c5d0c5738f91dc44c5894f634a42b375196d5106566f030fed21968c646",
+        "source.mid": "4918eb827cd1a419fde7432357368abdf5a6141b860a5385ab8ed4dcfba28b4f"
+      },
+      "files": {
+        "annotations.json": "0fabc964e70affe229a1f69ade7968f80feb94ddc8a4fbc2a74e9b6da0e9415b",
+        "notes.json": "591891223643ae86142707ffb803480bdc0c815db292f8b328cfc7116e22f8cf",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "5d492925460c8437d164511766563349cfc95e77a32c9121bd01f2749c3ef093",
+        "raw.mid": "f832a70aa228c5fe244f90b2bc2b3bb942cc8212f05d5706ba32c6f8e280652f",
+        "score.musicxml": "759882e459bfcc7df166d2574e12f4c4b9b13fd4c41c73c59f63e2576e9a6812",
+        "source.mid": "4918eb827cd1a419fde7432357368abdf5a6141b860a5385ab8ed4dcfba28b4f"
+      },
+      "project_state_sha256": "315b7188cc48824d700b1670ab9e867bd790a2c6b32a13788ffea6d49b44c59b",
+      "sha256": "963767db39c76e988076d2bb976ecb9a4b5063b98145450e6d74c158f50ac109"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "4918eb827cd1a419fde7432357368abdf5a6141b860a5385ab8ed4dcfba28b4f",
+    "title": "BWV 806 — Suite No. 1 in A major"
+  },
+  "status": "ok",
+  "version": 2
+}

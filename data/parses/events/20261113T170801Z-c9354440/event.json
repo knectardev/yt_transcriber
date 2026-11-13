@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 466.158,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170801Z-c9354440",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120753",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 466.15802
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "909",
+      "collection": "BWV 903-909 Fantasias and Fugues/Fughettas",
+      "collection_id": "bwv-903-909-fantasias-and-fugues",
+      "entry_id": "bwv-0909",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/12-Fantasien_Fugen/BWV_0909.mid",
+      "pinned_sha256": "8fb1df637aa320f68a68cd6e51df4d12a62503315af9afb1e8a709ebd03b0ee7",
+      "source_filename": "BWV_0909.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/fantasias-and-fugues/"
+    },
+    "import_settings_sha256": "85eb83c062d7a915c02ad125fc8550355ee67a701dd6b3b0165dd77150c2971e",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "8fb1df637aa320f68a68cd6e51df4d12a62503315af9afb1e8a709ebd03b0ee7"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 70.00007000007,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 70.00007000007,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 909 — Concerto e Fuga in c minor"
+  },
+  "recorded_at": "2026-11-13T17:08:01Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170801Z-c9354440",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "21301ac1571dc11692c51ded2eed0552a2e761bcd81804cfb58f92ab9011bb49",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "f99e6e6b88e4ece6a619551f7b15993da53eda4a2ee37e6594ef95fa7fa1da72",
+        "raw.mid": "4bfec18c426449240da07d3a6868296c6ed87872ae99e3c5ea0d4c67d16b9667",
+        "score.musicxml": "61a4cd2c30f69970903f81e68c576be44f0057e94187e5b86c92f6c29737a312",
+        "source.mid": "8fb1df637aa320f68a68cd6e51df4d12a62503315af9afb1e8a709ebd03b0ee7"
+      },
+      "files": {
+        "notes.json": "d4b24a059f0c13065b678eaa19239a929404cec22a1e9fbbb609875fce5c5092",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "f99e6e6b88e4ece6a619551f7b15993da53eda4a2ee37e6594ef95fa7fa1da72",
+        "raw.mid": "4bfec18c426449240da07d3a6868296c6ed87872ae99e3c5ea0d4c67d16b9667",
+        "score.musicxml": "08f96cbe4d26742770e97875c77e33938c3c40367af1c3ce8223ec5ad627c722",
+        "source.mid": "8fb1df637aa320f68a68cd6e51df4d12a62503315af9afb1e8a709ebd03b0ee7"
+      },
+      "project_state_sha256": "5a3cc63c7e034651483846fc0e26815542a9379bebc5c6f20806fdc2fb5e1c72",
+      "sha256": "87fa443e02e8b12a252210c112028983bb519577da4ad76eb1d109a145479fc1"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "8fb1df637aa320f68a68cd6e51df4d12a62503315af9afb1e8a709ebd03b0ee7",
+    "title": "BWV 909 — Concerto e Fuga in c minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

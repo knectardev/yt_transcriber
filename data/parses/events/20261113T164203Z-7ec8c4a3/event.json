@@ -1,0 +1,208 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 476.299,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T164203Z-7ec8c4a3",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-114147",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 476.29899
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "821",
+      "collection": "BWV 818-824 Miscellaneous Suites",
+      "collection_id": "bwv-818-824-miscellaneous-suites",
+      "entry_id": "bwv-0821",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/06-Diverse_Suiten/BWV_0821.mid",
+      "pinned_sha256": "0bee76b1ae5ff795d8f73abe00f526035649a43ef7802715b15da93882e33c8c",
+      "source_filename": "BWV_0821.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/miscellaneous-suites/"
+    },
+    "import_settings_sha256": "91f98c9d746b74837a1c8a2595b13067ff7d5bed69b92e0ff898b8cf8bedbe35",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "0bee76b1ae5ff795d8f73abe00f526035649a43ef7802715b15da93882e33c8c"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 104.00001386666852,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 104.00001386666852,
+          "time": 0.0
+        },
+        {
+          "bpm": 76.00006586672374,
+          "time": 41.538456
+        },
+        {
+          "bpm": 160.0,
+          "time": 174.16992
+        },
+        {
+          "bpm": 76.00006586672374,
+          "time": 233.41992
+        },
+        {
+          "bpm": 93.00004185001883,
+          "time": 347.10403199999996
+        },
+        {
+          "bpm": 65.000065000065,
+          "time": 460.65236799999997
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 174.16992
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 347.10403199999996
+        }
+      ]
+    },
+    "title": "BWV 821 — Suite in B flat major"
+  },
+  "recorded_at": "2026-11-13T16:42:03Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T164203Z-7ec8c4a3",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "af709672493fde7a46b85a7c0e6467e5be2d5833c5fc3a0665f839f97a01eb3f",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "6927fa32c09f8b045441aefe78d125bf881e5cbe6ad1b4e988064f25a73e6f66",
+        "raw.mid": "14366f70ccaf4b8cae757f56f2cc506ce3816c982b28af5f29f23a199c3df4f5",
+        "score.musicxml": "25b5709e16991e81ea2db073cd0874f93b4871e5e2d7d2dd7793f2a6cb55aed5",
+        "source.mid": "0bee76b1ae5ff795d8f73abe00f526035649a43ef7802715b15da93882e33c8c"
+      },
+      "files": {
+        "notes.json": "5d709f62b048fdaf76db47c0118e015e657ff4f3e9d9277c97e766f29527b66e",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "6927fa32c09f8b045441aefe78d125bf881e5cbe6ad1b4e988064f25a73e6f66",
+        "raw.mid": "14366f70ccaf4b8cae757f56f2cc506ce3816c982b28af5f29f23a199c3df4f5",
+        "score.musicxml": "407c7b8c333687a44931abd21180d440c56f2dc4d99fb26cc3ec84f4941bdfd4",
+        "source.mid": "0bee76b1ae5ff795d8f73abe00f526035649a43ef7802715b15da93882e33c8c"
+      },
+      "project_state_sha256": "ece8e1a99a1dd6105e77eb0592c0fbbb39443a58ab60a227db700ae36aa69aa3",
+      "sha256": "6a4057f6669b223dd6ca523a076c2c33ebd7d6cb14f4956261616ddf4d6ea34f"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "0bee76b1ae5ff795d8f73abe00f526035649a43ef7802715b15da93882e33c8c",
+    "title": "BWV 821 — Suite in B flat major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

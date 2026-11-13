@@ -1,0 +1,270 @@
+{
+  "action": "quantize",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 2427.8648,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": 0.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171739Z-f5b905a5",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083516",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 2427.86483
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "807",
+      "collection": "BWV 806-811 English Suites",
+      "collection_id": "bwv-806-811-english-suites",
+      "entry_id": "bwv-0807",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/04-Englische_Suiten/BWV_0807.mid",
+      "pinned_sha256": "afc5346df606f74fb53b5267a05f131bed4c02ed91218a0fcc6d3abb08f498b7",
+      "source_filename": "BWV_0807.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/english-suites/"
+    },
+    "import_settings_sha256": "2e52418612fbdb4f8b7f1c410d441be1050fb6a59d37baf5f2f13a332d04f2f1",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "afc5346df606f74fb53b5267a05f131bed4c02ed91218a0fcc6d3abb08f498b7"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": false,
+      "bpm": 80.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 60.0,
+          "time": 369.0
+        },
+        {
+          "bpm": 120.0,
+          "time": 561.0
+        },
+        {
+          "bpm": 80.0,
+          "time": 705.0
+        },
+        {
+          "bpm": 140.00014000014,
+          "time": 957.0
+        },
+        {
+          "bpm": 160.0,
+          "time": 1231.28544
+        },
+        {
+          "bpm": 60.0,
+          "time": 1397.97294
+        },
+        {
+          "bpm": 120.0,
+          "time": 1589.97294
+        },
+        {
+          "bpm": 80.0,
+          "time": 1733.97294
+        },
+        {
+          "bpm": 140.00014000014,
+          "time": 1985.97294
+        },
+        {
+          "bpm": 160.0,
+          "time": 2260.25838
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 369.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 561.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 705.0
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 957.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 1231.28544
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 1397.97294
+        },
+        {
+          "denominator": 2,
+          "numerator": 3,
+          "time": 1589.97294
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 1733.97294
+        },
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 1985.97294
+        },
+        {
+          "denominator": 8,
+          "numerator": 6,
+          "time": 2260.25838
+        }
+      ]
+    },
+    "title": "BWV 807 — Suite No. 2 in a minor"
+  },
+  "recorded_at": "2026-11-13T17:17:39Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171739Z-f5b905a5",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "0770bdd553aef6cbc50bc562021fae969f960851f67b804f29cb2fac0e1dd742",
+        "notes.json": "29cd26da01ebc52f3bab7003c10f3164c9d18d613dc2e4e5cdf1f13899957ea7",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "ddedba72418948851188bf388d15bc0167e3fa3694afe8a8ac2b0cddceb6a28a",
+        "raw.mid": "29a66d14d28f8b75fb958baa362f9eb2e05939150e1aee0ed01f2409ec65328e",
+        "score.musicxml": "7eb01c1e311aa387821edaa83913d7c2c67fd82307d7976516bc4cbaa2c7b4e9",
+        "source.mid": "afc5346df606f74fb53b5267a05f131bed4c02ed91218a0fcc6d3abb08f498b7"
+      },
+      "files": {
+        "annotations.json": "ba2940dc853083347ecf94aa26ecf01d67d5129666fda7466609e1562dfc755e",
+        "notes.json": "22a9ac054297afd66e0ba4f0e9a064e05e9275da5d095e962b1042517409d367",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "ddedba72418948851188bf388d15bc0167e3fa3694afe8a8ac2b0cddceb6a28a",
+        "raw.mid": "29a66d14d28f8b75fb958baa362f9eb2e05939150e1aee0ed01f2409ec65328e",
+        "score.musicxml": "43cd8eca58e06d4f4f17762986b6354b2ecf3b01df8baee599f280c04e6d0c31",
+        "source.mid": "afc5346df606f74fb53b5267a05f131bed4c02ed91218a0fcc6d3abb08f498b7"
+      },
+      "project_state_sha256": "32516869fe126bf9a7801859b8dc410f8c443ff30d252981db4dacf44ac96739",
+      "sha256": "62554f61257a0e5d225e7a264ad176d0843864f992d907fef35ec2a561074dee"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "afc5346df606f74fb53b5267a05f131bed4c02ed91218a0fcc6d3abb08f498b7",
+    "title": "BWV 807 — Suite No. 2 in a minor"
+  },
+  "status": "ok",
+  "version": 2
+}

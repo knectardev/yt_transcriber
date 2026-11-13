@@ -1,0 +1,187 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 230.1368,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T170554Z-b606e908",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-120549",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 230.13675
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "893",
+      "collection": "BWV 870-893 The Well-Tempered Clavier Book II",
+      "collection_id": "bwv-870-893-wtc-ii",
+      "entry_id": "bwv-0893",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/10-Wohltemperiertes_Klavier_II/BWV_0893.mid",
+      "pinned_sha256": "a9e6c78d2f32a9422392929d47c9dab4ab0ad3882036f428527f8c37c49db192",
+      "source_filename": "BWV_0893.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/the-well-tempered-clavier-book-ii/"
+    },
+    "import_settings_sha256": "1633ee6985651c96a78bb31f3ceb0d243b1d4171f2b3e821b151d58f25a3afd2",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "a9e6c78d2f32a9422392929d47c9dab4ab0ad3882036f428527f8c37c49db192"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        },
+        {
+          "bpm": 92.00012880018032,
+          "time": 132.0
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 0.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 132.0
+        }
+      ]
+    },
+    "title": "BWV 893 — Prelude and Fugue No. 24"
+  },
+  "recorded_at": "2026-11-13T17:05:54Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T170554Z-b606e908",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "ec76f1588563ed9982eab1cc0d385289533a7778d1aaae16353c38bb3231e2a9",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "9d5ebdda766de903364fb0b3139272dc6d87750b05687a5adb00e9bfcd75dfb5",
+        "raw.mid": "ba62d379c25a6f3c7cf140e5dbbd2f802d3690e674a0bbbe540ab2e6b3a741b0",
+        "score.musicxml": "cb53f526abdfcd8cdeffaa0e7edecd73a95d3631854cdb5ab02bedffc824d406",
+        "source.mid": "a9e6c78d2f32a9422392929d47c9dab4ab0ad3882036f428527f8c37c49db192"
+      },
+      "files": {
+        "notes.json": "0533121791b9ecc6589accf82cffd6804a7ed345dbe2db5c9b16a1890c8c1534",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "9d5ebdda766de903364fb0b3139272dc6d87750b05687a5adb00e9bfcd75dfb5",
+        "raw.mid": "ba62d379c25a6f3c7cf140e5dbbd2f802d3690e674a0bbbe540ab2e6b3a741b0",
+        "score.musicxml": "bec6ac6d99080510cb282656b93056b727f63dab26eb3af89555eccbf7339ead",
+        "source.mid": "a9e6c78d2f32a9422392929d47c9dab4ab0ad3882036f428527f8c37c49db192"
+      },
+      "project_state_sha256": "bbc4341e283d724ae334bb16f1cce4ca35377de4e5fc67ab26daea9faa660886",
+      "sha256": "154488edd316f746bda67e332d2ddbe43fcf86d098d5cb01ae2dac8bd7e0e335"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "a9e6c78d2f32a9422392929d47c9dab4ab0ad3882036f428527f8c37c49db192",
+    "title": "BWV 893 — Prelude and Fugue No. 24"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

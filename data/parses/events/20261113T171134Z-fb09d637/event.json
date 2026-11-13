@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 86.325,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T171134Z-fb09d637",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-121132",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 86.325
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "926",
+      "collection": "BWV 924-932 Little Preludes (Clavierbüchlein for W.F. Bach)",
+      "collection_id": "bwv-924-932-little-preludes-wf",
+      "entry_id": "bwv-0926",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/14-Kleine_Praeludien_WFB/BWV_0926.mid",
+      "pinned_sha256": "fc0eb2bcfe3ff73c3b7325199e28ed07b2cdcc557c86bfd97a24b147ad89c923",
+      "source_filename": "BWV_0926.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/little-preludes-clavier-buechlein-for-w-f-bach/"
+    },
+    "import_settings_sha256": "64950ef639c2c8088ae9a5f4c67e4ede65dff74de7361e7ff5426246c8e64574",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "readable"
+      },
+      "style": "readable"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "fc0eb2bcfe3ff73c3b7325199e28ed07b2cdcc557c86bfd97a24b147ad89c923"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 926 — Prelude in d minor"
+  },
+  "recorded_at": "2026-11-13T17:11:34Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T171134Z-fb09d637",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "19c6a01acd93b3cc7d959e7c0bb90cc263634740438eba73a297d6f357fce0d4",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "5c97da566f578f1ea7f1711f58cdf3c19b583d1663cc9b0bdfdeb6a42de0f4a1",
+        "raw.mid": "32b132b0f1741033eaf7ec302bd4205f40026368276f04d49451d9c5c03ddb22",
+        "score.musicxml": "07e2943b870a96a99676ff3815a6cf4eafdca7f9effdbf5af59bcc38a9b1c52a",
+        "source.mid": "fc0eb2bcfe3ff73c3b7325199e28ed07b2cdcc557c86bfd97a24b147ad89c923"
+      },
+      "files": {
+        "notes.json": "75f44745b6ea4a54f4794a6b5d1f1c78434cd3756421c450b8f08c06d42dc713",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "5c97da566f578f1ea7f1711f58cdf3c19b583d1663cc9b0bdfdeb6a42de0f4a1",
+        "raw.mid": "32b132b0f1741033eaf7ec302bd4205f40026368276f04d49451d9c5c03ddb22",
+        "score.musicxml": "2004db9f99a02f79148e136a863a3cd76046af29f630b78b20cbe61a57c44b43",
+        "source.mid": "fc0eb2bcfe3ff73c3b7325199e28ed07b2cdcc557c86bfd97a24b147ad89c923"
+      },
+      "project_state_sha256": "b7fe33a2a2397e5e5bdf59f348abd6279dcb8365042b4222f69c4f283a5f3906",
+      "sha256": "558e4585c321f3fb238b3650396ac2703253f2ab2d85db657c2bdadb2b5585b8"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "fc0eb2bcfe3ff73c3b7325199e28ed07b2cdcc557c86bfd97a24b147ad89c923",
+    "title": "BWV 926 — Prelude in d minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}
