@@ -19,7 +19,7 @@ const btnPrevSection = document.getElementById("btn-prev-section");
 const btnNextSection = document.getElementById("btn-next-section");
 const sectionPickerWrap = document.getElementById("section-picker-wrap");
 const sectionPicker = document.getElementById("section-picker");
-const btnBack = document.getElementById("btn-back");
+const btnCatalog = document.getElementById("btn-catalog");
 const btnPerformance = document.getElementById("btn-performance");
 
 let settings = loadSettings();
@@ -172,10 +172,13 @@ function updateSectionChrome(entry, movementId) {
 }
 
 function updateColorToggle(pkg) {
-  const hasVoices = Boolean(pkg && pkg.musicxmlVoices && pkg.musicxml);
-  if (colorToggle) colorToggle.hidden = !hasVoices;
+  // Show whenever a colored engraving exists, even if plain MusicXML is absent.
+  const hasVoices = Boolean(pkg && pkg.musicxmlVoices);
+  const hasPlain = Boolean(pkg && pkg.musicxml);
+  const canToggle = hasVoices && hasPlain;
+  if (colorToggle) colorToggle.hidden = !canToggle;
   if (colorVoices) {
-    colorVoices.disabled = !hasVoices;
+    colorVoices.disabled = !canToggle;
     colorVoices.checked = Boolean(settings.colorVoices);
   }
 }
@@ -284,7 +287,7 @@ async function openEntry(
     activeMovementId = resolvedMovement;
     activePackage = pkg;
     document.body.classList.add("score-open");
-    btnBack.hidden = false;
+    if (btnCatalog) btnCatalog.hidden = false;
     updateSectionChrome(entry, resolvedMovement);
     updateColorToggle(pkg);
     ensureScore().setPieceId(pieceId);
@@ -320,7 +323,7 @@ async function reloadWithColorPreference() {
 function showCatalog({ updateHistory = true } = {}) {
   if (score) score.persist();
   document.body.classList.remove("score-open");
-  btnBack.hidden = true;
+  if (btnCatalog) btnCatalog.hidden = true;
   pieceTitle.textContent = "Performance reader";
   systemLabel.textContent = "Bach keyboard catalog";
   if (sectionLabel) {
@@ -398,15 +401,22 @@ function wireControls() {
     if (!entry || !sectionPicker.value) return;
     openEntry(entry, { movementId: sectionPicker.value, updateHistory: true });
   });
-  btnBack.addEventListener("click", () => showCatalog({ updateHistory: true }));
+  if (btnCatalog) {
+    btnCatalog.addEventListener("click", (event) => {
+      event.preventDefault();
+      showCatalog({ updateHistory: true });
+    });
+  }
   btnPerformance.addEventListener("click", () => {
     settings = saveSettings({ performanceMode: !settings.performanceMode });
     applyChrome();
   });
-  colorVoices.addEventListener("change", async () => {
-    settings = saveSettings({ colorVoices: colorVoices.checked });
-    await reloadWithColorPreference();
-  });
+  if (colorVoices) {
+    colorVoices.addEventListener("change", async () => {
+      settings = saveSettings({ colorVoices: colorVoices.checked });
+      await reloadWithColorPreference();
+    });
+  }
   zoomInput.addEventListener("input", () => {
     settings = saveSettings({ zoom: Number(zoomInput.value) });
     if (document.body.classList.contains("score-open")) {

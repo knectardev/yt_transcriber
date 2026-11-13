@@ -11,12 +11,12 @@
   </head>
   <body>
     <header id="app-header">
-      <div>
+      <div class="header-main">
+        <a href="./" id="btn-catalog" class="catalog-link" hidden>← Catalog</a>
         <h1 id="piece-title">Performance reader</h1>
         <div class="meta" id="section-label" hidden></div>
         <div class="meta" id="system-label">Bach keyboard catalog</div>
       </div>
-      <button type="button" id="btn-back" class="setup-only" hidden>Catalog</button>
     </header>
 
     <div id="error-banner" hidden></div>
@@ -36,7 +36,7 @@
         </label>
         <button type="button" id="btn-prev">Previous system</button>
         <button type="button" id="btn-next">Next system</button>
-        <label id="color-toggle" class="setup-only" hidden>
+        <label id="color-toggle" hidden>
           <input type="checkbox" id="color-voices" />
           Color voices
         </label>

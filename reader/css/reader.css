@@ -48,6 +48,10 @@ a {
   backdrop-filter: blur(6px);
 }
 
+#app-header .header-main {
+  min-width: 0;
+}
+
 #app-header h1 {
   margin: 0;
   font-size: 1.1rem;
@@ -55,9 +59,31 @@ a {
   font-weight: 600;
 }
 
+#app-header .catalog-link {
+  display: inline-block;
+  margin-bottom: 0.25rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+#app-header .catalog-link:hover,
+#app-header .catalog-link:focus-visible {
+  text-decoration: underline;
+}
+
+#app-header .catalog-link[hidden] {
+  display: none;
+}
+
 #app-header .meta {
   color: var(--muted);
   font-size: 0.85rem;
+}
+
+#color-toggle {
+  font-size: 0.85rem;
+  color: var(--ink);
 }
 
 #section-label {
