@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
+from dataclasses import replace
 from http.client import HTTPConnection
 from pathlib import Path
 from urllib.error import HTTPError
@@ -459,6 +460,31 @@ def test_transcription_page_selects_loops_and_links_a_passage(tmp_path: Path):
     assert out["cleared"] == {"selected": [], "bounds": None, "extractHidden": True}
 
 
+def test_movement_page_extract_link_uses_suite_measure_numbers(tmp_path: Path):
+    """Local mm. 1–2 on a section tab must extract suite measures (base + local)."""
+
+    project, _folder = saved(tmp_path)
+    extract = HOME + "extract?project=parent"
+    context = replace(load_playback(project), source_measure_base=249)
+    page = write_playback_page(
+        context, tmp_path / "pages" / "mov-playback.html", home_url=HOME, extract_url=extract
+    )
+    assert page_config(page)["sourceMeasureBase"] == 249
+    out = run_page(
+        tmp_path,
+        page,
+        """
+        H.draw();
+        H.click("select-toggle");
+        H.clickMeasure(2);
+        H.clickMeasure(3);
+        return { href: H.el("extract-link").href, selected: H.selected() };
+        """,
+    )
+    assert out["selected"] == [2, 3]
+    assert out["href"] == extract + "&measures=251-252"
+
+
 @pytest.mark.parametrize(
     ("search", "selected", "cue"),
     [
@@ -510,7 +536,10 @@ def test_server_serves_a_fragment_and_stores_its_sync_offset(tmp_path: Path, ser
     assert config["syncOffset"] == SIGMA and config["passage"]["end"] == pytest.approx(DURATION)
     # The parent is on this computer, so the page links to it at the passage.
     parent_token = server.register(project)
-    assert config["sourceUrl"] == f"{server.page_url(parent_token)}?w={T0:.3f}"
+    source = config["sourceUrl"]
+    assert source.startswith(server.page_url(parent_token))
+    assert f"w={T0:.3f}" in source
+    assert "sel=2-3" in source
     assert config["toolsUrl"] == f"{HOME}fragment?id={before['id']}"
 
     with urlopen(address + "sync-offset") as response:
@@ -658,6 +687,18 @@ def test_parent_place_finds_the_passage_in_the_parent_as_it_is_now(tmp_path: Pat
     parent["origin"] = parent["youtube_url"] = "https://www.youtube.com/watch?v=aaaaaaaaaaa"
     path.write_text(json.dumps(parent), encoding="utf-8")
     assert P.parent_place(folder, transcriptions=tmp_path) is None
+
+
+def test_parent_source_href_cues_and_selects_parent_measures(tmp_path: Path):
+    project, folder = saved(tmp_path)
+    base = "http://127.0.0.1:8766/p/parent/"
+    href = P.parent_source_href(folder, transcriptions=tmp_path, base_url=base)
+    assert href is not None
+    url, label = href
+    assert url.startswith(base)
+    assert f"w={T0:.3f}" in url
+    assert "sel=2-3" in url
+    assert "measures 2" in label and "3" in label
 
 
 def test_notation_page_wording_is_unchanged_unless_asked(tmp_path: Path):

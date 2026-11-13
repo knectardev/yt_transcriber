@@ -309,15 +309,25 @@ def _download_button(column, *, row, catalog) -> None:
 
 
 def _open_score_button(column, *, row) -> None:
-    """One click → same-tab score. Materialize first when needed, then redirect at page top."""
+    """One click → same-tab score. Materialize first when needed, then redirect at page top.
+
+    Multi-movement works open on the first section so OSMD does not wait on the
+    whole suite; other sections warm in the background after that.
+    """
 
     import streamlit as st
 
     entry = row.entry
     ready = _ready_project(row)
+    movements = movements_for_entry(entry.id, include_draft=True)
+    first_mov = (
+        movements.movements[0].id
+        if movements is not None and len(movements.movements) > 1
+        else None
+    )
     with column:
         if ready is not None:
-            url = detail_url(ready)
+            url = detail_url(ready, movement_id=first_mov)
             st.html(
                 f'<a class="bt-catalog-open" href="{escape(url, quote=True)}" '
                 'target="_top">Open score</a>'
@@ -329,7 +339,7 @@ def _open_score_button(column, *, row) -> None:
             except (CatalogError, CatalogSyncError, MidiImportError, OSError, ValueError) as exc:
                 st.error(str(exc))
             else:
-                st.session_state["catalog_open_url"] = detail_url(project)
+                st.session_state["catalog_open_url"] = detail_url(project, movement_id=first_mov)
                 st.rerun()
 
 

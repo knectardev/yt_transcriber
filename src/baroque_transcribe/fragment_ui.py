@@ -39,7 +39,7 @@ from baroque_transcribe.fragment_pages import (
     fragment_detail_url,
     fragment_details_url,
     fragment_has_video,
-    parent_place,
+    parent_source_href,
     youtube_place_url,
 )
 from baroque_transcribe.fragments import (
@@ -693,7 +693,15 @@ def fragment_page() -> None:
     _flash()
 
     player = fragment_detail_url(folder)
-    st.html(f'<a class="bt-back" href="{escape(player, quote=True)}">&larr; Open score page</a>')
+    source = parent_source_href(folder)
+    nav = [f'<a class="bt-back" href="{escape(player, quote=True)}">&larr; Open score page</a>']
+    if source is not None:
+        address, label = source
+        nav.append(
+            f'<a class="bt-back" href="{escape(address, quote=True)}" style="margin-left:1.25rem">'
+            f"{escape(label)}</a>"
+        )
+    st.html("".join(nav))
     try:
         import streamlit.components.v1 as components
 
@@ -706,12 +714,17 @@ def fragment_page() -> None:
     except Exception:
         st.caption("The score page could not be framed here. Use Open score page above.")
 
-    _fragment_links(folder, manifest)
+    _fragment_links(folder, manifest, source=source)
     _fragment_form(folder, manifest)
     _fragment_downloads(folder, manifest)
 
 
-def _fragment_links(folder: Path, manifest: dict) -> None:
+def _fragment_links(
+    folder: Path,
+    manifest: dict,
+    *,
+    source: tuple[str, str] | None = None,
+) -> None:
     import streamlit as st
 
     chips: list[str] = []
@@ -720,13 +733,11 @@ def _fragment_links(folder: Path, manifest: dict) -> None:
         chips.append(
             f'<a class="bt-chip" href="{escape(youtube, quote=True)}" target="_blank" rel="noopener">Open on YouTube</a>'
         )
-    place = parent_place(folder)
-    if place is not None:
-        from baroque_transcribe.playback import detail_url
-
-        project, working = place
-        address = f"{detail_url(project)}?w={working:.3f}"
-        chips.append(f'<a class="bt-chip" href="{escape(address, quote=True)}">Open source transcription</a>')
+    if source is None:
+        source = parent_source_href(folder)
+    if source is not None:
+        address, label = source
+        chips.append(f'<a class="bt-chip" href="{escape(address, quote=True)}">{escape(label)}</a>')
     parent = manifest.get("parent") if isinstance(manifest.get("parent"), dict) else {}
     name = str(parent.get("project") or "")
     status = fragment_parent_status(manifest)

@@ -23,6 +23,7 @@ from urllib.parse import parse_qs, quote, urlparse
 from baroque_transcribe.analysis import analysis_is_stale, load_analysis
 from baroque_transcribe.defaults import (
     ANNOTATIONS_JSON,
+    LOCAL_DIR,
     MANIFEST,
     NOTATION_MAP_JSON,
     NOTES_JSON,
@@ -242,6 +243,69 @@ _YOUTUBE_HOSTS = {"youtube.com", "m.youtube.com", "music.youtube.com"}
 _OFFSET_LIMIT = 60.0
 _SERVER: "PlaybackServer | None" = None
 _SERVER_LOCK = threading.Lock()
+_PLAYBACK_REGISTRY = "playback_registry.json"
+
+
+def _playback_registry_path() -> Path:
+    from baroque_transcribe.parse_store import repo_root
+
+    return repo_root() / LOCAL_DIR / _PLAYBACK_REGISTRY
+
+
+def _stable_project_token(project: Path) -> str | None:
+    """Folder-name token when it is URL-safe and resolves under ``transcriptions/``."""
+
+    name = project.name
+    if not _TOKEN.match(name):
+        return None
+    try:
+        from baroque_transcribe.library import find_project
+
+        found = find_project(name)
+    except Exception:
+        return None
+    if found is None:
+        return None
+    try:
+        if found.resolve() != project.resolve():
+            return None
+    except OSError:
+        return None
+    return name
+
+
+def _load_playback_registry() -> dict[str, dict[str, str]]:
+    path = _playback_registry_path()
+    if not path.is_file():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    projects = payload.get("projects") if isinstance(payload, dict) else None
+    if not isinstance(projects, dict):
+        return {}
+    out: dict[str, dict[str, str]] = {}
+    for token, row in projects.items():
+        if not isinstance(token, str) or not _TOKEN.match(token) or not isinstance(row, dict):
+            continue
+        folder = str(row.get("path") or "").strip()
+        if not folder:
+            continue
+        out[token] = {"path": folder, "title": str(row.get("title") or "")}
+    return out
+
+
+def _save_playback_registry(entries: dict[str, dict[str, str]]) -> None:
+    path = _playback_registry_path()
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        write_text_atomic(
+            path,
+            json.dumps({"projects": entries}, indent=2, sort_keys=True) + "\n",
+        )
+    except OSError:
+        return
 
 
 class SyncError(ValueError):
@@ -396,6 +460,12 @@ class PlaybackContext:
     # Absolute seconds into ``preview.wav`` / the source where movement-local
     # time 0 begins. Zero for full-project and fragment pages.
     media_offset: float = 0.0
+    # Coloured-voice MusicXML. Movement pages point at a sliced sibling so the
+    # browser never downloads the full-suite voices file for one section.
+    voices_score_path: Path | None = None
+    # Add to a movement-local measure number to get the suite measure used by
+    # fragment extract (``local + base``). Zero on full-piece pages.
+    source_measure_base: int = 0
 
 
 def score_end_time(quantization: Quantization) -> float:
@@ -466,6 +536,7 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
     from baroque_transcribe.library import read_run, run_facts
 
     run = read_run(project)
+    voices_path = project / SCORE_VOICES_XML
     return PlaybackContext(
         project=project,
         score_path=score_path,
@@ -480,6 +551,7 @@ def load_playback(project: Path, *, title: str | None = None) -> PlaybackContext
         end_time=score_end_time(quantization),
         media_kind=media_kind,
         media_url=media_url,
+        voices_score_path=voices_path if voices_path.is_file() else None,
     )
 
 
@@ -634,10 +706,13 @@ def write_playback_page(
     from baroque_transcribe.notation import format_measure_time
 
     xml = json.dumps(context.score_path.read_text(encoding="utf-8")).replace("<", "\\u003c")
-    voices_path = context.project / SCORE_VOICES_XML
+    voices_path = context.voices_score_path
+    if voices_path is None:
+        candidate = context.project / SCORE_VOICES_XML
+        voices_path = candidate if candidate.is_file() else None
     xml_voices = (
         json.dumps(voices_path.read_text(encoding="utf-8")).replace("<", "\\u003c")
-        if voices_path.is_file()
+        if voices_path is not None and voices_path.is_file()
         else "null"
     )
     from baroque_transcribe.preview_synth import DEFAULT_PREVIEW_SOUND, PREVIEW_SOUNDS
@@ -661,7 +736,8 @@ def write_playback_page(
             "previewVolume": 0.5,
             "previewVolume2": 0.5,
             "voiceInstruments": bool(
-                (context.project / SCORE_VOICES_XML).is_file()
+                voices_path is not None
+                and voices_path.is_file()
                 and (context.project / NOTATION_MAP_JSON).is_file()
             ),
             "voiceColor1": "#c62828",
@@ -675,6 +751,7 @@ def write_playback_page(
             "toolsLabel": tools_label or "",
             "movements": _project_movements(context.project),
             "activeMovementId": active_movement_id or "",
+            "sourceMeasureBase": int(context.source_measure_base or 0),
             "mediaOffset": float(context.media_offset or 0.0),
             "endTime": context.end_time,
             "passage": (
@@ -685,7 +762,7 @@ def write_playback_page(
             "excerptStart": context.excerpt_start,
             "syncOffset": context.sync_offset,
             "harmony": context.harmony,
-            "hasVoiceColors": voices_path.is_file(),
+            "hasVoiceColors": bool(voices_path is not None and voices_path.is_file()),
             "anchors": [
                 {
                     "measure": anchor.measure,
@@ -855,29 +932,81 @@ class PlaybackServer:
         self._thread = None
 
     def register(self, project: Path, title: str | None = None) -> str:
-        """Return the token for a project. One project keeps one token for the life of the server.
+        """Return the token for a project.
 
-        ``title`` is the heading for the project's pages. It is remembered
-        until a later call gives another.
+        Library projects under ``transcriptions/`` use their folder name so
+        catalog links survive UI restarts. Other paths keep a random token.
+        The mapping is also written under ``.local/playback_registry.json``.
         """
 
         resolved = project.resolve()
         with self._lock:
             token = next((existing for existing, folder in self._projects.items() if folder == resolved), None)
             if token is None:
-                token = secrets.token_urlsafe(8)
+                token = _stable_project_token(resolved) or secrets.token_urlsafe(8)
                 self._projects[token] = resolved
             if title:
                 self._titles[token] = title
+            self._persist_registry_locked()
         return token
 
     def project_for(self, token: str) -> Path | None:
+        if not token or not _TOKEN.match(token):
+            return None
         with self._lock:
+            known = self._projects.get(token)
+            if known is not None:
+                return known
+        recovered = self._recover_project(token)
+        if recovered is None:
+            return None
+        with self._lock:
+            self._projects.setdefault(token, recovered)
             return self._projects.get(token)
 
     def title_for(self, token: str) -> str | None:
         with self._lock:
-            return self._titles.get(token)
+            known = self._titles.get(token)
+            if known:
+                return known
+        row = _load_playback_registry().get(token) or {}
+        title = str(row.get("title") or "").strip()
+        return title or None
+
+    def _recover_project(self, token: str) -> Path | None:
+        """Resolve a token after a UI restart (stable name or on-disk registry)."""
+
+        try:
+            from baroque_transcribe.library import find_project
+
+            found = find_project(token)
+        except Exception:
+            found = None
+        if found is not None:
+            return found
+        row = _load_playback_registry().get(token)
+        if row is None:
+            return None
+        folder = Path(row["path"])
+        if not folder.is_dir() or not (folder / NOTES_JSON).is_file():
+            return None
+        try:
+            return folder.resolve()
+        except OSError:
+            return None
+
+    def _persist_registry_locked(self) -> None:
+        entries = {
+            token: {
+                "path": str(folder),
+                "title": str(self._titles.get(token) or ""),
+            }
+            for token, folder in self._projects.items()
+        }
+        # Merge so tokens registered in an older process are not wiped.
+        for token, row in _load_playback_registry().items():
+            entries.setdefault(token, row)
+        _save_playback_registry(entries)
 
     def page_url(self, token: str) -> str:
         return f"http://{request_host()}:{self.port}/p/{token}/"
@@ -913,20 +1042,19 @@ class PlaybackServer:
     def _context_for_movement(self, context: PlaybackContext, movement_id: str) -> PlaybackContext:
         from baroque_transcribe.movement_scores import (
             MovementScoreError,
-            ensure_movement_score,
+            ensure_movement_scores,
             remap_movement_timeline,
+            warm_project_movements,
         )
 
-        movement = next(
-            (row for row in _project_movements(context.project) if row.get("id") == movement_id),
-            None,
-        )
+        movements = _project_movements(context.project)
+        movement = next((row for row in movements if row.get("id") == movement_id), None)
         if movement is None:
             raise SyncError(f"Unknown movement: {movement_id}")
         start = float(movement["start_seconds"])
         end = float(movement["end_seconds"])
         try:
-            score_path, source_first, source_last = ensure_movement_score(
+            score_path, voices_path, source_first, source_last = ensure_movement_scores(
                 context.project,
                 movement_id=movement_id,
                 start_seconds=start,
@@ -965,9 +1093,18 @@ class PlaybackServer:
                 # Fall back to the full suite WAV + absolute offset.
                 media_url = context.media_url or "preview.wav"
                 media_offset = start
+        # Prefetch the other sections so tab switches skip the cold slice.
+        if len(movements) > 1:
+            warm_project_movements(
+                context.project,
+                movements=movements,
+                anchors=context.anchors,
+                skip_id=movement_id,
+            )
         return replace(
             context,
             score_path=score_path,
+            voices_score_path=voices_path,
             anchors=anchors,
             note_anchors=notes,
             passage=(0.0, duration),
@@ -975,6 +1112,8 @@ class PlaybackServer:
             media_offset=media_offset,
             media_url=media_url,
             excerpt_start=0.0,
+            # Local mm. 1 → suite measure ``source_first``.
+            source_measure_base=max(0, int(source_first) - 1),
         )
 
     def _library_home(self, project: Path) -> tuple[str, str]:
@@ -1010,15 +1149,15 @@ class PlaybackServer:
         return fragment_pages_root()
 
     def _fragment_source_url(self, folder: Path) -> str:
-        """The parent transcription's page at the fragment's place, when the parent is on this computer."""
+        """The parent transcription's page at the extracted measures, when the parent is here."""
 
-        from baroque_transcribe.fragment_pages import parent_place
+        from baroque_transcribe.fragment_pages import format_parent_source_url, parent_source_target
 
-        place = parent_place(folder, transcriptions=self.transcriptions)
-        if place is None:
+        target = parent_source_target(folder, transcriptions=self.transcriptions)
+        if target is None:
             return ""
-        project, working = place
-        return f"{self.page_url(self.register(project))}?w={working:.3f}"
+        base = self.page_url(self.register(target["project"]))
+        return format_parent_source_url(base, target)
 
     def build_fragment_playback(self, token: str) -> Path:
         """Write a fragment's synced page from its files as they are now."""
@@ -2281,7 +2420,11 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       document.getElementById("clear-passage").hidden = !selection;
       const extract = document.getElementById("extract-link");
       if (selection && config.extractUrl) {
-        extract.href = config.extractUrl + "&measures=" + selection.first + "-" + selection.last;
+        // Movement tabs renumber from 1; extract still uses suite measure numbers.
+        const base = Number(config.sourceMeasureBase) || 0;
+        const first = selection.first + base;
+        const last = selection.last + base;
+        extract.href = config.extractUrl + "&measures=" + first + "-" + last;
         extract.hidden = false;
       } else {
         extract.hidden = true;
@@ -2974,7 +3117,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       if (draft) {
         const note = document.createElement("p");
         note.className = "draft-note";
-        note.textContent = "Movement tabs are a draft for review — each tab loads that section's score only.";
+        note.textContent = "Movement tabs are a draft for review — the open tab loads first; other sections warm in the background.";
         host.appendChild(note);
       }
       if (passage) {

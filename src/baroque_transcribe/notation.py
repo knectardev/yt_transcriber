@@ -801,8 +801,21 @@ def write_musicxml(
         try:
             try:
                 written = score_obj.write("musicxml", fp=str(temporary))
-            except Exception as exc:
-                raise NotationError(f"MusicXML export failed: {exc}") from exc
+            except Exception:
+                # music21's default makeRests/makeTies can reinsert a Measure
+                # already in a PartStaff (StreamException). Fallback: split
+                # complex durations and skip makeNotation (music21-recommended).
+                try:
+                    prepared = score_obj.splitAtDurations(recurse=True)[0]
+                    written = prepared.write(
+                        "musicxml",
+                        fp=str(temporary),
+                        makeNotation=False,
+                    )
+                except TypeError:
+                    written = score_obj.write("musicxml", fp=str(temporary))
+                except Exception as exc:
+                    raise NotationError(f"MusicXML export failed: {exc}") from exc
             written_path = Path(str(written)) if written else temporary
             if written_path != temporary and written_path.exists():
                 written_path.replace(temporary)

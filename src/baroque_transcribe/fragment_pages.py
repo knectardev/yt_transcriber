@@ -334,6 +334,135 @@ def parent_place(folder: Path, *, transcriptions: Path | None = None) -> tuple[P
     return project, max(0.0, working)
 
 
+def parent_source_target(
+    folder: Path,
+    *,
+    transcriptions: Path | None = None,
+) -> dict | None:
+    """Where to open the parent score for this fragment.
+
+    Keys: ``project``, ``cue`` (page-local working seconds), ``sel_first``,
+    ``sel_last``, ``movement_id`` (optional), ``label``.
+    """
+
+    place = parent_place(folder, transcriptions=transcriptions)
+    if place is None:
+        return None
+    project, working = place
+    try:
+        manifest = read_manifest(folder)
+    except FragmentError:
+        return None
+    parent = manifest.get("parent") if isinstance(manifest.get("parent"), dict) else {}
+    try:
+        measure_start = int(parent.get("measure_start"))
+        measure_end = int(parent.get("measure_end"))
+    except (TypeError, ValueError):
+        return None
+    if measure_start < 1 or measure_end < measure_start:
+        return None
+
+    movement_id = ""
+    cue = working
+    sel_first, sel_last = measure_start, measure_end
+    covering = _movement_covering_measures(project, measure_start, measure_end)
+    if covering is not None:
+        movement_id, sel_first, sel_last, section_start = covering
+        cue = max(0.0, working - section_start)
+    label = measures_label(manifest) or f"measures {measure_start}\u2013{measure_end}"
+    return {
+        "project": project,
+        "cue": float(cue),
+        "sel_first": int(sel_first),
+        "sel_last": int(sel_last),
+        "movement_id": movement_id,
+        "label": f"Open source ({label})",
+    }
+
+
+def format_parent_source_url(base_url: str, target: dict) -> str:
+    """Attach ``mov`` / ``w`` / ``sel`` query params to a parent playback URL."""
+
+    url = str(base_url)
+    movement_id = str(target.get("movement_id") or "").strip()
+    if movement_id:
+        sep = "&" if "?" in url else "?"
+        url = f"{url}{sep}mov={quote(movement_id)}"
+    sel_first = int(target["sel_first"])
+    sel_last = int(target["sel_last"])
+    sel = str(sel_first) if sel_first == sel_last else f"{sel_first}-{sel_last}"
+    sep = "&" if "?" in url else "?"
+    return f"{url}{sep}w={float(target['cue']):.3f}&sel={sel}"
+
+
+def parent_source_href(
+    folder: Path,
+    *,
+    transcriptions: Path | None = None,
+    base_url: str | None = None,
+) -> tuple[str, str] | None:
+    """Link to the parent score at the extracted measures, with a short label.
+
+    Prefers the movement tab that contains the passage (so large suites open
+    only that section). Falls back to the full piece with absolute measures.
+    ``base_url`` overrides the playback origin (tests); otherwise ``detail_url``.
+    """
+
+    target = parent_source_target(folder, transcriptions=transcriptions)
+    if target is None:
+        return None
+    if base_url is not None:
+        url = format_parent_source_url(base_url, target)
+    else:
+        from baroque_transcribe.playback import detail_url
+
+        url = format_parent_source_url(
+            detail_url(target["project"], movement_id=target["movement_id"] or None),
+            {**target, "movement_id": ""},  # already applied by detail_url
+        )
+    return url, str(target["label"])
+
+
+def _movement_covering_measures(
+    project: Path,
+    measure_start: int,
+    measure_end: int,
+) -> tuple[str, int, int, float] | None:
+    """``(movement_id, local_first, local_last, section_start_seconds)`` when one section owns the span."""
+
+    try:
+        from baroque_transcribe.movement_scores import measures_for_time_span
+        from baroque_transcribe.playback import SyncError, _project_movements, load_playback
+    except Exception:
+        return None
+    movements = _project_movements(project)
+    if len(movements) < 2:
+        return None
+    try:
+        context = load_playback(project)
+    except (SyncError, OSError, ValueError):
+        return None
+    for row in movements:
+        movement_id = str(row.get("id") or "").strip()
+        if not movement_id:
+            continue
+        start = float(row["start_seconds"])
+        end = float(row["end_seconds"])
+        try:
+            first, last = measures_for_time_span(context.anchors, start, end)
+        except Exception:
+            continue
+        if measure_start < first or measure_end > last:
+            continue
+        return (
+            movement_id,
+            measure_start - first + 1,
+            measure_end - first + 1,
+            start,
+        )
+    return None
+
+
 # --------------------------------------------------------------------------
 # Writing the pages
 # --------------------------------------------------------------------------
