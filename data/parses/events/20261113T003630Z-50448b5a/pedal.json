@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "model": "bytedance-note-pedal",
+  "control": 64,
+  "description": "Sustain pedal down/up times in seconds, relative to working.wav. The same events are also stored as MIDI CC 64 inside raw.mid.",
+  "pedals": [
+    {
+      "onset": 0.02,
+      "offset": 1.29
+    },
+    {
+      "onset": 3.57,
+      "offset": 5.39118
+    },
+    {
+      "onset": 5.49,
+      "offset": 7.13248
+    },
+    {
+      "onset": 7.26,
+      "offset": 8.92
+    }
+  ]
+}

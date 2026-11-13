@@ -11,6 +11,7 @@ from baroque_transcribe.preview_synth import (
     preview_sound_ids,
     resolve_preview_sound,
     synthesize_preview,
+    synthesize_preview_by_voice,
 )
 from baroque_transcribe.schema import NoteEvent
 
@@ -36,6 +37,37 @@ def test_synthesize_preview_renders_each_named_sound():
         assert audio.dtype == np.float32
         assert audio.shape == (16_000,)
         assert float(np.max(np.abs(audio))) > 0.1
+
+
+def test_synthesize_preview_by_voice_applies_independent_volumes():
+    paired = [
+        (NoteEvent(72, 0.0, 0.5, 100), 1),
+        (NoteEvent(48, 0.0, 0.5, 100), 2),
+    ]
+    loud = synthesize_preview_by_voice(
+        paired,
+        16_000,
+        0.6,
+        sounds_by_voice={"1": "concert_grand", "2": "concert_grand"},
+        volumes_by_voice={1: 1.0, 2: 0.0},
+    )
+    quiet = synthesize_preview_by_voice(
+        paired,
+        16_000,
+        0.6,
+        sounds_by_voice={"1": "concert_grand", "2": "concert_grand"},
+        volumes_by_voice={1: 0.0, 2: 0.0},
+    )
+    both = synthesize_preview_by_voice(
+        paired,
+        16_000,
+        0.6,
+        sounds_by_voice={"1": "concert_grand", "2": "concert_grand"},
+        volumes_by_voice={1: 0.5, 2: 0.5},
+    )
+    assert float(np.max(np.abs(loud))) > float(np.max(np.abs(quiet))) + 0.05
+    assert float(np.max(np.abs(both))) > float(np.max(np.abs(quiet))) + 0.05
+    assert loud.dtype == np.float32
 
 
 def test_piano_roll_svg_is_a_compact_inline_strip():

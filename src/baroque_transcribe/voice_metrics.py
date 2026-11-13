@@ -122,9 +122,9 @@ def staff_split_assessment(interpretation: Interpretation, staff_split: int = 60
         "near_split_bass": sum(1 for note in near if note.staff == 2),
         "voices_spanning_both_registers": spanning,
         "recommendation": (
-            "The fixed threshold can still bias near-split notes toward the treble "
-            "and inflate treble voice count. A later improvement is staff-per-segment "
-            "chosen from the voice's median pitch after continuity assignment, "
-            "without changing the voice identity. Not rewritten in this phase."
+            "Voice ids are global and keep Colour voices stable across the staff "
+            "split; the pitch threshold still chooses which staff prints each note. "
+            "Near-split sticky continuation can leave a mid-range line on the treble "
+            "a little longer than a hand change would."
         ),
     }

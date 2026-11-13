@@ -187,12 +187,8 @@ def compare_project(
             from baroque_transcribe.notation import VOICE_COLORS, voice_color
 
             legend = (
-                "Voice colours: "
-                + ", ".join(
-                    f"staff{staff}/v{voice}={voice_color(staff, voice)}"
-                    for staff in (1, 2)
-                    for voice in (1, 2, 3, 4)
-                )
+                "Voice colours (global ids): "
+                + ", ".join(f"v{voice}={voice_color(voice)}" for voice in (1, 2, 3, 4))
             )
             del VOICE_COLORS
         page_path = write_notation_page(

@@ -1,0 +1,945 @@
+{
+  "schema_version": 1,
+  "status": "draft",
+  "review_required": true,
+  "notes": "Draft movement partitions for multi-movement Bach suites. Approve after listening before treating times as final.",
+  "entries": {
+    "bwv-0806": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (6 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "prelude",
+          "title": "Prélude",
+          "start_seconds": 0.0,
+          "end_seconds": 92.5,
+          "source": "tempo_map"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 92.5,
+          "end_seconds": 305.833,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courantes-i-ii-doubles",
+          "title": "Courantes (I, II & Doubles)",
+          "start_seconds": 305.833,
+          "end_seconds": 765.832,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 765.832,
+          "end_seconds": 957.832,
+          "source": "tempo_map"
+        },
+        {
+          "id": "bourrees-i-ii",
+          "title": "Bourrées (I & II)",
+          "start_seconds": 957.832,
+          "end_seconds": 1159.282,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 1159.282,
+          "end_seconds": 1303.253,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0807": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (11 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 369.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-2",
+          "title": "Section 2",
+          "start_seconds": 369.0,
+          "end_seconds": 561.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-3",
+          "title": "Section 3",
+          "start_seconds": 561.0,
+          "end_seconds": 705.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-4",
+          "title": "Section 4",
+          "start_seconds": 705.0,
+          "end_seconds": 957.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-5",
+          "title": "Section 5",
+          "start_seconds": 957.0,
+          "end_seconds": 1231.285,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-6",
+          "title": "Section 6",
+          "start_seconds": 1231.285,
+          "end_seconds": 1397.973,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-7",
+          "title": "Section 7",
+          "start_seconds": 1397.973,
+          "end_seconds": 1589.973,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-8",
+          "title": "Section 8",
+          "start_seconds": 1589.973,
+          "end_seconds": 1733.973,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-9",
+          "title": "Section 9",
+          "start_seconds": 1733.973,
+          "end_seconds": 1985.973,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-10",
+          "title": "Section 10",
+          "start_seconds": 1985.973,
+          "end_seconds": 2260.258,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-11",
+          "title": "Section 11",
+          "start_seconds": 2260.258,
+          "end_seconds": 2427.865,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0808": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (6 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "prelude",
+          "title": "Prélude",
+          "start_seconds": 0.0,
+          "end_seconds": 168.158,
+          "source": "tempo_map"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 168.158,
+          "end_seconds": 293.375,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courantes-i-ii-doubles",
+          "title": "Courantes (I, II & Doubles)",
+          "start_seconds": 293.375,
+          "end_seconds": 430.517,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 430.517,
+          "end_seconds": 692.335,
+          "source": "tempo_map"
+        },
+        {
+          "id": "bourrees-i-ii",
+          "title": "Bourrées (I & II)",
+          "start_seconds": 692.335,
+          "end_seconds": 812.335,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 812.335,
+          "end_seconds": 958.988,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0809": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (1 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 1008.225,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0810": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (3 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 714.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-2",
+          "title": "Section 2",
+          "start_seconds": 714.0,
+          "end_seconds": 823.091,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-3",
+          "title": "Section 3",
+          "start_seconds": 823.091,
+          "end_seconds": 1003.079,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0811": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (1 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 1406.732,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0812": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (5 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 0.0,
+          "end_seconds": 192.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courante",
+          "title": "Courante",
+          "start_seconds": 192.0,
+          "end_seconds": 305.684,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 305.684,
+          "end_seconds": 436.593,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-gavotte-bourree",
+          "title": "Menuet / Gavotte / Bourrée",
+          "start_seconds": 436.593,
+          "end_seconds": 603.736,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 603.736,
+          "end_seconds": 771.736,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0813": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (6 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 0.0,
+          "end_seconds": 158.303,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courante",
+          "title": "Courante",
+          "start_seconds": 158.303,
+          "end_seconds": 300.803,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 300.803,
+          "end_seconds": 435.803,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-gavotte",
+          "title": "Menuet / Gavotte",
+          "start_seconds": 435.803,
+          "end_seconds": 536.856,
+          "source": "tempo_map"
+        },
+        {
+          "id": "bourree-loure",
+          "title": "Bourrée / Loure",
+          "start_seconds": 536.856,
+          "end_seconds": 639.713,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 639.713,
+          "end_seconds": 765.695,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0813a": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (1 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 71.975,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0814": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (1 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 1131.613,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0815": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (7 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 0.0,
+          "end_seconds": 148.863,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courante",
+          "title": "Courante",
+          "start_seconds": 148.863,
+          "end_seconds": 264.578,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 264.578,
+          "end_seconds": 381.334,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-i",
+          "title": "Menuet I",
+          "start_seconds": 381.334,
+          "end_seconds": 447.334,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-ii",
+          "title": "Menuet II",
+          "start_seconds": 447.334,
+          "end_seconds": 502.719,
+          "source": "tempo_map"
+        },
+        {
+          "id": "bourree-gavotte",
+          "title": "Bourrée / Gavotte",
+          "start_seconds": 502.719,
+          "end_seconds": 655.762,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 655.762,
+          "end_seconds": 863.413,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0815v": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (1 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 47.926,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0815a": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (9 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 148.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-2",
+          "title": "Section 2",
+          "start_seconds": 148.0,
+          "end_seconds": 293.454,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-3",
+          "title": "Section 3",
+          "start_seconds": 293.454,
+          "end_seconds": 408.633,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-4",
+          "title": "Section 4",
+          "start_seconds": 408.633,
+          "end_seconds": 525.39,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-5",
+          "title": "Section 5",
+          "start_seconds": 525.39,
+          "end_seconds": 668.64,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-6",
+          "title": "Section 6",
+          "start_seconds": 668.64,
+          "end_seconds": 822.64,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-7",
+          "title": "Section 7",
+          "start_seconds": 822.64,
+          "end_seconds": 827.89,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-8",
+          "title": "Section 8",
+          "start_seconds": 827.89,
+          "end_seconds": 981.89,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-9",
+          "title": "Section 9",
+          "start_seconds": 981.89,
+          "end_seconds": 1134.933,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0816": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (11 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 155.676,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-2",
+          "title": "Section 2",
+          "start_seconds": 155.676,
+          "end_seconds": 266.445,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-3",
+          "title": "Section 3",
+          "start_seconds": 266.445,
+          "end_seconds": 475.14,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-4",
+          "title": "Section 4",
+          "start_seconds": 475.14,
+          "end_seconds": 487.94,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-5",
+          "title": "Section 5",
+          "start_seconds": 487.94,
+          "end_seconds": 643.616,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-6",
+          "title": "Section 6",
+          "start_seconds": 643.616,
+          "end_seconds": 754.385,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-7",
+          "title": "Section 7",
+          "start_seconds": 754.385,
+          "end_seconds": 963.081,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-8",
+          "title": "Section 8",
+          "start_seconds": 963.081,
+          "end_seconds": 1027.081,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-9",
+          "title": "Section 9",
+          "start_seconds": 1027.081,
+          "end_seconds": 1102.081,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-10",
+          "title": "Section 10",
+          "start_seconds": 1102.081,
+          "end_seconds": 1246.081,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-11",
+          "title": "Section 11",
+          "start_seconds": 1246.081,
+          "end_seconds": 1538.255,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0817": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (8 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 170.812,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-2",
+          "title": "Section 2",
+          "start_seconds": 170.812,
+          "end_seconds": 262.241,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-3",
+          "title": "Section 3",
+          "start_seconds": 262.241,
+          "end_seconds": 406.241,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-4",
+          "title": "Section 4",
+          "start_seconds": 406.241,
+          "end_seconds": 472.908,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-5",
+          "title": "Section 5",
+          "start_seconds": 472.908,
+          "end_seconds": 562.908,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-6",
+          "title": "Section 6",
+          "start_seconds": 562.908,
+          "end_seconds": 667.908,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-7",
+          "title": "Section 7",
+          "start_seconds": 667.908,
+          "end_seconds": 752.613,
+          "source": "tempo_map"
+        },
+        {
+          "id": "section-8",
+          "title": "Section 8",
+          "start_seconds": 752.613,
+          "end_seconds": 906.873,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0825": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (4 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "praeludium-sinfonia",
+          "title": "Praeludium / Sinfonia",
+          "start_seconds": 0.0,
+          "end_seconds": 389.5,
+          "source": "tempo_map"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 389.5,
+          "end_seconds": 628.166,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courante-sarabande",
+          "title": "Courante / Sarabande",
+          "start_seconds": 628.166,
+          "end_seconds": 796.166,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue-capriccio",
+          "title": "Gigue / Capriccio",
+          "start_seconds": 796.166,
+          "end_seconds": 1252.166,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0826": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (6 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "praeludium",
+          "title": "Praeludium",
+          "start_seconds": 0.0,
+          "end_seconds": 362.4,
+          "source": "tempo_map"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 362.4,
+          "end_seconds": 568.8,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courante",
+          "title": "Courante",
+          "start_seconds": 568.8,
+          "end_seconds": 711.8,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 711.8,
+          "end_seconds": 903.8,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-burlesca-scherzo",
+          "title": "Menuet / Burlesca / Scherzo",
+          "start_seconds": 903.8,
+          "end_seconds": 1127.8,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 1127.8,
+          "end_seconds": 1319.8,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0827": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (7 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "praeludium",
+          "title": "Praeludium",
+          "start_seconds": 0.0,
+          "end_seconds": 114.893,
+          "source": "tempo_map"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 114.893,
+          "end_seconds": 252.036,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courante",
+          "title": "Courante",
+          "start_seconds": 252.036,
+          "end_seconds": 420.036,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 420.036,
+          "end_seconds": 566.123,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-i",
+          "title": "Menuet I",
+          "start_seconds": 566.123,
+          "end_seconds": 694.695,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-ii",
+          "title": "Menuet II",
+          "start_seconds": 694.695,
+          "end_seconds": 755.647,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 755.647,
+          "end_seconds": 938.071,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0828": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (1 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "section-1",
+          "title": "Section 1",
+          "start_seconds": 0.0,
+          "end_seconds": 1896.938,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0829": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (6 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "praeludium",
+          "title": "Praeludium",
+          "start_seconds": 0.0,
+          "end_seconds": 142.5,
+          "source": "tempo_map"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 142.5,
+          "end_seconds": 367.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courante",
+          "title": "Courante",
+          "start_seconds": 367.0,
+          "end_seconds": 463.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 463.0,
+          "end_seconds": 667.857,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-burlesca-scherzo",
+          "title": "Menuet / Burlesca / Scherzo",
+          "start_seconds": 667.857,
+          "end_seconds": 784.857,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 784.857,
+          "end_seconds": 1136.857,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0830": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (7 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "praeludium",
+          "title": "Praeludium",
+          "start_seconds": 0.0,
+          "end_seconds": 288.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 288.0,
+          "end_seconds": 416.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courante",
+          "title": "Courante",
+          "start_seconds": 416.0,
+          "end_seconds": 888.999,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 888.999,
+          "end_seconds": 894.999,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-i",
+          "title": "Menuet I",
+          "start_seconds": 894.999,
+          "end_seconds": 938.999,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-ii",
+          "title": "Menuet II",
+          "start_seconds": 938.999,
+          "end_seconds": 944.999,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 944.999,
+          "end_seconds": 1681.665,
+          "source": "tempo_map"
+        }
+      ]
+    },
+    "bwv-0831": {
+      "status": "draft",
+      "notes": "Draft from tempo/meter map (7 sections). Nested dances that share one tempo block are grouped. Pending human review.",
+      "movements": [
+        {
+          "id": "praeludium",
+          "title": "Praeludium",
+          "start_seconds": 0.0,
+          "end_seconds": 1056.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "allemande",
+          "title": "Allemande",
+          "start_seconds": 1056.0,
+          "end_seconds": 1199.0,
+          "source": "tempo_map"
+        },
+        {
+          "id": "courante",
+          "title": "Courante",
+          "start_seconds": 1199.0,
+          "end_seconds": 1410.2,
+          "source": "tempo_map"
+        },
+        {
+          "id": "sarabande",
+          "title": "Sarabande",
+          "start_seconds": 1410.2,
+          "end_seconds": 1544.6,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-i",
+          "title": "Menuet I",
+          "start_seconds": 1544.6,
+          "end_seconds": 1712.1,
+          "source": "tempo_map"
+        },
+        {
+          "id": "menuet-ii",
+          "title": "Menuet II",
+          "start_seconds": 1712.1,
+          "end_seconds": 1920.1,
+          "source": "tempo_map"
+        },
+        {
+          "id": "gigue",
+          "title": "Gigue",
+          "start_seconds": 1920.1,
+          "end_seconds": 2352.288,
+          "source": "tempo_map"
+        }
+      ]
+    }
+  }
+}

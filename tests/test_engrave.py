@@ -43,6 +43,41 @@ def test_three_independent_voices_stay_three():
     assert len(treble_voices) >= 3
 
 
+def test_two_voice_invention_keeps_global_ids_across_staff_split():
+    # Subject in the treble; answer enters in the bass *while* the subject
+    # still sounds. Subject then steps down across the staff split — same
+    # global voice id (colour) on both staves.
+    notes = [
+        NoteEvent(72, 0.0, 0.5, 80),  # subject (voice 1)
+        NoteEvent(71, 0.5, 1.0, 80),
+        NoteEvent(69, 1.0, 1.5, 80),
+        NoteEvent(67, 1.5, 3.0, 80),  # holds across the answer's entry
+        NoteEvent(48, 2.0, 2.5, 70),  # answer (voice 2), far below, overlaps
+        NoteEvent(47, 2.5, 3.0, 70),
+        NoteEvent(45, 3.0, 3.5, 70),
+        NoteEvent(43, 3.5, 5.0, 70),
+        # Subject continues by step from 67 into the bass staff.
+        NoteEvent(65, 3.0, 3.5, 80),
+        NoteEvent(64, 3.5, 4.0, 80),
+        NoteEvent(62, 4.0, 4.5, 80),
+        NoteEvent(60, 4.5, 5.0, 80),
+        NoteEvent(58, 5.0, 5.5, 80),
+        NoteEvent(57, 5.5, 6.0, 80),
+        NoteEvent(55, 6.0, 6.5, 80),
+        NoteEvent(53, 6.5, 7.0, 80),  # steps onto bass staff, still voice 1
+    ]
+    quantization = _q(notes)
+    written = assign_voices(quantization.grid, settings=quantization.settings, staff_split=60)
+    by_source = {note.source_index: note for note in written}
+    subject = by_source[0].voice
+    answer = by_source[4].voice
+    assert subject != answer
+    assert len({note.voice for note in written}) == 2
+    assert by_source[0].staff == 1
+    assert any(note.staff == 2 and note.voice == subject for note in written)
+    assert all(by_source[i].voice == subject for i in range(8, 16))
+
+
 def test_gap_continues_same_voice_instead_of_new_id():
     # A line pauses, then resumes nearby in pitch: keep one voice ID.
     notes = [

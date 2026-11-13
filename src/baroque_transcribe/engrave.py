@@ -97,14 +97,21 @@ def _active_on_staff(voices: list[_VoiceState], staff: int, at_step: int) -> int
     return sum(1 for voice in voices if voice.staff == staff and voice.end_step > at_step)
 
 
-def _new_voice_cost(settings: NotationSettings, active: int) -> float:
-    """Cost of opening another voice on a staff that already has ``active`` sounding."""
+def _new_voice_cost(settings: NotationSettings, active_on_staff: int, total_voices: int) -> float:
+    """Cost of opening another voice given staff activity and global stream count."""
 
     from baroque_transcribe.defaults import DEFAULT_EXTRA_VOICE_SURCHARGE
 
-    cost = 1.15 + settings.extra_voice_cost * max(0, active - 1)
-    if active >= 2:
-        cost += DEFAULT_EXTRA_VOICE_SURCHARGE * (active - 1)
+    cost = 1.15 + settings.extra_voice_cost * max(0, active_on_staff - 1)
+    if active_on_staff >= 2:
+        cost += DEFAULT_EXTRA_VOICE_SURCHARGE * (active_on_staff - 1)
+    # Keyboard counterpoint is usually two (or three) global lines. Prefer
+    # reactivating an ended stream over minting voice 3+ for Color voices /
+    # later per-voice instrument assignment.
+    if total_voices >= 2:
+        cost += 1.75
+    if total_voices >= 3:
+        cost += 2.5
     return cost
 
 
@@ -114,10 +121,11 @@ def assign_voices(
     settings: NotationSettings,
     staff_split: int,
 ) -> list[WrittenNote]:
-    """Assign each grid note to a staff and voice with a soft two-voice preference.
+    """Assign each grid note to a staff and a *global* voice id.
 
-    Prefers continuing or reactivating an existing same-staff line across gaps
-    instead of minting short-lived voice IDs that fragment Color voices.
+    Voice identity is continuous across the middle-C staff split so Color voices
+    (and later per-voice instruments) keep one colour/line. Staff is chosen per
+    note for notation placement; it does not reset the voice id.
     """
 
     ordered = sorted(grid, key=lambda item: (item.onset_step, item.pitch, item.source_index))
@@ -129,12 +137,13 @@ def assign_voices(
         for index, voice in enumerate(voices):
             staff = _predicted_staff(item.pitch, staff_split, voice.staff)
             pitch_cost = abs(item.pitch - voice.last_pitch) / 12.0
-            staff_cost = 0.0 if staff == voice.staff else 0.75
+            # Cheap staff change: a subject that answers in the other hand must
+            # keep its voice id (colour), not start a new local stream.
+            staff_cost = 0.0 if staff == voice.staff else 0.2
 
             if item.onset_step > voice.end_step:
                 gap = item.onset_step - voice.end_step
-                # Prefer dormant same-register lines over a brand-new voice ID.
-                gap_cost = min(gap, 32) * 0.015
+                gap_cost = min(gap, 48) * 0.012
                 kind = "continue"
                 score = pitch_cost + staff_cost + gap_cost
             elif item.onset_step == voice.last_onset:
@@ -149,36 +158,35 @@ def assign_voices(
                 # Starts while this voice is still holding: cannot join it.
                 continue
             else:
-                # onset == end: contiguous
+                # onset == end: contiguous. Large leaps are weaker evidence of
+                # the same line (a new entry often begins as the previous ends).
                 kind = "continue"
                 score = pitch_cost + staff_cost
+                if pitch_cost >= 0.5:
+                    score += 0.85
 
             if best is None or score < best[0]:
                 best = (score, index, kind)
 
-        staff = _predicted_staff(
-            item.pitch,
-            staff_split,
-            voices[best[1]].staff if best is not None else None,
-        )
+        sticky = voices[best[1]].staff if best is not None else None
+        staff = _predicted_staff(item.pitch, staff_split, sticky)
         active = _active_on_staff(voices, staff, item.onset_step)
-        new_cost = _new_voice_cost(settings, active)
+        new_cost = _new_voice_cost(settings, active, len(voices))
         # Prefer continuing/reactivating over opening a weak new stream.
         if best is None or best[0] > new_cost:
-            # Last chance: reactivate the closest ended same-staff voice even when
-            # the generic loop preferred "new" slightly.
+            # Reactivate the closest ended stream by pitch — any staff.
             reactivate: tuple[float, int] | None = None
             for index, voice in enumerate(voices):
-                predicted = _predicted_staff(item.pitch, staff_split, voice.staff)
-                if predicted != staff or voice.staff != staff:
-                    continue
                 if voice.end_step > item.onset_step:
                     continue
                 gap = item.onset_step - voice.end_step
-                score = abs(item.pitch - voice.last_pitch) / 12.0 + min(gap, 48) * 0.012
+                score = abs(item.pitch - voice.last_pitch) / 12.0 + min(gap, 64) * 0.01
+                predicted = _predicted_staff(item.pitch, staff_split, voice.staff)
+                if predicted != voice.staff:
+                    score += 0.15
                 if reactivate is None or score < reactivate[0]:
                     reactivate = (score, index)
-            if reactivate is not None and reactivate[0] <= new_cost + 0.75:
+            if reactivate is not None and reactivate[0] <= new_cost + 1.0:
                 best = (reactivate[0], reactivate[1], "continue")
             else:
                 voice_id = len(voices) + 1
@@ -195,7 +203,7 @@ def assign_voices(
                 assignments[item.source_index] = (staff, voice_id)
                 continue
 
-        score, index, kind = best
+        _score, index, kind = best
         voice = voices[index]
         staff = _predicted_staff(item.pitch, staff_split, voice.staff)
         if kind == "chord":
@@ -209,19 +217,12 @@ def assign_voices(
             voice.last_pitch = item.pitch
             voice.staff = staff
             voice.members.append(item.source_index)
-        # Voice ids are 1-based in creation order; renumber per staff later.
+        # Global 1-based id = creation order. Do not renumber per staff.
         assignments[item.source_index] = (staff, index + 1)
 
-    # Renumber voices per staff by first appearance.
-    staff_voice_map: dict[tuple[int, int], int] = {}
-    next_id = {1: 1, 2: 1}
     written: list[WrittenNote] = []
     for item in ordered:
-        staff, raw_voice = assignments[item.source_index]
-        key = (staff, raw_voice)
-        if key not in staff_voice_map:
-            staff_voice_map[key] = next_id[staff]
-            next_id[staff] += 1
+        staff, voice_id = assignments[item.source_index]
         written.append(
             WrittenNote(
                 source_index=item.source_index,
@@ -231,9 +232,11 @@ def assign_voices(
                 written_offset_step=item.offset_step,
                 velocity=item.velocity,
                 staff=staff,
-                voice=staff_voice_map[key],
+                voice=voice_id,
             )
         )
+    # Compact only folds sparse extras that share a staff and do not collide;
+    # surviving voice ids stay global so colours remain stable across staves.
     return _compact_staff_voices(written, max_voices=2)
 
 
@@ -306,8 +309,10 @@ def _compact_staff_voices(notes: list[WrittenNote], *, max_voices: int = 2) -> l
                     adjustments=list(note.adjustments) + [f"voice_compact:{note.voice}->{target}"],
                 )
             )
-        # Overflow keeps distinct voices only when a merge would collide in time.
-        next_voice = max(keep) + 1
+        # Overflow keeps distinct global voice ids only when a merge would collide.
+        # Do not renumber 1..n per staff — colours and instrument assignment need
+        # the global id to survive a hand crossing the staff split.
+        next_voice = max((note.voice for note in remapped), default=max(keep)) + 1
         overflow_map: dict[int, int] = {}
         for note in overflow:
             mapped = overflow_map.setdefault(note.voice, next_voice)
@@ -330,31 +335,7 @@ def _compact_staff_voices(notes: list[WrittenNote], *, max_voices: int = 2) -> l
                     adjustments=list(note.adjustments) + [f"voice_overflow:{note.voice}->{mapped}"],
                 )
             )
-        # Final dense renumber 1..n by first appearance.
-        order: dict[int, int] = {}
-        sequential = 1
-        for note in sorted(remapped, key=lambda item: (item.onset_step, item.voice, item.pitch)):
-            if note.voice not in order:
-                order[note.voice] = sequential
-                sequential += 1
-        for note in remapped:
-            result.append(
-                WrittenNote(
-                    source_index=note.source_index,
-                    pitch=note.pitch,
-                    onset_step=note.onset_step,
-                    sounding_offset_step=note.sounding_offset_step,
-                    written_offset_step=note.written_offset_step,
-                    velocity=note.velocity,
-                    staff=note.staff,
-                    voice=order[note.voice],
-                    chord_with=list(note.chord_with),
-                    gap_filled_steps=note.gap_filled_steps,
-                    overlap_trimmed_steps=note.overlap_trimmed_steps,
-                    clustered_ms=note.clustered_ms,
-                    adjustments=list(note.adjustments),
-                )
-            )
+        result.extend(remapped)
     return result
 
 

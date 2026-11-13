@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 215.901,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133515Z-bf6c9299",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083513",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 215.90104
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "805",
+      "collection": "BWV 802-805 Four Duets",
+      "collection_id": "bwv-802-805-four-duets",
+      "entry_id": "bwv-0805",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/03-Duette/BWV_0805.mid",
+      "pinned_sha256": "bd2a8160e556d702e8ecbabd308097441b7f8b89403c8d0dd4ab668fb3e39462",
+      "source_filename": "BWV_0805.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/duets/"
+    },
+    "import_settings_sha256": "36fb59ac03aeec23c77b7d6170508cd7fa36339be96b321811d546e64c3eef42",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "bd2a8160e556d702e8ecbabd308097441b7f8b89403c8d0dd4ab668fb3e39462"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 120.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 120.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "2/2",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 2,
+          "numerator": 2,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 805 — Duet No. 4 in a minor"
+  },
+  "recorded_at": "2026-11-13T13:35:15Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133515Z-bf6c9299",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "51496a41737023ef3d72ada56ecf5f95d3791220d3fb25f69c288cf41130c2a6",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "47ba02f2e1cc3f7aca98e2959fc061e4e92ae50b13ea769d82d7017534b8302c",
+        "raw.mid": "2843e1a60e01d3edd947cc936c7c8c9e4939ef14a0f54cace401bf51b0622737",
+        "score.musicxml": "eeff034416c1c2ece28d4fd40808ea744bd405da0f9c3177fcdcbedcc35cd037",
+        "source.mid": "bd2a8160e556d702e8ecbabd308097441b7f8b89403c8d0dd4ab668fb3e39462"
+      },
+      "files": {
+        "notes.json": "09b20bfe332ab7e9b90804ddffd06ef9ae05526724b8aa251a62ce4824c4e5f5",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "47ba02f2e1cc3f7aca98e2959fc061e4e92ae50b13ea769d82d7017534b8302c",
+        "raw.mid": "2843e1a60e01d3edd947cc936c7c8c9e4939ef14a0f54cace401bf51b0622737",
+        "score.musicxml": "97f5fd639a8dcdab0126d44b92389fa2a4f290be0fd55eab871eb39a6b2b928e",
+        "source.mid": "bd2a8160e556d702e8ecbabd308097441b7f8b89403c8d0dd4ab668fb3e39462"
+      },
+      "project_state_sha256": "2cdde1be3ef7c5c47a5e87d27770c0151d40ad5ff62127053acfc64c27039a0e",
+      "sha256": "c34ec14185a6592f3a1fa048a8e2a44f9481a3e2439be29d30c056978d746e49"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "bd2a8160e556d702e8ecbabd308097441b7f8b89403c8d0dd4ab668fb3e39462",
+    "title": "BWV 805 — Duet No. 4 in a minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 94.5,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133452Z-8234006e",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083451",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 94.5
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "783",
+      "collection": "BWV 772-786 Inventions",
+      "collection_id": "bwv-772-786-inventions",
+      "entry_id": "bwv-0783",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/01-Inventionen/BWV_0783.mid",
+      "pinned_sha256": "5a85c0b5c0988ae7a52c25815e7e00830722f7a9e56fd2694ef6ddd57cbd1776",
+      "source_filename": "BWV_0783.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/inventions/"
+    },
+    "import_settings_sha256": "8346fc7606c48f96db51051a8babe62d3bc9147c8f54dc4b6d6b0e0139fda0a9",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "5a85c0b5c0988ae7a52c25815e7e00830722f7a9e56fd2694ef6ddd57cbd1776"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "12/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 12,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 783 — Invention No. 12"
+  },
+  "recorded_at": "2026-11-13T13:34:52Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133452Z-8234006e",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "71151dca3ebc0eeb21bd2213d5bf53fda974abafb79023f48509037aa1e1339b",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "90bc72c151cd347f8a8967d61eb862a601369717cae9475816afe42d19dda735",
+        "raw.mid": "fc6dc66d5c9231f7e336b5019cd4d22ae4c93d374f145fa3adb4fcb0c7472da7",
+        "score.musicxml": "49a67ce2769519685328c606db6e0d0f89107aa3d30147488fe6c166864758b6",
+        "source.mid": "5a85c0b5c0988ae7a52c25815e7e00830722f7a9e56fd2694ef6ddd57cbd1776"
+      },
+      "files": {
+        "notes.json": "98067ba4dafe43515aa48053083fdc73888683ee428d99b5c8d7d34222a3786b",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "90bc72c151cd347f8a8967d61eb862a601369717cae9475816afe42d19dda735",
+        "raw.mid": "fc6dc66d5c9231f7e336b5019cd4d22ae4c93d374f145fa3adb4fcb0c7472da7",
+        "score.musicxml": "2ae96333e9c51c20c139e756dae9a68a51a415739514205d8dfb630eadb92a13",
+        "source.mid": "5a85c0b5c0988ae7a52c25815e7e00830722f7a9e56fd2694ef6ddd57cbd1776"
+      },
+      "project_state_sha256": "9b564667b0aa850c9d15516b5ae07f70b8dd43b76c9b2be02417d7cfac34936c",
+      "sha256": "19fa956da56ff5f311e8b2918aa19446b7c828d4b6783b41e994ea2556684c4d"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "5a85c0b5c0988ae7a52c25815e7e00830722f7a9e56fd2694ef6ddd57cbd1776",
+    "title": "BWV 783 — Invention No. 12"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

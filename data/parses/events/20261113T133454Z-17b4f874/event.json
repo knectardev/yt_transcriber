@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 127.9009,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133454Z-17b4f874",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083454",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 127.90091
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "788",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0788",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0788.mid",
+      "pinned_sha256": "444a092fe5aa65d83b0082dd533f6f1fd48e1e3ad9abbb2aa0330f6e8ae10cda",
+      "source_filename": "BWV_0788.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "dc2ca47f0b7eb5bd60a614275405bf59b78414c46c1bd9619e3ce521971c8c97",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "444a092fe5aa65d83b0082dd533f6f1fd48e1e3ad9abbb2aa0330f6e8ae10cda"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "12/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 12,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 788 — Sinfonia No. 2"
+  },
+  "recorded_at": "2026-11-13T13:34:54Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133454Z-17b4f874",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "a9a77060e8a85c12ee68752566b95de9140eda04e0db36de2a44e9fad2c1deb0",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "912d46b5f59c9620830408f00fe6f966328ed035316de2cbe5b787e8c29643eb",
+        "raw.mid": "b7b8f195b0f23d5622d4c8e6a98c3c021e00b7c2aa89fcb465ad5e1b311391ee",
+        "score.musicxml": "219271d2177d83cdcacd5012bbc30545e3c4d4c0411319f7725f5b6c8b32f74e",
+        "source.mid": "444a092fe5aa65d83b0082dd533f6f1fd48e1e3ad9abbb2aa0330f6e8ae10cda"
+      },
+      "files": {
+        "notes.json": "bbb768635d3602fe2810b82424be5955fcb5682bde7cb39d38e2437ab7ffffea",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "912d46b5f59c9620830408f00fe6f966328ed035316de2cbe5b787e8c29643eb",
+        "raw.mid": "b7b8f195b0f23d5622d4c8e6a98c3c021e00b7c2aa89fcb465ad5e1b311391ee",
+        "score.musicxml": "8bafecf1a2d22a664fcff1dba4bbe3560d8d865a57aab49b7ed38823fe9851ae",
+        "source.mid": "444a092fe5aa65d83b0082dd533f6f1fd48e1e3ad9abbb2aa0330f6e8ae10cda"
+      },
+      "project_state_sha256": "ed80fa4c875ae3b6ac37ec578a4c6834ecd81156569bf58de915e31032e22dba",
+      "sha256": "a11ea9fae4ff40f59dbf1c49693117798c36b6bda7b8a0254f42758266530492"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "444a092fe5aa65d83b0082dd533f6f1fd48e1e3ad9abbb2aa0330f6e8ae10cda",
+    "title": "BWV 788 — Sinfonia No. 2"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

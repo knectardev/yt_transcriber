@@ -20,7 +20,6 @@ from __future__ import annotations
 import base64
 import json
 import os
-import webbrowser
 from datetime import datetime
 from html import escape
 from pathlib import Path
@@ -143,6 +142,13 @@ _STYLE = """
   .bt-brand .bt-nav a.bt-current { color: var(--bt-ink); text-decoration: underline; }
   .bt-section .bt-count a { color: var(--bt-accent-ink); text-decoration: none; }
   .bt-section .bt-count a:hover { text-decoration: underline; }
+  a.bt-catalog-open {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 100%; box-sizing: border-box; min-height: 2.4rem; padding: 0.35rem 0.6rem;
+    border: 1px solid var(--bt-line); border-radius: 0.5rem; background: #fff;
+    color: var(--bt-ink); text-decoration: none; font-size: 0.92rem; font-weight: 500;
+  }
+  a.bt-catalog-open:hover { border-color: var(--bt-accent); color: var(--bt-accent-ink); }
 </style>
 """
 
@@ -289,7 +295,16 @@ def _transcribe_page() -> None:
     with st.container(border=True):
         _transcribe_fragment()()
     _jobs_board()()
-    st.caption('Finished projects appear under [Projects](/projects). Fragments live on the [home page](/).')
+    st.html(
+        '<div class="bt-section"><h2>Projects on this computer</h2>'
+        '<span class="bt-count">YouTube transcriptions and imports · '
+        '<a href="/projects">Full projects list</a></span></div>'
+    )
+    _render_project_grid(
+        filter_key="transcribe_source_filter",
+        search_key="transcribe-projects-search",
+        default_kind="YouTube",
+    )
 
 
 def _projects_page() -> None:
@@ -305,12 +320,15 @@ def _projects_page() -> None:
             '<div class="bt-section"><h2>Projects</h2>'
             f'<span class="bt-count">{count} transcription{"" if count == 1 else "s"} on this computer'
             ' · <a href="/">Fragments</a>'
-            ' · <a href="/catalog">Bach catalog</a></span></div>'
+            ' · <a href="/catalog">Bach catalog</a>'
+            ' · <a href="/transcribe">Transcribe</a></span></div>'
+            '<p class="bt-lede"><b>Bach catalog</b> is the full list of keyboard works (downloaded MIDI). '
+            '<b>Opened Bach</b> here is only the subset you have opened into a project.</p>'
         )
     with filter_col:
         kind = st.segmented_control(
             "Show",
-            options=["All", "YouTube", "MIDI files", "Catalog"],
+            options=["All", "YouTube", "MIDI files", "Opened Bach"],
             default="All",
             key="library_source_filter",
             label_visibility="collapsed",
@@ -321,7 +339,52 @@ def _projects_page() -> None:
         key="projects-search",
         label_visibility="collapsed",
     )
-    kind = kind or "All"
+    _render_project_grid(
+        kind=kind or "All",
+        text=text,
+        cards=cards,
+        empty_html=(
+            '<div class="bt-empty">Nothing has been transcribed yet. '
+            '<a href="/transcribe">Transcribe or import</a>, or open a work from the '
+            '<a href="/catalog">Bach catalog</a>.</div>'
+        ),
+    )
+
+
+def _render_project_grid(
+    *,
+    kind: str | None = None,
+    text: str | None = None,
+    cards: list[Card] | None = None,
+    filter_key: str = "library_source_filter",
+    search_key: str = "projects-search",
+    default_kind: str = "All",
+    empty_html: str | None = None,
+) -> None:
+    """Shared YouTube / MIDI / catalog project thumbnail grid."""
+
+    import streamlit as st
+
+    if cards is None:
+        cards = _with_local_thumbnails(library_cards(for_grid=True))
+        filter_col, search_col = st.columns([2, 3], vertical_alignment="bottom")
+        with filter_col:
+            kind = st.segmented_control(
+                "Show",
+                options=["All", "YouTube", "MIDI files", "Opened Bach"],
+                default=default_kind,
+                key=filter_key,
+                label_visibility="collapsed",
+            )
+        with search_col:
+            text = st.text_input(
+                "Search projects",
+                placeholder="Search title or folder…",
+                key=search_key,
+                label_visibility="collapsed",
+            )
+    kind = kind or default_kind
+    text = text or ""
     visible = [
         card
         for card in cards
@@ -329,9 +392,11 @@ def _projects_page() -> None:
     ]
     if not cards:
         st.html(
-            '<div class="bt-empty">Nothing has been transcribed yet. '
-            '<a href="/transcribe">Transcribe or import</a>, or open a work from the '
-            '<a href="/catalog">Bach catalog</a>.</div>'
+            empty_html
+            or (
+                '<div class="bt-empty">Nothing has been transcribed yet. '
+                '<a href="/transcribe">Transcribe or import</a>.</div>'
+            )
         )
     elif not visible:
         st.html('<div class="bt-empty">No projects match those filters.</div>')
@@ -389,7 +454,8 @@ def _card_matches_library_filter(card: Card, kind: str) -> bool:
         return bool(card.video_id)
     if kind == "MIDI files":
         return _card_is_midi(card) and not _card_is_catalog(card)
-    if kind == "Catalog":
+    # Legacy "Catalog" key kept so older sessions still filter correctly.
+    if kind in {"Opened Bach", "Catalog"}:
         return _card_is_catalog(card)
     return True
 
@@ -1605,28 +1671,27 @@ def _render_jobs_board() -> None:
 
 
 def _open_playback(project: Path) -> None:
-    """Open the score page in the user's browser.
+    """Navigate this browser tab to the project's score page (never a new tab)."""
 
-    On this PC, open a new tab. On a phone or another computer on the LAN,
-    navigate this tab to the score — do not ask for a second click.
-    """
+    _navigate_same_tab(detail_url(project))
 
-    import streamlit as st
+
+def _navigate_same_tab(url: str) -> None:
+    """Leave the Streamlit iframe and open ``url`` in this tab."""
+
     import streamlit.components.v1 as components
 
-    url = detail_url(project)
-    if _browser_is_on_this_pc():
-        try:
-            webbrowser.open_new_tab(url)
-        except Exception:
-            st.switch_page(_PAGES["project"])
-        return
-    # Streamlit runs inside an iframe; top-level navigation reaches the score.
+    safe = escape(url, quote=True)
     components.html(
-        "<script>window.top.location.href = "
+        "<!DOCTYPE html><html><head><meta charset='utf-8'>"
+        f"<meta http-equiv='refresh' content='0;url={safe}'>"
+        "</head><body style='font:14px sans-serif;padding:0.5rem'>"
+        f"<a id='go' href='{safe}' target='_top'>Opening score…</a>"
+        "<script>window.top.location.replace("
         + json.dumps(url)
-        + ";</script>",
-        height=0,
+        + ");</script>"
+        "</body></html>",
+        height=48,
     )
 
 

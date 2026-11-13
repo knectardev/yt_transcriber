@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 88.3332,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133459Z-980c0405",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083458",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 88.33325
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "793",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0793",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0793.mid",
+      "pinned_sha256": "0c282da4b2043c5162b87ef96e4a5cb890aaa59145b532cfc00567277df0cb9e",
+      "source_filename": "BWV_0793.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "aef0594d2abbebd8db45985344ecc25eaa32a3eea6a753c61c09f4cd81ffc49f",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "0c282da4b2043c5162b87ef96e4a5cb890aaa59145b532cfc00567277df0cb9e"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.333333
+        }
+      ]
+    },
+    "title": "BWV 793 — Sinfonia No. 7"
+  },
+  "recorded_at": "2026-11-13T13:34:59Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133459Z-980c0405",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "14f22bfcd40eea9d50619856bc8117a7d34730b237f8339b301bde652a55e3b9",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "28bb93876eed0fce6e34f68ece5e978ae8985d41132a9fb839cb5e8118c9bee4",
+        "raw.mid": "f9a463861ad3f73fd5e3716d241da3079a4b4d06c53273090ee950df2273d585",
+        "score.musicxml": "e79ebebc408d1daaae4ea3a6e20400bbb2f1846a111bad620e4562c59f2c78d4",
+        "source.mid": "0c282da4b2043c5162b87ef96e4a5cb890aaa59145b532cfc00567277df0cb9e"
+      },
+      "files": {
+        "notes.json": "ceb636b796e25db16ce06cc166f373d2b7506ffac8a8f59c6b7c06b8f231d2b1",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "28bb93876eed0fce6e34f68ece5e978ae8985d41132a9fb839cb5e8118c9bee4",
+        "raw.mid": "f9a463861ad3f73fd5e3716d241da3079a4b4d06c53273090ee950df2273d585",
+        "score.musicxml": "ba08f8ceca71cf72e0e95dbb26df1439472082dc239b88009e49f9a0088523ef",
+        "source.mid": "0c282da4b2043c5162b87ef96e4a5cb890aaa59145b532cfc00567277df0cb9e"
+      },
+      "project_state_sha256": "f0ed478ba5ddf48dbf7ee4f40a07880636abf2599b07010844609d82bbc5e1d8",
+      "sha256": "c20eb9976d1642ba4d36a21d92fd48eaa463c99b1cbe8953abd313dc6a685272"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "0c282da4b2043c5162b87ef96e4a5cb890aaa59145b532cfc00567277df0cb9e",
+    "title": "BWV 793 — Sinfonia No. 7"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

@@ -46,7 +46,9 @@ def open_catalog_entry(
     entry = get_entry(entry_id, path=manifest_path, root=root)
     existing = find_project_for_entry(entry.id, root=root)
     if existing is not None and (existing / NOTES_JSON).is_file():
-        return existing.resolve()
+        project = existing.resolve()
+        _attach_movements(project, entry.id)
+        return project
 
     if sync_if_missing:
         midi_path = ensure_local_midi(
@@ -75,12 +77,14 @@ def open_catalog_entry(
     local_match = _find_local_by_hash(source_hash, root=root)
     if local_match is not None and not allow_duplicate:
         _ensure_catalog_provenance(local_match, entry, catalog.source.attribution, source_hash)
+        _attach_movements(local_match, entry.id)
         return local_match
 
     if not allow_duplicate:
         duplicate = _find_published_project(source_hash, history_store=history_store, root=root)
         if duplicate is not None:
             _ensure_catalog_provenance(duplicate, entry, catalog.source.attribution, source_hash)
+            _attach_movements(duplicate, entry.id)
             return duplicate
 
     target = Path(output_dir) if output_dir is not None else projects_root_for(root) / "catalog"
@@ -97,7 +101,7 @@ def open_catalog_entry(
     provenance["attribution"] = catalog.source.attribution
 
     try:
-        return import_midi_project(
+        project = import_midi_project(
             midi_path,
             target,
             title=entry.display_title,
@@ -113,8 +117,11 @@ def open_catalog_entry(
         # Last-resort: locate any local project whose source.mid matches.
         local = _find_local_by_hash(source_hash, root=root)
         if local is not None:
+            _attach_movements(local, entry.id)
             return local
         raise CatalogError(str(exc)) from exc
+    _attach_movements(project, entry.id)
+    return project
 
 
 def _find_published_project(
@@ -158,6 +165,26 @@ def _ensure_catalog_provenance(
         return
     manifest["catalog"] = catalog_provenance(entry, midi_sha256=source_hash)
     manifest["catalog"]["attribution"] = attribution
+    write_project_manifest(project, manifest)
+
+
+def _attach_movements(project: Path, entry_id: str) -> None:
+    """Copy draft/approved movement tabs onto the project manifest when known."""
+
+    from baroque_transcribe.catalog_movements import movements_as_dicts, movements_for_entry
+    from baroque_transcribe.project_manifest import read_project_manifest, write_project_manifest
+
+    row = movements_for_entry(entry_id, include_draft=True)
+    if row is None:
+        return
+    try:
+        manifest = read_project_manifest(project, missing_ok=False)
+    except Exception:
+        return
+    manifest["movements"] = movements_as_dicts(row)
+    manifest["movements_status"] = row.status
+    if row.notes:
+        manifest["movements_notes"] = row.notes
     write_project_manifest(project, manifest)
 
 

@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 71.8303,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133453Z-532ccd9c",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083453",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 71.83029
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "787",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0787",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0787.mid",
+      "pinned_sha256": "93162d05b415e2fbbaa0fcb4e096d82c228e854e6e96b227631d37fb87b0f710",
+      "source_filename": "BWV_0787.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "c77afb69494dc6ccfea7c04301e7e3ca27dd99fcefa008cf47d97cf9b182755d",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "93162d05b415e2fbbaa0fcb4e096d82c228e854e6e96b227631d37fb87b0f710"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 70.00007000007,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 70.00007000007,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 787 — Sinfonia No. 1"
+  },
+  "recorded_at": "2026-11-13T13:34:53Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133453Z-532ccd9c",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "2345df75752bf66b1175e6312caa04feeaada5517ddafc9462099361c3f6c1e3",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "f57d58df18186305b05a97f4f5e0bff109a4bc5f6c7155e814538060ed173133",
+        "raw.mid": "849ddfa5decac2658d7fb8e861758ac57cea415e60b8612e5df69f44d61f1e6f",
+        "score.musicxml": "728657f35f3a68c161c49d0544723f1f37abce913ed07a669bcf70d7f6cee95f",
+        "source.mid": "93162d05b415e2fbbaa0fcb4e096d82c228e854e6e96b227631d37fb87b0f710"
+      },
+      "files": {
+        "notes.json": "f62e4e407e26b746f10427c9e831c2f5efdb54f3e68ae22061bc127173eb56e2",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "f57d58df18186305b05a97f4f5e0bff109a4bc5f6c7155e814538060ed173133",
+        "raw.mid": "849ddfa5decac2658d7fb8e861758ac57cea415e60b8612e5df69f44d61f1e6f",
+        "score.musicxml": "18e7f742a07ddbb07f01fdd682151382d48986b83184f0a76872a9707ff57b88",
+        "source.mid": "93162d05b415e2fbbaa0fcb4e096d82c228e854e6e96b227631d37fb87b0f710"
+      },
+      "project_state_sha256": "3bc5ebfc4e12ed8f87a106d16493525709f2509ae80d4988b6490846fec19ce4",
+      "sha256": "3d4be0c830f3409ae896046299de7f3f052511e6598fcd8ef804f1c9181e6fd8"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "93162d05b415e2fbbaa0fcb4e096d82c228e854e6e96b227631d37fb87b0f710",
+    "title": "BWV 787 — Sinfonia No. 1"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

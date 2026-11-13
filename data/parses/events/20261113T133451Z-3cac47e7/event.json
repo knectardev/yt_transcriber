@@ -1,0 +1,188 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 69.0,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133451Z-3cac47e7",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083450",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 69.0
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "782",
+      "collection": "BWV 772-786 Inventions",
+      "collection_id": "bwv-772-786-inventions",
+      "entry_id": "bwv-0782",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/01-Inventionen/BWV_0782.mid",
+      "pinned_sha256": "b6bc102b121579a9632e31f7b85ffb83305652f8d702a1da58e9f8ab02317447",
+      "source_filename": "BWV_0782.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/inventions/"
+    },
+    "import_settings_sha256": "13f96772419c03566578c62862e332a4b9de2426644634ed3e7e74a526b275c3",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "b6bc102b121579a9632e31f7b85ffb83305652f8d702a1da58e9f8ab02317447"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "8/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 8,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 54.0
+        },
+        {
+          "denominator": 8,
+          "numerator": 8,
+          "time": 60.0
+        }
+      ]
+    },
+    "title": "BWV 782 — Invention No. 11"
+  },
+  "recorded_at": "2026-11-13T13:34:51Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133451Z-3cac47e7",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "3708399908de329cb4e89ab803be0c2b0b7c2eae38c2796eeebab31354430983",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "2cf90bac8d311c3e038194c1b9abbd92cebef3c2a5cbc63355a03a529496b430",
+        "raw.mid": "fb5fa7a1d53c8729b7cc6a193cc97dccb1cd626f38f3aff4ece20aa05fdb387c",
+        "score.musicxml": "8f4711411e0e0b6e94769ae7f73910021b4cc2ab56cccef0bc9cd4bf83746638",
+        "source.mid": "b6bc102b121579a9632e31f7b85ffb83305652f8d702a1da58e9f8ab02317447"
+      },
+      "files": {
+        "notes.json": "dbd627fc433460b2983747a12aafd5011212c9780d0228c5101625ec03e246d0",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "2cf90bac8d311c3e038194c1b9abbd92cebef3c2a5cbc63355a03a529496b430",
+        "raw.mid": "fb5fa7a1d53c8729b7cc6a193cc97dccb1cd626f38f3aff4ece20aa05fdb387c",
+        "score.musicxml": "f2de3c67ee5c0df0f9774223aec4992efe98d54aa1e45ec7bfdd48f547276977",
+        "source.mid": "b6bc102b121579a9632e31f7b85ffb83305652f8d702a1da58e9f8ab02317447"
+      },
+      "project_state_sha256": "cf5473097b0ab7aa7b5a0ff4e5273077b490e8371b3f46f1c6896349e4ea9380",
+      "sha256": "d5681bda6e8d194d0b849c16de89509df78961cc5f4b58de30e14909201bdd52"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "b6bc102b121579a9632e31f7b85ffb83305652f8d702a1da58e9f8ab02317447",
+    "title": "BWV 782 — Invention No. 11"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

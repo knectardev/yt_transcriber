@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 65.901,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133502Z-a88585c7",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083502",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 65.90098
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "796",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0796",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0796.mid",
+      "pinned_sha256": "146d3091339a54f69431f7067186461e980c376f0057812f0bd368a2ed61d6c2",
+      "source_filename": "BWV_0796.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "aef0594d2abbebd8db45985344ecc25eaa32a3eea6a753c61c09f4cd81ffc49f",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "146d3091339a54f69431f7067186461e980c376f0057812f0bd368a2ed61d6c2"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 796 — Sinfonia No. 10"
+  },
+  "recorded_at": "2026-11-13T13:35:02Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133502Z-a88585c7",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "a5c18317cf4c65d1e1a91ca9e7fbb76032287e5663351d3b3c7ca3cbdf8f9574",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "8c1adf729a14c99bb1fc71b25b7df6f0932fe1fbf3c909d2804e6bee993e0c9a",
+        "raw.mid": "792e80c8347c3bddd75ac74004144e5ca49859a4e7d3d463535c09e13df05184",
+        "score.musicxml": "5b85785c083f9f5114e7f3c18f2166ba163d0f907494842d5ec860e2a18197ef",
+        "source.mid": "146d3091339a54f69431f7067186461e980c376f0057812f0bd368a2ed61d6c2"
+      },
+      "files": {
+        "notes.json": "4e4ff6071af4f6eaeba59b61313766ed994fdf9972a4c6a92a3eb9c812dab813",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "8c1adf729a14c99bb1fc71b25b7df6f0932fe1fbf3c909d2804e6bee993e0c9a",
+        "raw.mid": "792e80c8347c3bddd75ac74004144e5ca49859a4e7d3d463535c09e13df05184",
+        "score.musicxml": "19b2824dc1a705147412e53d999316fc932b70c2db0dbe035ea7a77f63ff4db2",
+        "source.mid": "146d3091339a54f69431f7067186461e980c376f0057812f0bd368a2ed61d6c2"
+      },
+      "project_state_sha256": "33125dba66e8a29db557dc5bb41ed5ac97ca1a9a7ba6b6181b3626d0b7b987a9",
+      "sha256": "ca9b5c4492db4cf58ac6491a8d39b89902a74fc6dc2448ff61f0d1da6884e4fa"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "146d3091339a54f69431f7067186461e980c376f0057812f0bd368a2ed61d6c2",
+    "title": "BWV 796 — Sinfonia No. 10"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

@@ -1,0 +1,169 @@
+{
+  "action": "transcribe",
+  "audio": {
+    "diagnostics": [
+      "comparison.wav",
+      "overview.png",
+      "piano_roll.png",
+      "resynthesis.wav",
+      "spectrogram.png",
+      "waveform.png"
+    ],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": 318.0,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 10.0,
+      "excerpt_end_seconds": 40.0,
+      "excerpt_start_seconds": 30.0,
+      "file": "working.wav",
+      "sample_rate": 16000,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": 40.0,
+    "start_seconds": 30.0
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": true,
+      "stored": true
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": false,
+      "stored": false
+    }
+  },
+  "id": "20261113T003630Z-50448b5a",
+  "machine": "Knectar_Alien",
+  "project": "performance-20261112-193602",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": 40.0,
+      "excerpt_start_seconds": 30.0,
+      "full_duration_seconds": 318.0,
+      "sample_rate": 16000,
+      "working_duration_seconds": 10.0
+    },
+    "import_settings_sha256": "",
+    "model": "bytedance-note-pedal",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "youtube",
+      "video_id": "Anx1SFCbGow"
+    },
+    "staff_assignment": "",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "assumed_bpm": true,
+      "bpm": 98.68,
+      "downbeat_seconds": 0.0,
+      "estimate": {
+        "bpm": 98.68,
+        "candidates": [
+          49.34,
+          98.68,
+          197.37
+        ],
+        "method": "spectral-flux autocorrelation"
+      },
+      "grid": "fixed",
+      "source": "estimated",
+      "subdivision": 16,
+      "time_signature": "4/4",
+      "time_signature_assumed": true
+    },
+    "title": "Baroque Improvisation Tip No. 1 - Listen, Experiment, and Practice"
+  },
+  "recorded_at": "2026-11-13T00:36:30Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T003630Z-50448b5a",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "annotations.json": "69509fa3e7acfcc056186e08f285ac757f55261592164aa6286d8d59cb7583be",
+        "notes.json": "87bee192fdc1cb8727fb8356deff489dc730ebab4002e9ae36b372d00a1b4af5",
+        "pedal.json": "1da287538a247ad702c1ee17092ef291e09258eadf65f8a172f0850793c3db84",
+        "quantized.mid": "f074bde27ac6fc7bd57589898ba5fe8bd31fa6ff9fb975be26384c29fb2735f5",
+        "raw.mid": "708d5dea83272dcd4d0909ae72f0831951f864b5a8b2c32035146efd15c832e2",
+        "score.musicxml": "f14c2f178a43a02575dad325e6f3004de5328ab2aec27acee53ca3492c452e28"
+      },
+      "files": {
+        "annotations.json": "55e43e932daf416a18decea8583eb50e26142b27a967f56dd679625e66a53561",
+        "notes.json": "5fca5229e0fd4b588d68912f9b46c93241e3f8c15a173211a56649ff78faaeb2",
+        "pedal.json": "76035974ff66f73946896e45cdd1a10b772fce62263cbd08c16f2726ba62083a",
+        "quantized.mid": "f074bde27ac6fc7bd57589898ba5fe8bd31fa6ff9fb975be26384c29fb2735f5",
+        "raw.mid": "708d5dea83272dcd4d0909ae72f0831951f864b5a8b2c32035146efd15c832e2",
+        "score.musicxml": "832062b74064b625570c08719ef5b4586100992e91ddbb6815e6c19fbc11bb19"
+      },
+      "project_state_sha256": "ee41d479c0cddb869eca1c26398818e12479cdc321d0dbb5fc951dea975f717b",
+      "sha256": "dd7bd2792515a5bf25e5e857fd5336c986b747c64673bd0eab6b0783d10b538c"
+    }
+  },
+  "source": {
+    "kind": "youtube",
+    "title": "Baroque Improvisation Tip No. 1 - Listen, Experiment, and Practice",
+    "url": "https://www.youtube.com/watch?v=Anx1SFCbGow",
+    "video_id": "Anx1SFCbGow"
+  },
+  "status": "ok",
+  "version": 2
+}

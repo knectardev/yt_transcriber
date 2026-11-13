@@ -1,0 +1,222 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 938.0709,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T033247Z-ec93ee34",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261112-223222",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 938.0709
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "827",
+      "collection": "BWV 825-831 Partitas",
+      "collection_id": "bwv-825-831-partitas",
+      "entry_id": "bwv-0827",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/07-Partiten/BWV_0827.mid",
+      "pinned_sha256": "02b7f40876af0db80c6d23aaa80a37668beb088b8a7731f6661c3c45a0eeec1f",
+      "source_filename": "BWV_0827.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/partitas/"
+    },
+    "import_settings_sha256": "023a1fc7b5c627749f7564a9edf3934ab27a1ba764c4df98ca1d1f136a13c18b",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "02b7f40876af0db80c6d23aaa80a37668beb088b8a7731f6661c3c45a0eeec1f"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 94.00012846684224,
+      "constant_tempo": false,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 94.00012846684224,
+          "time": 0.0
+        },
+        {
+          "bpm": 56.000029866682596,
+          "time": 114.89345999999999
+        },
+        {
+          "bpm": 120.0,
+          "time": 252.036244
+        },
+        {
+          "bpm": 69.00001725000432,
+          "time": 420.036244
+        },
+        {
+          "bpm": 112.00005973336519,
+          "time": 566.123164
+        },
+        {
+          "bpm": 126.00012600012602,
+          "time": 694.694524
+        },
+        {
+          "bpm": 198.000198000198,
+          "time": 755.646844
+        }
+      ],
+      "time_signature": "3/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 0.0
+        },
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 114.89345999999999
+        },
+        {
+          "denominator": 4,
+          "numerator": 3,
+          "time": 252.036244
+        },
+        {
+          "denominator": 4,
+          "numerator": 2,
+          "time": 694.694524
+        },
+        {
+          "denominator": 8,
+          "numerator": 12,
+          "time": 755.646844
+        }
+      ]
+    },
+    "title": "BWV 827 — Partita No. 3 in a minor"
+  },
+  "recorded_at": "2026-11-13T03:32:47Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T033247Z-ec93ee34",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "158d8625be68b0427c52e24b11389197be78f2982d150e5c78c6a481ed291c01",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "21adb685c4142adb260bdb908d94c6dbd9ec88d5f9e3af0507dff1f871563190",
+        "raw.mid": "047c7193be0a089300e209d7e19fbd2ef8ac7111955cce03ae2859f1666cec36",
+        "score.musicxml": "f02e4b5eeca804348d8c880accd1f96d34eba58b36695b22e124ad819a30d731",
+        "source.mid": "02b7f40876af0db80c6d23aaa80a37668beb088b8a7731f6661c3c45a0eeec1f"
+      },
+      "files": {
+        "notes.json": "a6c5354dd4fe57e48903f5a3c5a99ac8ea8d7cc06f662ac1aa43e9907410e18c",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "21adb685c4142adb260bdb908d94c6dbd9ec88d5f9e3af0507dff1f871563190",
+        "raw.mid": "047c7193be0a089300e209d7e19fbd2ef8ac7111955cce03ae2859f1666cec36",
+        "score.musicxml": "f3f4309fcc7f1aecce67fdc3f9f791cd45cc03883bd8aecc4f6ea6ac9ce71f18",
+        "source.mid": "02b7f40876af0db80c6d23aaa80a37668beb088b8a7731f6661c3c45a0eeec1f"
+      },
+      "project_state_sha256": "7aaa1c7ffa79ea07e13392c9b4dc2f1991017496f534d64a63c95a13e9f6b42e",
+      "sha256": "75a13d9589b21a52edb2323337199c4b734db3f425a634d3008071dd3308d090"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "02b7f40876af0db80c6d23aaa80a37668beb088b8a7731f6661c3c45a0eeec1f",
+    "title": "BWV 827 — Partita No. 3 in a minor"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

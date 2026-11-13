@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 61.2673,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133456Z-0aea9cec",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083456",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 61.2673
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "790",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0790",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0790.mid",
+      "pinned_sha256": "4e2e86f851dfc9677b2628d7a9ec4a05adbd5a039a3f43d5e96c489fd03993e2",
+      "source_filename": "BWV_0790.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "c510c25914216321c6825677f60fd581fd488f2ccdb12ea33f62734e529d2628",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "4e2e86f851dfc9677b2628d7a9ec4a05adbd5a039a3f43d5e96c489fd03993e2"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 790 — Sinfonia No. 4"
+  },
+  "recorded_at": "2026-11-13T13:34:56Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133456Z-0aea9cec",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "92da30966c38596acc4f3286fb6f7b36188d506e55f9ebe76a081f5081f97d0d",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "9a50a8f436c442fdfb6ef2b60f0064ab910ecce7590a4692eb6c8e10de3122a0",
+        "raw.mid": "7c9b82dcb456b3ccb49c8c34b518c723bc56810bda5127b7873c4634bd3e2f31",
+        "score.musicxml": "edc9095754e5b1ac50c3af4819333d9a2c68e2a4ca3bbee2aa1d9e78419d7a3b",
+        "source.mid": "4e2e86f851dfc9677b2628d7a9ec4a05adbd5a039a3f43d5e96c489fd03993e2"
+      },
+      "files": {
+        "notes.json": "e8a760a437329044ada98ec8d8ecb6f6eccb2fbaeec298bcdbe65bdc2729d59f",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "9a50a8f436c442fdfb6ef2b60f0064ab910ecce7590a4692eb6c8e10de3122a0",
+        "raw.mid": "7c9b82dcb456b3ccb49c8c34b518c723bc56810bda5127b7873c4634bd3e2f31",
+        "score.musicxml": "e48f2a23eceaa9990f8617dc091b90eabdd6021f032acb59ddd6623c05717b51",
+        "source.mid": "4e2e86f851dfc9677b2628d7a9ec4a05adbd5a039a3f43d5e96c489fd03993e2"
+      },
+      "project_state_sha256": "dbd63a559d7bb84af33869946bcd49da1d6b7582d203c75609d6afb7a05c83f1",
+      "sha256": "ddc0de12b847edb30a94e47004d4af83bbd072ef68f2d2e31f34ef64330e97e1"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "4e2e86f851dfc9677b2628d7a9ec4a05adbd5a039a3f43d5e96c489fd03993e2",
+    "title": "BWV 790 — Sinfonia No. 4"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

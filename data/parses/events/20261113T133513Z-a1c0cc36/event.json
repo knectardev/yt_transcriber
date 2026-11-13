@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 139.0813,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133513Z-a1c0cc36",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083512",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 139.08125
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "804",
+      "collection": "BWV 802-805 Four Duets",
+      "collection_id": "bwv-802-805-four-duets",
+      "entry_id": "bwv-0804",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/03-Duette/BWV_0804.mid",
+      "pinned_sha256": "c821e8d240e2b5b47bea477f152756e8be55160ca746467b23f10147891bfb45",
+      "source_filename": "BWV_0804.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/duets/"
+    },
+    "import_settings_sha256": "710a2353dfdc8a810b1b8fe2e0bfc965df81e2b5913afe8d919d0637d64cccdb",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "c821e8d240e2b5b47bea477f152756e8be55160ca746467b23f10147891bfb45"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 99.99999999999999,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 99.99999999999999,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "12/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 12,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 804 — Duet No. 3 in G major"
+  },
+  "recorded_at": "2026-11-13T13:35:13Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133513Z-a1c0cc36",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "53e091a8b4c2ca6a49ae9f1912b3fc088f4f04b4b4843018c6c602dfc3e5860f",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "73d0cf0bdc4b71f9506b8f237abe53fc235c99b2b5c03dde5969f9a37894ab64",
+        "raw.mid": "23b9110f5ed66d1f53f69c7ca151d0c76b6edb17b720c549ebbea958d4f58fc8",
+        "score.musicxml": "dd6353775ddc05351049985adc781cc015ba6c0037c2a05d19dea6199d3f9716",
+        "source.mid": "c821e8d240e2b5b47bea477f152756e8be55160ca746467b23f10147891bfb45"
+      },
+      "files": {
+        "notes.json": "e7c2892af65b9a0ef308717edb9c902e3734f6b7e0a9dec3cc1f7f9a359fb7b1",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "73d0cf0bdc4b71f9506b8f237abe53fc235c99b2b5c03dde5969f9a37894ab64",
+        "raw.mid": "23b9110f5ed66d1f53f69c7ca151d0c76b6edb17b720c549ebbea958d4f58fc8",
+        "score.musicxml": "44fe7bd6aefd8e8d517df18534031ae6d8a88aefbb871360219c1a7a6f1250a9",
+        "source.mid": "c821e8d240e2b5b47bea477f152756e8be55160ca746467b23f10147891bfb45"
+      },
+      "project_state_sha256": "740a49147e55cb918c40d863c83366bbf83b0d42ea47f75bbc3913074600b7ba",
+      "sha256": "ce23dcf15ca95de1566d87ec46a1f934e0eefb211979da35b79619dafa63e021"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "c821e8d240e2b5b47bea477f152756e8be55160ca746467b23f10147891bfb45",
+    "title": "BWV 804 — Duet No. 3 in G major"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

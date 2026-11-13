@@ -32,13 +32,15 @@ class NotationError(RuntimeError):
     pass
 
 
-# Stable palette for the voice-continuity diagnostic. Same (staff, voice) keeps
-# the same colour across the whole score.
+# Stable palette for Color voices. Index is the *global* interpreted voice id
+# (1-based), not a per-staff slot — so a line that crosses the middle-C split
+# keeps one colour (needed before assigning instruments per voice).
+# First two entries are the primary contrapuntal pair (red / green).
 VOICE_COLORS = (
-    "#c62828",
-    "#1565c0",
-    "#2e7d32",
-    "#6a1b9a",
+    "#c62828",  # voice 1
+    "#2e7d32",  # voice 2
+    "#1565c0",  # voice 3
+    "#6a1b9a",  # voice 4
     "#ef6c00",
     "#00838f",
     "#ad1457",
@@ -49,16 +51,16 @@ VOICE_COLORS = (
 _CONVENTIONAL_STEPS = {1, 2, 3, 4, 6, 8, 12, 16, 24, 32}
 
 
-def voice_color(staff: int, voice: int) -> str:
-    """Two stable colours per staff so Color voices stays readable.
+def voice_color(voice: int, staff: int | None = None) -> str:
+    """Colour for one interpreted voice id (stable across the whole score).
 
-    Extra structural voice IDs (rare overflows) reuse the staff's pair instead
-    of minting a new rainbow hue for a one-note fragment.
+    ``staff`` is accepted for older call sites and ignored: colour follows the
+    global voice identity, not the staff the note happens to sit on.
     """
 
-    pair = ((staff - 1) * 2) % len(VOICE_COLORS)
-    slot = 0 if int(voice) <= 1 else (int(voice) - 1) % 2
-    return VOICE_COLORS[(pair + slot) % len(VOICE_COLORS)]
+    del staff  # legacy kw/positional compatibility
+    index = max(0, int(voice) - 1)
+    return VOICE_COLORS[index % len(VOICE_COLORS)]
 
 
 def nearest_second(seconds: float) -> int:
@@ -557,11 +559,14 @@ def _fill_part_readable(
             if opening_key is not None:
                 measure.insert(0, opening_key)
         active: list[tuple[int, list[note.GeneralNote]]] = []
-        for voice_id, events in enumerate(staff_voices, start=1):
+        for local_slot, events in enumerate(staff_voices, start=1):
             sounding = any(event.onset_step < end and event.offset_step > start for event in events)
             if not sounding:
                 continue
-            color = voice_color(staff, voice_id) if colorize_voices else None
+            # Colour follows the structural/global voice id on the events, not
+            # the local MusicXML packing slot on this staff.
+            structural = int(events[0].voice) if events else local_slot
+            color = voice_color(structural) if colorize_voices else None
             rendered = _render_voice(
                 _voice_events_to_grid(events),
                 start,
@@ -575,7 +580,7 @@ def _fill_part_readable(
             )
             if end_step is not None and start == last_bar:
                 rendered = _cut_at_barline(rendered, _steps_to_ql(per_measure, quantization.subdivision))
-            active.append((voice_id, rendered))
+            active.append((local_slot, rendered))
         if not active:
             measure.append(note.Rest(quarterLength=_steps_to_ql(per_measure, quantization.subdivision)))
         elif len(active) == 1:

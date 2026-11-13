@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 104.8516,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133501Z-44e69c04",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083501",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 104.85156
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "795",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0795",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0795.mid",
+      "pinned_sha256": "6ff01c22c8df719355bf55dd7a7aa26f9f44217f041c949bd2c7548435cd3cee",
+      "source_filename": "BWV_0795.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "63f3f4e58c8335161fe16022075dfb71a573250eecba5d0e51625227c4bf70e6",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "6ff01c22c8df719355bf55dd7a7aa26f9f44217f041c949bd2c7548435cd3cee"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 80.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 80.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 795 — Sinfonia No. 9"
+  },
+  "recorded_at": "2026-11-13T13:35:01Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133501Z-44e69c04",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "6ad964b59dbf9000dd49fa8d1b7a15b061014c67dea936c6145ffeaf98189adb",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "095678e7af30883bc7e153722ad724dd64a489bfe82002a1846bcd002d184e74",
+        "raw.mid": "56024b2e102ec1b3c776f995704e8dca7b80a56e1f2b809b7ea3e6944ec1042f",
+        "score.musicxml": "762c0e38f6da539671b3e42472fcdac8bb0c4aef4cf9141d146ddfc27b91220d",
+        "source.mid": "6ff01c22c8df719355bf55dd7a7aa26f9f44217f041c949bd2c7548435cd3cee"
+      },
+      "files": {
+        "notes.json": "110c78a50139088b269f684d4f0fb48a9d7a8485777de49bc7640ff108d9ba4e",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "095678e7af30883bc7e153722ad724dd64a489bfe82002a1846bcd002d184e74",
+        "raw.mid": "56024b2e102ec1b3c776f995704e8dca7b80a56e1f2b809b7ea3e6944ec1042f",
+        "score.musicxml": "878ab1c115085db4a76898ad075f9326c79d0e90289816bb633c3d2f3b210ecc",
+        "source.mid": "6ff01c22c8df719355bf55dd7a7aa26f9f44217f041c949bd2c7548435cd3cee"
+      },
+      "project_state_sha256": "e0c963e066a913ce90d29d11d3fcb363673f8271013daf3a4386e8bfeec6e4eb",
+      "sha256": "5362916977cf10ca96c68f4053e39c71c446104f357f539729049d425b84887b"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "6ff01c22c8df719355bf55dd7a7aa26f9f44217f041c949bd2c7548435cd3cee",
+    "title": "BWV 795 — Sinfonia No. 9"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

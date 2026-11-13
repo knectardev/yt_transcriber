@@ -13,6 +13,7 @@ from baroque_transcribe.catalog import (
     load_catalog,
     search_catalog,
 )
+from baroque_transcribe.catalog_movements import movements_for_entry
 from baroque_transcribe.catalog_open import open_catalog_entry
 from baroque_transcribe.catalog_sync import (
     CatalogSyncError,
@@ -24,8 +25,11 @@ from baroque_transcribe.catalog_sync import (
 from baroque_transcribe.defaults import (
     CATALOG_DELAY_MAX_SECONDS,
     CATALOG_DELAY_MIN_SECONDS,
+    NOTES_JSON,
 )
+from baroque_transcribe.library import find_project
 from baroque_transcribe.midi_import import MidiImportError
+from baroque_transcribe.playback import detail_url
 
 PAGES: dict[str, object] = {}
 
@@ -41,9 +45,15 @@ def catalog_href() -> str:
 def catalog_page() -> None:
     import streamlit as st
 
-    from baroque_transcribe.ui import _brand, _flash, _open_playback
+    from baroque_transcribe.ui import _brand, _flash, _navigate_same_tab
 
-    _brand(crumb="Bach catalog")
+    pending = st.session_state.pop("catalog_open_url", None)
+    if pending:
+        _brand(crumb="Bach catalog", current="catalog")
+        _navigate_same_tab(str(pending))
+        return
+
+    _brand(crumb="Bach catalog", current="catalog")
     _flash()
     try:
         catalog = load_catalog()
@@ -56,8 +66,12 @@ def catalog_page() -> None:
     imported = sum(1 for row in statuses if row.imported_projects)
     st.html(
         '<div class="bt-section bt-section-tight"><h2>Bach catalog</h2>'
-        f'<span class="bt-count">{catalog.entry_count} works · {downloaded} on this computer'
-        f" · {imported} imported</span></div>"
+        f'<span class="bt-count">{catalog.entry_count} works · {downloaded} downloaded'
+        f" · {imported} opened as projects</span></div>"
+        '<p class="bt-lede">This is the full Bach keyboard list. Download keeps MIDI in the local mirror; '
+        '<b>Open score</b> creates a project. Only opened works also appear under '
+        '<a href="/projects">Projects → Opened Bach</a>. '
+        "Multi-movement suites can expand to draft section jumps (tempo-map based — pending your review).</p>"
     )
     st.markdown(
         f"{catalog.source.attribution} Noncommercial use with attribution. "
@@ -73,7 +87,7 @@ def catalog_page() -> None:
         return
 
     for row in rows:
-        _row(row, catalog=catalog, open_playback=_open_playback)
+        _row(row, catalog=catalog)
 
 
 def _toolbar(catalog, statuses):
@@ -173,10 +187,8 @@ def _sync_panel(catalog, statuses) -> None:
             )
             logger = setup_sync_logger()
             progress = st.progress(0.0, text="Starting…")
-            state = {"index": 0}
 
             def on_progress(index: int, total: int, result) -> None:
-                state["index"] = index
                 progress.progress(
                     index / max(1, total),
                     text=f"{index}/{total} {result.entry_id}: {result.action}",
@@ -199,10 +211,11 @@ def _sync_panel(catalog, statuses) -> None:
             st.rerun()
 
 
-def _row(row, *, catalog, open_playback) -> None:
+def _row(row, *, catalog) -> None:
     import streamlit as st
 
     entry = row.entry
+    movements = movements_for_entry(entry.id, include_draft=True)
     with st.container(border=True):
         left, right = st.columns([4, 2], vertical_alignment="center")
         with left:
@@ -216,6 +229,11 @@ def _row(row, *, catalog, open_playback) -> None:
                     if row.fragment_count
                     else "",
                     "variant" if entry.is_variant else "",
+                    (
+                        f"{len(movements.movements)} sections"
+                        if movements is not None and len(movements.movements) > 1
+                        else ""
+                    ),
                 )
                 if part
             )
@@ -223,22 +241,8 @@ def _row(row, *, catalog, open_playback) -> None:
             st.caption(f"{escape(entry.collection)} · {escape(meta)}")
         with right:
             a, b, c = st.columns(3)
-            if a.button("Download", key=f"cat-dl-{entry.id}", disabled=row.local and row.hash_ok is not False):
-                try:
-                    ensure_local_midi(entry, allowed_hosts=catalog.source.allowed_hosts)
-                except (CatalogError, CatalogSyncError, OSError) as exc:
-                    st.error(str(exc))
-                else:
-                    st.session_state["flash"] = ("success", f"Downloaded {entry.id}.")
-                    st.rerun()
-            if b.button("Open score", key=f"cat-open-{entry.id}"):
-                try:
-                    project = open_catalog_entry(entry.id)
-                except (CatalogError, CatalogSyncError, MidiImportError, OSError, ValueError) as exc:
-                    st.error(str(exc))
-                else:
-                    st.session_state["open_project"] = str(project)
-                    open_playback(project)
+            _download_button(a, row=row, catalog=catalog)
+            _open_score_button(b, row=row)
             if c.button("Fragments", key=f"cat-frags-{entry.id}"):
                 st.session_state["frag-search"] = entry.id
                 st.session_state["catalog_fragment_filter"] = entry.id
@@ -246,3 +250,94 @@ def _row(row, *, catalog, open_playback) -> None:
                     st.switch_page(PAGES["home"])
                 elif "fragments" in PAGES:
                     st.switch_page(PAGES["fragments"])
+        if movements is not None and len(movements.movements) > 1:
+            label = f"Sections ({len(movements.movements)})"
+            if movements.is_draft:
+                label += " — draft"
+            with st.expander(label, expanded=False):
+                if movements.is_draft:
+                    st.caption(
+                        "Draft partitions from the MIDI tempo map — confirm before relying on them."
+                    )
+                ready = _ready_project(row)
+                for movement in movements.movements:
+                    cols = st.columns([4, 1])
+                    cols[0].markdown(
+                        f"**{escape(movement.title)}**  \n"
+                        f"{movement.start_seconds:.0f}s–{movement.end_seconds:.0f}s"
+                    )
+                    if ready is not None:
+                        url = detail_url(ready, movement_id=movement.id)
+                        cols[1].html(
+                            f'<a class="bt-catalog-open" href="{escape(url, quote=True)}" '
+                            f'target="_top">Open</a>'
+                        )
+                    elif cols[1].button("Open", key=f"cat-mov-{entry.id}-{movement.id}"):
+                        try:
+                            project = open_catalog_entry(entry.id)
+                        except (
+                            CatalogError,
+                            CatalogSyncError,
+                            MidiImportError,
+                            OSError,
+                            ValueError,
+                        ) as exc:
+                            st.error(str(exc))
+                        else:
+                            st.session_state["catalog_open_url"] = detail_url(
+                                project, movement_id=movement.id
+                            )
+                            st.rerun()
+
+
+def _download_button(column, *, row, catalog) -> None:
+    import streamlit as st
+
+    entry = row.entry
+    if row.local and row.hash_ok is not False:
+        column.button("Downloaded", key=f"cat-dl-{entry.id}", disabled=True)
+        return
+    label = "Redownload" if row.hash_ok is False else "Download"
+    if column.button(label, key=f"cat-dl-{entry.id}"):
+        try:
+            ensure_local_midi(entry, allowed_hosts=catalog.source.allowed_hosts)
+        except (CatalogError, CatalogSyncError, OSError) as exc:
+            st.error(str(exc))
+        else:
+            st.session_state["flash"] = ("success", f"Downloaded {entry.id}.")
+            st.rerun()
+
+
+def _open_score_button(column, *, row) -> None:
+    """One click → same-tab score. Materialize first when needed, then redirect at page top."""
+
+    import streamlit as st
+
+    entry = row.entry
+    ready = _ready_project(row)
+    with column:
+        if ready is not None:
+            url = detail_url(ready)
+            st.html(
+                f'<a class="bt-catalog-open" href="{escape(url, quote=True)}" '
+                'target="_top">Open score</a>'
+            )
+            return
+        if st.button("Open score", key=f"cat-open-{entry.id}"):
+            try:
+                project = open_catalog_entry(entry.id)
+            except (CatalogError, CatalogSyncError, MidiImportError, OSError, ValueError) as exc:
+                st.error(str(exc))
+            else:
+                st.session_state["catalog_open_url"] = detail_url(project)
+                st.rerun()
+
+
+def _ready_project(row) -> Path | None:
+    """Existing imported project that can open without a Streamlit round-trip."""
+
+    for name in row.imported_projects:
+        folder = find_project(name)
+        if folder is not None and (folder / NOTES_JSON).is_file():
+            return folder
+    return None

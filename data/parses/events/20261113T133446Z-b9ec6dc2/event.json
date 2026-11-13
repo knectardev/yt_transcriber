@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 106.2856,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133446Z-b9ec6dc2",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083445",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 106.28561
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "777",
+      "collection": "BWV 772-786 Inventions",
+      "collection_id": "bwv-772-786-inventions",
+      "entry_id": "bwv-0777",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/01-Inventionen/BWV_0777.mid",
+      "pinned_sha256": "1cd503c17177eafe3be82c46ce754c610060aa272f04ea73d87a25782bbf1cac",
+      "source_filename": "BWV_0777.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/inventions/"
+    },
+    "import_settings_sha256": "2dc2a9f9ca78f15ba76f72717e9e7b8ea4a9fc972ff29f0268d4269c004859d8",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "1cd503c17177eafe3be82c46ce754c610060aa272f04ea73d87a25782bbf1cac"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 70.00007000007,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 70.00007000007,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "3/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 3,
+          "time": 0.8571420000000001
+        }
+      ]
+    },
+    "title": "BWV 777 — Invention No. 6"
+  },
+  "recorded_at": "2026-11-13T13:34:46Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133446Z-b9ec6dc2",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "13dbdc163e76fec51787ad1afdf09da623d6ce6e3da41af8cc641c5562283b99",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "4090d80b1935a830206916466e41a7f346999955735d92ec11fb7f86cb9c0d38",
+        "raw.mid": "1e0fa3ac00dd4ef14047f376256d59232e6ecb9c8ee5264c5cb22b287ccd5c73",
+        "score.musicxml": "a482f3bf921e4475539b9818ea0560c85b2ba52d9f2bc2c2d9e3152f715850e3",
+        "source.mid": "1cd503c17177eafe3be82c46ce754c610060aa272f04ea73d87a25782bbf1cac"
+      },
+      "files": {
+        "notes.json": "2cb1e1e68a777e06e0e22d383873b470cccc0514add4e86a3f802e7c8e6fd1b3",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "4090d80b1935a830206916466e41a7f346999955735d92ec11fb7f86cb9c0d38",
+        "raw.mid": "1e0fa3ac00dd4ef14047f376256d59232e6ecb9c8ee5264c5cb22b287ccd5c73",
+        "score.musicxml": "1aa1f0982bc0e9dabccc6e6f8bb0f8272fa333ca8c71f98cd1810abe0f4aad44",
+        "source.mid": "1cd503c17177eafe3be82c46ce754c610060aa272f04ea73d87a25782bbf1cac"
+      },
+      "project_state_sha256": "8404117cc2f28e525355e7c80f80c1460327a51c6a72fb9fa095062645356d4b",
+      "sha256": "c49e1fcc9716b83aad99103b4bfe846076d4e8d8445b8ce1cd62c32d64a83b3f"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "1cd503c17177eafe3be82c46ce754c610060aa272f04ea73d87a25782bbf1cac",
+    "title": "BWV 777 — Invention No. 6"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

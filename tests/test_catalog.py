@@ -220,3 +220,25 @@ def test_entry_statuses_detect_missing(tmp_path: Path):
     catalog = validate_catalog(_manifest_with(entries))
     rows = entry_statuses(catalog, root=tmp_path)
     assert rows[0].status_label == "not downloaded"
+
+
+def test_playback_library_home_for_catalog_and_other_projects(tmp_path: Path):
+    from baroque_transcribe.playback import library_home_for_project
+    from baroque_transcribe.project_manifest import write_project_manifest
+
+    catalog_project = tmp_path / "catalog-work"
+    other = tmp_path / "youtube-work"
+    catalog_project.mkdir()
+    other.mkdir()
+    write_project_manifest(
+        catalog_project,
+        {
+            "schema_version": 1,
+            "title": "BWV 772",
+            "catalog": {"entry_id": "bwv-0772"},
+        },
+    )
+    write_project_manifest(other, {"schema_version": 1, "title": "Other"})
+    base = "http://192.168.40.137:8765"
+    assert library_home_for_project(catalog_project, base) == (f"{base}/catalog", "Bach catalog")
+    assert library_home_for_project(other, base) == (f"{base}/projects", "Projects")

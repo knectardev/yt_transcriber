@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 121.9009,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133458Z-a8b61dd5",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083457-2",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 121.90092
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "792",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0792",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0792.mid",
+      "pinned_sha256": "2a4468fc649c9007a9737ff5c6c22a2dd2411638bdf92e64639b240068b3c9b9",
+      "source_filename": "BWV_0792.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "761cba9a411d5f9352b9ae1181e16b79538097cd2239060e84a5398099597c16",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "2a4468fc649c9007a9737ff5c6c22a2dd2411638bdf92e64639b240068b3c9b9"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 90.00009000009,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 90.00009000009,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "9/8",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 8,
+          "numerator": 9,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 792 — Sinfonia No. 6"
+  },
+  "recorded_at": "2026-11-13T13:34:58Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133458Z-a8b61dd5",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "c4e4874ea1344f8f67f0ee3718e6452562bb5082cbe945ba1713b0bad1548c8e",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "4a4a70a704df7af223ca7086a8ab0f22a24dde7d0129c8c61b536ccdb6a92961",
+        "raw.mid": "a5645fb77cf426c687dd8bcf4cc6c670fc3c1c3bbcfe45bde5f15dec12815f2b",
+        "score.musicxml": "061998c35eb53b18d15deda343866c0544f12c690679c113d6426c154089b83b",
+        "source.mid": "2a4468fc649c9007a9737ff5c6c22a2dd2411638bdf92e64639b240068b3c9b9"
+      },
+      "files": {
+        "notes.json": "3f56c01e3e768d7e802622e4b3a8d5c41a452f2dcf53093b5cd6ce929f51a4da",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "4a4a70a704df7af223ca7086a8ab0f22a24dde7d0129c8c61b536ccdb6a92961",
+        "raw.mid": "a5645fb77cf426c687dd8bcf4cc6c670fc3c1c3bbcfe45bde5f15dec12815f2b",
+        "score.musicxml": "f4d331f9895aa90848b8867b3b85ce7a1192b796d84b777869b84b2cc77fe49a",
+        "source.mid": "2a4468fc649c9007a9737ff5c6c22a2dd2411638bdf92e64639b240068b3c9b9"
+      },
+      "project_state_sha256": "df1e750d12976a788329989f017f6c0b9ed289da7ce73cfd9c87f0cb3a6c4d28",
+      "sha256": "67ae874d400827b342b04f95361d61ac8de8e5ca5698764df1e2884dbe42b264"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "2a4468fc649c9007a9737ff5c6c22a2dd2411638bdf92e64639b240068b3c9b9",
+    "title": "BWV 792 — Sinfonia No. 6"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

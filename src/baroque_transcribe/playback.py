@@ -14,14 +14,21 @@ import re
 import secrets
 import socket
 import threading
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from html import escape
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, urlparse
 
 from baroque_transcribe.analysis import analysis_is_stale, load_analysis
-from baroque_transcribe.defaults import ANNOTATIONS_JSON, MANIFEST, NOTES_JSON, SCORE_VOICES_XML, SCORE_XML
+from baroque_transcribe.defaults import (
+    ANNOTATIONS_JSON,
+    MANIFEST,
+    NOTATION_MAP_JSON,
+    NOTES_JSON,
+    SCORE_VOICES_XML,
+    SCORE_XML,
+)
 # ``notation`` (and its music21 import) is loaded inside the functions that
 # write score pages, not here: this module is also imported for YouTube id
 # parsing on the UI home page, which must start without that weight.
@@ -386,6 +393,9 @@ class PlaybackContext:
     # Shared transport: youtube (IFrame), audio (preview WAV), or silent scrubber.
     media_kind: str = "youtube"
     media_url: str = ""
+    # Absolute seconds into ``preview.wav`` / the source where movement-local
+    # time 0 begins. Zero for full-project and fragment pages.
+    media_offset: float = 0.0
 
 
 def score_end_time(quantization: Quantization) -> float:
@@ -486,6 +496,78 @@ def _ensure_library(dest_dir: Path) -> None:
         copy_file_atomic(library, local)
 
 
+def library_home_for_project(project: Path, home_url: str) -> tuple[str, str]:
+    """Playback ``←`` destination for a project.
+
+    Catalog works return to ``/catalog``. Other projects return to ``/projects``
+    (the YouTube / MIDI grid). Empty when there is no library site URL.
+    """
+
+    base = (home_url or "").rstrip("/")
+    if not base:
+        return "", ""
+    from baroque_transcribe.project_manifest import load_project_manifest
+
+    try:
+        manifest = load_project_manifest(project)
+    except Exception:
+        manifest = {}
+    catalog = manifest.get("catalog") if isinstance(manifest.get("catalog"), dict) else {}
+    if str(catalog.get("entry_id") or "").strip():
+        return f"{base}/catalog", "Bach catalog"
+    return f"{base}/projects", "Projects"
+
+
+def _project_movements(project: Path) -> list[dict]:
+    """Movement tabs for the playback page (draft or approved)."""
+
+    try:
+        manifest = load_project_manifest(project)
+    except Exception:
+        return []
+    raw = manifest.get("movements")
+    if isinstance(raw, list) and raw:
+        out: list[dict] = []
+        for item in raw:
+            if not isinstance(item, dict):
+                continue
+            movement_id = str(item.get("id") or "").strip()
+            title = str(item.get("title") or "").strip()
+            try:
+                start = float(item.get("start_seconds"))
+                end = float(item.get("end_seconds"))
+            except (TypeError, ValueError):
+                continue
+            if not movement_id or not title or end <= start:
+                continue
+            out.append(
+                {
+                    "id": movement_id,
+                    "title": title,
+                    "start_seconds": start,
+                    "end_seconds": end,
+                    "status": str(manifest.get("movements_status") or item.get("status") or ""),
+                }
+            )
+        return out
+    catalog = manifest.get("catalog") if isinstance(manifest.get("catalog"), dict) else {}
+    entry_id = str(catalog.get("entry_id") or "").strip()
+    if not entry_id:
+        return []
+    try:
+        from baroque_transcribe.catalog_movements import movements_as_dicts, movements_for_entry
+
+        row = movements_for_entry(entry_id, include_draft=True)
+    except Exception:
+        return []
+    if row is None:
+        return []
+    return [
+        {**item, "status": row.status}
+        for item in movements_as_dicts(row)
+    ]
+
+
 def tools_page_url(home_url: str, project: Path) -> str:
     """Address of the project's "Edit & files" page on the library site.
 
@@ -523,6 +605,7 @@ def write_playback_page(
     source_url: str = "",
     home_label: str = "",
     tools_label: str = "",
+    active_movement_id: str | None = None,
 ) -> Path:
     """Write the synced playback page next to the score.
 
@@ -557,17 +640,42 @@ def write_playback_page(
         if voices_path.is_file()
         else "null"
     )
+    from baroque_transcribe.preview_synth import DEFAULT_PREVIEW_SOUND, PREVIEW_SOUNDS
+
+    nominal_bpm = None
+    try:
+        manifest = json.loads((context.project / MANIFEST).read_text(encoding="utf-8"))
+        bpm = (manifest.get("tempo") or {}).get("bpm")
+        if isinstance(bpm, (int, float)) and float(bpm) > 0:
+            nominal_bpm = float(bpm)
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        nominal_bpm = None
     config = json.dumps(
         {
             "videoId": context.video_id,
             "mediaKind": context.media_kind,
             "mediaUrl": context.media_url,
+            "previewSound": DEFAULT_PREVIEW_SOUND,
+            "previewSound2": DEFAULT_PREVIEW_SOUND,
+            "previewSounds": [{"id": sound.id, "label": sound.label} for sound in PREVIEW_SOUNDS],
+            "previewVolume": 0.5,
+            "previewVolume2": 0.5,
+            "voiceInstruments": bool(
+                (context.project / SCORE_VOICES_XML).is_file()
+                and (context.project / NOTATION_MAP_JSON).is_file()
+            ),
+            "voiceColor1": "#c62828",
+            "voiceColor2": "#2e7d32",
+            "nominalBpm": nominal_bpm,
             "homeUrl": home_url or "",
             "toolsUrl": tools_url or "",
             "extractUrl": extract_url or "",
             "sourceUrl": source_url or "",
             "homeLabel": home_label or "",
             "toolsLabel": tools_label or "",
+            "movements": _project_movements(context.project),
+            "activeMovementId": active_movement_id or "",
+            "mediaOffset": float(context.media_offset or 0.0),
             "endTime": context.end_time,
             "passage": (
                 {"start": context.passage[0], "end": context.passage[1]} if context.passage is not None else None
@@ -634,17 +742,28 @@ def notation_page_url(project: Path, *, title: str | None = None) -> str:
     return server.page_url(token) + "notation.html"
 
 
-def detail_url(project: Path, *, title: str | None = None) -> str:
+def detail_url(
+    project: Path,
+    *,
+    title: str | None = None,
+    movement_id: str | None = None,
+) -> str:
     """Address of the page for one transcription, without writing it.
 
     The server writes the page when the address is opened, so a link costs
     nothing to make: the library can link every run without reading its
     notes. A project with no video opens on its score, and one with no score
-    yet opens on its "Edit & files" page.
+    yet opens on its "Edit & files" page. ``movement_id`` appends ``?mov=``
+    so suite tabs open on that section.
     """
 
     server = shared_playback_server()
-    return server.page_url(server.register(project, title))
+    url = server.page_url(server.register(project, title))
+    mov = str(movement_id or "").strip()
+    if mov:
+        sep = "&" if "?" in url else "?"
+        return f"{url}{sep}mov={quote(mov)}"
+    return url
 
 
 def shared_playback_server(home_url: str | None = None) -> "PlaybackServer":
@@ -763,21 +882,105 @@ class PlaybackServer:
     def page_url(self, token: str) -> str:
         return f"http://{request_host()}:{self.port}/p/{token}/"
 
-    def build_playback(self, token: str) -> Path:
-        """Write the synced playback page from the project's files as they are now."""
+    def build_playback(self, token: str, *, movement_id: str | None = None) -> Path:
+        """Write the synced playback page from the project's files as they are now.
+
+        When ``movement_id`` is set, the page embeds a sliced MusicXML for that
+        section only (fast OSMD load) and cues/loops the matching audio span.
+        """
 
         project = self.project_for(token)
         if project is None:
             raise SyncError("That project is not being served.")
         with self._build_lock:
             context = load_playback(project, title=self.title_for(token))
+            dest = project / "playback.html"
+            mov = str(movement_id or "").strip()
+            if mov:
+                context = self._context_for_movement(context, mov)
+                dest = project / f"playback-{mov}.html"
+            home_url, home_label = self._library_home(project)
             return write_playback_page(
                 context,
-                project / "playback.html",
-                home_url=self.home_url,
+                dest,
+                home_url=home_url,
+                home_label=home_label,
                 tools_url=tools_page_url(self.home_url, project),
                 extract_url=extract_page_url(self.home_url, project),
+                active_movement_id=mov or None,
             )
+
+    def _context_for_movement(self, context: PlaybackContext, movement_id: str) -> PlaybackContext:
+        from baroque_transcribe.movement_scores import (
+            MovementScoreError,
+            ensure_movement_score,
+            remap_movement_timeline,
+        )
+
+        movement = next(
+            (row for row in _project_movements(context.project) if row.get("id") == movement_id),
+            None,
+        )
+        if movement is None:
+            raise SyncError(f"Unknown movement: {movement_id}")
+        start = float(movement["start_seconds"])
+        end = float(movement["end_seconds"])
+        try:
+            score_path, source_first, source_last = ensure_movement_score(
+                context.project,
+                movement_id=movement_id,
+                start_seconds=start,
+                end_seconds=end,
+                anchors=context.anchors,
+                title=str(movement.get("title") or movement_id),
+            )
+        except MovementScoreError as exc:
+            raise SyncError(str(exc)) from exc
+        anchors, notes, duration = remap_movement_timeline(
+            anchors=context.anchors,
+            note_anchors=context.note_anchors,
+            start_seconds=start,
+            end_seconds=end,
+            source_first=source_first,
+            source_last=source_last,
+        )
+        media_url = context.media_url
+        media_offset = 0.0
+        if context.media_kind == "audio":
+            try:
+                from baroque_transcribe.preview_audio import (
+                    PreviewAudioError,
+                    ensure_movement_preview_wav,
+                    movement_preview_filename,
+                )
+
+                ensure_movement_preview_wav(
+                    context.project,
+                    movement_id=movement_id,
+                    start_seconds=start,
+                    end_seconds=end,
+                )
+                media_url = movement_preview_filename(movement_id)
+            except (PreviewAudioError, OSError, ValueError, RuntimeError):
+                # Fall back to the full suite WAV + absolute offset.
+                media_url = context.media_url or "preview.wav"
+                media_offset = start
+        return replace(
+            context,
+            score_path=score_path,
+            anchors=anchors,
+            note_anchors=notes,
+            passage=(0.0, duration),
+            end_time=duration,
+            media_offset=media_offset,
+            media_url=media_url,
+            excerpt_start=0.0,
+        )
+
+    def _library_home(self, project: Path) -> tuple[str, str]:
+        """Where the playback ``←`` link should go for this project."""
+
+        return library_home_for_project(project, self.home_url)
 
     # ----------------------------------------------------------- fragments
 
@@ -866,11 +1069,13 @@ class PlaybackServer:
         title = self.title_for(token) or (run.title if run else "") or project.name
         with self._build_lock:
             try:
+                home_url, home_label = self._library_home(project)
                 return write_notation_page(
                     score,
                     project / "notation.html",
                     title=title,
-                    home_url=self.home_url,
+                    home_url=home_url,
+                    home_label=home_label,
                     facts=run_facts(run) if run else None,
                     folder=str(project),
                     tools_url=tools_page_url(self.home_url, project) or None,
@@ -901,6 +1106,11 @@ _PAGE_NAMES = {
     "sync-offset",
     "preview.wav",
 }
+_MOV_WAV = re.compile(r"^mov-[A-Za-z0-9_-]+\.wav$")
+
+
+def _page_name_allowed(name: str) -> bool:
+    return name in _PAGE_NAMES or bool(_MOV_WAV.match(name))
 
 
 def _route(path: str) -> tuple[str, str] | None:
@@ -908,7 +1118,7 @@ def _route(path: str) -> tuple[str, str] | None:
     if len(parts) < 2 or parts[0] != "p" or len(parts) > 3:
         return None
     name = parts[2] if len(parts) == 3 else ""
-    if not _TOKEN.match(parts[1]) or name not in _PAGE_NAMES:
+    if not _TOKEN.match(parts[1]) or not _page_name_allowed(name):
         return None
     return parts[1], name
 
@@ -920,7 +1130,7 @@ def _fragment_route(path: str) -> tuple[str, str] | None:
     if len(parts) < 2 or parts[0] != "f" or len(parts) > 3:
         return None
     name = parts[2] if len(parts) == 3 else ""
-    if not _TOKEN.match(parts[1]) or name not in _PAGE_NAMES:
+    if not _TOKEN.match(parts[1]) or not _page_name_allowed(name):
         return None
     return parts[1], name
 
@@ -955,23 +1165,81 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                 body = json.dumps({"offset": read_sync_offset(project)}).encode("utf-8")
                 self._send(200, "application/json", body)
                 return
-            if name == "preview.wav":
+            if name == "preview.wav" or _MOV_WAV.match(name):
                 try:
                     from baroque_transcribe.preview_audio import (
                         PreviewAudioError,
+                        ensure_movement_preview_wav,
                         ensure_project_preview_wav,
                         project_audio_root,
                     )
+                    from baroque_transcribe.preview_synth import DEFAULT_PREVIEW_SOUND, resolve_preview_sound
 
-                    target = ensure_project_preview_wav(project)
+                    query = parse_qs(urlparse(self.path).query)
+                    sound_raw = (query.get("sound") or [DEFAULT_PREVIEW_SOUND])[0]
+                    sound2_raw = (query.get("sound2") or [None])[0]
+                    vol_raw = (query.get("vol") or [None])[0]
+                    vol2_raw = (query.get("vol2") or [None])[0]
+
+                    def _parse_vol(raw: str | None) -> float:
+                        if raw is None or raw == "":
+                            return 0.5
+                        try:
+                            return max(0.0, min(1.0, float(raw)))
+                        except (TypeError, ValueError):
+                            return 0.5
+
+                    try:
+                        sound = resolve_preview_sound(sound_raw).id
+                    except ValueError:
+                        sound = DEFAULT_PREVIEW_SOUND
+                    sound2 = None
+                    if sound2_raw:
+                        try:
+                            sound2 = resolve_preview_sound(sound2_raw).id
+                        except ValueError:
+                            sound2 = None
+                    volume = _parse_vol(vol_raw)
+                    volume2 = _parse_vol(vol2_raw)
+                    if name == "preview.wav":
+                        target = ensure_project_preview_wav(
+                            project,
+                            sound=sound,
+                            sound2=sound2,
+                            volume=volume,
+                            volume2=volume2,
+                        )
+                    else:
+                        movement_id = name[len("mov-") : -len(".wav")]
+                        movement = next(
+                            (
+                                row
+                                for row in _project_movements(project)
+                                if row.get("id") == movement_id
+                            ),
+                            None,
+                        )
+                        if movement is None:
+                            self.send_error(404)
+                            return
+                        target = ensure_movement_preview_wav(
+                            project,
+                            movement_id=movement_id,
+                            start_seconds=float(movement["start_seconds"]),
+                            end_seconds=float(movement["end_seconds"]),
+                            sound=sound,
+                            sound2=sound2,
+                            volume=volume,
+                            volume2=volume2,
+                        )
                     audio_root = project_audio_root()
-                except (PreviewAudioError, OSError, ValueError, RuntimeError):
+                except (PreviewAudioError, OSError, ValueError, RuntimeError, KeyError, TypeError):
                     self.send_error(404)
                     return
                 if not _within(audio_root, target):
                     self.send_error(404)
                     return
-                self._send(200, "audio/wav", target.read_bytes(), cache=True)
+                self._send_file(target, "audio/wav", cache=True)
                 return
             content_type = "text/html; charset=utf-8"
             if name == "opensheetmusicdisplay.min.js":
@@ -988,7 +1256,9 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                     return
             else:
                 try:
-                    target = server.build_playback(token)
+                    query = parse_qs(urlparse(self.path).query)
+                    movement_id = (query.get("mov") or [None])[0]
+                    target = server.build_playback(token, movement_id=movement_id)
                 except (SyncError, OSError, ValueError) as exc:
                     # Incomplete project (no notes/tempo): fall back to score-only.
                     if (project / SCORE_XML).is_file():
@@ -1154,6 +1424,59 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
             self.end_headers()
             self.wfile.write(body)
 
+        def _send_file(self, path: Path, content_type: str, cache: bool = False) -> None:
+            """Stream a file, honoring ``Range`` so HTML5 audio can seek."""
+
+            size = path.stat().st_size
+            cache_control = "public, max-age=86400" if cache else "no-store"
+            range_header = self.headers.get("Range") or ""
+            start = 0
+            end = size - 1 if size else 0
+            status = 200
+            if range_header.startswith("bytes=") and size > 0:
+                spec = range_header[len("bytes=") :].strip()
+                if "," not in spec:
+                    left, _, right = spec.partition("-")
+                    try:
+                        if left == "" and right:
+                            # suffix: last N bytes
+                            suffix = int(right)
+                            start = max(0, size - suffix)
+                        else:
+                            start = int(left) if left else 0
+                            end = int(right) if right else size - 1
+                    except ValueError:
+                        start = 0
+                        end = size - 1
+                    else:
+                        end = min(end, size - 1)
+                        if start < 0 or start > end:
+                            self.send_response(416)
+                            self.send_header("Content-Range", f"bytes */{size}")
+                            self.end_headers()
+                            return
+                        status = 206
+            length = (end - start + 1) if size else 0
+            self.send_response(status)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Accept-Ranges", "bytes")
+            self.send_header("Content-Length", str(length))
+            if status == 206:
+                self.send_header("Content-Range", f"bytes {start}-{end}/{size}")
+            self.send_header("Cache-Control", cache_control)
+            self.end_headers()
+            if length <= 0:
+                return
+            with path.open("rb") as handle:
+                handle.seek(start)
+                remaining = length
+                while remaining > 0:
+                    chunk = handle.read(min(256 * 1024, remaining))
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    remaining -= len(chunk)
+
     return Handler
 
 
@@ -1243,6 +1566,23 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     }
     label.follow { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--muted); }
     label.follow[hidden], #voice-legend[hidden] { display: none !important; }
+    .sound-tempo {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem;
+      color: var(--muted); font-size: 0.9rem;
+    }
+    .sound-tempo label,
+    .sound-tempo .voice-control { display: inline-flex; align-items: center; gap: 0.45rem; }
+    .sound-tempo input[type="range"] { width: 9rem; accent-color: var(--accent); }
+    .sound-tempo input.voice-vol { width: 6.5rem; }
+    .sound-tempo select {
+      min-width: 11rem; padding: 0.2rem 0.45rem; border: 1px solid var(--line);
+      border-radius: 6px; background: #fff; color: var(--ink); font: inherit;
+    }
+    .sound-tempo output { color: var(--ink); font-variant-numeric: tabular-nums; min-width: 4.5rem; }
+    .sound-tempo output.voice-vol-label { min-width: 2.75rem; }
+    .sound-tempo .busy { color: var(--accent-ink); font-size: 0.82rem; }
+    .sound-tempo .voice-control[hidden],
+    .sound-tempo .voice-vol-wrap[hidden] { display: none !important; }
     .sync {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.7rem;
       padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
@@ -1289,6 +1629,21 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       font-size: 10px; font-style: italic; color: var(--accent-ink);
       border-bottom: 2px solid rgba(180, 83, 9, 0.55); padding-bottom: 1px; white-space: nowrap;
     }
+    .movement-tabs {
+      display: none; flex-wrap: wrap; gap: 0.35rem; padding: 0.45rem 0 0.15rem;
+    }
+    .movement-tabs.visible { display: flex; }
+    .movement-tabs button {
+      font: inherit; font-size: 0.82rem; font-weight: 550; padding: 0.28rem 0.7rem;
+      border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); cursor: pointer;
+    }
+    .movement-tabs button:hover { border-color: var(--accent); color: var(--accent-ink); }
+    .movement-tabs button[aria-selected="true"] {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+    }
+    .movement-tabs .draft-note {
+      flex: 1 1 100%; margin: 0.15rem 0 0; color: var(--muted); font-size: 0.78rem;
+    }
   </style>
 </head>
 <body>
@@ -1305,6 +1660,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     <div class="topbar-row meta" id="meta-row" hidden>
       <span class="path" id="project-path"></span>
     </div>
+    <div class="movement-tabs" id="movement-tabs" hidden></div>
   </nav>
   <header class="stage">
     <div class="player-wrap" id="player-wrap"><div id="player"></div></div>
@@ -1320,6 +1676,33 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         <label class="follow"><input id="show-harmony" type="checkbox" checked> Harmony</label>
         <label class="follow"><input id="lead-sheet" type="checkbox"> Lead-sheet chord symbols</label>
         <label class="follow" id="color-voices-label" hidden><input id="color-voices" type="checkbox"> Color voices</label>
+      </div>
+      <div class="sound-tempo" id="sound-tempo-row">
+        <label>Tempo
+          <input id="tempo" type="range" min="50" max="150" value="100" step="5" aria-valuemin="50" aria-valuemax="150">
+          <output id="tempo-label">100%</output>
+        </label>
+        <div class="voice-control" id="instrument-wrap" hidden>
+          <span id="instrument-label">Instrument</span>
+          <select id="instrument" aria-label="Preview instrument for voice 1"></select>
+          <label class="voice-vol-wrap" id="volume1-wrap" hidden>
+            Vol
+            <input class="voice-vol" id="volume1" type="range" min="0" max="100" value="50" step="5"
+              aria-label="Volume for voice 1">
+            <output class="voice-vol-label" id="volume1-label">50%</output>
+          </label>
+        </div>
+        <div class="voice-control" id="instrument2-wrap" hidden>
+          <span id="instrument2-label">Voice 2</span>
+          <select id="instrument2" aria-label="Preview instrument for voice 2"></select>
+          <label class="voice-vol-wrap" id="volume2-wrap" hidden>
+            Vol
+            <input class="voice-vol" id="volume2" type="range" min="0" max="100" value="50" step="5"
+              aria-label="Volume for voice 2">
+            <output class="voice-vol-label" id="volume2-label">50%</output>
+          </label>
+        </div>
+        <span class="busy" id="instrument-busy" hidden>Rendering preview…</span>
       </div>
       <p id="voice-legend" class="limit" hidden>Colours mark interpreted contrapuntal voices, not hands.</p>
       <div class="sync">
@@ -1416,6 +1799,9 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     const anchors = config.anchors || [];
     const excerptStart = Number(config.excerptStart) || 0;
     let syncOffset = Number(config.syncOffset) || 0;
+    // Absolute seconds into the source media where local time 0 begins
+    // (movement pages remap the score/timeline to start at 0).
+    const mediaOffset = Number(config.mediaOffset) || 0;
     const mediaKind = config.mediaKind || (config.videoId ? "youtube" : "silent");
     const anchorByMeasure = {};
     anchors.forEach(function (anchor) { anchorByMeasure[anchor.measure] = anchor; });
@@ -1565,6 +1951,17 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       }
       if (typeof config.endTime === "number" && isFinite(config.endTime)) {
         return config.endTime + excerptStart + syncOffset;
+      }
+      return 0;
+    }
+
+    function localMediaDuration() {
+      if (typeof config.endTime === "number" && isFinite(config.endTime) && config.endTime > 0) {
+        return config.endTime + excerptStart + syncOffset;
+      }
+      const span = config.passage;
+      if (span && isFinite(Number(span.start)) && isFinite(Number(span.end))) {
+        return Math.max(0, Number(span.end) - Number(span.start)) + excerptStart + syncOffset;
       }
       return 0;
     }
@@ -2052,7 +2449,9 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       let time = Math.max(0, startAt || 0);
       let playing = false;
       let wall = 0;
+      let rate = 1;
       const duration = Math.max(
+        localMediaDuration(),
         mediaDuration(),
         (typeof config.endTime === "number" && isFinite(config.endTime) ? config.endTime : 0) + excerptStart + syncOffset
       );
@@ -2066,7 +2465,7 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       const api = {
         getCurrentTime: function () {
           if (playing) {
-            time = Math.min(duration || time + 1, time + (performance.now() - wall) / 1000);
+            time = Math.min(duration || time + 1, time + ((performance.now() - wall) / 1000) * rate);
             wall = performance.now();
             if (duration && time >= duration) {
               playing = false;
@@ -2085,7 +2484,12 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         play: function () { playing = true; wall = performance.now(); setPlayLabel(true); },
         pause: function () { playing = false; setPlayLabel(false); },
         isPlaying: function () { return playing; },
-        getPlaybackRate: function () { return 1; }
+        getPlaybackRate: function () { return rate; },
+        setPlaybackRate: function (next) {
+          rate = (typeof next === "number" && isFinite(next) && next > 0) ? next : 1;
+          if (playing) wall = performance.now();
+          playbackRate = rate;
+        }
       };
       scrub.addEventListener("input", function () {
         time = duration * (Number(scrub.value) / 1000);
@@ -2103,10 +2507,53 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       const audio = document.createElement("audio");
       audio.controls = true;
       audio.preload = "auto";
-      audio.src = config.mediaUrl || "preview.wav";
       host.appendChild(audio);
-      audio.currentTime = Math.max(0, startAt || 0);
-      audio.addEventListener("play", function () { setPlayLabel(true); syncFromPlayer(); });
+      // Local page clock starts at 0; mediaOffset maps into the full suite WAV.
+      const localDuration = localMediaDuration();
+      let pendingLocal = Math.max(0, startAt || 0);
+      let mediaBase = config.mediaUrl || "preview.wav";
+      let soundId = config.previewSound || "concert_grand";
+      let soundId2 = config.previewSound2 || soundId;
+      let volume1 = (typeof config.previewVolume === "number") ? config.previewVolume : 0.5;
+      let volume2 = (typeof config.previewVolume2 === "number") ? config.previewVolume2 : 0.5;
+      function mediaSrc() {
+        const join = mediaBase.indexOf("?") >= 0 ? "&" : "?";
+        let url = mediaBase + join + "sound=" + encodeURIComponent(soundId);
+        if (config.voiceInstruments) {
+          url += "&sound2=" + encodeURIComponent(soundId2 || soundId);
+          url += "&vol=" + Number(volume1).toFixed(2) + "&vol2=" + Number(volume2).toFixed(2);
+        }
+        return url;
+      }
+      // Overall player level defaults to 50%; per-voice gains are baked into the WAV.
+      audio.volume = 0.5;
+      audio.src = mediaSrc();
+      function absoluteFromLocal(local) {
+        return Math.max(0, mediaOffset + Math.max(0, local));
+      }
+      function localFromAbsolute(absolute) {
+        return Math.max(0, (absolute || 0) - mediaOffset);
+      }
+      function applyPendingSeek() {
+        try {
+          audio.currentTime = absoluteFromLocal(pendingLocal);
+        } catch (error) {}
+      }
+      function needsOffsetSnap() {
+        return mediaOffset > 0 && (audio.currentTime || 0) + 0.35 < mediaOffset;
+      }
+      // currentTime before enough media is buffered is often ignored; re-apply.
+      ["loadedmetadata", "canplay", "canplaythrough", "playing"].forEach(function (eventName) {
+        audio.addEventListener(eventName, function () {
+          if (needsOffsetSnap()) applyPendingSeek();
+        });
+      });
+      applyPendingSeek();
+      audio.addEventListener("play", function () {
+        if (needsOffsetSnap()) applyPendingSeek();
+        setPlayLabel(true);
+        syncFromPlayer();
+      });
       audio.addEventListener("pause", function () { setPlayLabel(false); syncFromPlayer(); });
       audio.addEventListener("ended", function () {
         setPlayLabel(false);
@@ -2116,15 +2563,72 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         }
         syncFromPlayer();
       });
-      audio.addEventListener("timeupdate", function () { syncFromPlayer(); });
+      audio.addEventListener("timeupdate", function () {
+        if (needsOffsetSnap()) {
+          applyPendingSeek();
+          return;
+        }
+        if (localDuration > 0 && localFromAbsolute(audio.currentTime) >= localDuration - 0.05) {
+          if (loopEnabled() && loopBounds()) {
+            seekToLoopStart(loopBounds());
+            if (!audio.paused) audio.play();
+            return;
+          }
+          if (!audio.paused) {
+            audio.pause();
+            setPlayLabel(false);
+          }
+        }
+        syncFromPlayer();
+      });
       return {
-        getCurrentTime: function () { return audio.currentTime || 0; },
-        getDuration: function () { return audio.duration || mediaDuration(); },
-        seek: function (seconds) { audio.currentTime = Math.max(0, seconds); },
-        play: function () { audio.play(); },
+        getCurrentTime: function () { return localFromAbsolute(audio.currentTime || 0); },
+        getDuration: function () {
+          if (localDuration > 0) return localDuration;
+          const full = audio.duration || 0;
+          return full > mediaOffset ? full - mediaOffset : full;
+        },
+        seek: function (seconds) {
+          pendingLocal = Math.max(0, seconds);
+          applyPendingSeek();
+        },
+        play: function () {
+          if (needsOffsetSnap()) applyPendingSeek();
+          audio.play();
+        },
         pause: function () { audio.pause(); },
         isPlaying: function () { return !audio.paused && !audio.ended; },
-        getPlaybackRate: function () { return audio.playbackRate || 1; }
+        getPlaybackRate: function () { return audio.playbackRate || 1; },
+        setPlaybackRate: function (next) {
+          const rate = (typeof next === "number" && isFinite(next) && next > 0) ? next : 1;
+          audio.playbackRate = rate;
+          playbackRate = rate;
+        },
+        setPreviewSound: function (nextSound, resumeAt, shouldPlay, nextSound2, nextVol, nextVol2) {
+          soundId = nextSound || soundId;
+          if (typeof nextSound2 === "string" && nextSound2) soundId2 = nextSound2;
+          if (typeof nextVol === "number" && isFinite(nextVol)) {
+            volume1 = Math.max(0, Math.min(1, nextVol));
+          }
+          if (typeof nextVol2 === "number" && isFinite(nextVol2)) {
+            volume2 = Math.max(0, Math.min(1, nextVol2));
+          }
+          pendingLocal = Math.max(0, resumeAt || 0);
+          const wasRate = audio.playbackRate || 1;
+          const wasVolume = (typeof audio.volume === "number" && isFinite(audio.volume)) ? audio.volume : 0.5;
+          audio.src = mediaSrc();
+          const onReady = function () {
+            audio.removeEventListener("canplay", onReady);
+            applyPendingSeek();
+            audio.playbackRate = wasRate;
+            playbackRate = wasRate;
+            audio.volume = wasVolume;
+            if (shouldPlay) audio.play();
+            syncFromPlayer();
+          };
+          audio.addEventListener("canplay", onReady);
+          audio.load();
+        }
       };
     }
 
@@ -2144,8 +2648,19 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
               isPlaying: function () { return player.getPlayerState() === 1; },
               getPlaybackRate: function () {
                 try { return player.getPlaybackRate() || 1; } catch (error) { return 1; }
+              },
+              setPlaybackRate: function (next) {
+                const rate = (typeof next === "number" && isFinite(next) && next > 0) ? next : 1;
+                try { player.setPlaybackRate(rate); } catch (error) {}
+                playbackRate = rate;
               }
             };
+            // Re-apply the page tempo control once the IFrame API is ready.
+            const tempoBox = document.getElementById("tempo");
+            if (tempoBox) {
+              const percent = Number(tempoBox.value) || 100;
+              transport.setPlaybackRate(percent / 100);
+            }
             syncFromPlayer();
           },
           onStateChange: function (event) {
@@ -2190,6 +2705,209 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       if (player.getPlayerState() === 1) player.pauseVideo();
       else player.playVideo();
     });
+    (function () {
+      const tempoKey = "baroque-transcribe.tempo-percent";
+      const soundKey = "baroque-transcribe.preview-sound";
+      const tempoInput = document.getElementById("tempo");
+      const tempoLabel = document.getElementById("tempo-label");
+      const instrumentWrap = document.getElementById("instrument-wrap");
+      const instrument = document.getElementById("instrument");
+      const busy = document.getElementById("instrument-busy");
+      const nominalBpm = (typeof config.nominalBpm === "number" && config.nominalBpm > 0) ? config.nominalBpm : null;
+      function paintTempo(percent) {
+        const rate = percent / 100;
+        if (nominalBpm) {
+          tempoLabel.textContent = Math.round(nominalBpm * rate) + " BPM";
+        } else {
+          tempoLabel.textContent = percent + "%";
+        }
+        tempoInput.setAttribute("aria-valuenow", String(percent));
+        tempoInput.setAttribute("aria-valuetext", tempoLabel.textContent);
+      }
+      function applyTempo(percent) {
+        const clamped = Math.max(50, Math.min(150, Math.round(percent / 5) * 5));
+        tempoInput.value = String(clamped);
+        paintTempo(clamped);
+        const rate = clamped / 100;
+        playbackRate = rate;
+        if (transport && transport.setPlaybackRate) transport.setPlaybackRate(rate);
+        else if (player && player.setPlaybackRate) {
+          try { player.setPlaybackRate(rate); } catch (error) {}
+        }
+        try { window.localStorage.setItem(tempoKey, String(clamped)); } catch (error) {}
+      }
+      let savedTempo = 100;
+      try {
+        const raw = window.localStorage.getItem(tempoKey);
+        if (raw) savedTempo = Number(raw);
+      } catch (error) {}
+      applyTempo(isFinite(savedTempo) ? savedTempo : 100);
+      tempoInput.addEventListener("input", function () { applyTempo(Number(tempoInput.value)); });
+
+      const sounds = Array.isArray(config.previewSounds) ? config.previewSounds : [];
+      const instrument2Wrap = document.getElementById("instrument2-wrap");
+      const instrument2 = document.getElementById("instrument2");
+      const volume1Wrap = document.getElementById("volume1-wrap");
+      const volume2Wrap = document.getElementById("volume2-wrap");
+      const volume1Input = document.getElementById("volume1");
+      const volume2Input = document.getElementById("volume2");
+      const volume1Label = document.getElementById("volume1-label");
+      const volume2Label = document.getElementById("volume2-label");
+      const soundKey2 = "baroque-transcribe.preview-sound-2";
+      const volKey = "baroque-transcribe.preview-vol";
+      const volKey2 = "baroque-transcribe.preview-vol-2";
+      const dualVoices = !!(config.voiceInstruments && instrument2Wrap && instrument2);
+      if (mediaKind === "audio" && sounds.length && instrumentWrap && instrument) {
+        instrumentWrap.hidden = false;
+        if (dualVoices) {
+          instrument2Wrap.hidden = false;
+          if (volume1Wrap) volume1Wrap.hidden = false;
+          if (volume2Wrap) volume2Wrap.hidden = false;
+          const label1 = document.getElementById("instrument-label");
+          const label2 = document.getElementById("instrument2-label");
+          const c1 = config.voiceColor1 || "#c62828";
+          const c2 = config.voiceColor2 || "#2e7d32";
+          if (label1) {
+            label1.innerHTML = 'Voice 1 <span style="display:inline-block;width:0.7rem;height:0.7rem;border-radius:2px;background:' + c1 + ';vertical-align:middle;"></span>';
+          }
+          if (label2) {
+            label2.innerHTML = 'Voice 2 <span style="display:inline-block;width:0.7rem;height:0.7rem;border-radius:2px;background:' + c2 + ';vertical-align:middle;"></span>';
+          }
+        }
+        let chosen = config.previewSound || "concert_grand";
+        let chosen2 = config.previewSound2 || chosen;
+        let chosenVol = Math.round(((typeof config.previewVolume === "number") ? config.previewVolume : 0.5) * 100);
+        let chosenVol2 = Math.round(((typeof config.previewVolume2 === "number") ? config.previewVolume2 : 0.5) * 100);
+        try {
+          const stored = window.localStorage.getItem(soundKey);
+          if (stored) chosen = stored;
+          const stored2 = window.localStorage.getItem(soundKey2);
+          if (stored2) chosen2 = stored2;
+          const storedVol = window.localStorage.getItem(volKey);
+          if (storedVol != null && storedVol !== "") chosenVol = Number(storedVol);
+          const storedVol2 = window.localStorage.getItem(volKey2);
+          if (storedVol2 != null && storedVol2 !== "") chosenVol2 = Number(storedVol2);
+        } catch (error) {}
+        function clampVolPercent(value) {
+          const n = Math.round(Number(value) / 5) * 5;
+          if (!isFinite(n)) return 50;
+          return Math.max(0, Math.min(100, n));
+        }
+        chosenVol = clampVolPercent(chosenVol);
+        chosenVol2 = clampVolPercent(chosenVol2);
+        function paintVol(input, label, percent) {
+          if (!input || !label) return;
+          input.value = String(percent);
+          label.textContent = percent + "%";
+          input.setAttribute("aria-valuenow", String(percent));
+          input.setAttribute("aria-valuetext", percent + "%");
+        }
+        if (dualVoices) {
+          paintVol(volume1Input, volume1Label, chosenVol);
+          paintVol(volume2Input, volume2Label, chosenVol2);
+        }
+        function fillSelect(select, value) {
+          sounds.forEach(function (sound) {
+            const option = document.createElement("option");
+            option.value = sound.id;
+            option.textContent = sound.label;
+            if (sound.id === value) option.selected = true;
+            select.appendChild(option);
+          });
+          if (![...select.options].some(function (row) { return row.value === value; })) {
+            select.value = config.previewSound || sounds[0].id;
+          }
+          return select.value;
+        }
+        chosen = fillSelect(instrument, chosen);
+        if (dualVoices) chosen2 = fillSelect(instrument2, chosen2);
+
+        function warmAndApply(next1, next2, nextVol, nextVol2) {
+          if (!(transport && transport.setPreviewSound)) return;
+          const at = transport.getCurrentTime() || 0;
+          const playing = !!transport.isPlaying();
+          if (playing) transport.pause();
+          busy.hidden = false;
+          instrument.disabled = true;
+          if (instrument2) instrument2.disabled = true;
+          if (volume1Input) volume1Input.disabled = true;
+          if (volume2Input) volume2Input.disabled = true;
+          const volA = dualVoices ? (typeof nextVol === "number" ? nextVol : chosenVol) / 100 : undefined;
+          const volB = dualVoices ? (typeof nextVol2 === "number" ? nextVol2 : chosenVol2) / 100 : undefined;
+          const base = config.mediaUrl || "preview.wav";
+          const join = base.indexOf("?") >= 0 ? "&" : "?";
+          let url = base + join + "sound=" + encodeURIComponent(next1);
+          if (dualVoices) {
+            url += "&sound2=" + encodeURIComponent(next2 || next1);
+            url += "&vol=" + Number(volA).toFixed(2) + "&vol2=" + Number(volB).toFixed(2);
+          }
+          fetch(url, {
+            method: "GET",
+            cache: "no-store",
+            headers: { Range: "bytes=0-1" }
+          }).then(function () {
+            transport.setPreviewSound(next1, at, playing, dualVoices ? next2 : undefined, volA, volB);
+          }).catch(function () {
+            transport.setPreviewSound(next1, at, playing, dualVoices ? next2 : undefined, volA, volB);
+          }).finally(function () {
+            busy.hidden = true;
+            instrument.disabled = false;
+            if (instrument2) instrument2.disabled = false;
+            if (volume1Input) volume1Input.disabled = false;
+            if (volume2Input) volume2Input.disabled = false;
+            syncFromPlayer();
+          });
+        }
+
+        // Apply stored sounds/volumes once transport exists when they differ from defaults.
+        const default1 = config.previewSound || "concert_grand";
+        const default2 = config.previewSound2 || default1;
+        const defaultVol = Math.round(((typeof config.previewVolume === "number") ? config.previewVolume : 0.5) * 100);
+        const defaultVol2 = Math.round(((typeof config.previewVolume2 === "number") ? config.previewVolume2 : 0.5) * 100);
+        const needsWarm = chosen !== default1
+          || (dualVoices && chosen2 !== default2)
+          || (dualVoices && (chosenVol !== defaultVol || chosenVol2 !== defaultVol2));
+        if (transport && transport.setPreviewSound && needsWarm) {
+          warmAndApply(chosen, chosen2, chosenVol, chosenVol2);
+        }
+        instrument.addEventListener("change", function () {
+          const next = instrument.value;
+          try { window.localStorage.setItem(soundKey, next); } catch (error) {}
+          warmAndApply(next, dualVoices ? instrument2.value : next, chosenVol, chosenVol2);
+        });
+        if (dualVoices) {
+          instrument2.addEventListener("change", function () {
+            const next2 = instrument2.value;
+            try { window.localStorage.setItem(soundKey2, next2); } catch (error) {}
+            warmAndApply(instrument.value, next2, chosenVol, chosenVol2);
+          });
+          if (volume1Input) {
+            volume1Input.addEventListener("input", function () {
+              chosenVol = clampVolPercent(volume1Input.value);
+              paintVol(volume1Input, volume1Label, chosenVol);
+            });
+            volume1Input.addEventListener("change", function () {
+              chosenVol = clampVolPercent(volume1Input.value);
+              paintVol(volume1Input, volume1Label, chosenVol);
+              try { window.localStorage.setItem(volKey, String(chosenVol)); } catch (error) {}
+              warmAndApply(instrument.value, instrument2.value, chosenVol, chosenVol2);
+            });
+          }
+          if (volume2Input) {
+            volume2Input.addEventListener("input", function () {
+              chosenVol2 = clampVolPercent(volume2Input.value);
+              paintVol(volume2Input, volume2Label, chosenVol2);
+            });
+            volume2Input.addEventListener("change", function () {
+              chosenVol2 = clampVolPercent(volume2Input.value);
+              paintVol(volume2Input, volume2Label, chosenVol2);
+              try { window.localStorage.setItem(volKey2, String(chosenVol2)); } catch (error) {}
+              warmAndApply(instrument.value, instrument2.value, chosenVol, chosenVol2);
+            });
+          }
+        }
+      }
+    })();
     document.getElementById("show-harmony").addEventListener("change", drawHarmony);
     document.getElementById("lead-sheet").addEventListener("change", drawHarmony);
     (function () {
@@ -2225,6 +2943,52 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
       const asked = /^(\\d+)(?:-(\\d+))?$/.exec(new URLSearchParams(window.location.search).get("sel") || "");
       if (asked) setSelection(Number(asked[1]), Number(asked[2] || asked[1]));
       paintSelection();
+    })();
+    (function () {
+      const movements = Array.isArray(config.movements) ? config.movements : [];
+      const host = document.getElementById("movement-tabs");
+      if (!host || movements.length < 2) return;
+      host.hidden = false;
+      host.classList.add("visible");
+      const draft = movements.some(function (row) { return String(row.status || "") === "draft"; });
+      const activeId = config.activeMovementId || new URLSearchParams(window.location.search).get("mov") || "";
+      // Tab changes reload the page so the server can embed that section's sliced score.
+      movements.forEach(function (movement) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.setAttribute("data-mov", movement.id);
+        button.setAttribute("aria-selected", movement.id === activeId ? "true" : "false");
+        button.textContent = movement.title;
+        button.addEventListener("click", function () {
+          if (movement.id === activeId) return;
+          try {
+            const url = new URL(window.location.href);
+            url.searchParams.set("mov", movement.id);
+            window.location.assign(url.toString());
+          } catch (error) {
+            window.location.search = "?mov=" + encodeURIComponent(movement.id);
+          }
+        });
+        host.appendChild(button);
+      });
+      if (draft) {
+        const note = document.createElement("p");
+        note.className = "draft-note";
+        note.textContent = "Movement tabs are a draft for review — each tab loads that section's score only.";
+        host.appendChild(note);
+      }
+      if (passage) {
+        document.getElementById("loop").checked = true;
+        const cueMovement = function () {
+          if (!(transport || (player && player.seekTo))) {
+            window.setTimeout(cueMovement, 200);
+            return;
+          }
+          seekToLoopStart(passage);
+          syncFromPlayer();
+        };
+        cueMovement();
+      }
     })();
     showOffset();
     setInterval(syncFromPlayer, 100);

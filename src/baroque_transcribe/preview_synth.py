@@ -221,6 +221,85 @@ def synthesize_preview(
     return mix.astype(np.float32)
 
 
+def synthesize_preview_by_voice(
+    notes: list[tuple[NoteEvent, int]],
+    sample_rate: int,
+    duration: float,
+    *,
+    sounds_by_voice: dict[int, str | PreviewSound],
+    default_sound: str | PreviewSound = DEFAULT_PREVIEW_SOUND,
+    volumes_by_voice: dict[int, float] | None = None,
+) -> np.ndarray:
+    """Render notes with a timbre chosen by interpreted global voice id.
+
+    ``notes`` is ``(NoteEvent, voice_id)``. Voice 1/2 map to the two instrument
+    controls; any higher voice id falls back to voice 1's sound when present,
+    else ``default_sound``. Chord tones that share one voice id share one timbre.
+
+    ``volumes_by_voice`` is linear gain in ``0..1`` (default 0.5 per voice). Each
+    voice is peak-normalized on its own stem, then scaled by its volume, then
+    summed — so the two sliders stay independent.
+    """
+
+    resolved: dict[int, PreviewSound] = {}
+    for voice_id, sound in sounds_by_voice.items():
+        resolved[int(voice_id)] = (
+            sound if isinstance(sound, PreviewSound) else resolve_preview_sound(sound)
+        )
+    fallback = (
+        default_sound
+        if isinstance(default_sound, PreviewSound)
+        else resolve_preview_sound(default_sound)
+    )
+    primary = resolved.get(1, fallback)
+    volumes = {1: 0.5, 2: 0.5}
+    if volumes_by_voice:
+        for voice_id, gain in volumes_by_voice.items():
+            try:
+                volumes[int(voice_id)] = max(0.0, min(1.0, float(gain)))
+            except (TypeError, ValueError):
+                continue
+    length = max(1, int(round(duration * sample_rate)))
+    stems: dict[int, np.ndarray] = {}
+    for note, voice_id in notes:
+        vid = int(voice_id)
+        if vid <= 0:
+            preset = primary
+            stem_id = 1
+        elif vid >= 3:
+            preset = primary
+            stem_id = 1
+        elif vid in resolved:
+            preset = resolved[vid]
+            stem_id = vid
+        else:
+            preset = resolved.get(2, primary)
+            stem_id = 2 if 2 in resolved else 1
+        start = int(round(note.onset * sample_rate))
+        end = int(round(note.offset * sample_rate))
+        start = max(0, min(length, start))
+        end = max(start + 1, min(length, end))
+        count = end - start
+        if count <= 0:
+            continue
+        stem = stems.get(stem_id)
+        if stem is None:
+            stem = np.zeros(length, dtype=np.float64)
+            stems[stem_id] = stem
+        stem[start:end] += _render_note(note, count, sample_rate, preset)
+    mix = np.zeros(length, dtype=np.float64)
+    for stem_id, stem in stems.items():
+        peak = float(np.max(np.abs(stem))) if stem.size else 0.0
+        if peak > 1e-8:
+            stem = stem * (0.9 / peak)
+        gain = volumes.get(stem_id, volumes.get(1, 0.5))
+        mix += stem * gain
+    peak = float(np.max(np.abs(mix))) if mix.size else 0.0
+    if peak > 1.0:
+        mix *= 0.98 / peak
+    return mix.astype(np.float32)
+
+
 def _render_note(note: NoteEvent, count: int, sample_rate: int, preset: PreviewSound) -> np.ndarray:
     times = np.arange(count, dtype=np.float64) / sample_rate
     frequency = 440.0 * 2.0 ** ((note.pitch - 69) / 12.0)

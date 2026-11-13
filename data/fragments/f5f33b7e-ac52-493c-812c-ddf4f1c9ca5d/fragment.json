@@ -1,0 +1,103 @@
+{
+  "schema_version": 2,
+  "id": "f5f33b7e-ac52-493c-812c-ddf4f1c9ca5d",
+  "title": "BWV 784 — BWV 784 — Invention No. 13 — mm. 1–2",
+  "description": "",
+  "practice_notes": "",
+  "tags": [
+    "bwv-784",
+    "bwv-772-786-inventions"
+  ],
+  "composer": "Johann Sebastian Bach",
+  "performer": "",
+  "source": {
+    "kind": "midi",
+    "name": "source.mid",
+    "extension": ".mid",
+    "title": "BWV 784 — Invention No. 13",
+    "sha256": "957c80795abd17c02e34fc05249cd35b50c64e763a1c8e002bb0b3575ae6e82d"
+  },
+  "parent": {
+    "project": "catalog-20261112-202636",
+    "event_id": "20261113T012636Z-86f4cf9b",
+    "lineage_id": "20261113T012636Z-86f4cf9b",
+    "base_event_id": "20261113T012636Z-86f4cf9b",
+    "base_snapshot_sha256": "502c5e7cfb6e10e0851d6dffa1dcdf6577c79726df7863693fa1683fdd8b0841",
+    "snapshot_sha256": "502c5e7cfb6e10e0851d6dffa1dcdf6577c79726df7863693fa1683fdd8b0841",
+    "revision_state": "synchronized",
+    "notes_fingerprint": "3539e97b0100eb56",
+    "analysis_sha256": "",
+    "measure_start": 1,
+    "measure_end": 2,
+    "step_start": 0,
+    "step_end": 32
+  },
+  "time": {
+    "working_audio": {
+      "start_seconds": 0.0,
+      "end_seconds": 6.0
+    },
+    "source_video": {
+      "start_seconds": 0.0,
+      "end_seconds": 6.0,
+      "excerpt_start_seconds": 0.0
+    },
+    "duration_seconds": 6.0
+  },
+  "sync": {
+    "offset_seconds": 0.0,
+    "parent_offset_at_extraction": 0.0
+  },
+  "music": {
+    "analyzed_key": {
+      "tonic": "A",
+      "mode": "minor",
+      "source": "estimated-at-extraction",
+      "confidence": 0.9221
+    },
+    "written_key_signature": {
+      "tonic": "A",
+      "mode": "minor"
+    },
+    "time_signature": "8/8",
+    "bpm": 80.0,
+    "subdivision": 16,
+    "staff_split": 60,
+    "measures": 2,
+    "parent_grid_mode": "fixed",
+    "notation_style": "literal"
+  },
+  "harmony": {
+    "roman": [],
+    "symbols": []
+  },
+  "boundary": {
+    "notes": 40,
+    "owned": 40,
+    "carried_in": 0,
+    "cut_off": 0,
+    "unprinted_overlaps": 0,
+    "pedal_down_at_start": false
+  },
+  "artifacts": {
+    "notes": "notes.json",
+    "grid": "grid.json",
+    "performance_midi": "performance.mid",
+    "quantized_midi": "quantized.mid",
+    "musicxml": "score.musicxml",
+    "harmony": null
+  },
+  "warnings": [
+    "The parent project has no harmonic analysis, so the fragment has no chord labels. The key was estimated from the parent's notes."
+  ],
+  "created_at": "2026-11-13T01:27:53Z",
+  "modified_at": "2026-11-13T01:27:53Z",
+  "catalog": {
+    "entry_id": "bwv-0784",
+    "bwv": "784",
+    "collection_id": "bwv-772-786-inventions",
+    "collection": "BWV 772-786 Inventions",
+    "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/inventions/",
+    "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de)."
+  }
+}

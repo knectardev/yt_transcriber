@@ -325,6 +325,39 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Create another project even if this exact MIDI import was already published.",
     )
 
+    catalog_preprocess = catalog_sub.add_parser(
+        "preprocess",
+        help="Import downloaded catalog MIDI into scored Library projects (resume/skip).",
+    )
+    catalog_preprocess.add_argument("--all", action="store_true", help="Preprocess every downloaded entry.")
+    catalog_preprocess.add_argument("--entry", action="append", default=[], help="One entry id. Repeatable.")
+    catalog_preprocess.add_argument(
+        "--confirm",
+        action="store_true",
+        help="Required for bulk --all preprocess.",
+    )
+    catalog_preprocess.add_argument(
+        "--keep-awake",
+        action="store_true",
+        help="Ask Windows not to sleep while this run lasts.",
+    )
+    catalog_preprocess.add_argument(
+        "--force",
+        action="store_true",
+        help="Re-import even when a scored project already exists.",
+    )
+    catalog_preprocess.add_argument("--manifest", type=Path, default=None)
+
+    catalog_movements = catalog_sub.add_parser(
+        "movements-draft",
+        help="Draft movement partitions for English/French suites and Partitas from tempo maps.",
+    )
+    catalog_movements.add_argument(
+        "--write",
+        action="store_true",
+        help="Write data/catalog/movements-draft.json and a review markdown file.",
+    )
+
     ui = sub.add_parser("ui", help="Open the local review window.")
     ui.add_argument("--port", type=int, default=DEFAULT_UI_PORT)
     ui.add_argument(
@@ -582,6 +615,67 @@ def _catalog(args: argparse.Namespace) -> int:
                 allow_duplicate=bool(args.allow_duplicate),
             )
             print(f"Opened catalog entry {args.entry_id} as {project}")
+            return 0
+        if args.catalog_command == "preprocess":
+            from baroque_transcribe.catalog_preprocess import (
+                entries_needing_preprocess,
+                preprocess_catalog,
+            )
+
+            catalog = load_catalog(path=args.manifest)
+            if args.entry:
+                entry_ids = list(args.entry)
+            elif args.all:
+                entry_ids = None
+                needed = entries_needing_preprocess(catalog)
+                if not args.confirm:
+                    print(f"Would preprocess {len(needed)} downloaded entr{'y' if len(needed) == 1 else 'ies'} that are not yet scored projects.")
+                    print("Re-run with --confirm to start.")
+                    return 2
+            else:
+                print("Give --all or one or more --entry ids.", file=sys.stderr)
+                return 2
+            print(
+                "Starting catalog preprocess"
+                + (" with keep-awake" if args.keep_awake else "")
+                + "."
+            )
+
+            def progress(index: int, total: int, result) -> None:
+                detail = result.project or result.error
+                suffix = f" ({detail})" if detail else ""
+                print(f"[{index}/{total}] {result.entry_id}: {result.action}{suffix}")
+
+            report = preprocess_catalog(
+                catalog,
+                manifest_path=args.manifest,
+                entry_ids=entry_ids,
+                force=bool(args.force),
+                keep_awake=bool(args.keep_awake),
+                on_progress=progress,
+            )
+            print(report.summary())
+            return 0 if report.ok else 1
+        if args.catalog_command == "movements-draft":
+            from baroque_transcribe.catalog_movements import (
+                build_draft_overlay,
+                movements_draft_path,
+                review_markdown,
+                write_draft_overlay,
+            )
+
+            payload = build_draft_overlay()
+            count = len(payload.get("entries") or {})
+            print(f"Drafted movements for {count} multi-movement catalog entries.")
+            if args.write:
+                path = write_draft_overlay(payload)
+                review = path.with_name("movements-draft-REVIEW.md")
+                review.write_text(review_markdown(payload), encoding="utf-8")
+                print(f"Wrote {path}")
+                print(f"Wrote {review}")
+            else:
+                print(f"Default output would be {movements_draft_path()}")
+                print("Re-run with --write to save the draft and review markdown.")
             return 0
     except (CatalogError, CatalogSyncError, MidiImportError, OSError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)

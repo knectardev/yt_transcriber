@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 76.6417,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T133507Z-964144b5",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261113-083506",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 76.64167
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "800",
+      "collection": "BWV 787-801 Sinfonias",
+      "collection_id": "bwv-787-801-sinfonias",
+      "entry_id": "bwv-0800",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/02-Sinfonien/BWV_0800.mid",
+      "pinned_sha256": "a9b69a889003fbcde91e67e40ed3cd86aa2ddb3024a95bc48d93bc081422be45",
+      "source_filename": "BWV_0800.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/sinfonias/"
+    },
+    "import_settings_sha256": "d01d65e2a617d93299371b32df18ac17254354ab7f55bcb4f491cb0c301adb84",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "quantized_grid",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "a9b69a889003fbcde91e67e40ed3cd86aa2ddb3024a95bc48d93bc081422be45"
+    },
+    "staff_assignment": "pitch_split",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 75.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 75.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 800 — Sinfonia No. 14"
+  },
+  "recorded_at": "2026-11-13T13:35:07Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T133507Z-964144b5",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "170738db673c54193658c2df760454d725d2fc93942f63737fcfb28465cd500a",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "0ac7751af53a120f759c33332050577e77168736d3decd274fdb7f99df24b80c",
+        "raw.mid": "85210061fc6e6e02cfea13a82ba7239f89f60fd4ae566d9974afc1d309865f7f",
+        "score.musicxml": "3b6768cf9ef1f52735c46056876be9ced1ea4ac3850fb4b512db64a79b762ae8",
+        "source.mid": "a9b69a889003fbcde91e67e40ed3cd86aa2ddb3024a95bc48d93bc081422be45"
+      },
+      "files": {
+        "notes.json": "65b322779addc2752b534a24f21ad0287cde3fa5440fc572b36d4769e424fed9",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "0ac7751af53a120f759c33332050577e77168736d3decd274fdb7f99df24b80c",
+        "raw.mid": "85210061fc6e6e02cfea13a82ba7239f89f60fd4ae566d9974afc1d309865f7f",
+        "score.musicxml": "8772afea1f6ce7af7c940f704ee73a9b7d626a0d480b9893876ea1c2ed36d2ad",
+        "source.mid": "a9b69a889003fbcde91e67e40ed3cd86aa2ddb3024a95bc48d93bc081422be45"
+      },
+      "project_state_sha256": "47fe9584779e091d8f689ef3aab84f43a0694c663e9933bd4497cb01384ceefb",
+      "sha256": "108e9736eebc169ce93df782751ca8f8e04b596eacb25a77fe889cb106bb1efd"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "a9b69a889003fbcde91e67e40ed3cd86aa2ddb3024a95bc48d93bc081422be45",
+    "title": "BWV 800 — Sinfonia No. 14"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}

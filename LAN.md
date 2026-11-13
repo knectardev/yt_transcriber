@@ -81,7 +81,7 @@ All of this stays where it already is:
 - Search index and generated pages: `.local\`
 - Model checkpoint: `%USERPROFILE%\.cache\baroque_transcribe\`
 
-Catalog sync and open-on-demand downloads always run on this PC. Remote browsers only trigger them; they do not store MIDI locally. **Open score** on the catalog page navigates that remote browser to the playback URL in the same tab (it does not ask for a second click). An overnight `catalog sync` can keep running while the UI stays up.
+Catalog sync and open-on-demand downloads always run on this PC. Remote browsers only trigger them; they do not store MIDI locally. **Bach catalog** is the full keyboard list; **Opened Bach** on Projects is only works you have opened from it. **Open score** navigates that browser to the playback URL in the same tab (no expand, no second button, no new tab). Catalog playback pages link **← Bach catalog** back to `/catalog`. The YouTube thumbnail list is under **Projects** and again on **Transcribe**. An overnight `catalog sync` can keep running while the UI stays up.
 
 A transcription job writes a `.transcribe-incomplete` marker in its new folder. The library hides that folder until the job finishes. If the job fails, that folder is deleted. If the process is killed, the marked folder is left in place and is not merged into another project. Restarting the app does not resume the job.
 

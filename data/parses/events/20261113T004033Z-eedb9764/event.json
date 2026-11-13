@@ -1,0 +1,178 @@
+{
+  "action": "import",
+  "audio": {
+    "diagnostics": [],
+    "source_wav": {
+      "file": "source.wav",
+      "full_duration_seconds": null,
+      "stored": false
+    },
+    "working_wav": {
+      "duration_seconds": 70.4,
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": null,
+      "file": "working.wav",
+      "sample_rate": null,
+      "stored": false
+    }
+  },
+  "error": null,
+  "excerpt": {
+    "end_seconds": null,
+    "start_seconds": null
+  },
+  "formats": {
+    "annotations_json": {
+      "file": "annotations.json",
+      "present": false,
+      "stored": false
+    },
+    "musicxml": {
+      "file": "score.musicxml",
+      "present": true,
+      "stored": true
+    },
+    "notation_html": {
+      "file": "notation.html",
+      "present": false,
+      "stored": false
+    },
+    "notes_json": {
+      "file": "notes.json",
+      "present": true,
+      "stored": true
+    },
+    "pedal_json": {
+      "file": "pedal.json",
+      "present": true,
+      "stored": true
+    },
+    "quantized_midi": {
+      "file": "quantized.mid",
+      "present": true,
+      "stored": true
+    },
+    "raw_midi": {
+      "file": "raw.mid",
+      "present": true,
+      "stored": true
+    },
+    "score_pdf": {
+      "file": "score.pdf",
+      "present": false,
+      "status": "planned",
+      "stored": false
+    },
+    "source_midi": {
+      "file": "source.mid",
+      "present": true,
+      "stored": true
+    }
+  },
+  "id": "20261113T004033Z-eedb9764",
+  "machine": "Knectar_Alien",
+  "project": "catalog-20261112-194032",
+  "project_state": {
+    "audio": {
+      "excerpt_end_seconds": null,
+      "excerpt_start_seconds": 0.0,
+      "working_duration_seconds": 70.4
+    },
+    "catalog": {
+      "attribution": "MIDI files from Tobis Notenarchiv (tobis-notenarchiv.de).",
+      "bwv": "772a",
+      "collection": "BWV 772-786 Inventions",
+      "collection_id": "bwv-772-786-inventions",
+      "entry_id": "bwv-0772a",
+      "midi_url": "https://www.tobis-notenarchiv.de/bach/10-Klavierwerke/01-Inventionen/BWV_0772a.mid",
+      "pinned_sha256": "efa04cf5c8bd75aa4b840d61822a679085d3368f763703be6497a9895d696cd4",
+      "source_filename": "BWV_0772a.mid",
+      "source_page": "https://tobis-notenarchiv.de/wp/en/bach-archive/instrumental-works/keyboard-works/inventions/"
+    },
+    "import_settings_sha256": "11918900c091e74b682bb004285c35a83ffc879cf188113b2002be2e2f289f72",
+    "model": "midi-import",
+    "notation": {
+      "score_from": "midi_tracks",
+      "settings": {
+        "chord_release_tolerance_steps": 1,
+        "cluster_ms": 30.0,
+        "extra_voice_cost": 2.5,
+        "fill_gap_steps": 1,
+        "grid": "fixed",
+        "keep_rest_steps": 2,
+        "overlap_trim_steps": 1,
+        "silence_reanchor_seconds": 1.5,
+        "style": "literal"
+      },
+      "style": "literal"
+    },
+    "source": {
+      "kind": "midi",
+      "name": "source.mid",
+      "sha256": "efa04cf5c8bd75aa4b840d61822a679085d3368f763703be6497a9895d696cd4"
+    },
+    "staff_assignment": "tracks",
+    "staff_split": 60,
+    "sync_offset_seconds": 0.0,
+    "tempo": {
+      "bpm": 75.0,
+      "constant_tempo": true,
+      "downbeat_seconds": 0.0,
+      "grid": "fixed",
+      "source": "midi",
+      "subdivision": 16,
+      "tempo_map": [
+        {
+          "bpm": 75.0,
+          "time": 0.0
+        }
+      ],
+      "time_signature": "4/4",
+      "time_signature_assumed": false,
+      "time_signature_map": [
+        {
+          "denominator": 4,
+          "numerator": 4,
+          "time": 0.0
+        }
+      ]
+    },
+    "title": "BWV 772a — Invention No. 1 – variant"
+  },
+  "recorded_at": "2026-11-13T00:40:33Z",
+  "revision": {
+    "complete_snapshot": true,
+    "lineage_id": "20261113T004033Z-eedb9764",
+    "parent_event_id": null,
+    "snapshot": {
+      "artifacts": {
+        "notes.json": "b52a37b4f28ada21be71da371462728c76cbee42782ab1524ad62b409a5cefb2",
+        "pedal.json": "21644fa09938a5fe9eeab9377bcd8e41070f3a13ca964659219b0a7110f93cb0",
+        "quantized.mid": "165bb4fce13fe954b9c2ce44e8fed01316b330f35124526fb580c65b84cadbeb",
+        "raw.mid": "0b60b76974cbb1c9f19261c336da4e8002b5757ba9b990574b62cfdbdd982c1e",
+        "score.musicxml": "a99d068f6b06e4957e3fa43cf06d3f37789fc33c4c98e767914141f73776a8e1",
+        "source.mid": "efa04cf5c8bd75aa4b840d61822a679085d3368f763703be6497a9895d696cd4"
+      },
+      "files": {
+        "notes.json": "858f0d6953315c36359f3e030621044ca7517c724347b785971a63d0813f7f96",
+        "pedal.json": "eff3d2157c290d21b9ffac94907346b52dfd89f42f72ffbbc3a903dce3f414d4",
+        "quantized.mid": "165bb4fce13fe954b9c2ce44e8fed01316b330f35124526fb580c65b84cadbeb",
+        "raw.mid": "0b60b76974cbb1c9f19261c336da4e8002b5757ba9b990574b62cfdbdd982c1e",
+        "score.musicxml": "0f43a56ddbf504b7a5515c1d4d2c072b18bd21afd95efd4bac467c313146ad89",
+        "source.mid": "efa04cf5c8bd75aa4b840d61822a679085d3368f763703be6497a9895d696cd4"
+      },
+      "project_state_sha256": "71fb187fce744eaa2e19e2d782058b62dbf041ac0bd683dfc3384ed0a09be4bf",
+      "sha256": "68a045b155d6230d50eae250d8300776502a9a65a6f1d6cf0a79315b5666d8d2"
+    }
+  },
+  "source": {
+    "extension": ".mid",
+    "kind": "midi",
+    "name": "source.mid",
+    "sha256": "efa04cf5c8bd75aa4b840d61822a679085d3368f763703be6497a9895d696cd4",
+    "title": "BWV 772a — Invention No. 1 – variant"
+  },
+  "status": "ok",
+  "version": 2,
+  "via": "midi-import"
+}
