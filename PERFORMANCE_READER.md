@@ -8,13 +8,13 @@ Configure the linked GitHub project (`knectardev/yt_transcriber`) as follows:
 
 | Setting | Value |
 | --- | --- |
-| Root Directory | `reader` |
-| Framework Preset | Other |
-| Install Command | `echo "skip install"` (from `reader/vercel.json`) |
-| Build Command | `echo "static reader; no desktop Python"` |
-| Output Directory | `.` |
+| Framework Preset | **Other** (not Python) |
+| Root Directory | empty / repository root **or** `reader` |
+| Install / Build / Output | Prefer repo-root [`vercel.json`](vercel.json): no-op install/build, `outputDirectory: "reader"` |
 
-Vercel must **never** install or execute the desktop Python application. There is no Python entrypoint on purpose. A root-level deploy that detects `pyproject.toml` and looks for `app.py` is misconfigured.
+If Root Directory is set to `reader`, then Output Directory is `.` and [`reader/vercel.json`](reader/vercel.json) applies instead.
+
+Vercel must **never** install or execute the desktop Python application. There is no Python entrypoint on purpose. If the project still shows a Python icon / `PYTHON_ENTRYPOINT_NOT_FOUND`, open **Settings → General → Framework Preset → Other**, save, then **Redeploy**.
 
 ## Publishing mechanism (v1)
 

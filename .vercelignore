@@ -1,0 +1,18 @@
+# Deploy only the static reader partition. Keep the desktop Python app off Vercel.
+.venv
+src
+tests
+transcriptions
+data
+catalog
+scripts
+*.md
+!PERFORMANCE_READER.md
+pyproject.toml
+requirements*.txt
+todo.txt
+notes.txt
+.local
+.cursor
+.pytest_cache
+__pycache__

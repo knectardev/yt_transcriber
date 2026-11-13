@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "echo \"skip install — static reader only\"",
+  "buildCommand": "echo \"static reader; no desktop Python\"",
+  "outputDirectory": "reader"
+}
