@@ -338,6 +338,55 @@ def youtube_video_id(url: str) -> str | None:
     return ident
 
 
+def youtube_start_seconds(url: str) -> float:
+    """Seconds named by a YouTube ``t`` or ``start`` parameter, otherwise 0.
+
+    Accepts a bare number of seconds (``t=90``, ``t=90.5``) and a clock
+    (``t=1m30s``, ``t=1h2m3s``, ``t=1m30``). A URL that is not a YouTube
+    video is 0, the same as a video link with no time.
+    """
+
+    raw = (url or "").strip()
+    if youtube_video_id(raw) is None:
+        return 0.0
+    parsed = urlparse(raw)
+    query = parse_qs(parsed.query)
+    fragment = parse_qs(parsed.fragment)
+    for bag in (query, fragment):
+        for key in ("t", "start"):
+            for candidate in bag.get(key) or []:
+                seconds = _parse_youtube_clock(candidate)
+                if seconds is not None:
+                    return seconds
+    return 0.0
+
+
+def _parse_youtube_clock(value: str) -> float | None:
+    """YouTube's ``t`` value: ``90``, ``90.5``, ``1m30s``, ``1h2m3s``, or ``1m30``."""
+
+    text = (value or "").strip().lower()
+    if not text:
+        return None
+    if re.fullmatch(r"\d+(?:\.\d+)?", text):
+        return float(text)
+    if re.fullmatch(r"(?:\d+(?:\.\d+)?[hms])+", text):
+        hours = minutes = 0
+        seconds = 0.0
+        for number, unit in re.findall(r"(\d+(?:\.\d+)?)([hms])", text):
+            amount = float(number)
+            if unit == "h":
+                hours = int(amount)
+            elif unit == "m":
+                minutes = int(amount)
+            else:
+                seconds = amount
+        return hours * 3600 + minutes * 60 + seconds
+    match = re.fullmatch(r"(?:(\d+)h)?(?:(\d+)m)?(\d+(?:\.\d+)?)?", text)
+    if match is None or (match.group(1) is None and match.group(2) is None):
+        return None
+    return int(match.group(1) or 0) * 3600 + int(match.group(2) or 0) * 60 + float(match.group(3) or 0)
+
+
 def project_youtube_id(manifest: dict) -> str | None:
     """Video id for a project: an attached URL, or the transcription origin.
 

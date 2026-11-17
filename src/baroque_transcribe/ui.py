@@ -59,6 +59,7 @@ from baroque_transcribe.playback import (
     set_request_host,
     shared_playback_server,
     write_youtube_url,
+    youtube_start_seconds,
     youtube_video_id,
 )
 from baroque_transcribe.project_manifest import load_project_manifest
@@ -720,6 +721,305 @@ def _revision_controls(project: Path, run: Run) -> None:
                 st.rerun()
 
 
+def _youtube_excerpt_html(video_id: str, cue_seconds: float) -> str:
+    """Player for the transcribe form. Start and End are filled from the playhead.
+
+    The markup depends only on the video id and a cue time taken from the URL.
+    Putting the Start or End field into this string would rebuild the player
+    every time those fields change, and the video would jump back.
+    """
+
+    if youtube_video_id(f"https://youtu.be/{video_id}") != video_id:
+        raise ValueError("Not a YouTube video id.")
+    config = json.dumps(
+        {"videoId": video_id, "cue": max(0.0, round(float(cue_seconds), 3))},
+        separators=(",", ":"),
+    ).replace("<", "\\u003c")
+    return _YOUTUBE_EXCERPT_HTML.replace("__CONFIG__", config)
+
+
+# The buttons write the YouTube playhead into the Start and End text inputs
+# (``.st-key-start`` / ``.st-key-end``). Those fields are ``live="0s"``, so the
+# input event is saved at once. The delayed blur covers a field that only
+# saves when it loses focus.
+_YOUTUBE_EXCERPT_HTML = """
+<style>
+  .bt-yt { width: min(100%, 800px); margin: 0.15rem 0 0.85rem; }
+  .bt-yt-hint { margin: 0 0 0.45rem; color: #6b6560; font-size: 0.92rem; line-height: 1.45; }
+  .bt-yt-frame {
+    position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 180px;
+    background: #1c1917; border-radius: 8px; overflow: hidden;
+  }
+  .bt-yt-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .bt-yt-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; margin-top: 0.55rem; }
+  .bt-yt-clock {
+    font-variant-numeric: tabular-nums;
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-size: 1.08rem; min-width: 8.5rem; color: #1c1917;
+  }
+  .bt-yt-bar button {
+    font: inherit; font-size: 0.88rem; font-weight: 650;
+    padding: 0.38rem 0.8rem; border-radius: 0.5rem; cursor: pointer;
+    border: 1px solid #b45309;
+  }
+  .bt-yt-bar button[data-act="start"],
+  .bt-yt-bar button[data-act="end"] { background: #b45309; color: #fffdf9; }
+  .bt-yt-bar button[data-act="preview"] { background: #fffdf9; color: #7c3a07; }
+  .bt-yt-bar button:disabled { opacity: 0.45; cursor: default; }
+  .bt-yt-note { margin: 0.35rem 0 0; min-height: 1.2em; color: #6b6560; font-size: 0.88rem; }
+</style>
+<div class="bt-yt" data-bt-yt="1">
+  <p class="bt-yt-hint">Play the video and move to the moment you want. Set start and Set end copy that time into the fields below. Preview plays from Start and stops at End.</p>
+  <div class="bt-yt-frame"><div class="bt-yt-mount"></div></div>
+  <div class="bt-yt-bar">
+    <span class="bt-yt-clock" aria-live="polite">0:00</span>
+    <button type="button" data-act="start" disabled>Set start</button>
+    <button type="button" data-act="end" disabled>Set end</button>
+    <button type="button" data-act="preview" disabled>Preview excerpt</button>
+  </div>
+  <p class="bt-yt-note" role="status"></p>
+</div>
+<script>
+(function () {
+  var script = document.currentScript;
+  var root = script && script.previousElementSibling;
+  if (!root || root.getAttribute("data-bt-yt") !== "1") return;
+  if (root.getAttribute("data-mounted") === "1") return;
+  root.setAttribute("data-mounted", "1");
+
+  var config = __CONFIG__;
+  var clock = root.querySelector(".bt-yt-clock");
+  var note = root.querySelector(".bt-yt-note");
+  var buttons = root.querySelectorAll("button[data-act]");
+  var previewEnd = null;
+  var player = null;
+  var failed = false;
+
+  function setNote(text) { if (note) note.textContent = text || ""; }
+
+  function formatClock(seconds) {
+    var clamped = Math.max(0, Number(seconds) || 0);
+    var tenths = Math.round(clamped * 10);
+    var frac = tenths % 10;
+    var whole = Math.floor(tenths / 10);
+    var hours = Math.floor(whole / 3600);
+    var minutes = Math.floor((whole % 3600) / 60);
+    var secs = whole % 60;
+    var body = hours
+      ? hours + ":" + String(minutes).padStart(2, "0") + ":" + String(secs).padStart(2, "0")
+      : minutes + ":" + String(secs).padStart(2, "0");
+    return frac ? body + "." + frac : body;
+  }
+
+  function parseClock(text) {
+    var raw = String(text || "").trim();
+    if (!raw) return null;
+    var parts = raw.split(":");
+    var numbers = parts.map(Number);
+    if (numbers.some(function (n) { return !isFinite(n) || n < 0; })) return null;
+    if (parts.length === 1) return numbers[0];
+    if (parts.length === 2) return numbers[0] * 60 + numbers[1];
+    if (parts.length === 3) return numbers[0] * 3600 + numbers[1] * 60 + numbers[2];
+    return null;
+  }
+
+  function fieldInput(key) {
+    var box = document.querySelector(".st-key-" + key);
+    return box ? box.querySelector("input") : null;
+  }
+
+  function remember() {
+    if (!player || typeof player.getCurrentTime !== "function") return;
+    var playing = false;
+    var time = 0;
+    try {
+      time = player.getCurrentTime() || 0;
+      playing = player.getPlayerState && player.getPlayerState() === 1;
+    } catch (err) { return; }
+    try {
+      sessionStorage.setItem("bt-yt-playhead", JSON.stringify({
+        videoId: config.videoId, time: time, at: Date.now(), playing: !!playing
+      }));
+    } catch (err) {}
+  }
+
+  function savedPlayhead() {
+    try {
+      var data = JSON.parse(sessionStorage.getItem("bt-yt-playhead") || "null");
+      if (!data || data.videoId !== config.videoId) return null;
+      if (typeof data.time !== "number" || data.time < 0) return null;
+      if (Date.now() - Number(data.at || 0) > 4000) return null;
+      return data;
+    } catch (err) { return null; }
+  }
+
+  function writeField(key, formatted) {
+    var input = fieldInput(key);
+    if (!input) {
+      setNote("The " + (key === "start" ? "Start" : "End") + " field is not on the page.");
+      return false;
+    }
+    if (input.value === formatted) return true;
+    var descriptor = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value");
+    if (input._valueTracker) input._valueTracker.setValue(formatted === "" ? "x" : "");
+    descriptor.set.call(input, formatted);
+    var typed;
+    try {
+      typed = new InputEvent("input", { bubbles: true, inputType: "insertText", data: formatted });
+    } catch (err) {
+      typed = new Event("input", { bubbles: true });
+    }
+    input.dispatchEvent(typed);
+    // Blur after React has stored the new text. Blurring in this turn commits the previous value.
+    setTimeout(function () {
+      try { input.focus({ preventScroll: true }); } catch (err) { try { input.focus(); } catch (e2) {} }
+      input.blur();
+    }, 50);
+    return true;
+  }
+
+  function currentTime() {
+    try { return player && player.getCurrentTime ? (player.getCurrentTime() || 0) : 0; }
+    catch (err) { return 0; }
+  }
+
+  function tick() {
+    if (!player) return;
+    var now = currentTime();
+    var duration = 0;
+    try { duration = player.getDuration ? (player.getDuration() || 0) : 0; } catch (err) { duration = 0; }
+    if (clock) clock.textContent = duration > 0 ? formatClock(now) + " / " + formatClock(duration) : formatClock(now);
+    if (previewEnd != null && now >= previewEnd - 0.08) {
+      previewEnd = null;
+      try { player.pauseVideo(); } catch (err) {}
+      setNote("Paused at the end of the excerpt.");
+    }
+    remember();
+  }
+
+  function mark(key) {
+    if (!player) return;
+    var formatted = formatClock(currentTime());
+    if (!writeField(key, formatted)) return;
+    if (key === "end") {
+      var startInput = fieldInput("start");
+      var start = parseClock(startInput && startInput.value);
+      if (start != null && currentTime() + 0.05 < start) {
+        setNote("End " + formatted + " is earlier than Start.");
+        return;
+      }
+    }
+    setNote((key === "start" ? "Start" : "End") + " set to " + formatted + ".");
+    remember();
+  }
+
+  function preview() {
+    if (!player) return;
+    var startInput = fieldInput("start");
+    var endInput = fieldInput("end");
+    var start = parseClock(startInput && startInput.value);
+    var end = parseClock(endInput && endInput.value);
+    if (start == null) start = 0;
+    if (end != null && end <= start) {
+      setNote("End is not after Start, so there is nothing to preview.");
+      return;
+    }
+    previewEnd = end;
+    player.seekTo(start, true);
+    player.playVideo();
+    setNote(end == null ? "Playing from Start." : "Playing from Start through End.");
+    remember();
+  }
+
+  root.querySelector('[data-act="start"]').addEventListener("click", function () { mark("start"); });
+  root.querySelector('[data-act="end"]').addEventListener("click", function () { mark("end"); });
+  root.querySelector('[data-act="preview"]').addEventListener("click", preview);
+
+  function cueAt() {
+    var saved = savedPlayhead();
+    if (saved) return saved;
+    var startInput = fieldInput("start");
+    var fromField = parseClock(startInput && startInput.value);
+    var cue = (fromField && fromField > 0) ? fromField : (Number(config.cue) || 0);
+    return { time: Math.max(0, cue), playing: false, fresh: true };
+  }
+
+  function mount() {
+    if (window.__btYt && window.__btYt.timer) clearInterval(window.__btYt.timer);
+    if (window.__btYt && window.__btYt.player && window.__btYt.player.destroy) {
+      try { window.__btYt.player.destroy(); } catch (err) {}
+    }
+    var mountNode = root.querySelector(".bt-yt-mount");
+    if (!mountNode || !window.YT || !window.YT.Player) return;
+    window.__btYt = { player: null, timer: null, videoId: config.videoId };
+    var where = cueAt();
+    player = new YT.Player(mountNode, {
+      width: "100%",
+      height: "100%",
+      videoId: config.videoId,
+      playerVars: {
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        origin: window.location.origin,
+        start: Math.floor(where.time || 0)
+      },
+      events: {
+        onReady: function (event) {
+          player = event.target;
+          window.__btYt.player = player;
+          if (failed) return;
+          var place = cueAt();
+          try {
+            if (Math.abs((player.getCurrentTime() || 0) - (place.time || 0)) > 0.6) {
+              player.seekTo(place.time || 0, true);
+            }
+            if (place.playing) player.playVideo();
+          } catch (err) {}
+          buttons.forEach(function (button) { button.disabled = false; });
+          setNote("");
+          tick();
+        },
+        onStateChange: function () { tick(); },
+        onError: function (event) {
+          failed = true;
+          buttons.forEach(function (button) { button.disabled = true; });
+          var code = event && event.data;
+          if (code === 101 || code === 150) {
+            setNote("This video cannot be embedded. Open it on YouTube to read the times, or type Start and End.");
+          } else {
+            setNote("This video did not load in the player. You can still type Start and End.");
+          }
+        }
+      }
+    });
+    window.__btYt.player = player;
+    window.__btYt.timer = setInterval(tick, 200);
+  }
+
+  setNote("Loading the YouTube player…");
+  if (window.YT && window.YT.Player) {
+    mount();
+    return;
+  }
+  var previous = window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady = function () {
+    if (typeof previous === "function") previous();
+    mount();
+  };
+  if (!document.querySelector("script[src*='youtube.com/iframe_api']")) {
+    var api = document.createElement("script");
+    api.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(api);
+  }
+  setTimeout(function () {
+    if (!player) setNote("The YouTube player did not load. You can still type Start and End.");
+  }, 12000);
+})();
+</script>
+"""
+
+
 def _transcribe_panel() -> None:
     import streamlit as st
 
@@ -736,7 +1036,12 @@ def _transcribe_panel() -> None:
     main, side = st.columns([3, 2], gap="medium")
     with main:
         if kind == "YouTube URL":
-            youtube = st.text_input("YouTube URL", placeholder="https://youtu.be/…", key="youtube_url")
+            youtube = st.text_input(
+                "YouTube URL",
+                placeholder="https://youtu.be/…",
+                key="youtube_url",
+                help="A watch, share, or embed link. Leave this field and the video appears here so you can mark the excerpt.",
+            )
         elif kind == "Local file":
             local_path = st.text_input("WAV, MP3, or FLAC path", key="local_path")
         else:
@@ -752,18 +1057,61 @@ def _transcribe_panel() -> None:
             ),
         )
 
+    video_id = youtube_video_id(youtube) if kind == "YouTube URL" and youtube.strip() else None
+    if video_id:
+        st.html(_youtube_excerpt_html(video_id, youtube_start_seconds(youtube)), unsafe_allow_javascript=True)
+        start_col, end_col = st.columns(2)
+        start = start_col.text_input(
+            "Start",
+            value="0",
+            key="start",
+            live="0s",
+            help="Seconds, M:SS, or H:MM:SS. Set start on the player fills this from the playhead.",
+        )
+        end = end_col.text_input(
+            "End",
+            value="",
+            key="end",
+            live="0s",
+            help="Leave empty to keep going until the video ends. Set end on the player fills this from the playhead.",
+        )
+    elif kind == "YouTube URL" and youtube.strip():
+        st.caption("That is not a YouTube URL, so there is no player to mark times on.")
+
     with st.expander("Excerpt and notation settings", expanded=False):
-        a, b, c, d = st.columns(4)
-        start = a.text_input("Start", value="0", key="start", help="Seconds, M:SS, or H:MM:SS.")
-        end = b.text_input("End", value="", key="end", help="Leave empty to keep going until the file ends.")
-        model = c.selectbox("Model", ["bytedance", "basic-pitch"], key="model")
-        device = d.selectbox("Device", ["auto", "cpu", "cuda"], key="device")
-        e, f, g, h, i = st.columns(5)
-        tempo = e.text_input("Tempo", value="auto", key="tempo", help="BPM, or auto.")
-        meter = f.text_input("Time signature", value="", key="meter", help="Leave empty to assume 4/4.")
-        subdivision = g.selectbox("Subdivision", [16, 8, 32], index=0, key="subdivision")
-        downbeat = h.text_input("Downbeat", value="0", key="downbeat", help="Seconds into the excerpt of the first strong beat.")
-        staff_split = i.number_input("Treble from MIDI pitch", min_value=21, max_value=108, value=60, key="staff_split")
+        if video_id:
+            c, d, e, f = st.columns(4)
+            model = c.selectbox("Model", ["bytedance", "basic-pitch"], key="model")
+            device = d.selectbox("Device", ["auto", "cpu", "cuda"], key="device")
+            tempo = e.text_input("Tempo", value="auto", key="tempo", help="BPM, or auto.")
+            meter = f.text_input("Time signature", value="", key="meter", help="Leave empty to assume 4/4.")
+            g, h, i = st.columns(3)
+            subdivision = g.selectbox("Subdivision", [16, 8, 32], index=0, key="subdivision")
+            downbeat = h.text_input(
+                "Downbeat",
+                value="0",
+                key="downbeat",
+                help="Seconds into the excerpt of the first strong beat.",
+            )
+            staff_split = i.number_input(
+                "Treble from MIDI pitch",
+                min_value=21,
+                max_value=108,
+                value=60,
+                key="staff_split",
+            )
+        else:
+            a, b, c, d = st.columns(4)
+            start = a.text_input("Start", value="0", key="start", help="Seconds, M:SS, or H:MM:SS.")
+            end = b.text_input("End", value="", key="end", help="Leave empty to keep going until the file ends.")
+            model = c.selectbox("Model", ["bytedance", "basic-pitch"], key="model")
+            device = d.selectbox("Device", ["auto", "cpu", "cuda"], key="device")
+            e, f, g, h, i = st.columns(5)
+            tempo = e.text_input("Tempo", value="auto", key="tempo", help="BPM, or auto.")
+            meter = f.text_input("Time signature", value="", key="meter", help="Leave empty to assume 4/4.")
+            subdivision = g.selectbox("Subdivision", [16, 8, 32], index=0, key="subdivision")
+            downbeat = h.text_input("Downbeat", value="0", key="downbeat", help="Seconds into the excerpt of the first strong beat.")
+            staff_split = i.number_input("Treble from MIDI pitch", min_value=21, max_value=108, value=60, key="staff_split")
 
     button_col, hint_col = st.columns([1, 4], vertical_alignment="center")
     run_clicked = button_col.button("Transcribe", type="primary", width="stretch")

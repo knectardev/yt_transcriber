@@ -10,7 +10,9 @@ from baroque_transcribe.audio import parse_timestamp, prepare_audio, slugify
 def test_parse_timestamp_accepts_clock_times():
     assert parse_timestamp("90") == 90
     assert parse_timestamp("1:30") == 90
+    assert parse_timestamp("1:30.4") == 90.4
     assert parse_timestamp("1:02:03") == 3723
+    assert parse_timestamp("1:02:03.5") == 3723.5
     assert parse_timestamp(None) is None
     assert parse_timestamp("") is None
 

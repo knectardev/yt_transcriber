@@ -15,6 +15,7 @@ from baroque_transcribe.playback import (
     write_youtube_url,
     youtube_embed_html,
     youtube_project_for_midi,
+    youtube_start_seconds,
     youtube_video_id,
 )
 from baroque_transcribe.schema import SCHEMA_VERSION
@@ -28,6 +29,21 @@ def test_youtube_ids_from_watch_share_and_embed_urls():
     assert youtube_video_id("https://www.youtube.com/live/abcdefghijk") == "abcdefghijk"
     assert youtube_video_id("not a url") is None
     assert youtube_video_id("https://youtu.be/short") is None
+
+
+def test_youtube_start_seconds_from_t_and_start_params():
+    assert youtube_start_seconds("https://youtu.be/abcdefghijk") == 0
+    assert youtube_start_seconds("https://www.youtube.com/watch?v=abcdefghijk&t=90") == 90
+    assert youtube_start_seconds("https://www.youtube.com/watch?v=abcdefghijk&t=90.5") == 90.5
+    assert youtube_start_seconds("https://www.youtube.com/watch?v=abcdefghijk&t=90s") == 90
+    assert youtube_start_seconds("https://www.youtube.com/watch?v=abcdefghijk&t=1m30s") == 90
+    assert youtube_start_seconds("https://www.youtube.com/watch?v=abcdefghijk&t=1m30") == 90
+    assert youtube_start_seconds("https://www.youtube.com/watch?v=abcdefghijk&t=1h2m3s") == 3723
+    assert youtube_start_seconds("https://www.youtube.com/watch?v=abcdefghijk&start=12") == 12
+    assert youtube_start_seconds("https://youtu.be/abcdefghijk?t=1m2s") == 62
+    assert youtube_start_seconds("https://youtu.be/abcdefghijk#t=15s") == 15
+    assert youtube_start_seconds("not a url") == 0
+    assert youtube_start_seconds("https://www.youtube.com/watch?v=abcdefghijk&t=nope") == 0
 
 
 def test_embed_html_cues_the_excerpt_start():
