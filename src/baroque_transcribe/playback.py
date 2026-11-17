@@ -23,6 +23,7 @@ from urllib.parse import parse_qs, quote, urlparse
 from baroque_transcribe.analysis import analysis_is_stale, load_analysis
 from baroque_transcribe.defaults import (
     ANNOTATIONS_JSON,
+    FRAGMENT_JSON,
     LOCAL_DIR,
     MANIFEST,
     NOTATION_MAP_JSON,
@@ -466,6 +467,9 @@ class PlaybackContext:
     # Add to a movement-local measure number to get the suite measure used by
     # fragment extract (``local + base``). Zero on full-piece pages.
     source_measure_base: int = 0
+    # Separate instrument and volume for voice 1 and voice 2. Projects infer
+    # this from notation_map.json; a fragment sets it from its grid.
+    voice_instruments: bool = False
 
 
 def score_end_time(quantization: Quantization) -> float:
@@ -667,6 +671,33 @@ def extract_page_url(home_url: str, project: Path) -> str:
     return f"{home_url.rstrip('/')}/extract?project={quote(project_param(project))}"
 
 
+def _nominal_bpm(project: Path) -> float | None:
+    """Written tempo for the playback slider, from a project or a fragment."""
+
+    for filename in (MANIFEST, FRAGMENT_JSON):
+        path = Path(project) / filename
+        if not path.is_file():
+            continue
+        try:
+            manifest = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            continue
+        if not isinstance(manifest, dict):
+            continue
+        tempo = manifest.get("tempo") if isinstance(manifest.get("tempo"), dict) else {}
+        music = manifest.get("music") if isinstance(manifest.get("music"), dict) else {}
+        raw = tempo.get("bpm")
+        if raw in (None, "", 0):
+            raw = music.get("bpm")
+        try:
+            bpm = float(raw)
+        except (TypeError, ValueError):
+            continue
+        if bpm > 0:
+            return bpm
+    return None
+
+
 def write_playback_page(
     context: PlaybackContext,
     dest: Path,
@@ -717,14 +748,7 @@ def write_playback_page(
     )
     from baroque_transcribe.preview_synth import DEFAULT_PREVIEW_SOUND, PREVIEW_SOUNDS
 
-    nominal_bpm = None
-    try:
-        manifest = json.loads((context.project / MANIFEST).read_text(encoding="utf-8"))
-        bpm = (manifest.get("tempo") or {}).get("bpm")
-        if isinstance(bpm, (int, float)) and float(bpm) > 0:
-            nominal_bpm = float(bpm)
-    except (OSError, TypeError, ValueError, json.JSONDecodeError):
-        nominal_bpm = None
+    nominal_bpm = _nominal_bpm(context.project)
     config = json.dumps(
         {
             "videoId": context.video_id,
@@ -736,9 +760,12 @@ def write_playback_page(
             "previewVolume": 0.5,
             "previewVolume2": 0.5,
             "voiceInstruments": bool(
-                voices_path is not None
-                and voices_path.is_file()
-                and (context.project / NOTATION_MAP_JSON).is_file()
+                context.voice_instruments
+                or (
+                    voices_path is not None
+                    and voices_path.is_file()
+                    and (context.project / NOTATION_MAP_JSON).is_file()
+                )
             ),
             "voiceColor1": "#c62828",
             "voiceColor2": "#2e7d32",
@@ -1179,7 +1206,7 @@ class PlaybackServer:
     def build_fragment_notation(self, token: str) -> Path:
         """Write a fragment's static score page from its files as they are now."""
 
-        from baroque_transcribe.fragment_pages import fragment_has_video, write_fragment_notation
+        from baroque_transcribe.fragment_pages import write_fragment_notation
 
         folder = self.fragment_for(token)
         if folder is None:
@@ -1189,7 +1216,7 @@ class PlaybackServer:
                 folder,
                 self._fragment_pages(),
                 home_url=self.home_url,
-                playback_url=self.fragment_url(token) if fragment_has_video(folder) else None,
+                playback_url=self.fragment_url(token),
             )
 
     def build_notation(self, token: str) -> Path:
@@ -1456,6 +1483,53 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                     return
                 self._send(200, "text/javascript; charset=utf-8", body)
                 return
+            if name == "preview.wav":
+                try:
+                    from baroque_transcribe.fragments import ensure_fragment_preview_wav, fragment_audio_root
+                    from baroque_transcribe.preview_synth import DEFAULT_PREVIEW_SOUND, resolve_preview_sound
+
+                    query = parse_qs(urlparse(self.path).query)
+                    sound_raw = (query.get("sound") or [DEFAULT_PREVIEW_SOUND])[0]
+                    sound2_raw = (query.get("sound2") or [None])[0]
+                    vol_raw = (query.get("vol") or [None])[0]
+                    vol2_raw = (query.get("vol2") or [None])[0]
+
+                    def _parse_vol(raw: str | None) -> float:
+                        if raw is None or raw == "":
+                            return 0.5
+                        try:
+                            return max(0.0, min(1.0, float(raw)))
+                        except (TypeError, ValueError):
+                            return 0.5
+
+                    try:
+                        sound = resolve_preview_sound(sound_raw).id
+                    except ValueError:
+                        sound = DEFAULT_PREVIEW_SOUND
+                    sound2 = None
+                    if sound2_raw:
+                        try:
+                            sound2 = resolve_preview_sound(sound2_raw).id
+                        except ValueError:
+                            sound2 = None
+                    pages = server._fragment_pages()
+                    target = ensure_fragment_preview_wav(
+                        folder,
+                        sound=sound,
+                        sound2=sound2,
+                        volume=_parse_vol(vol_raw),
+                        volume2=_parse_vol(vol2_raw),
+                        local=pages.parent,
+                    )
+                    audio_root = fragment_audio_root(pages.parent)
+                except (OSError, ValueError, RuntimeError, KeyError, TypeError):
+                    self.send_error(404)
+                    return
+                if not _within(audio_root, target):
+                    self.send_error(404)
+                    return
+                self._send_file(target, "audio/wav", cache=True)
+                return
             if name == "notation.html":
                 try:
                     target = server.build_fragment_notation(token)
@@ -1466,8 +1540,7 @@ def _handler_class(server: PlaybackServer) -> type[BaseHTTPRequestHandler]:
                 try:
                     target = server.build_fragment_playback(token)
                 except (SyncError, OSError, ValueError) as exc:
-                    # A fragment of a local recording has no video to follow:
-                    # its score, with the harmony, is its page.
+                    # The player could not be built. The static score is the fallback.
                     if fragment_has_score(folder):
                         self._redirect(f"/f/{token}/notation.html" + self._query())
                     else:
@@ -1682,6 +1755,15 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     #player .silent-meter { width: 100%; color: var(--muted); font-size: 0.9rem; }
     #scrub { width: 100%; margin-top: 0.45rem; }
     .controls { display: flex; flex-direction: column; gap: 0.8rem; min-width: 0; }
+    details.more-controls {
+      border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+      padding: 0.4rem 0.75rem;
+    }
+    details.more-controls > summary {
+      cursor: pointer; color: var(--ink); font-size: 0.9rem; font-weight: 600;
+    }
+    details.more-controls[open] > summary { margin-bottom: 0.75rem; }
+    .more-controls-body { display: flex; flex-direction: column; gap: 0.8rem; }
     .transport { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; }
     .transport.clock-row { flex-wrap: nowrap; }
     .transport.toggles-row { gap: 0.55rem 0.85rem; }
@@ -1809,6 +1891,9 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         <span id="clock">0:00 / 0:00</span>
         <span id="measure-label">Measure —</span>
       </div>
+      <details id="more-controls" class="more-controls">
+        <summary>More controls</summary>
+        <div class="more-controls-body">
       <div class="transport toggles-row">
         <label class="follow"><input id="follow" type="checkbox" checked> Follow score</label>
         <label class="follow"><input id="highlight-notes" type="checkbox"> Highlight notes</label>
@@ -1867,8 +1952,8 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
         <button id="clear-passage" type="button" hidden>Clear</button>
         <a id="extract-link" href="#" target="_top" hidden>Extract fragment&hellip;</a>
       </div>
-      <p class="limit" id="follow-help">The highlighted measure follows the transport. Scroll the score to look around — that turns off Follow score so playback stops forcing the viewport; tick Follow score again to resume. Turn on Highlight notes for a small attack dot above the staff (pitch names stay in the measure label). Notation earlier/later move the cursor. Click a measure to jump there; with Highlight notes on, click the attack dot to seek to that onset.</p>
-      <p class="limit" id="passage-help">To mark a passage, choose Select passage, then click its first measure and its last; the − and + buttons move either end by a measure. While selecting, a click marks a measure and does not seek. Choose the button again to go back to jumping. Loop replays the passage at whatever speed the player is set to, between the estimated starts of its measures.</p>
+        </div>
+      </details>
       <p id="player-error" class="limit" hidden>This video cannot be embedded. The working audio is still on the transcription page.</p>
     </div>
   </header>
@@ -1884,6 +1969,14 @@ _PLAYBACK_TEMPLATE = """<!DOCTYPE html>
     (function () {
       const params = new URLSearchParams(window.location.search);
       if (params.get("embed") === "1") document.body.classList.add("embed");
+      const more = document.getElementById("more-controls");
+      const moreKey = "baroque-transcribe.more-controls";
+      if (more) {
+        try { if (window.localStorage.getItem(moreKey) === "1") more.open = true; } catch (error) {}
+        more.addEventListener("toggle", function () {
+          try { window.localStorage.setItem(moreKey, more.open ? "1" : "0"); } catch (error) {}
+        });
+      }
       const home = document.getElementById("home-link");
       if (config.homeUrl) {
         home.href = config.homeUrl;

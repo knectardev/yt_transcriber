@@ -38,7 +38,6 @@ from baroque_transcribe.fragment_index import (
 from baroque_transcribe.fragment_pages import (
     fragment_detail_url,
     fragment_details_url,
-    fragment_has_video,
     parent_source_href,
     youtube_place_url,
 )
@@ -706,11 +705,9 @@ def fragment_page() -> None:
         import streamlit.components.v1 as components
 
         embed = player if player.endswith("/") else player + "/"
-        if fragment_has_video(folder):
-            components.iframe(embed + "?embed=1", height=640, scrolling=True)
-        else:
-            components.iframe(embed + "notation.html?embed=1", height=520, scrolling=True)
-            st.info("This fragment was taken from a local recording, so there is no video to play here.")
+        # Same player as a catalog score: transport, follow, harmony, tempo,
+        # instruments, sync, and passage. embed=1 hides that page's own header.
+        components.iframe(embed + "?embed=1", height=1100, scrolling=True)
     except Exception:
         st.caption("The score page could not be framed here. Use Open score page above.")
 

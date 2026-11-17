@@ -1498,6 +1498,36 @@ PREVIEW_MODES = ("performance", "quantized")
 PREVIEW_SAMPLE_RATE = 22_050
 
 
+def fragment_voice_assignments(folder: Path) -> dict[int, int] | None:
+    """``notes.json`` index → global voice id, when the grid stored two or more voices.
+
+    Readable extractions copy the parent's voice numbers. A literal grid has
+    none, and then the preview uses one instrument.
+    """
+
+    try:
+        notes = grid_notes(read_grid(folder))
+    except FragmentError:
+        return None
+    mapping: dict[int, int] = {}
+    for note in notes:
+        if note.voice is None:
+            continue
+        mapping[int(note.index)] = int(note.voice)
+    if len(set(mapping.values())) < 2:
+        return None
+    return mapping
+
+
+def _clamp_preview_volume(value: float | int | str | None, default: float = 0.5) -> float:
+    if value is None or value == "":
+        return default
+    try:
+        return max(0.0, min(1.0, float(value)))
+    except (TypeError, ValueError):
+        return default
+
+
 def preview_notes(folder: Path, mode: str = "performance") -> tuple[list[NoteEvent], float]:
     """Notes and duration for a library preview of ``folder``.
 
@@ -1542,6 +1572,9 @@ def ensure_fragment_preview_wav(
     *,
     mode: str = "performance",
     sound: str | None = None,
+    sound2: str | None = None,
+    volume: float | None = None,
+    volume2: float | None = None,
     local: Path | None = None,
     sample_rate: int = PREVIEW_SAMPLE_RATE,
 ) -> Path:
@@ -1551,11 +1584,20 @@ def ensure_fragment_preview_wav(
     sound id and a hash of the source notes or grid, so a changed fragment or
     a different timbre rebuilds itself. The fragment folder is never written.
     Deleting the cache only forces a rewrite.
+
+    When ``sound2`` is set and the grid stored two voices, voice 1 uses
+    ``sound`` and voice 2 uses ``sound2``, each scaled by ``volume`` /
+    ``volume2`` (default 0.5). Otherwise a single timbre is used.
     """
 
     import soundfile as sf
 
-    from baroque_transcribe.preview_synth import DEFAULT_PREVIEW_SOUND, resolve_preview_sound, synthesize_preview
+    from baroque_transcribe.preview_synth import (
+        DEFAULT_PREVIEW_SOUND,
+        resolve_preview_sound,
+        synthesize_preview,
+        synthesize_preview_by_voice,
+    )
 
     folder = Path(folder)
     chosen = str(mode or "performance").strip().lower()
@@ -1567,6 +1609,16 @@ def ensure_fragment_preview_wav(
         preset = resolve_preview_sound(sound or DEFAULT_PREVIEW_SOUND)
     except ValueError as exc:
         raise FragmentError(str(exc)) from exc
+    secondary = None
+    if sound2 is not None and str(sound2).strip():
+        try:
+            secondary = resolve_preview_sound(sound2).id
+        except ValueError:
+            secondary = None
+    voice_map = fragment_voice_assignments(folder) if secondary else None
+    use_voices = bool(secondary and voice_map)
+    vol1 = _clamp_preview_volume(volume, 0.5)
+    vol2 = _clamp_preview_volume(volume2, 0.5)
     manifest = read_manifest(folder)
     ident = str(manifest["id"])
     source = folder / (
@@ -1579,14 +1631,36 @@ def ensure_fragment_preview_wav(
     digest = hashlib.sha256(source.read_bytes()).hexdigest()[:16]
     cache = fragment_audio_root(local)
     cache.mkdir(parents=True, exist_ok=True)
-    target = cache / f"{ident}-{chosen}-{preset.id}-{digest}.wav"
+    if use_voices and voice_map is not None:
+        map_key = hashlib.sha256(
+            ",".join(f"{index}:{voice_map[index]}" for index in sorted(voice_map)).encode("utf-8")
+        ).hexdigest()[:12]
+        target = (
+            cache
+            / f"{ident}-{chosen}-{preset.id}+{secondary}-v{vol1:.2f}+{vol2:.2f}-{digest}-{map_key}.wav"
+        )
+        pattern = f"{ident}-{chosen}-{preset.id}+{secondary}-*.wav"
+    else:
+        target = cache / f"{ident}-{chosen}-{preset.id}-{digest}.wav"
+        pattern = f"{ident}-{chosen}-{preset.id}-*.wav"
     if target.is_file() and target.stat().st_size > 0:
         return target
     notes, duration = preview_notes(folder, chosen)
     if not notes:
         raise FragmentError("This fragment has no notes to preview.")
-    audio = synthesize_preview(notes, int(sample_rate), duration, sound=preset)
-    for old in cache.glob(f"{ident}-{chosen}-{preset.id}-*.wav"):
+    if use_voices and voice_map is not None:
+        paired = [(note, int(voice_map.get(index, 1))) for index, note in enumerate(notes)]
+        audio = synthesize_preview_by_voice(
+            paired,
+            int(sample_rate),
+            float(duration),
+            sounds_by_voice={1: preset.id, 2: secondary or preset.id},
+            default_sound=preset.id,
+            volumes_by_voice={1: vol1, 2: vol2},
+        )
+    else:
+        audio = synthesize_preview(notes, int(sample_rate), duration, sound=preset)
+    for old in cache.glob(pattern):
         if old != target:
             old.unlink(missing_ok=True)
     temporary = target.with_name(target.stem + ".tmp.wav")

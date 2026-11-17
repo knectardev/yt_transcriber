@@ -104,11 +104,12 @@ def test_playback_page_records_the_estimate_limitation(tmp_path):
     text = dest.read_text(encoding="utf-8")
     assert "abcdefghijk" in text
     assert "Highlight notes" in text
-    assert "attack dot" in text
     assert "Follow score" in text
     assert "ignoreScoreScroll" in text
-    assert "turns off Follow score" in text
     assert "Notation earlier" in text
+    assert 'id="more-controls"' in text
+    assert "turns off Follow score" not in text
+    assert "attack dot" not in text
     assert "seekTo" in text
     assert '"place": "(0:02)"' in text
     assert "stampMeasurePlaces" in text

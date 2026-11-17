@@ -21,17 +21,22 @@ adjustment moves both ends by the same amount and cannot change the length.
 
 Harmony is placed by measure and position in the bar, never by seconds.
 
-A fragment taken from a local recording has no video, so it has no synced
-page. Its page is the score with the harmony.
+A fragment taken from a local recording or a MIDI file has no video. Its
+player is the same one a catalog score uses: a synthesized preview, with the
+score following it. The preview is cached outside the fragment folder. The
+page origin is fragment time zero, because that WAV already starts at the
+window. A YouTube fragment still uses the source-video origin above.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 from urllib.parse import quote
 
-from baroque_transcribe.defaults import MANIFEST, SCORE_XML
+from baroque_transcribe.defaults import FRAGMENT_GRID_JSON, MANIFEST, SCORE_XML
 from baroque_transcribe.fragments import (
     FragmentError,
     duration_seconds,
@@ -213,18 +218,26 @@ def fragment_facts(manifest: dict) -> list[dict[str, str]]:
     return facts
 
 
-def fragment_context(folder: Path, *, title: str | None = None) -> PlaybackContext:
+def fragment_context(
+    folder: Path,
+    *,
+    title: str | None = None,
+    audio_local: Path | None = None,
+) -> PlaybackContext:
     """What the synced page needs to show a fragment, read from its folder.
 
-    Raises ``SyncError`` when the fragment has no video or no score, and
-    ``FragmentError`` when its files cannot be read.
+    A YouTube fragment plays the source video. A MIDI or local-recording
+    fragment plays a synthesized preview (or a silent scrubber when that
+    preview cannot be built), with the same transport as a catalog score.
+    ``audio_local`` is the machine-local root for that preview cache.
+
+    Raises ``SyncError`` when the fragment has no score, and ``FragmentError``
+    when its files cannot be read.
     """
 
     folder = Path(folder)
     manifest = read_manifest(folder)
     video_id = fragment_video_id(manifest)
-    if video_id is None:
-        raise SyncError("This fragment was taken from a local recording, so there is no video to play.")
     score_path = _score_path(folder, manifest)
     if not score_path.is_file():
         raise SyncError("This fragment has no score to display.")
@@ -268,19 +281,36 @@ def fragment_context(folder: Path, *, title: str | None = None) -> PlaybackConte
         # neither has changed since.
         harmony["stale"] = False
     duration = duration_seconds(manifest)
+    # The preview WAV is already fragment time. A video still starts at the
+    # source position written at extraction.
+    media_kind = "youtube"
+    media_url = ""
+    excerpt = video_origin(manifest)
+    if video_id is None:
+        excerpt = 0.0
+        try:
+            from baroque_transcribe.fragments import ensure_fragment_preview_wav
+
+            ensure_fragment_preview_wav(folder, local=audio_local)
+            media_kind = "audio"
+            media_url = "preview.wav"
+        except (FragmentError, OSError, ValueError, RuntimeError):
+            media_kind = "silent"
     return PlaybackContext(
         project=folder,
         score_path=score_path,
         title=title or str(manifest["title"]),
         video_id=video_id,
         anchors=anchors,
-        excerpt_start=video_origin(manifest),
+        excerpt_start=excerpt,
         sync_offset=sync_offset(manifest),
         harmony=harmony,
         facts=fragment_facts(manifest),
         note_anchors=notes,
         end_time=duration,
         passage=(0.0, duration),
+        media_kind=media_kind,
+        media_url=media_url,
     )
 
 
@@ -468,15 +498,93 @@ def _movement_covering_measures(
 # --------------------------------------------------------------------------
 
 
+def _fragment_key(manifest: dict) -> tuple[str, str] | None:
+    music = manifest.get("music") if isinstance(manifest.get("music"), dict) else {}
+    for name in ("written_key_signature", "analyzed_key"):
+        key = music.get(name) if isinstance(music.get(name), dict) else {}
+        tonic = str(key.get("tonic") or "").strip()
+        mode = str(key.get("mode") or "").strip()
+        if tonic and mode:
+            return tonic, mode
+    return None
+
+
+def ensure_fragment_voices_score(folder: Path, pages: Path) -> Path | None:
+    """Coloured MusicXML for the color-voices toggle, cached next to the pages.
+
+    Nothing in the fragment folder is written. None when the fragment has no
+    readable two-voice assignment, or when the coloured score cannot be built.
+    """
+
+    folder = Path(folder)
+    pages = Path(pages)
+    try:
+        manifest = read_manifest(folder)
+        music = manifest.get("music") if isinstance(manifest.get("music"), dict) else {}
+        if str(music.get("notation_style") or "") != "readable":
+            return None
+        from baroque_transcribe.fragments import (
+            _interpretation,
+            fragment_voice_assignments,
+            grid_notes,
+            grid_quantization,
+            read_grid,
+        )
+
+        if fragment_voice_assignments(folder) is None:
+            return None
+        from baroque_transcribe.notation import write_musicxml
+        grid_path = folder / FRAGMENT_GRID_JSON
+        digest = hashlib.sha256(grid_path.read_bytes()).hexdigest()[:16]
+        target = pages / f"{folder.name}.voices-{digest}.musicxml"
+        if target.is_file() and target.stat().st_size > 0:
+            return target
+        grid = read_grid(folder)
+        notes = grid_notes(grid)
+        quantization = grid_quantization(grid)
+        staff_split = int(grid.get("staff_split") or 60)
+        interpretation = _interpretation(notes, quantization.settings, staff_split)
+        measures = int(grid.get("measures") or 0)
+        pages.mkdir(parents=True, exist_ok=True)
+        write_musicxml(
+            target,
+            quantization,
+            staff_split=staff_split,
+            title=str(manifest.get("title") or folder.name),
+            style="readable",
+            key=_fragment_key(manifest),
+            interpretation=interpretation,
+            colorize_voices=True,
+            end_step=measures * quantization.steps_per_measure if measures > 0 else None,
+        )
+        for old in pages.glob(f"{folder.name}.voices-*.musicxml"):
+            if old != target:
+                old.unlink(missing_ok=True)
+        return target if target.is_file() else None
+    except Exception:
+        # Colouring is optional. A failure here must not take down the player.
+        return None
+
+
 def write_fragment_playback(folder: Path, pages: Path, *, home_url: str = "", source_url: str = "") -> Path:
     """Write the fragment's synced page into ``pages`` and return it.
 
     ``source_url`` is the parent transcription's page, when there is one to
-    link to.
+    link to. A fragment with stored voices also gets the color-voices score
+    and the two instrument controls.
     """
 
+    from baroque_transcribe.fragments import fragment_voice_assignments
+
     folder = Path(folder)
-    context = fragment_context(folder)
+    pages = Path(pages)
+    context = fragment_context(folder, audio_local=pages.parent)
+    voices = ensure_fragment_voices_score(folder, pages)
+    context = replace(
+        context,
+        voices_score_path=voices,
+        voice_instruments=fragment_voice_assignments(folder) is not None,
+    )
     return write_playback_page(
         context,
         Path(pages) / f"{folder.name}.playback.html",

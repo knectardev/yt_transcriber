@@ -24,7 +24,6 @@ import baroque_transcribe.fragments as F
 from baroque_transcribe.defaults import FRAGMENT_JSON, MANIFEST
 from baroque_transcribe.playback import (
     PlaybackServer,
-    SyncError,
     extract_page_url,
     load_playback,
     score_end_time,
@@ -606,33 +605,101 @@ def test_server_knows_only_the_fragment_addresses_it_gave_out(tmp_path: Path, se
         assert b"<h1>Parent take</h1>" in response.read()
 
 
-def test_fragment_of_a_local_recording_has_a_score_page_and_no_player(tmp_path: Path, server: PlaybackServer):
-    _project, folder = saved(tmp_path, youtube=None)
+def test_fragment_of_a_local_recording_has_the_score_player(tmp_path: Path, server: PlaybackServer):
+    _project, folder = saved(tmp_path, youtube=None, sync=0.0)
     manifest = F.read_manifest(folder)
     assert manifest["source"]["kind"] == "file" and P.fragment_video_id(manifest) is None
     assert not P.fragment_has_video(folder) and P.fragment_has_score(folder)
     assert P.youtube_place_url(manifest) == ""
-    with pytest.raises(SyncError, match="local recording"):
-        P.fragment_context(folder)
     before = tree_digest(folder)
 
+    context = P.fragment_context(folder, audio_local=server.fragment_pages.parent)
+    assert context.video_id is None
+    assert context.excerpt_start == 0.0
+    assert context.media_kind in {"audio", "silent"}
+    if context.media_kind == "audio":
+        assert context.media_url == "preview.wav"
+
     token = server.register_fragment(folder)
-    assert get(server, f"/f/{token}/") == (302, f"/f/{token}/notation.html")
-    assert get(server, f"/f/{token}/?embed=1") == (302, f"/f/{token}/notation.html?embed=1")
-    with urlopen(server.fragment_url(token)) as response:
+    address = server.fragment_url(token)
+    with urlopen(address + "?embed=1") as response:
         body = response.read().decode("utf-8")
+        assert response.status == 200
     assert "<h1>Two bars</h1>" in body
-    assert "Play with score" not in body
-    assert f'href="{HOME}fragments">&larr; Fragments</a>' in body
-    assert f'href="{HOME}fragment?id={manifest["id"]}">Details &amp; files</a>' in body
-    assert "in the recording" in body and "in the video" not in body
-    # The harmony travels with the fragment and is drawn by bar.
-    harmony = embedded_json(body, "const harmony = ")
+    config = embedded_json(body, "const config = ")
+    assert config["homeUrl"] == HOME + "fragments" and config["homeLabel"] == "Fragments"
+    assert config["toolsUrl"] == f"{HOME}fragment?id={manifest['id']}"
+    assert config["toolsLabel"] == "Details & files"
+    assert config["mediaKind"] in {"audio", "silent"}
+    assert config["excerptStart"] == 0.0
+    assert config["nominalBpm"] == pytest.approx(120.0)
+    assert config["passage"] == {"start": 0.0, "end": pytest.approx(DURATION)}
+    for needle in (
+        'id="play"',
+        'id="follow"',
+        'id="highlight-notes"',
+        'id="show-harmony"',
+        'id="lead-sheet"',
+        'id="color-voices"',
+        'id="tempo"',
+        'id="instrument"',
+        'id="instrument2"',
+        'id="volume1"',
+        'id="volume2"',
+        'id="earlier"',
+        'id="reset"',
+        'id="later"',
+        'id="select-toggle"',
+        'id="loop"',
+        "Follow score",
+        "Highlight notes",
+        "Lead-sheet chord symbols",
+        "Notation earlier",
+        "Select passage",
+    ):
+        assert needle in body, needle
+    # The static score is still there, and it links back to this player.
+    with urlopen(address + "notation.html") as response:
+        notation = response.read().decode("utf-8")
+    assert "Play with score" in notation
+    assert "in the recording" in notation and "in the video" not in notation
+    harmony = embedded_json(notation, "const harmony = ")
     assert harmony["chords"] and {chord["measure"] for chord in harmony["chords"]} <= {1, 2}
-    # Measure 1 is labelled with its place in the recording: E + t0 + offset.
-    times = embedded_json(body, "const measureTimes = ")
+    times = embedded_json(notation, "const measureTimes = ")
     assert times["1"] == "(0:32)"
+    if config["mediaKind"] == "audio":
+        with urlopen(address + "preview.wav?sound=concert_grand") as response:
+            assert response.status == 200
+            assert response.headers.get_content_type() == "audio/wav"
+            assert len(response.read(64)) > 0
     # Nothing was written into the fragment to show it.
+    assert tree_digest(folder) == before
+
+
+def test_readable_fragment_offers_the_voice_controls(tmp_path: Path):
+    from fragment_helpers import fixture_project
+
+    project = fixture_project(tmp_path, grid="fixed", style="readable", youtube=None)
+    folder = F.extract_fragment(project, 3, 5, title="Hands", root=tmp_path / "fragments")
+    before = tree_digest(folder)
+    assignments = F.fragment_voice_assignments(folder)
+    assert assignments and len(set(assignments.values())) >= 2
+
+    pages = tmp_path / "pages"
+    config = page_config(P.write_fragment_playback(folder, pages))
+    assert config["mediaKind"] == "audio"
+    assert config["voiceInstruments"] is True
+    assert config["hasVoiceColors"] is True
+    assert config["nominalBpm"] > 0
+    wav = F.ensure_fragment_preview_wav(
+        folder,
+        sound="rhodes",
+        sound2="wurli",
+        volume=0.4,
+        volume2=0.8,
+        local=pages.parent,
+    )
+    assert "+" in wav.name and wav.is_file()
     assert tree_digest(folder) == before
 
 
